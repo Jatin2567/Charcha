@@ -1,0 +1,14 @@
+.git
+node_modules
+web/node_modules
+dist
+web/dist
+server/.venv
+server/.pytest_cache
+**/__pycache__
+**/.env
+**/.env.*
+!**/.env.example
+work
+*.zip
+*.tar.gz

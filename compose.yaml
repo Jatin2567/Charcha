@@ -1,0 +1,59 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    env_file: .env
+    ports: ['127.0.0.1:8000:8000']
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'python',
+          '-c',
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health')",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    ports: ['127.0.0.1:8080:80']
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+  livekit:
+    image: livekit/livekit-server:v1.9.1
+    profiles: ['local-livekit']
+    command: ['--dev', '--bind', '0.0.0.0', '--node-ip', '127.0.0.1']
+    ports:
+      - '127.0.0.1:7880:7880'
+      - '127.0.0.1:7881:7881'
+      - '127.0.0.1:7882:7882/udp'
+  evon:
+    image: vllm/vllm-openai:v0.12.0
+    profiles: ['local-evon']
+    environment:
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes: ['evon-models:/root/.cache/huggingface']
+    ports: ['127.0.0.1:8001:8000']
+    ipc: host
+    command:
+      - '--model'
+      - 'gnani/gnani-evon-v3.3-30B-A3B'
+      - '--trust-remote-code'
+      - '--max-model-len'
+      - '8192'
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+volumes:
+  evon-models:

@@ -1,0 +1,23 @@
+{
+  "name": "artha-mesh",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Indic multilingual meeting interpretation — Track B",
+  "workspaces": [
+    "web"
+  ],
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "dev:web": "npm run dev --workspace web",
+    "dev:server": "uv run --project server uvicorn artha_mesh.main:app --app-dir server --host 127.0.0.1 --port 8000 --reload --no-access-log --log-level warning",
+    "build": "npm run build --workspace web && node scripts/copy-dist.mjs",
+    "build:demo": "node scripts/build-demo.mjs",
+    "test:web": "npm run test --workspace web",
+    "test:server": "uv run --project server --extra dev pytest server/tests -q",
+    "test": "npm run test:web && npm run test:server",
+    "format": "prettier --write web/src scripts/*.mjs docs/*.md README.md package.json compose.yaml"
+  },
+  "devDependencies": {
+    "prettier": "3.6.2"
+  }
+}
