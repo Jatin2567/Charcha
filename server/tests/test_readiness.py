@@ -11,6 +11,8 @@ from artha_mesh.services.readiness import production_configuration_issues, readi
 def production_settings(**overrides):
     values = {
         "mode": "live",
+        "usage_require_flow_approval": True,
+        "usage_show_private_balance": False,
         "livekit_url": "wss://rtc.artha.in",
         "livekit_internal_url": "ws://127.0.0.1:7880",
         "livekit_api_key": "server-generated-key",
@@ -40,6 +42,8 @@ def test_production_allows_colocated_private_services_but_does_not_claim_access(
 
 @pytest.mark.parametrize(("name", "value", "key"), [
     ("mode", "demo", "ARTHA_MODE"),
+    ("usage_require_flow_approval", False, "USAGE_REQUIRE_FLOW_APPROVAL"),
+    ("usage_show_private_balance", True, "USAGE_SHOW_PRIVATE_BALANCE"),
     ("livekit_url", "ws://rtc.artha.in", "LIVEKIT_URL"),
     ("livekit_url", "wss://127.0.0.1:7880", "LIVEKIT_URL"),
     ("livekit_url", "wss://localhost.", "LIVEKIT_URL"),

@@ -88,6 +88,10 @@ The live server rejects incomplete setup; it does not silently return demo trans
 
 ### First live acceptance check
 
+Provider use is locked until an operator explicitly approves one bounded flow. Start with the [local Gnani checks](docs/GNANI_CHECKS.md): their default plan makes no API calls, and the speech-only test needs no remote server, LiveKit or Evon. Give separate permission for cloning. Manual balance evidence and reference prices appear in Usage; actual programme charges remain unverified until dashboard reconciliation.
+
+The [test-flow catalogue](docs/TEST_FLOWS.md) separates the passed standard-speech check from prepared cloning, translation, multi-party and recovery checks. The [validation record](docs/VALIDATION.md#first-approved-gnani-speech-check) reports the actual one-flow Gnani measurements without treating them as a meeting benchmark.
+
 1. Open two different browser profiles/devices and join the same invitation.
 2. Choose Hindi for one participant and Tamil for the other, with standard voices.
 3. Enable microphones intentionally; use headphones. Speak short complete phrases in both directions.
@@ -189,7 +193,7 @@ Requires a compatible NVIDIA GPU/runtime, sufficient model memory, model access 
 ## Deployment and privacy boundaries
 
 - Run a **single API worker**. Rooms, memberships and voice embeddings are in memory, expire, and are lost on restart. Durable storage and distributed room ownership are future deployment work.
-- Provider-usage reservations persist separately in a small local SQLite ledger so an API restart cannot silently reset the daily counters. Keep its Docker volume/local data directory. The ledger stores only dates, resource names and reserved unit totals.
+- Provider-usage reservations persist separately in a small local SQLite ledger so an API restart cannot silently reset the daily counters. Keep its Docker volume/local data directory. The ledger stores resource totals, bounded approval metadata/measurements and optional manual balance evidence, without audio, transcripts, keys or embeddings. Public usage responses hide financial evidence by default.
 - Invitations permit joining a room. Host admission, user accounts, SSO and organisation policies are not implemented.
 - Reference uploads are bounded and processed in memory. This application retains only session-scoped embeddings, which are deleted on leave/expiry or explicit deletion. External API retention is governed by your provider's settings and terms.
 - Recaps are only persisted in the current browser after an explicit save. Downloaded exports remain wherever the user saves them.

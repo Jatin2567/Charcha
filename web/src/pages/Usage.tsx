@@ -7,6 +7,7 @@ import {
   Download,
   Gauge,
   Layers3,
+  LockKeyhole,
   MicOff,
   Pause,
   Play,
@@ -18,11 +19,38 @@ import { Badge, ErrorNotice, PageHeading, downloadJson } from '../components/ui'
 import { useApp } from '../state/AppContext';
 import { useUsage } from '../hooks/useUsage';
 import { isLocalDemo } from '../services/api';
-import { USAGE_DEFAULTS } from '../services/usage';
-import type { UsageResource } from '../types/usage';
+import { balanceSnapshotIsStale, speechFlowReferenceCost, USAGE_DEFAULTS } from '../services/usage';
+import type {
+  BalanceUnit,
+  ProgrammePricing,
+  ProviderFlow,
+  UsageReport,
+  UsageResource,
+} from '../types/usage';
 import './Usage.css';
 
 const amount = (value: number | null) => (value === null ? 'Unknown' : value.toLocaleString());
+const balanceAmount = (value: number | null, unit: BalanceUnit | null) =>
+  value === null || unit === null
+    ? 'Unknown'
+    : unit === 'INR'
+      ? `₹${value.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`
+      : `${value.toLocaleString()} credits`;
+const dateTime = (value: string | null) =>
+  value
+    ? new Date(value).toLocaleString([], {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        timeZoneName: 'short',
+      })
+    : 'Not recorded';
+const flowPurpose: Record<ProviderFlow['purpose'], string> = {
+  gnani_speech_check: 'Speech API check',
+  voice_clone_check: 'Consented voice cloning check',
+  live_interpretation: 'Live interpretation',
+};
 const resourceNotes: Record<UsageResource['key'], string> = {
   stt_seconds: 'Connected recognition time, including silence. Reserved in whole seconds.',
   stt_connections: 'Every attempt to open a recognition stream, including reconnections.',
@@ -38,6 +66,330 @@ const statusText = {
   exhausted: 'Stopped',
   unknown: 'Unknown usage',
 };
+
+function FlowCostReference({
+  flow,
+  pricing,
+}: {
+  flow: ProviderFlow;
+  pricing: ProgrammePricing | null;
+}) {
+  const estimate = speechFlowReferenceCost(flow, pricing);
+  return (
+    <div className="usage-flow-reconciliation">
+      <h3>Reference cost for reserved speech work</h3>
+      <p>
+        {estimate === null ? (
+          <>
+            <strong>Unknown.</strong>{' '}
+            {flow.purpose === 'voice_clone_check'
+              ? 'Enrollment and cloned-speech tariffs have not been confirmed.'
+              : 'Matching recognition and synthesis pricing is not available for this flow.'}
+          </>
+        ) : (
+          <>
+            <strong>
+              Approximately ₹{estimate.toLocaleString('en-IN', { maximumFractionDigits: 4 })}.
+            </strong>{' '}
+            Reserved recognition seconds × hourly STT rate ÷ 3,600, plus reserved synthesis
+            characters × TTS rate ÷ 10,000.
+          </>
+        )}
+      </p>
+      <p>
+        This is a pricing estimate, not a charge. Billing rounding is unconfirmed; provider invoices
+        and failed-attempt charges may differ. It does not deduct from the reported balance.
+      </p>
+    </div>
+  );
+}
+
+function ProviderEvidence({ report }: { report: UsageReport }) {
+  const { programme, approval } = report;
+  const approved = approval.status === 'approved';
+  const recorded = programme.balance !== null;
+  const stale = recorded && balanceSnapshotIsStale(programme.observed_at);
+  return (
+    <>
+      <div className="usage-provider-grid">
+        <section className="panel usage-programme" aria-labelledby="usage-programme-title">
+          <div className="usage-section-title">
+            <Wallet size={20} />
+            <h2 id="usage-programme-title">Gnani account & programme</h2>
+          </div>
+          <div className="usage-evidence-heading">
+            <div className="usage-programme-value">
+              <strong>{balanceAmount(programme.balance, programme.unit)}</strong>
+              <span>
+                {programme.unit === 'INR'
+                  ? 'Reported rupee balance'
+                  : programme.unit === 'programme_credits'
+                    ? 'Reported programme balance'
+                    : 'Balance not connected'}
+              </span>
+            </div>
+            <Badge>
+              {programme.source === 'user_reported'
+                ? 'Owner reported'
+                : programme.source === 'manual_dashboard'
+                  ? 'Manual dashboard snapshot'
+                  : 'Unknown balance'}
+            </Badge>
+          </div>
+          <p className="usage-intro">{programme.detail}</p>
+          <p className="usage-evidence-note">
+            <strong>Automatic balance sync is unavailable.</strong> This page reads the workspace
+            ledger; it does not contact Gnani or deduct provider credits.
+          </p>
+          {recorded && (
+            <p className="usage-snapshot-time">
+              Recorded {dateTime(programme.observed_at)}
+              {stale && <Badge tone="orange">Older than 24 hours</Badge>}
+              <span>A historical snapshot, not a live account balance.</span>
+            </p>
+          )}
+          {programme.pricing && (
+            <div className="usage-rate-note">
+              <h3>Speech pricing reference</h3>
+              <dl className="usage-flow-meta">
+                <div>
+                  <dt>Recognition</dt>
+                  <dd>
+                    {programme.pricing.stt_per_hour === null
+                      ? 'Not confirmed'
+                      : `₹${programme.pricing.stt_per_hour}/hour`}
+                  </dd>
+                </div>
+                <div>
+                  <dt>Speech synthesis</dt>
+                  <dd>
+                    {programme.pricing.tts_per_10000_characters === null
+                      ? 'Not confirmed'
+                      : `₹${programme.pricing.tts_per_10000_characters}/10,000 characters`}
+                  </dd>
+                </div>
+                <div>
+                  <dt>Voice enrollment & cloning</dt>
+                  <dd>Not confirmed</dd>
+                </div>
+              </dl>
+              <p>
+                From the{' '}
+                <a href={programme.pricing.reference_url} target="_blank" rel="noreferrer">
+                  pricing table you supplied
+                </a>
+                . Billing rounding and cloning coverage still need confirmation. Recognition uses
+                duration; synthesis uses characters.
+              </p>
+            </div>
+          )}
+          {programme.quoted_rate && !programme.pricing && (
+            <div className="usage-rate-note">
+              Your quoted rate: <strong>₹{programme.quoted_rate.amount}/request</strong> · service
+              coverage unconfirmed. Recognition, synthesis and cloning may have different billing
+              units. No credit deduction or request allowance is calculated from this rate.
+            </div>
+          )}
+          <p className="usage-evidence-note">
+            Rupees and programme credits are separate units. Programme credits used per flow stay
+            unknown until matching snapshots in programme-credit units are recorded. Rupee balance
+            differences appear separately.
+          </p>
+        </section>
+
+        <section className="panel usage-approval" aria-labelledby="usage-approval-title">
+          <div className="usage-section-title">
+            <LockKeyhole size={20} />
+            <h2 id="usage-approval-title">Permission before each flow</h2>
+          </div>
+          <div className="usage-approval-state">
+            <Badge tone={approved ? 'green' : 'neutral'}>
+              {approved
+                ? 'One bounded flow approved'
+                : approval.status === 'demo'
+                  ? 'Demo · no provider use'
+                  : approval.status === 'unavailable'
+                    ? 'Approval ledger unavailable'
+                    : 'Locked · no flow approved'}
+            </Badge>
+          </div>
+          <p className="usage-intro">{approval.detail}</p>
+          {approved && (
+            <dl className="usage-approval-meta">
+              <div>
+                <dt>Flow reference</dt>
+                <dd>{approval.active_flow_id}</dd>
+              </div>
+              <div>
+                <dt>Approval expires</dt>
+                <dd>{dateTime(approval.expires_at)}</dd>
+              </div>
+            </dl>
+          )}
+          <ol className="usage-approval-steps">
+            <li>Review the proposed test, endpoints, maximum work and any known billing rate.</li>
+            <li>Give written permission for that single flow before it starts.</li>
+            <li>The operator records its resource caps and expiry on the server.</li>
+            <li>Review reservations, measured latency and dashboard balance changes afterward.</li>
+          </ol>
+          <p className="usage-evidence-note">
+            This read-only page cannot grant permission. Another flow needs another approval;
+            refreshing the page never starts a test. API keys stay on the server.
+          </p>
+        </section>
+      </div>
+
+      <section className="panel usage-flow-history" aria-labelledby="usage-flow-title">
+        <div className="usage-flow-heading">
+          <div className="usage-section-title">
+            <Layers3 size={20} />
+            <h2 id="usage-flow-title">Approved flow history</h2>
+          </div>
+          <Badge>{programme.flows.length} recorded</Badge>
+        </div>
+        <p className="usage-intro">
+          Each flow has its own allowance in addition to the seven daily caps. Reservations show
+          attempted work; provider credit charges require a separate dashboard check.
+        </p>
+        {programme.flows.length === 0 ? (
+          <div className="usage-flow-empty">
+            <LockKeyhole size={22} />
+            <div>
+              <h3>No provider flows recorded</h3>
+              <p>No paid test history is invented in demo or offline mode.</p>
+            </div>
+          </div>
+        ) : (
+          <div className="usage-flow-list">
+            {programme.flows.map((flow) => (
+              <details className="usage-flow" key={flow.id}>
+                <summary>
+                  <div>
+                    <strong>{flowPurpose[flow.purpose]}</strong>
+                    <span>{dateTime(flow.started_at)}</span>
+                  </div>
+                  <div className="usage-flow-summary-end">
+                    <Badge tone={flow.status === 'approved' ? 'green' : 'neutral'}>
+                      {flow.status.charAt(0).toUpperCase() + flow.status.slice(1)}
+                    </Badge>
+                    <span>
+                      Programme credits used: <strong>{amount(flow.credits_used)}</strong>
+                    </span>
+                  </div>
+                </summary>
+                <div className="usage-flow-body">
+                  <dl className="usage-flow-meta">
+                    <div>
+                      <dt>Flow reference</dt>
+                      <dd>{flow.id}</dd>
+                    </div>
+                    <div>
+                      <dt>Expires</dt>
+                      <dd>{dateTime(flow.expires_at)}</dd>
+                    </div>
+                    <div>
+                      <dt>Closed</dt>
+                      <dd>{dateTime(flow.closed_at)}</dd>
+                    </div>
+                  </dl>
+                  <div className="usage-flow-table-scroll">
+                    <table>
+                      <caption>Reserved work within this approved flow</caption>
+                      <thead>
+                        <tr>
+                          <th scope="col">Resource</th>
+                          <th scope="col">Reserved</th>
+                          <th scope="col">Flow cap</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {USAGE_DEFAULTS.map(({ key, label, unit }) => (
+                          <tr key={key}>
+                            <th scope="row">{label}</th>
+                            <td>
+                              {amount(flow.used[key])} {unit}
+                            </td>
+                            <td>{amount(flow.budgets[key])}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <FlowCostReference flow={flow} pricing={programme.pricing} />
+                  <div className="usage-flow-reconciliation">
+                    <h3>Measured test results</h3>
+                    <dl className="usage-flow-meta">
+                      {(
+                        [
+                          ['tts_first_pcm_ms', 'Speech first PCM', 'ms'],
+                          ['tts_total_ms', 'Speech synthesis total', 'ms'],
+                          ['stt_final_ms', 'Recognition final result', 'ms'],
+                          ['tts_audio_seconds', 'Generated speech', 's'],
+                          ['reference_seconds', 'Enrollment reference', 's'],
+                        ] as const
+                      ).map(([key, label, unit]) => (
+                        <div key={key}>
+                          <dt>{label}</dt>
+                          <dd>
+                            {flow.metrics[key] === undefined
+                              ? 'Not measured'
+                              : `${flow.metrics[key].toLocaleString(undefined, { maximumFractionDigits: 2 })} ${unit}`}
+                          </dd>
+                        </div>
+                      ))}
+                      {flow.metrics.error_stage && (
+                        <div>
+                          <dt>Reported error stage</dt>
+                          <dd>
+                            {flow.metrics.error_stage === 'none'
+                              ? 'None reported'
+                              : flow.metrics.error_stage}
+                          </dd>
+                        </div>
+                      )}
+                    </dl>
+                    <p>
+                      Timing is measured at the server. First PCM means the first generated audio
+                      received by the server; it does not measure when a listener hears it.
+                    </p>
+                  </div>
+                  <div className="usage-flow-reconciliation">
+                    <h3>Account balance reconciliation</h3>
+                    <dl className="usage-flow-meta">
+                      <div>
+                        <dt>Before</dt>
+                        <dd>
+                          {balanceAmount(flow.before_balance, flow.balance_unit)}
+                          <small>{dateTime(flow.before_observed_at)}</small>
+                        </dd>
+                      </div>
+                      <div>
+                        <dt>After</dt>
+                        <dd>
+                          {balanceAmount(flow.after_balance, flow.balance_unit)}
+                          <small>{dateTime(flow.after_observed_at)}</small>
+                        </dd>
+                      </div>
+                      <div>
+                        <dt>Manual dashboard delta</dt>
+                        <dd>{balanceAmount(flow.balance_delta, flow.balance_unit)}</dd>
+                      </div>
+                    </dl>
+                    <p>
+                      {flow.credits_source === 'unknown'
+                        ? 'Charge unknown: matching before-and-after dashboard snapshots have not been reconciled.'
+                        : 'This dashboard difference includes other account activity between snapshots. It is not a provider invoice or an independently verified charge for this flow.'}
+                    </p>
+                  </div>
+                </div>
+              </details>
+            ))}
+          </div>
+        )}
+      </section>
+    </>
+  );
+}
 
 function ResourceCard({ resource, reference }: { resource: UsageResource; reference: boolean }) {
   const percent = resource.utilization_percent;
@@ -108,7 +460,7 @@ export function Usage() {
       <PageHeading
         eyebrow="BUILD WITHIN YOUR BUDGET"
         title="Usage & limits"
-        description="Keep development economical. See the workspace’s daily allowances before making live calls."
+        description="Review permission, reported account balances and bounded resource use before each live test."
         action={
           <Link className="button secondary" to="/performance">
             <Gauge size={16} />
@@ -168,6 +520,8 @@ export function Usage() {
           check the remaining allowance.
         </div>
       )}
+
+      <ProviderEvidence report={report} />
 
       <div className="usage-controls">
         <div className="usage-refresh-status">
@@ -353,8 +707,8 @@ export function Usage() {
         <div className="usage-balance">
           <Wallet size={18} />
           <p>
-            <strong>Provider balance: unavailable.</strong> {report.billing.detail} Reading or
-            refreshing this page does not call an AI inference endpoint.
+            <strong>Live provider balance sync: unavailable.</strong> {report.billing.detail}{' '}
+            Reading or refreshing this page does not call an AI inference endpoint.
           </p>
         </div>
       </section>

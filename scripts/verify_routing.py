@@ -60,6 +60,7 @@ async def run():
         livekit_internal_url="ws://127.0.0.1:7880", livekit_api_key="devkey",
         livekit_api_secret="secret", gnani_api_key="test-double-never-sent",
         evon_base_url="http://127.0.0.1:9/v1", evon_model="test-double",
+        usage_require_flow_approval=False,  # Synthetic provider doubles only; never real APIs.
     )
     app = create_app(settings)
     fake = TestProviders()

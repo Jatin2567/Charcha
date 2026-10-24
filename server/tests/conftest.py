@@ -14,6 +14,11 @@ from artha_mesh.config import Settings
 def isolated_usage_storage(monkeypatch, tmp_path):
     # Protocol fixtures must never spend or overwrite the operator's real ledger.
     monkeypatch.setenv("USAGE_DB_PATH", str(tmp_path / "usage.sqlite3"))
+    # Legacy adapter fixtures use deterministic doubles, not operator-approved paid flows.
+    # Approval enforcement is tested explicitly with usage_require_flow_approval=True.
+    monkeypatch.setenv("USAGE_REQUIRE_FLOW_APPROVAL", "false")
+    monkeypatch.setenv("GNANI_API_KEY", "")
+    monkeypatch.setenv("EVON_API_KEY", "")
 
 
 @pytest.fixture

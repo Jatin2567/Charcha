@@ -1,6 +1,6 @@
 # Provider credit controls
 
-The application enforces conservative daily usage reservations before live Gnani or Evon requests. The **Usage & limits** page reads `/api/usage` without probing any provider. Demo mode makes no paid provider calls and does not create a usage database.
+The application requires an explicit bounded operator grant and enforces conservative daily usage reservations before live Gnani or Evon requests. The **Usage & limits** page reads `/api/usage` without probing any provider. Demo mode makes no paid provider calls and does not create a usage database. See [GNANI_CHECKS.md](GNANI_CHECKS.md) for the prepared local speech/clone plans and permission workflow.
 
 These are application safeguards, not a provider balance, rupee estimate, or guarantee of the bill. Provider billing may use different units, rounding, minimum connection charges, tokens, or partial-request rules. Usage from other applications is outside this ledger. Set spending/quota controls in the Gnani, LiveKit and hosted Evon accounts as well. A self-hosted Evon GPU can cost money while idle; this application does not stop that machine.
 
@@ -38,7 +38,7 @@ All counters are global across rooms and users of the API, shared for each UTC d
 
 ## Persistent ledger and failures
 
-Local development defaults to `server/data/usage.sqlite3`. `USAGE_DB_PATH` can select another persistent local path. The SQLite ledger has only UTC date, resource key and integer reserved units. It contains no transcript, names, audio, embeddings, model values, URLs, tokens or API keys. The directory and SQLite files are ignored by source control and excluded from the source archive.
+Local development defaults to `server/data/usage.sqlite3`. `USAGE_DB_PATH` can select another persistent local path. The SQLite ledger stores UTC resource totals, bounded operator-flow metadata and measurements, and optional manual balance evidence. It contains no transcript, names, audio, embeddings, model values, URLs, tokens or API keys. The entire runtime data directory is ignored by source control and excluded from the source archive. Public usage responses hide manual financial evidence by default; the operator CLI can read it locally.
 
 All units required for a request are reserved in one SQLite transaction before contacting the provider. Concurrent reservations cannot cross the same daily cap. The application deliberately does not refund attempted requests. Existing in-flight requests can finish after their reservation; STT initiates close when the next second cannot be reserved. Connection close/transport delays and provider billing granularity mean this is not an exact billed-seconds cap.
 

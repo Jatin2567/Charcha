@@ -7,7 +7,7 @@ export type JournalArea =
   | 'experience'
   | 'usage'
   | 'delivery';
-export type JournalEvidence = 'automated' | 'synthetic-rtc' | 'browser' | 'review' | 'live-pending';
+export type JournalEvidence = 'automated' | 'synthetic-rtc' | 'browser' | 'review' | 'live-provider' | 'live-pending';
 export interface DeveloperJournalEntry {
   id: string;
   date: string;
@@ -47,6 +47,7 @@ export const JOURNAL_EVIDENCE_LABELS: Record<JournalEvidence, string> = {
   'synthetic-rtc': 'Synthetic WebRTC',
   browser: 'Browser check',
   review: 'Code review',
+  'live-provider': 'Approved API check',
   'live-pending': 'Live check pending',
 };
 export const DEFAULT_JOURNAL_FILTER: JournalFilter = {
@@ -261,24 +262,28 @@ export const developerJournal: DeveloperJournalEntry[] = [
     date: JOURNAL_UPDATED,
     status: 'improved',
     area: 'usage',
-    title: 'Daily usage caps survive server restarts',
+    title: 'Paid flows require permission and retain their usage record',
     summary:
-      'Atomic daily reservations limit provider attempts and connected recognition time; usage remains separate from the provider balance.',
+      'Short-lived operator grants and atomic daily caps protect each paid flow; reserved units, rupees and programme credits stay separate.',
     cause:
       'Limited provider allowances need explicit application budgets in addition to each vendor’s own account limits.',
     change:
-      'A persistent metadata-only ledger enforces configurable UTC daily caps, zero-limit blocking and bounded concurrency. Muted, empty and same-language-only rooms skip recognition; authentication/quota failures stop retries. Same-language forwarding continues with generated captions paused.',
+      'The ledger checks explicit flow budgets and expiry before upstream work, binds ongoing streams to the same grant, and records safe measurements. The Usage page distinguishes manual balance snapshots, reference prices and unverified actual charges; financial evidence is hidden on public responses by default.',
     verification:
-      'Mocked tests check atomic reservations, restart persistence, date rollover, failures, unavailable storage, idle-stream termination and terminal provider errors. No actual provider inference or billing validation was performed.',
-    evidence: ['automated', 'review'],
+      'Mocked checks cover grant expiry/replacement, atomic caps, privacy, reconciliation and a bounded test runner. One separately approved Gnani TTS→STT check passed and closed its grant; the Usage page records its units and timings. Actual invoice and cloning checks remain pending.',
+    evidence: ['automated', 'review', 'live-provider'],
     references: [
       'server/artha_mesh/services/usage.py',
+      'server/artha_mesh/services/approvals.py',
+      'server/tests/test_approvals.py',
+      'scripts/check_gnani.py',
+      'docs/GNANI_CHECKS.md',
       'server/tests/test_usage.py',
       'server/tests/test_credit_transport.py',
       'docs/CREDIT_CONTROLS.md',
     ],
     outstanding:
-      'Set allowances from the actual provider account. App estimates are not an invoice or a vendor-enforced spending guarantee.',
+      'Obtain human permission before each actual test. Reconcile charges against the provider dashboard and confirm enrollment/cloned-synthesis pricing. Reference costs are not a guaranteed invoice or a provider-enforced rupee cap.',
   },
   {
     id: 'provider-admission-lifecycle',
@@ -310,17 +315,17 @@ export const developerJournal: DeveloperJournalEntry[] = [
     area: 'delivery',
     title: 'Real-provider speech and clone acceptance',
     summary:
-      'Working Gnani/LiveKit access, an Evon endpoint and consenting speakers are still required.',
+      'The first approved Gnani standard-speech check passed. Cloning, translated meetings and speaker review remain pending.',
     cause:
       'Mock protocol checks and synthetic audio establish integration behavior, not language accuracy or voice similarity.',
     change:
       'A staged acceptance checklist starts with short standard-voice Hindi→Tamil phrases, reverses direction, adds Bengali, and then checks consented cloning and deletion.',
     verification:
-      'Pending real-provider calls and human review. Draft evaluation cases are available but are not certified ground truth.',
-    evidence: ['live-pending'],
+      'Gnani synthesized a fixed Hindi phrase and returned the same transcript over STT. First PCM arrived in 505.91 ms; STT final arrived in 2081.17 ms including connection and streamed input. This single test does not establish language accuracy or voice similarity.',
+    evidence: ['live-provider', 'live-pending'],
     references: ['docs/GO_LIVE.md', 'docs/EVALUATION.md', 'docs/VALIDATION.md'],
     outstanding:
-      'Check account entitlements, actual model/voice IDs, quotas, meaning, names, numbers, negation and cross-language clone quality.',
+      'Check cloned-voice entitlement and similarity, Evon translation, both meeting directions, names/numbers/negation and target-language intelligibility with consenting speakers.',
   },
   {
     id: 'listener-latency',

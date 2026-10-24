@@ -61,6 +61,10 @@ def production_configuration_issues(settings: Settings) -> list[dict[str, str]]:
 
     if settings.mode != "live":
         issue("ARTHA_MODE", "Switch to live mode only after the production configuration is ready.")
+    if not settings.usage_require_flow_approval:
+        issue("USAGE_REQUIRE_FLOW_APPROVAL", "Require an explicit bounded operator grant before any paid provider flow.")
+    if settings.usage_show_private_balance:
+        issue("USAGE_SHOW_PRIVATE_BALANCE", "Disable private financial snapshots on public deployments; the local-only balance view has no operator sign-in.")
     missing = settings.missing_live_config()
     for name in missing:
         issue(name, "Required live configuration is missing.")
@@ -110,6 +114,8 @@ def readiness_snapshot(settings: Settings) -> dict:
 
     requirement("ARTHA_MODE", "Live processing enabled", settings.mode == "live", True,
                 "Application", "Set live mode after configuring the providers; demo mode uses scripted examples.")
+    requirement("USAGE_REQUIRE_FLOW_APPROVAL", "Provider flow permission", settings.usage_require_flow_approval, True,
+                "Application", "Every billable flow needs a local operator grant with an expiry and explicit resource budgets; daily caps remain enforced.")
     requirement("GNANI_API_KEY", "Gnani API access", settings.gnani_api_key.get_secret_value(), True,
                 "Gnani", "Account must have Prisma STT, Timbre TTS and voice-clone access; usage or quota is unverified.")
     requirement("LIVEKIT_URL", "LiveKit room URL", settings.livekit_url, True, "LiveKit",

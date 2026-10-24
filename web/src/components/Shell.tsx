@@ -127,7 +127,7 @@ export function Shell() {
             <Badge tone={health?.mode === 'live' ? 'green' : 'orange'}>
               <span className="status-dot" />
               {health?.mode === 'live'
-                ? 'Live services'
+                ? 'Live mode'
                 : healthLoading
                   ? 'Connecting'
                   : 'Demo workspace'}

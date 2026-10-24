@@ -43,6 +43,14 @@ class Settings(BaseSettings):
     audio_sample_rate: int = 24000
     # Application safeguards count reserved attempts/units, not vendor billing.
     usage_db_path: Path = Path(__file__).resolve().parents[1] / "data" / "usage.sqlite3"
+    usage_require_flow_approval: bool = True
+    # Public usage summaries must not expose manually entered financial evidence.
+    # Enable only for an operator-controlled local API, never public deployment.
+    usage_show_private_balance: bool = False
+    # Optional human-reported reference only; never used to estimate vendor charges.
+    usage_reported_request_rate_inr: float | None = Field(default=None, ge=0, allow_inf_nan=False)
+    usage_stt_inr_per_hour: float | None = Field(default=None, ge=0, allow_inf_nan=False)
+    usage_tts_inr_per_10000_characters: float | None = Field(default=None, ge=0, allow_inf_nan=False)
     usage_stt_seconds_per_day: int = Field(default=600, ge=0, le=864000)
     usage_stt_connections_per_day: int = Field(default=30, ge=0, le=100000)
     usage_mt_requests_per_day: int = Field(default=100, ge=0, le=1000000)

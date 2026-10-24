@@ -135,7 +135,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @app.get("/api/usage")
     async def usage_summary():
-        return usage.snapshot()
+        return usage.public_snapshot()
 
     @app.get("/api/readiness")
     async def readiness():

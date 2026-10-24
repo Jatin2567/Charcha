@@ -105,6 +105,8 @@ export function validateDeployment(value: unknown): DeploymentSnapshot {
     'GNANI_TTS_URL',
     'GNANI_EMBEDDING_URL',
     'CORS_ORIGINS',
+    'USAGE_REQUIRE_FLOW_APPROVAL',
+    'USAGE_SHOW_PRIVATE_BALANCE',
   ]);
   const issues = value.configuration_issues ?? [];
   if (!Array.isArray(issues)) throw new Error('Invalid deployment readiness report.');

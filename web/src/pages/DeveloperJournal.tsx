@@ -182,7 +182,8 @@ export function DeveloperJournal() {
           <h2 id="journal-evidence-title">Read the evidence at the right level</h2>
           <p>
             Automated checks validate specific behavior. Synthetic WebRTC uses generated audio and
-            provider doubles. Browser checks cover interaction. Real translation quality, cloned
+            provider doubles. Browser checks cover interaction. Approved API checks record bounded
+            calls to the real service. Real translation quality, cloned
             voice similarity and audible listener delay still require live accounts and consenting
             speakers.
           </p>

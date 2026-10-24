@@ -42,13 +42,14 @@ BOUNDS = {
     "USAGE_MAX_LIVE_ROOM_SECONDS": (900, 60, 86400),
 }
 FLOAT_BOUNDS = {"PROVIDER_TIMEOUT_SECONDS": (45, 1, 120), "USAGE_PROVIDER_ADMISSION_TIMEOUT_SECONDS": (5, 0.01, 30)}
+REFERENCE_PRICES = {"USAGE_STT_INR_PER_HOUR", "USAGE_TTS_INR_PER_10000_CHARACTERS"}
 PROVIDER_DEFAULTS = {
     "GNANI_STT_URL": "wss://api.vachana.ai/stt/v3/stream",
     "GNANI_TTS_URL": "wss://api.vachana.ai/api/v1/tts",
     "GNANI_EMBEDDING_URL": "https://api.vachana.ai/api/v1/tts/voice-clone/embeddings",
     "TIMBRE_MODEL": "timbre-v2.5", "TIMBRE_VOICE": "Nalini", "VOICE_CLONE_MODEL": "vachana-vc-v1",
 }
-PROVIDER_KEYS = {"GNANI_API_KEY", "EVON_BASE_URL", "EVON_MODEL", "EVON_API_KEY", *PROVIDER_DEFAULTS, *BOUNDS, *FLOAT_BOUNDS}
+PROVIDER_KEYS = {"GNANI_API_KEY", "EVON_BASE_URL", "EVON_MODEL", "EVON_API_KEY", *PROVIDER_DEFAULTS, *BOUNDS, *FLOAT_BOUNDS, *REFERENCE_PRICES}
 
 
 class PreparationError(ValueError):
@@ -157,11 +158,21 @@ def runtime_env(config: dict[str, str], supplied: dict[str, str], api_key: str, 
         if not minimum <= value <= maximum:
             raise PreparationError(f"{name} requires a number within its supported bounds.")
         settings[name] = str(value)
+    for name in REFERENCE_PRICES:
+        if name in settings:
+            try:
+                amount = float(settings[name])
+            except ValueError:
+                raise PreparationError(f"{name} requires a finite nonnegative reference rate.") from None
+            if not 0 <= amount <= 1000000:
+                raise PreparationError(f"{name} requires a finite nonnegative reference rate.")
+            settings[name] = str(amount)
     settings.update({
         "ARTHA_MODE": "live", "CORS_ORIGINS": f"https://{config['app_domain']}",
         "LIVEKIT_URL": f"wss://{config['livekit_domain']}", "LIVEKIT_INTERNAL_URL": "ws://127.0.0.1:7880",
         "LIVEKIT_API_KEY": api_key, "LIVEKIT_API_SECRET": api_secret,
         "USAGE_DB_PATH": "/app/data/usage.sqlite3",
+        "USAGE_REQUIRE_FLOW_APPROVAL": "true", "USAGE_SHOW_PRIVATE_BALANCE": "false",
     })
     return settings
 

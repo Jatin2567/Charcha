@@ -4,8 +4,8 @@ Verified on 24 October 2026, on the local Windows development environment.
 
 | Area                                        | Result            | What this establishes                                                                                                                                                                                         |
 | ------------------------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Python API/provider/lifecycle suite         | 130 passing tests | Room isolation, consent, bounded queues, expiration, cancellation, voice validation, mocked provider protocols, WebSocket header authentication and per-branch performance reporting                          |
-| Frontend suite                              | 64 passing tests  | Routing, transcript recovery, WAV encoding, timing summaries, filters, sanitized exports, browser-stat conversion and report-tab isolation                                                                    |
+| Python API/provider/lifecycle suite         | 195 passing tests | Room isolation, consent, bounded queues, expiration, cancellation, voice validation, mocked provider protocols, WebSocket header authentication and per-branch performance reporting                          |
+| Frontend suite                              | 79 passing tests  | Routing, transcript recovery, WAV encoding, timing summaries, filters, sanitized exports, browser-stat conversion and report-tab isolation                                                                    |
 | TypeScript and Vite production build        | Passed            | The application compiles and produces a deployable static frontend                                                                                                                                            |
 | Real local WebRTC, three distinct languages | Passed            | Three synthetic PCM publishers; six directed provider-double branches; two non-silent appropriate tracks per listener; no self/original/wrong-language subscriptions                                          |
 | Same-language transport experiment          | Passed            | Hindi/Hindi/Tamil forwarding and resampling, shared target language generation, mute/unmute and expiry gates using synthetic PCM and provider doubles                                                         |
@@ -20,7 +20,7 @@ Performance reporting retains at most 1,000 terminal branches per room. Automate
 
 ## Still requires your accounts/infrastructure
 
-1. Configure Gnani STT/TTS/voice-cloning access, a LiveKit deployment and a served Evon endpoint.
+1. Standard Gnani STT/TTS passed one approved local speech test. Voice-cloning access, a LiveKit deployment and a served Evon endpoint still require acceptance.
 2. Verify both directions with actual Hindi and Tamil speakers, then Bengali fan-out.
 3. Check voice/model IDs, quotas, streaming permissions, reference quality and cross-language cloning on the account being used.
 4. Collect actual latency and cost under the intended network and speech concurrency. The UI's server timing boundary is distinct from audible receiver playback.
@@ -44,7 +44,7 @@ Application reservations are not a provider invoice or a remaining-balance readi
 
 ## Self-host deployment preparation
 
-The added backend checks cover redacted readiness, secure public endpoints, explicit frontend origins, self-generated signing credentials and safe validation failures. All 130 backend tests and 64 frontend tests pass. The frontend tests include seven deployment-report and read-only request checks. Both the normal production build and explicitly scripted preview are checked separately.
+The added backend checks cover redacted readiness, secure public endpoints, explicit frontend origins, self-generated signing credentials and safe validation failures. All 195 backend tests and 79 frontend tests pass. The frontend tests include seven deployment-report and read-only request checks. Both the normal production build and explicitly scripted preview are checked separately.
 
 The offline generator prepares a Linux host-network stack for the frontend, one API/RTC worker, LiveKit and Caddy's shared HTTPS/TURN port. Unit checks cover credential generation, overwrite refusal, supported bounds, literal secret handling, topology consistency, no-network preparation, tamper detection and failure redaction. POSIX permissions and symbolic-link checks require their Linux run; Windows skips are not evidence that Linux permissions have been exercised.
 
@@ -53,3 +53,26 @@ Docker Compose configuration validation passed with synthetic inputs without sta
 The API image now installs the exact runtime dependency pins and artifact hashes exported offline from `server/uv.lock`, instead of resolving floating ranges during image construction. This validates the lock export, not installation of every Linux wheel; the Docker build still requires the deployment host. The offline generator suite passes 20 tests, with two POSIX-specific checks skipped on Windows.
 
 Browser review verified the separate Deployment setup page on desktop and mobile, manual refresh against the local demo API, and unknown statuses after that API was stopped. The page contains no credential inputs. The frontend uses system fonts without an external font stylesheet. The developer journal retains deployment acceptance as pending despite the completed configuration work.
+
+## Permission and account reporting preparation
+
+The full backend suite passes **195 tests**, including 37 approval/rate/privacy checks and 25 prepared Gnani-runner checks using provider doubles. The frontend passes **79 tests**, including 30 usage-report validation checks. The actual Windows `--plan` command was exercised without loading provider clients or making requests; its Hindi output is ASCII-safe JSON on older console encodings.
+
+Default live provider reservations require an explicit bounded operator grant. The same transaction checks daily caps and per-flow budgets. Tests cover expiry, replacement, atomic contention, cancellation, timeouts, missing consent, no automatic retries and redacted reports. The standard and cloned checks remain separate. No actual Gnani entitlement, voice-clone quality or provider invoice has been validated during this preparation.
+
+Browser review of the local loopback API displayed the owner's manually reported INR balance and supplied pricing table, with a locked flow and seven zero-usage counters. Desktop/mobile layouts, pause and refresh were checked; the API key was absent from rendered page text. No balance is baked into the frontend source. Public API responses hide manual financial evidence by default, and the static preview keeps account amounts unknown.
+
+## First approved Gnani speech check
+
+On 24 October 2026, the owner approved one specific TTS→STT flow. Gnani synthesized the fixed Hindi phrase “नमस्ते भारत।” and the streaming recognizer returned the identical phrase. The grant closed after the check; no automatic retry, enrollment, clone synthesis, translation or LiveKit Cloud call occurred.
+
+| Measurement | Observed value | Boundary |
+| --- | ---: | --- |
+| Synthesis requests / input | 1 / 12 characters | Reserved before the single request |
+| First PCM | 505.91 ms | Synthesis-stage start to first received PCM |
+| Full synthesis | 1640.93 ms | Synthesis-stage start to completed PCM stream |
+| Generated audio | 1.12 seconds | 16 kHz mono PCM sample count |
+| Recognition | 1 connection / 4 reserved seconds | Conservative connected-time reservations |
+| STT final | 2081.17 ms | Connection plus streamed test audio to first final transcript |
+
+The spoken phrase matched in this one check. These measurements do not certify general accuracy, ear-to-ear meeting delay, a latency percentile or cloned-voice similarity. The separate Usage flow record contains these actual measurements and counters. The owner reported observing a charge deduction; its exact amount was not supplied. Reference arithmetic remains separate from a verified invoice or programme-credit conversion.

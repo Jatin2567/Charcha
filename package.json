@@ -8,6 +8,7 @@
   ],
   "scripts": {
     "dev": "node scripts/dev.mjs",
+    "dev:checks": "node scripts/dev.mjs --provider-checks",
     "dev:web": "npm run dev --workspace web",
     "dev:server": "uv run --project server uvicorn artha_mesh.main:app --app-dir server --host 127.0.0.1 --port 8000 --reload --no-access-log --log-level warning",
     "build": "npm run build --workspace web && node scripts/copy-dist.mjs",

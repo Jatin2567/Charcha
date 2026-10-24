@@ -47,6 +47,8 @@ class DeploymentPreparationTests(unittest.TestCase):
         self.assertEqual(env["LIVEKIT_INTERNAL_URL"], "ws://127.0.0.1:7880")
         self.assertEqual(env["CORS_ORIGINS"], "https://meet.artha-fixture.in")
         self.assertEqual(env["USAGE_DB_PATH"], "/app/data/usage.sqlite3")
+        self.assertEqual(env["USAGE_REQUIRE_FLOW_APPROVAL"], "true")
+        self.assertEqual(env["USAGE_SHOW_PRIVATE_BALANCE"], "false")
         self.assertEqual(env["GNANI_API_KEY"], "private-$literal-gnani")
         self.assertEqual(env["EVON_MODEL"], "actual-evon-served-id")
         self.assertNotEqual(env["LIVEKIT_API_SECRET"], "must-not-be-reused")

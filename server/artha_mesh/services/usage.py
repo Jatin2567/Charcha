@@ -1,7 +1,8 @@
 """Fail-closed local credit safeguards; this ledger is not a billing statement.
 
-Only UTC date, resource key and reserved integer units enter SQLite. No conversation
-text, speaker identity, audio, model name, URL, embedding or credential is stored.
+UTC resource totals, bounded approval metadata/metrics and optional manual balances
+enter SQLite. No conversation text, speaker identity, audio, model name, URL,
+embedding or credential is stored.
 """
 from __future__ import annotations
 
@@ -15,6 +16,7 @@ from datetime import UTC, datetime, timedelta
 
 from ..config import Settings
 from ..errors import ProviderError
+from . import approvals
 
 RESOURCES = (
     ("stt_seconds", "Speech recognition connection time", "seconds", "usage_stt_seconds_per_day"),
@@ -27,6 +29,7 @@ RESOURCES = (
 )
 
 _eligibility: ContextVar[Callable[[], None] | None] = ContextVar("provider_eligibility", default=None)
+_approved_flow: ContextVar[str | None] = ContextVar("approved_provider_flow", default=None)
 
 
 @contextmanager
@@ -88,6 +91,7 @@ class UsageGuard:
                     "period TEXT NOT NULL, resource TEXT NOT NULL, units INTEGER NOT NULL CHECK(units >= 0), "
                     "PRIMARY KEY(period, resource))"
                 )
+                approvals.create_schema(connection)
                 self.initialized = True
             yield connection
         finally:
@@ -97,7 +101,7 @@ class UsageGuard:
         if self.settings.mode != "live":
             raise ProviderError("Provider calls are disabled in demo mode", False)
 
-    def reserve(self, units: dict[str, int]):
+    def reserve(self, units: dict[str, int]) -> str | None:
         """Reserve all supplied resources together before the external operation.
 
         Any attempted upstream operation keeps its reservation even if it fails or
@@ -113,6 +117,9 @@ class UsageGuard:
             with self.lock, self._connection() as connection:
                 connection.execute("BEGIN IMMEDIATE")
                 try:
+                    flow_id = None
+                    if self.settings.usage_require_flow_approval:
+                        flow_id = approvals.reserve(connection, self.now(), units, expected_flow_id=_approved_flow.get())
                     used = dict(connection.execute("SELECT resource, units FROM usage WHERE period=?", (period,)))
                     for key, amount in units.items():
                         if used.get(key, 0) + amount > self.limits[key]:
@@ -125,6 +132,7 @@ class UsageGuard:
                             (period, key, amount),
                         )
                     connection.commit()
+                    return flow_id
                 except BaseException:
                     connection.rollback()
                     raise
@@ -155,8 +163,14 @@ class UsageGuard:
         try:
             if check := _eligibility.get():
                 check()
-            self.reserve(units)
-            yield
+            flow_id = self.reserve(units)
+            # Stream ticker tasks inherit this binding. Expiring flow A cannot
+            # silently start consuming a later flow B approved by the operator.
+            flow_token = _approved_flow.set(flow_id)
+            try:
+                yield
+            finally:
+                _approved_flow.reset(flow_token)
         finally:
             slots.release()
 
@@ -164,13 +178,30 @@ class UsageGuard:
         period, reset = self._period()
         used: dict[str, int] | None = {}
         status = "demo" if self.settings.mode == "demo" else "ready"
+        approval = {"required": self.settings.usage_require_flow_approval,
+                    "status": "demo" if self.settings.mode == "demo" else "unavailable",
+                    "active_flow_id": None, "expires_at": None,
+                    "detail": "Demo makes no provider calls; live calls require explicit operator approval."}
+        programme = approvals.empty_programme(
+            self.settings.usage_reported_request_rate_inr,
+            stt_rate=self.settings.usage_stt_inr_per_hour,
+            tts_rate=self.settings.usage_tts_inr_per_10000_characters,
+        )
         if self.settings.mode == "live":
             try:
                 with self.lock, self._connection() as connection:
                     used = dict(connection.execute("SELECT resource, units FROM usage WHERE period=?", (period,)))
+                    approval, programme = approvals.snapshot(
+                        connection, self.now(), required=self.settings.usage_require_flow_approval,
+                        rate=self.settings.usage_reported_request_rate_inr,
+                        stt_rate=self.settings.usage_stt_inr_per_hour,
+                        tts_rate=self.settings.usage_tts_inr_per_10000_characters,
+                    )
             except (OSError, sqlite3.Error):
                 self.failed = True
                 used, status = None, "unavailable"
+                approval["status"] = "unavailable"
+                approval["detail"] = "Approval storage is unavailable; provider calls are blocked."
         resources = []
         for key, label, unit, _ in RESOURCES:
             limit = self.limits[key]
@@ -192,9 +223,80 @@ class UsageGuard:
             "period": {"date": period, "reset_at": reset},
             "enforcement": {"enabled": True, "persistent": status == "ready", "status": status, "detail": detail},
             "resources": resources,
+            "approval": approval,
+            "programme": programme,
             "billing": {"balance_available": False,
                         "detail": "Local reserved usage is not provider-billed usage or your remaining credit balance. LiveKit participant time/bandwidth and hosted Evon compute need limits in those provider consoles too."},
         }
+
+    def _operator_change(self, operation: Callable, **values) -> dict | None:
+        """Local CLI only; no HTTP writer exposes these operator capabilities."""
+        self.require_live()
+        try:
+            with self.lock, self._connection() as connection:
+                connection.execute("BEGIN IMMEDIATE")
+                try:
+                    result = operation(connection, self.now(), **values)
+                    connection.commit()
+                    return result
+                except BaseException:
+                    connection.rollback()
+                    raise
+        except (OSError, sqlite3.Error):
+            self.failed = True
+            raise ProviderError("Operator approval storage is unavailable; no grant or balance change was saved", False) from None
+
+    def public_snapshot(self) -> dict:
+        """Expose aggregate controls while keeping financial evidence operator-local.
+
+        The explicit opt-in is useful for a loopback development API. Production
+        configuration checks reject it because this endpoint has no operator auth.
+        Local CLI commands continue to use the full snapshot directly.
+        """
+        result = self.snapshot()
+        if not self.settings.usage_show_private_balance:
+            programme = result["programme"]
+            programme.update(source="not_connected", unit=None, balance=None, observed_at=None)
+            programme["detail"] = (
+                "Private financial evidence is hidden from this usage endpoint. "
+                "Use the operator CLI or explicitly configured local-only view for manual balances and dashboard deltas. "
+                "Resource reservations and reference prices are not provider-billed charges."
+            )
+            for flow in programme["flows"]:
+                for key in ("before_balance", "before_observed_at", "after_balance", "after_observed_at",
+                            "balance_unit", "balance_delta", "credits_used"):
+                    flow[key] = None
+                flow["credits_source"] = "unknown"
+        return result
+
+    def approve_flow(self, **values) -> dict:
+        return self._operator_change(approvals.approve, **values)
+
+    def inspect_flow(self, flow_id: str) -> dict:
+        return self._operator_change(approvals.inspect, flow_id=flow_id)
+
+    @contextmanager
+    def bind_flow(self, flow_id: str):
+        flow = self.inspect_flow(flow_id)
+        if flow["status"] != "approved":
+            raise ProviderError("The specified operator flow is not active; no API request was sent", False)
+        token = _approved_flow.set(flow_id)
+        try:
+            yield
+        finally:
+            _approved_flow.reset(token)
+
+    def close_flow(self, flow_id: str) -> dict:
+        return self._operator_change(approvals.close, flow_id=flow_id)
+
+    def reconcile_flow(self, **values) -> dict:
+        return self._operator_change(approvals.reconcile, **values)
+
+    def record_programme_balance(self, **values):
+        self._operator_change(approvals.record_balance, **values)
+
+    def record_flow_metrics(self, flow_id: str, metrics: dict) -> dict:
+        return self._operator_change(approvals.record_metrics, flow_id=flow_id, metrics=metrics)
 
     def close(self):
         # Connections are scoped to each transaction/read and already closed.
