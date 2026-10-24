@@ -12,6 +12,7 @@ import {
   Gauge,
   Coins,
   Wrench,
+  Server,
 } from 'lucide-react';
 import { Logo, Avatar, Badge } from './ui';
 import { useApp } from '../state/AppContext';
@@ -36,6 +37,7 @@ export function Shell() {
             { to: '/performance', name: 'Performance', icon: Gauge },
             { to: '/usage', name: 'Usage & limits', icon: Coins },
             { to: '/development', name: 'Developer journal', icon: Wrench },
+            { to: '/deployment', name: 'Deployment setup', icon: Server },
             { to: '/settings', name: 'Settings', icon: Settings2 },
           ].map((item) => (
             <NavLink
@@ -110,13 +112,15 @@ export function Shell() {
                       ? 'Usage & limits'
                       : location.pathname === '/development'
                         ? 'Developer journal'
-                        : location.pathname === '/history'
-                          ? 'Conversations'
-                          : location.pathname.startsWith('/join')
-                            ? 'Ready to join'
-                            : location.pathname.startsWith('/recap')
-                              ? 'Conversation recap'
-                              : 'Overview'}
+                        : location.pathname === '/deployment'
+                          ? 'Deployment setup'
+                          : location.pathname === '/history'
+                            ? 'Conversations'
+                            : location.pathname.startsWith('/join')
+                              ? 'Ready to join'
+                              : location.pathname.startsWith('/recap')
+                                ? 'Conversation recap'
+                                : 'Overview'}
             </strong>
           </div>
           <div className="topbar-right">

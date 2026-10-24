@@ -10,6 +10,7 @@ import { Settings } from './pages/Settings';
 import { Performance } from './pages/Performance';
 import { Usage } from './pages/Usage';
 import { DeveloperJournal } from './pages/DeveloperJournal';
+import { Deployment } from './pages/Deployment';
 import { VoiceStudio } from './pages/VoiceStudio';
 import { RecapPage, HistoryPage } from './pages/Recap';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -28,6 +29,7 @@ createRoot(document.getElementById('root')!).render(
               <Route path="performance" element={<Performance />} />
               <Route path="usage" element={<Usage />} />
               <Route path="development" element={<DeveloperJournal />} />
+              <Route path="deployment" element={<Deployment />} />
               <Route path="history" element={<HistoryPage />} />
               <Route path="recap/:id" element={<RecapPage />} />
             </Route>

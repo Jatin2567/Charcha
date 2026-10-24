@@ -1,0 +1,10 @@
+{
+  "repository": "https://github.com/livekit/deploy",
+  "commit": "1a7b369f94e3a2f890d366fceeb4f273bf9fb3f6",
+  "adapted_files": [
+    "generate/templates/caddy.go",
+    "generate/production.go"
+  ],
+  "license": "Apache-2.0",
+  "modifications": "Application hostname, loopback signaling/API, explicit node IP, private generated secrets, persistent usage ledger."
+}

@@ -1,9 +1,9 @@
 FROM python:3.12-slim
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 WORKDIR /app
-COPY server/pyproject.toml ./
+COPY server/requirements.lock ./requirements.lock
+RUN pip install --no-cache-dir --require-hashes --only-binary=:all: -r requirements.lock
 COPY server/artha_mesh ./artha_mesh
-RUN pip install --no-cache-dir '.[live]'
 RUN useradd --create-home --uid 10001 artha && mkdir /app/data && chown artha:artha /app/data
 USER artha
 EXPOSE 8000

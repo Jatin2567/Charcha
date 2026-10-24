@@ -27,3 +27,5 @@ The paths on each card refer to the downloadable source tree. They are displayed
 The export applies the current filters and includes `schema_version`, `record_type`, `last_updated`, scope and entries. It intentionally does not include the search query or any runtime application state. No automatic background polling or journal generation is used.
 
 See [VALIDATION.md](VALIDATION.md) for the current validation record, [GO_LIVE.md](GO_LIVE.md) for required access and exact measurement boundaries, and [EVALUATION.md](EVALUATION.md) for the human-review workflow.
+
+The deployment entry now records the offline server generator, generated LiveKit credentials, persistent ledger, shared HTTPS/TURN routing and `/#/deployment` setup page. Static checks and browser review are recorded separately from pending Linux-container, certificate, public-network and real-provider acceptance. The [India hosting reference](INDIA_HOSTING.md) links the provider offers and their eligibility rather than treating advertised credits as an approved grant.

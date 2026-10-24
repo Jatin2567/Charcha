@@ -347,23 +347,25 @@ export const developerJournal: DeveloperJournalEntry[] = [
     area: 'delivery',
     title: 'Full-stack hosting and India residency require deployment evidence',
     summary:
-      'The static private preview is available; the Python speech service and Evon need their own running infrastructure.',
+      'The self-hosted VM configuration generator and setup page are implemented; actual server and provider acceptance remain pending.',
     cause:
       'Local builds and configuration files do not establish reachable production media, GPU capacity or processing locations.',
     change:
-      'Deployment configuration and host checks are documented. The current in-memory room architecture requires a single API worker.',
+      'An offline generator prepares own-key LiveKit, shared-port HTTPS/TURN routing, one API worker and persistent usage counters. A separate setup page reports redacted configuration checks. System fonts remove the external font request.',
     verification:
-      'Production frontend build passed. Docker acceptance was not run because the local daemon was unavailable; the optional GPU model was not downloaded or started.',
-    evidence: ['automated', 'live-pending'],
+      'Backend readiness and frontend validation tests passed. Browser checks covered mobile/desktop layouts, safe refresh and unknown status with the service offline. No production container, certificate or real-provider acceptance has been performed.',
+    evidence: ['automated', 'browser', 'live-pending'],
     references: [
-      'compose.yaml',
-      'Dockerfile.api',
-      'Dockerfile.web',
+      'scripts/prepare_deployment.py',
+      'deploy/production/README.md',
+      'server/artha_mesh/services/readiness.py',
+      'web/src/pages/Deployment.tsx',
+      'docs/INDIA_HOSTING.md',
       'docs/VALIDATION.md',
       'docs/GO_LIVE.md',
     ],
     outstanding:
-      'Verify HTTPS/WSS, media reachability, GPU/model startup, recovery, and every actual worker, media, inference, provider and logging region before claiming India-only processing.',
+      'Supply the server/domain, Gnani access and approved Evon endpoint or GPU compute. Verify certificates, UDP/TURN, model contracts, recovery and actual processing/logging regions before claiming live completion or India-only processing.',
   },
 ];
 

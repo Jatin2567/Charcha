@@ -17,6 +17,7 @@ The application separates its React pages, reusable UI, hooks, domain state, API
 - Configuration diagnostics, bounded queues, provider errors/timeouts, session expiry, scoped tokens and cancellation on leave.
 - Persistent daily provider-usage caps, bounded provider concurrency/retries, and recognition shutdown for muted or listener-free streams.
 - Separate Usage & limits and Developer journal pages for counters, safeguards, bugs, fixes and verification evidence.
+- A Deployment setup page and offline Linux VM configuration generator for self-hosted LiveKit, HTTPS/TURN and the application.
 - Separate Performance & readiness page with room-level stage timings, rolling p50/p95, branch failures, downloadable measurements and the live acceptance checklist.
 - Labelled scripted demonstration, provider protocol tests, actual local RTC verification utility, and reproducible evaluation tools.
 
@@ -67,15 +68,15 @@ See the [go-live checklist](docs/GO_LIVE.md) for the exact inputs you supply, wh
 | ------------------------------ | ------------------------------------------------------------------------------------------- |
 | `ARTHA_MODE`                   | Set to `live` once the values below are configured                                          |
 | `GNANI_API_KEY`                | Gnani Speech API key with STT/TTS access; cloning requires the corresponding account access |
-| `LIVEKIT_URL`                  | Your LiveKit Cloud WebSocket URL, or a reachable self-hosted server                         |
-| `LIVEKIT_API_KEY`              | Your LiveKit server API key                                                                 |
-| `LIVEKIT_API_SECRET`           | Your LiveKit server API secret                                                              |
+| `LIVEKIT_URL`                  | Reachable self-hosted WSS endpoint; generated from your domain by the VM setup             |
+| `LIVEKIT_API_KEY`              | Generated locally by the self-hosted deployment tool                                       |
+| `LIVEKIT_API_SECRET`           | Generated locally by the self-hosted deployment tool                                       |
 | `EVON_BASE_URL`                | Reachable OpenAI-compatible Evon inference endpoint ending in `/v1`                         |
 | `EVON_MODEL`                   | Exact model identifier served by that endpoint                                              |
 | `EVON_API_KEY`                 | Inference endpoint key if it requires one; optional for a private local endpoint            |
 | `TIMBRE_MODEL`, `TIMBRE_VOICE` | Account-supported matching model/voice; defaults are `timbre-v2.5` / `Nalini`               |
 
-Evon is an open-weight model: an API key alone does not deploy it. Bring a hosted endpoint or run the optional GPU deployment below. Do not assume a 30B model fits ordinary laptop hardware because only a subset of its parameters is active per token.
+Evon is an open-weight model with a selected hosted API beta. If your account is approved, supply its actual endpoint/model/authentication contract and confirm compatibility with the current OpenAI-compatible adapter. An ordinary Gnani speech key does not establish Evon access. Otherwise bring a hosted endpoint or use separate GPU compute. Do not assume a 30B model fits ordinary laptop hardware because only a subset of its parameters is active per token. [Official beta details](https://www.gnani.ai/evon-waitlist).
 
 Run the configuration checker without revealing values:
 
@@ -99,7 +100,7 @@ The live server rejects incomplete setup; it does not silently return demo trans
 
 ```text
 web/src/
-  pages/          home, prejoin, meeting, voice studio, settings, performance, usage, developer journal, recap/history
+  pages/          home, prejoin, meeting, voice studio, settings, performance, usage, deployment, developer journal, recap/history
   components/     reusable controls, dialogs, participant and transcript UI
   hooks/          devices, meeting audio, WebSocket lifecycle, recording
   services/       HTTP client, explicit scripted demo, LiveKit adapter
@@ -115,7 +116,7 @@ server/artha_mesh/
   transport/      LiveKit identity/tokens, PCM tracks and subscription policy
 server/tests/     behavior, isolation, provider contract and lifecycle checks
 evaluation/       synthetic scripts, human-review CSV, run collector and report
-deploy/          reverse-proxy configuration
+deploy/          reverse-proxy configuration and production VM deployment guide
 scripts/         setup, development, configuration and actual RTC verification
 ```
 
@@ -151,6 +152,16 @@ It checks three real RTC publishers, six directed branches, non-silent target-la
 The evaluation set contains draft synthetic scripts, not a certified benchmark. Obtain bilingual review and collect real runs before publishing accuracy or latency claims. Server metrics end at dispatch to LiveKit; they do not measure the listener's speaker playback. Demo timing is not a live benchmark.
 
 ## Docker deployment
+
+### Online self-hosted deployment
+
+Use [deploy/production/README.md](deploy/production/README.md) for the prepared Linux VM stack. The offline generator validates input, generates private LiveKit credentials and writes ignored deployment files. Starting containers is a separate explicit operation. It does not buy a server, change DNS/firewall rules, install Docker, download Evon weights or call paid providers.
+
+The API image installs exact runtime dependency versions and hashes from `server/requirements.lock`, exported from the committed `server/uv.lock`. After intentionally updating the lock, regenerate the export with `uv export --project server --frozen --no-dev --extra live --no-emit-project --no-header --no-annotate --output-file server/requirements.lock`. The image requires matching binary wheels; Linux image acceptance remains a deployment check.
+
+Open **`/#/deployment`** for the required inputs, safe configuration status and hosting reference. The [India hosting guide](docs/INDIA_HOSTING.md) explains Zoho student credits, Gnani's conditional Evon beta, E2E/Yotta options and IndiaAI eligibility. Self-hosting removes LiveKit Cloud usage charges; infrastructure and speech/inference charges still need their own limits.
+
+### Local container development
 
 ```powershell
 Copy-Item .env.example .env

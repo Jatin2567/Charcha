@@ -1,0 +1,7 @@
+{
+  "app_domain": "meet.your-domain.in",
+  "livekit_domain": "rtc.your-domain.in",
+  "turn_domain": "turn.your-domain.in",
+  "public_ipv4": "REPLACE_WITH_SERVER_PUBLIC_IPV4",
+  "caddy_image": "livekit/caddyl4:latest"
+}

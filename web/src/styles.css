@@ -1,6 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700&family=Manrope:wght@400;500;600;650;700;750;800&display=swap');
 :root {
-  font-family: 'DM Sans', 'Segoe UI', sans-serif;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   color: #233630;
   background: #f7f8f4;
   font-synthesis: none;
@@ -67,7 +66,7 @@ h1,
 h2,
 h3,
 h4 {
-  font-family: 'Manrope', 'Segoe UI', sans-serif;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 svg {
   flex-shrink: 0;
@@ -153,7 +152,7 @@ label.field {
   height: 37px;
 }
 .brand > span {
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Segoe UI', system-ui, sans-serif;
   font-size: 23px;
   letter-spacing: -1.1px;
   line-height: 1.2;
@@ -165,7 +164,7 @@ label.field {
 }
 .brand small {
   display: block;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Segoe UI', system-ui, sans-serif;
   font-size: 6.5px;
   letter-spacing: 1.45px;
   margin-top: 5px;
