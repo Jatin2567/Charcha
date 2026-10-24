@@ -15,6 +15,7 @@ The application separates its React pages, reusable UI, hooks, domain state, API
 - Explicit processing consent, opt-in 5–30-second spoken voice enrollment, validation, session-scoped embeddings and deletion.
 - Per-turn understanding confirmation, transcript export, explicit browser-local recap saving and deletion.
 - Configuration diagnostics, bounded queues, provider errors/timeouts, session expiry, scoped tokens and cancellation on leave.
+- Separate Performance & readiness page with room-level stage timings, rolling p50/p95, branch failures, downloadable measurements and the live acceptance checklist.
 - Labelled scripted demonstration, provider protocol tests, actual local RTC verification utility, and reproducible evaluation tools.
 
 **Implementation is not vendor validation.** Real Gnani/Evon speech quality, account permissions, clone intelligibility and receiver playback latency must be verified after configuring working credentials and compute. Demo participants and translations are scripted. Configured settings are not proof of a successful provider connection.
@@ -58,6 +59,8 @@ This explicitly compiles `VITE_DEMO_MODE=true`; the interface labels browser-loc
 
 Edit **`server/.env`**, never a frontend file. Then restart the server.
 
+See the [go-live checklist](docs/GO_LIVE.md) for the exact inputs you supply, what can be measured now, and the evidence required before calling Track B verified. Actual secrets belong only in the ignored local environment file; do not paste them into chat or the browser.
+
 | Setting                        | Needed from you                                                                             |
 | ------------------------------ | ------------------------------------------------------------------------------------------- |
 | `ARTHA_MODE`                   | Set to `live` once the values below are configured                                          |
@@ -94,7 +97,7 @@ The live server rejects incomplete setup; it does not silently return demo trans
 
 ```text
 web/src/
-  pages/          home, prejoin, meeting, voice studio, settings, recap/history
+  pages/          home, prejoin, meeting, voice studio, settings, performance, recap/history
   components/     reusable controls, dialogs, participant and transcript UI
   hooks/          devices, meeting audio, WebSocket lifecycle, recording
   services/       HTTP client, explicit scripted demo, LiveKit adapter
@@ -115,6 +118,8 @@ scripts/         setup, development, configuration and actual RTC verification
 ```
 
 See [product/page specification](docs/PRODUCT.md), [architecture](docs/ARCHITECTURE.md), [API/event contract](docs/CONTRACT.md) and [evaluation guide](docs/EVALUATION.md).
+
+Open **`/#/performance`** for setup readiness and the measurement reference. A joined room exposes authenticated, room-scoped timing samples there. Live first-PCM percentiles exclude scripted demo values, same-language forwarding and unsuccessful branches; microphone and typed inputs must be reviewed separately. The [measurement definitions and listener-delay procedure](docs/GO_LIVE.md#what-the-performance-page-measures) explain how server timing differs from actual audible output.
 
 ## Verification
 

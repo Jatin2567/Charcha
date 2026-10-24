@@ -1,0 +1,86 @@
+# Track B: what you supply and how we verify it
+
+The Track B application code is present. Working accounts, an Evon deployment and real speakers are needed to establish that the configured system performs correctly. The separate **Performance & readiness** page at `/#/performance` provides setup status, timing definitions, room measurements and evidence boundaries. A static scripted preview cannot connect the Python speech pipeline.
+
+## What you supply
+
+| Input                                                                                                           | Required for                                         | Where it goes                                                                                |
+| --------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `GNANI_API_KEY` with Prisma streaming STT and Timbre streaming TTS enabled                                      | Live recognition and synthesis                       | `server/.env`                                                                                |
+| Voice-cloning/embedding account access; a supported matching Timbre model/voice if defaults are unavailable     | Optional cloned voices                               | Account entitlement; `TIMBRE_MODEL`, `TIMBRE_VOICE` and `VOICE_CLONE_MODEL` in `server/.env` |
+| `LIVEKIT_URL`, `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET`                                                          | Browser media and the translation participant        | `server/.env`                                                                                |
+| `EVON_BASE_URL` ending in `/v1`, exact served `EVON_MODEL`, and `EVON_API_KEY` if required                      | Evon translation                                     | `server/.env`                                                                                |
+| If no Evon endpoint exists: available GPU/host or managed inference access, preferred region and spending limit | Selecting and provisioning inference                 | Share the choices, not private credentials                                                   |
+| Two consenting Hindi/Tamil speakers, then a Bengali speaker, headphones and separate browser profiles/devices   | Actual one-way, bidirectional and three-party checks | A live test session                                                                          |
+| A consenting speaker's clean 5–30-second spoken reference                                                       | Clone enrollment and comparison                      | Record intentionally in the meeting's voice-enrollment dialog                                |
+| A deployment host/account and optional domain, desired region and budget                                        | Online full-stack deployment                         | Only needed beyond localhost                                                                 |
+
+Use a local ignored **`server/.env`** for actual secrets. Do not paste keys into chat, screenshots, frontend files, the Performance page or a public repository. Setup status shows missing/configured names without exposing values. Optional inference credentials remain server-side too. The browser-facing LiveKit URL is public connection configuration; LiveKit server keys and provider credentials are not.
+
+An Evon key alone does not host the model. The optional GPU profile is a deployment starting point, not proof that a specific GPU has enough memory or that a laptop can run it. Provider access, quotas and model availability must be checked on the actual account. No paid infrastructure or large model download is started automatically.
+
+## Bring the application live
+
+1. Run `scripts/setup.ps1` once. It preserves an existing environment file. Fill the settings above in `server/.env` and set `ARTHA_MODE=live`.
+2. Run `uv run --project server python scripts/check_config.py`. This checks configuration presence; it does not perform a paid provider request or prove account access.
+3. Start `npm run dev` and open the frontend URL it prints. The launcher chooses an available local API port and configures the frontend proxy.
+4. Open `/#/performance` for setup, definitions and the live-test checklist. During a call, use **Room details → Performance** to open its measurements in a separate tab. The original meeting tab continues the call and sends browser network statistics to the Performance tab on the same origin. The room's membership is copied into that tab's session only; the new tab clears its opener reference.
+5. Start with standard voices and short Hindi→Tamil phrases. Verify actual sound in headphones, then reverse the direction and add Bengali.
+6. Enroll a voice only after its speaker consents. Compare standard and cloned translations with both the speaker and a fluent target-language listener. Delete enrollment to confirm standard-voice fallback.
+
+For an online deployment, configure HTTPS/WSS, frontend `CORS_ORIGINS`, public media connectivity and provider reachability on the chosen host. Keep one API worker: room ownership and embeddings are in memory. A static Sites preview does not deploy Python or Evon inference. India-only processing requires checking every actual media, worker, inference, logging and provider location.
+
+## What the Performance page measures
+
+Metrics are room-scoped and retained in memory for the active room. Download them before room expiry or server restart. The export contains technical samples, not conversation text, voice references, embeddings or credentials. Utterance identifiers can still link samples to other records; share exports intentionally.
+
+| Field              | Boundary and use                                                                                                                                                                                                                                      |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Queue              | Accepted final transcript/typed turn entering the speaker's FIFO until it starts processing. Previous speech playout can contribute to this wait.                                                                                                     |
+| STT processing     | Server receipt of the provider's `processing` event to receipt of the final transcript. This is **not** measured from the speaker's final audible sample. Typed input has no STT stage; a missing processing event does not establish zero STT delay. |
+| Translation        | Evon request through translated-text response for the target-language branch.                                                                                                                                                                         |
+| First PCM          | Start of synthesis through the first translated PCM frame handed to the server's LiveKit output. It does not wait for all synthesized speech or prove receiver playback.                                                                              |
+| Total to first PCM | Measured STT processing interval plus queue and branch processing through first PCM dispatch. Excludes unmeasured microphone capture, earlier STT/VAD buffering and downstream listener playout.                                                      |
+| Status/errors      | Completed, failed or cancelled target-language branches. Inspect failures alongside the successful timing count; a low percentile alone is insufficient reliability evidence.                                                                         |
+
+The call tab shares technical network statistics through a same-origin browser channel every five seconds. Measurements older than 15 seconds display as unavailable. Keep that call tab open and connected; opening Performance directly without it cannot create browser media measurements. No audio, IP addresses, transcripts or credentials are sent on this channel, and these network statistics are not persisted.
+
+| Browser network field     | Definition and limit                                                                                                                                                                              |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| RTC round-trip time       | Selected candidate-pair RTT; the largest value if multiple active pairs are reported. This describes the network path, not translated audio end-to-end delay.                                     |
+| Inbound audio jitter      | Mean reported jitter across inbound audio streams. It describes packet-arrival variation, not synthesis speed.                                                                                    |
+| Audio jitter-buffer delay | Mean cumulative `jitterBufferDelay / jitterBufferEmittedCount` across eligible inbound streams. It is a lifetime average buffer residence time, not an instantaneous queue delay.                 |
+| Packet loss               | Cumulative lost packets divided by received plus lost packets across deduplicated inbound statistics. Also inspect the received/lost counts and sample time; this is not a five-second loss rate. |
+
+The server uses monotonic durations. p50/p95 use **nearest rank**: sort eligible durations, then select rank `ceil(p × n)`. The rolling window keeps at most **1,000 terminal language-branch samples**, not 1,000 conversations. Successful timing includes completed live `server_first_pcm` branches only. Simulated values, failed/cancelled branches and same-language forwarded source audio are excluded from latency percentiles. Forwarded audio has no translation/TTS stage. Review typed and microphone samples separately because typed input bypasses STT.
+
+Three participants speaking distinct languages create six directed source→target routes. The server synthesizes once per unique target language, so two listeners sharing a language share one branch; branch count is not listener count. Parallel target branches are reported separately. Do not add independently calculated stage p95 values and call the sum a measured total p95.
+
+The supplied blueprint's **under-800-ms end-to-end** budget is an **unverified design goal**, not an achieved result, guaranteed service level or confirmed contest requirement. Server first-PCM timing cannot establish that goal. Evaluate quality and reliability alongside speed.
+
+The implemented speech path translates provider-final, VAD-segmented transcripts. It does not promise the blueprint's speculative fixed 4–7-word clause chunker or an interim-transcript translation mode. Hindi/Tamil/Bengali/English are explicit language choices; Hinglish/Tanglish recognition and meaning preservation need their own real-speech evaluation rather than an automatic code-mixing claim.
+
+## Evidence needed before saying “Track B verified”
+
+| Requirement                             | Evidence to keep                                                                                                                                                        |
+| --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Hindi→Tamil and Tamil→Hindi speech      | Real microphone input, source transcript, target translation and listener confirmation in both directions                                                               |
+| Three-party Hindi/Tamil/Bengali routing | All six directed routes, no self-echo, correct target-only tracks and same-language recipient checks                                                                    |
+| Consent-based cloned voice              | Explicit consent, accepted enrollment, speaker similarity review, fluent-listener intelligibility review and deletion/fallback check                                    |
+| Recovery and privacy controls           | Mute/unmute, permission denial, language change, provider timeout, network interruption, queue saturation, leave and expiry; no stale output or unintended recipients   |
+| Recognition quality                     | Consented source audio plus human-verified transcript; documented word segmentation/normalization before calculating WER. Target translations are not STT ground truth. |
+| Translation quality                     | Bilingual review of meaning, quantities, names, negation and conditions; record failures and unreviewed cases                                                           |
+| Server performance                      | Exported live audio/text-separated samples, count, p50/p95, failures, exact revision/models/regions/voice mode and concurrency                                          |
+| Listener latency                        | Phrase-end to first audible translated sample at the receiver using the separate procedure below                                                                        |
+| Online deployment                       | HTTPS/WSS, reachable media/inference, host/GPU acceptance, region/retention configuration and restart/recovery checks                                                   |
+
+Automated tests and synthetic RTC checks support this evidence. They do not substitute for real-provider and listening checks. See [the validation record](VALIDATION.md) for what has actually been verified.
+
+## Measure actual listener delay
+
+1. Obtain consent for test recording. Record the source phrase and receiver's audio output on a **shared timebase** using two-channel capture or a synchronized fixture. Separate device clocks require measured alignment; two unrelated clocks in an ordinary screen recording are insufficient.
+2. Mark the last audible source-speech sample and first audible translated sample. Their difference is phrase-end→first-audible-output delay. Keep annotated captures privately for review. Report overlap separately if translation begins before the source phrase ends.
+3. Repeat across languages, short/long phrases, standard/cloned voices, intended networks and concurrent speakers. Retain input duration and failures; report sample count and p50/p95 with the exact boundary and method.
+4. Compare server exports with these measurements to locate delay outside measured server stages. Never label server dispatch as “ear-to-ear latency.”
+
+Use [EVALUATION.md](EVALUATION.md) for the included typed MT/TTS collector and bilingual review. It deliberately bypasses microphones and STT, so it is not a complete speech benchmark.

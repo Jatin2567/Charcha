@@ -12,6 +12,8 @@ import type {
   RemoteAudioTrack,
 } from 'livekit-client';
 import type { Language, Membership } from '../types/domain';
+import { transportChannel, transportMetrics } from './transportMetrics';
+import type { MetricStat, TransportMetrics } from './transportMetrics';
 
 export function shouldSubscribe(
   trackName: string,
@@ -46,6 +48,16 @@ export async function connectAudio(
   const lk = m.livekit;
   const room = new LiveKitRoom({ adaptiveStream: false, dynacast: false });
   const audios = new Map<string, HTMLMediaElement>();
+  const remoteAudio = new Map<string, RemoteAudioTrack>();
+  const metricsChannel =
+    typeof BroadcastChannel === 'undefined'
+      ? null
+      : new BroadcastChannel(transportChannel(m.room.code, m.participant.id));
+  let lastMetrics: TransportMetrics | null = null;
+  if (metricsChannel)
+    metricsChannel.onmessage = ({ data }) => {
+      if (data?.type === 'request' && lastMetrics) metricsChannel.postMessage(lastMetrics);
+    };
   const analysers = new Map<
     string,
     { speaker: string; calculateVolume: () => number; cleanup: () => Promise<void> }
@@ -55,6 +67,8 @@ export async function connectAudio(
   let outputMuted = false;
   let outputDevice = output;
   let timer: number | undefined;
+  let statsTimer: number | undefined;
+  let readingStats = false;
   let microphoneGeneration = 0;
   const subscriptions = (publication: RemoteTrackPublication, participant: RemoteParticipant) =>
     publication.setSubscribed(
@@ -78,6 +92,9 @@ export async function connectAudio(
     microphoneGeneration++;
     signal?.removeEventListener('abort', abort);
     clearInterval(timer);
+    clearInterval(statsTimer);
+    metricsChannel?.close();
+    remoteAudio.clear();
     local?.stop();
     audios.forEach((el) => el.remove());
     audios.clear();
@@ -111,6 +128,7 @@ export async function connectAudio(
       audio.setAttribute('data-artha-audio', 'true');
       document.body.appendChild(audio);
       audios.set(publication.trackSid, audio);
+      remoteAudio.set(publication.trackSid, track as RemoteAudioTrack);
       try {
         const analyser = createAudioAnalyser(track as RemoteAudioTrack);
         analysers.set(publication.trackSid, {
@@ -129,6 +147,7 @@ export async function connectAudio(
   room.on(RoomEvent.TrackUnsubscribed, (track, publication) => {
     track.detach().forEach((el) => el.remove());
     audios.delete(publication.trackSid);
+    remoteAudio.delete(publication.trackSid);
     const analyser = analysers.get(publication.trackSid);
     if (analyser) {
       onLevel(analyser.speaker, 0);
@@ -171,6 +190,29 @@ export async function connectAudio(
       await room.localParticipant.publishTrack(local, { name: `source:${m.participant.id}` });
     }
     onState('Audio connected');
+    const reportStats = async () => {
+      if (closed || readingStats) return;
+      readingStats = true;
+      try {
+        const tracks = [...remoteAudio.values(), ...(local ? [local] : [])];
+        const reports = await Promise.allSettled(tracks.map((track) => track.getRTCStatsReport()));
+        const rows: MetricStat[] = [];
+        for (const report of reports) {
+          if (report.status === 'fulfilled')
+            report.value?.forEach((row) => rows.push(row as MetricStat));
+        }
+        if (!closed) {
+          lastMetrics = transportMetrics(rows, remoteAudio.size);
+          metricsChannel?.postMessage(lastMetrics);
+        }
+      } catch {
+        // Optional diagnostics never affect media or permission decisions.
+      } finally {
+        readingStats = false;
+      }
+    };
+    statsTimer = window.setInterval(() => void reportStats(), 5000);
+    void reportStats();
     timer = window.setInterval(() => {
       onLevel(
         m.participant.id,

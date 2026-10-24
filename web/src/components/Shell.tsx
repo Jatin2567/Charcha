@@ -9,6 +9,7 @@ import {
   Headphones,
   Languages,
   PanelLeftClose,
+  Gauge,
 } from 'lucide-react';
 import { Logo, Avatar, Badge } from './ui';
 import { useApp } from '../state/AppContext';
@@ -30,6 +31,7 @@ export function Shell() {
             { to: '/', name: 'Overview', icon: LayoutDashboard },
             { to: '/voices', name: 'Voice studio', icon: AudioLines },
             { to: '/history', name: 'Conversations', icon: History },
+            { to: '/performance', name: 'Performance', icon: Gauge },
             { to: '/settings', name: 'Settings', icon: Settings2 },
           ].map((item) => (
             <NavLink
@@ -98,13 +100,15 @@ export function Shell() {
                 ? 'Voice studio'
                 : location.pathname === '/settings'
                   ? 'Settings'
-                  : location.pathname === '/history'
-                    ? 'Conversations'
-                    : location.pathname.startsWith('/join')
-                      ? 'Ready to join'
-                      : location.pathname.startsWith('/recap')
-                        ? 'Conversation recap'
-                        : 'Overview'}
+                  : location.pathname === '/performance'
+                    ? 'Performance'
+                    : location.pathname === '/history'
+                      ? 'Conversations'
+                      : location.pathname.startsWith('/join')
+                        ? 'Ready to join'
+                        : location.pathname.startsWith('/recap')
+                          ? 'Conversation recap'
+                          : 'Overview'}
             </strong>
           </div>
           <div className="topbar-right">

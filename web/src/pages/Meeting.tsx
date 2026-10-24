@@ -25,6 +25,7 @@ import {
   Captions,
   Download,
   LoaderCircle,
+  Gauge,
 } from 'lucide-react';
 import { useApp } from '../state/AppContext';
 import { useRoomEvents } from '../hooks/useRoomEvents';
@@ -44,6 +45,7 @@ import {
 import { ParticipantCard } from '../components/ParticipantCard';
 import { TranscriptPanel } from '../components/TranscriptPanel';
 import { VoiceEnrollment } from '../components/VoiceEnrollment';
+import { openPerformancePage } from '../services/transportMetrics';
 import type { Language, Membership, Recap, Turn } from '../types/domain';
 import { LANGUAGES, languageName } from '../types/domain';
 type SidePanel = 'transcript' | 'participants' | 'settings' | 'info' | null;
@@ -628,6 +630,19 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
                 <button className="button secondary full" onClick={reconnect}>
                   <RotateCcw size={14} />
                   Reconnect events
+                </button>
+                <button
+                  className="button secondary full"
+                  style={{ marginTop: 12 }}
+                  onClick={() => {
+                    if (!openPerformancePage())
+                      setToast(
+                        'Allow a new tab to open the performance page while keeping this call active.',
+                      );
+                  }}
+                >
+                  <Gauge size={14} />
+                  Performance & readiness ↗
                 </button>
               </div>
             )}

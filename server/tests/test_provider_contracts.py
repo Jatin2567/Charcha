@@ -209,6 +209,9 @@ async def test_stt_frames_arbitrary_pcm_input_and_deduplicates_final_segments(mo
     try:
         transcripts = [item async for item in speech.transcribe(audio(), "hi")]
         assert [item.text for item in transcripts] == ["पहला वाक्य", "दूसरा वाक्य"]
+        assert transcripts[0].stt_ms is not None
+        assert transcripts[0].stt_ms >= 0
+        assert transcripts[1].stt_ms is None  # No matching processing event: timing is unknown.
         assert configuration["lang_code"] == "hi-IN"
         assert configuration["x-sample-rate"] == "16000"
         assert socket.sent == [b"\x01" * 333 + b"\x02" * 691]

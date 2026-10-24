@@ -38,7 +38,9 @@ from .providers.demo import SAMPLES, DemoTranslator
 from .providers.evon import EvonTranslator
 from .providers.gnani import GnaniSpeech
 from .security import RequestBodyLimitMiddleware
+from .services.performance import performance_snapshot
 from .services.pipeline import Pipeline
+from .services.readiness import readiness_snapshot
 from .services.rooms import RoomService
 from .services.voice import MAX_REFERENCE_BYTES, VoiceService
 from .store import Consumer, Store, token_digest
@@ -127,6 +129,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     async def demo_samples():
         return {"samples": SAMPLES, "simulated": True}
 
+    @app.get("/api/readiness")
+    async def readiness():
+        return readiness_snapshot(config)
+
     @app.post("/api/rooms", status_code=201)
     async def create_room(body: CreateRoom, request: Request):
         await service.prune_expired()
@@ -156,6 +162,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         store.authenticate(token, code)
         state = store.room(code)
         return {"turns": state.turns, "metrics": state.metrics}
+
+    @app.get("/api/rooms/{code}/performance")
+    async def performance(code: str, token: str = Depends(bearer_token)):
+        store.authenticate(token, code)
+        return performance_snapshot(store.room(code))
 
     @app.post("/api/rooms/{code}/text", status_code=202)
     async def text_turn(code: str, body: SubmitText, token: str = Depends(bearer_token)):

@@ -5,12 +5,15 @@ import asyncio
 import hashlib
 import secrets
 import time
+from collections import deque
 from dataclasses import dataclass, field
 
 from fastapi import HTTPException
 
 from .config import Settings
-from .models import Event, Metrics, Room, Turn, VoiceProfile
+from .models import Event, Metrics, PerformanceSample, Room, Turn, VoiceProfile
+
+MAX_PERFORMANCE_SAMPLES = 1000
 
 
 def token_digest(token: str) -> str:
@@ -44,7 +47,10 @@ class RoomState:
     expires_at: float
     turns: list[Turn] = field(default_factory=list)
     metrics: Metrics = field(default_factory=Metrics)
-    latencies: list[float] = field(default_factory=list)
+    latencies: deque[float] = field(default_factory=lambda: deque(maxlen=MAX_PERFORMANCE_SAMPLES))
+    performance_samples: deque[PerformanceSample] = field(
+        default_factory=lambda: deque(maxlen=MAX_PERFORMANCE_SAMPLES)
+    )
     consumers: set[Consumer] = field(default_factory=set)
     voice_profiles: dict[str, str] = field(default_factory=dict)
     demo_task: asyncio.Task | None = None

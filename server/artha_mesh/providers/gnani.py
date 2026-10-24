@@ -19,7 +19,7 @@ from ..models import BCP47
 class Transcript:
     text: str
     segment_id: str
-    stt_ms: float
+    stt_ms: float | None
 
 
 class GnaniSpeech:
@@ -88,8 +88,8 @@ class GnaniSpeech:
                                 if text and segment not in seen:
                                     seen.add(segment)
                                     latency = ((time.perf_counter() - processing_at) * 1000
-                                               if processing_at is not None else 0.0)
-                                    yield Transcript(text[:2000], segment, round(latency, 2))
+                                               if processing_at is not None else None)
+                                    yield Transcript(text[:2000], segment, round(latency, 2) if latency is not None else None)
                                     processing_at = None
                 finally:
                     sender.cancel()

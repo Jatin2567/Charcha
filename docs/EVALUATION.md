@@ -6,6 +6,8 @@ An additional development verification script, `scripts/verify_routing.py`, conn
 
 ## Included data
 
+The separate [Performance & readiness reference](GO_LIVE.md#what-the-performance-page-measures) documents each in-app timing field and the nearest-rank p50/p95 calculation. Room measurements retain at most 1,000 terminal language branches. Completed live first-PCM branches contribute to latency percentiles; simulated, failed, cancelled and same-language-forwarded samples do not. Keep typed and microphone observations separate. The original blueprint's under-800-ms end-to-end budget remains an unverified goal; these server measurements cannot establish audible listener latency.
+
 `evaluation/trade_cases.jsonl` contains a small synthetic set of purchasing utterances across Hindi, Tamil and Bengali. Each case includes a draft target translation, critical values and a meaning/negation check. These drafts are **unreviewed author examples**, not bilingual-validated gold labels. No personal speech, customer data or recordings are included. Do not quote an accuracy percentage on this set before qualified bilingual review. A short script is useful for smoke testing, not a population-level quality claim.
 
 ## Collect real results
@@ -57,5 +59,7 @@ Run these with two or three real browser contexts and fresh credentials before s
 7. Inspect actual LiveKit track subscribers: originals only to the agent; translations only to intended recipients. Exercise join/leave/language changes. A UI badge alone is not media-routing evidence.
 
 ## Reproducibility record
+
+For STT WER, obtain consented source recordings and human-verified source transcripts first. Define language-specific tokenization, numeral normalization and treatment of code-mixed words before scoring; save both raw and normalized text and report substitutions, deletions, insertions and reference-token count. The supplied target-language drafts and typed-text collector provide no STT ground truth. Do not infer a WER score from translation output or an unreviewed source script.
 
 Attach the app revision, dependency lockfiles, actual configured provider/model identifiers, region inventory, anonymized result files, reviewer protocol, failure count and exact latency boundary. Document provider account access separately. The official [Gnani challenge guide](https://www.gnani.ai/resources/blogs/great-indian-ai-internship-challenge-2026) distinguishes hosted Prisma/Timbre from Evon weights requiring access and hosting. Verify actual entitlement before a live demonstration. Do not claim India-only processing solely because a model provider is Indian; see the deployment boundary in [ARCHITECTURE.md](ARCHITECTURE.md).

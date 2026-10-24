@@ -11,12 +11,14 @@ Meet-inspired, carefully designed Indic audio interpretation. Hindi (`hi`), Tami
 Base `/api`; default local backend port 8000 (development launcher selects a free fallback when needed). Auth for room-member operations is `Authorization: Bearer <session_token>`. Room codes are unguessable invitations, not user account identities. Do not log credentials.
 
 - GET `/health` -> `{status:"ok", mode:"demo"|"live", providers:[{name,status,detail}], languages:[{code,name,native_name}], version}`. No secret values.
+- GET `/readiness` -> `{mode,generated_at,requirements:[{key,label,configured:boolean,required:boolean,group,detail}],provider_verification:"not_checked",deployment_checks:[{key,label,status:"manual",detail}]}`. Public redacted configuration presence, including in demo mode. Never returns keys, URLs, model values or credentials. `configured` indicates only a present setting; no paid connectivity probes run. Required keys: `ARTHA_MODE` (configured only when live), `GNANI_API_KEY`, `LIVEKIT_URL`, `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET`, `EVON_BASE_URL`, `EVON_MODEL`. Optional selections: `EVON_API_KEY` (host-dependent authentication), `TIMBRE_MODEL`, `TIMBRE_VOICE`. Defaults can satisfy optional model/voice presence but do not prove entitlement.
 - POST `/rooms` `{title:string}` -> Room.
 - GET `/rooms/{code}` -> public Room with participants (no transcripts/tokens).
 - POST `/rooms/{code}/join` `{name,language:"hi"|"ta"|"bn"|"en",voice_mode:"standard"|"cloned",voice_profile_id?:string,consent:boolean}` -> `{room,participant,session_token,livekit:null|{url,token,agent_identity}}`.
 - POST `/rooms/{code}/leave` `{participant_id}` + bearer -> `{ok:true}`.
 - PATCH `/rooms/{code}/participants/me` `{language?,voice_mode?,voice_profile_id?,muted?}` + bearer -> Participant. Member only; voice clone needs enrollment consent.
 - GET `/rooms/{code}/transcript` + bearer -> `{turns:Turn[],metrics:Metrics}`.
+- GET `/rooms/{code}/performance` + bearer -> PerformanceSnapshot below. Authenticated for the exact room; never includes conversation text, speaker names, voice references or credentials.
 - POST `/rooms/{code}/text` `{text:string}` + bearer -> `{utterance_id}`. Real MT/TTS in live mode; only known sample dictionary in demo. Not a fake speech recognizer.
 - POST `/rooms/{code}/demo` `{scenario:"trade"}` + bearer -> `{ok:true}`. Creates explicitly simulated participants and runs canned hi/ta/bn turns through event stream; demo mode only.
 - POST `/voice-profiles` multipart `audio_file`, `name`, `consent=true`, `owner_token` (a room membership token) -> `{id,name,created_at,mode:"demo"|"live"}`. Server stores session-scoped embedding, not raw clip. Validate MIME/size/duration; documented Gnani reference 5–30s of clean spoken audio. Never return embedding to browser.
@@ -27,6 +29,26 @@ Room `{id,code,title,created_at,mode,participants:Participant[]}`.
 Participant `{id,name,language,voice_mode,muted:boolean,is_agent:boolean,is_demo:boolean,joined_at}`.
 Turn `{id,speaker_id,speaker_name,source_language,text,created_at,translations:{[language]:string},confirmed_by:string[],status:"processing"|"complete"|"error"}`.
 Metrics `{turns:number,stt_ms:number,mt_ms:number,tts_ms:number,total_ms:number,p50_ms:number,p95_ms:number,measurement:"server_pipeline"}`. Server timing is explicitly not measured receiver playback latency; demo metrics labelled simulated.
+
+## Performance measurements
+
+PerformanceSnapshot is `{room_code,mode,generated_at,measurement,summary,samples:PerformanceSample[]}`.
+
+`measurement` is `{boundary:"server_first_pcm",stt:"processing_to_transcript",total:"queue_to_first_pcm_plus_stt",receiver_playback_measured:false,retention_limit:1000}`.
+
+PerformanceSample is `{id,utterance_id,source_language,target_language,input_kind:"audio"|"text",voice_mode:"standard"|"cloned",status:"complete"|"error"|"cancelled",measurement:"server_first_pcm"|"source_forwarded"|"simulated",queue_ms:number|null,stt_ms:number|null,mt_ms:number|null,tts_first_pcm_ms:number|null,total_ms:number|null,created_at,error_stage:string|null}`. `voice_mode` records the requested voice at submission, enabling standard/cloned comparisons without retaining reference identifiers. Timestamps use UTC ISO 8601. Rows appear in terminal completion order, oldest first. `error_stage` is `null` on success or one of `queue`, `delivery`, `mt`, `voice_reference`, `tts`, `playout`, `internal`. Errors retain stage only, never upstream response bodies.
+
+`summary` is `{sample_count,success_count,error_count,cancelled_count,live_sample_count,forwarded_count,simulated_count,p50_ms:number|null,p95_ms:number|null,by_direction:[{source_language,target_language,sample_count,success_count,error_count,cancelled_count,live_sample_count,p50_ms:number|null,p95_ms:number|null}]}`. Counts describe only the retained window of up to 1000 terminal language branches, not lifetime room totals. One utterance can create several unique listener-language branches. Nearest-rank p50/p95 include only completed `server_first_pcm` branches with a first-PCM measurement; failures, cancellations, forwarded source audio and scripted demo rows are excluded. No samples yields `null`, not a fabricated zero. Legacy room metrics remain numeric for compatibility, with p50/p95 derived from the same valid branch window.
+
+- Queue: final transcript/text submission to FIFO dequeue, measured with the server monotonic clock. Queued cancellation records its elapsed wait to cancellation.
+- STT: server receipt of the vendor's `processing` event to receipt of that segment's final transcript. This is a processing proxy, not speech-end delay, full utterance duration, or a vendor-reported benchmark. Missing processing markers and typed text yield `null`.
+- MT: elapsed translation request, including an unsuccessful request where it began. Same-language typed input bypasses MT and yields `null`.
+- TTS first PCM: start of speech dispatch to the first PCM frame accepted by the LiveKit audio source. Includes connection/output creation and upstream time. Completion/planned audio duration is excluded.
+- Total: final transcript/text enqueue to first PCM dispatch, plus the STT processing proxy when available. Includes queue wait. When an audio row has `stt_ms:null`, total covers only enqueue-to-first-PCM; the absent STT interval is not silently estimated. Typed rows also cover enqueue-to-first-PCM. It excludes earlier capture/VAD time and network/jitter/device playback after the server boundary. It must never be labelled true mouth-to-ear or listener playback latency. Compare equivalent input/voice modes and STT availability when interpreting aggregates.
+
+Same-language microphone audio is continuously forwarded by the transport, not synthesized by the utterance pipeline. Its informational branch rows are labelled `source_forwarded` with all timings `null`; these rows do not claim measured forwarding latency. Demo rows are labelled `simulated` with timings `null`. Pipeline failure before first PCM leaves total/TTS first PCM `null`. A failure during playout can retain the already measured first-PCM values but is still excluded from success percentiles. Data is memory-only and disappears with the room/process; download before leaving if needed.
+
+No listeners means no branch rows. On an all-forwarded, all-failed or no-listener turn, legacy numeric stage metrics reset to zero (unavailable), while historical successful percentiles remain; the PerformanceSnapshot is the authoritative source for nullable stage measurements.
 
 ## Websocket events
 

@@ -7,6 +7,7 @@ import { Home } from './pages/Home';
 import { Prejoin } from './pages/Prejoin';
 import { Meeting } from './pages/Meeting';
 import { Settings } from './pages/Settings';
+import { Performance } from './pages/Performance';
 import { VoiceStudio } from './pages/VoiceStudio';
 import { RecapPage, HistoryPage } from './pages/Recap';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -22,6 +23,7 @@ createRoot(document.getElementById('root')!).render(
               <Route path="join/:code" element={<Prejoin />} />
               <Route path="voices" element={<VoiceStudio />} />
               <Route path="settings" element={<Settings />} />
+              <Route path="performance" element={<Performance />} />
               <Route path="history" element={<HistoryPage />} />
               <Route path="recap/:id" element={<RecapPage />} />
             </Route>

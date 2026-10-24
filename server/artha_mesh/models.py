@@ -117,6 +117,26 @@ class Metrics(BaseModel):
     simulated: bool = False
 
 
+class PerformanceSample(BaseModel):
+    """A terminal language branch; contains no conversation text or identity."""
+
+    id: str = Field(default_factory=new_id)
+    utterance_id: str
+    source_language: LanguageCode
+    target_language: LanguageCode
+    input_kind: Literal["audio", "text"]
+    voice_mode: VoiceMode = "standard"
+    status: Literal["complete", "error", "cancelled"] = "complete"
+    measurement: Literal["server_first_pcm", "source_forwarded", "simulated"]
+    queue_ms: float | None = None
+    stt_ms: float | None = None
+    mt_ms: float | None = None
+    tts_first_pcm_ms: float | None = None
+    total_ms: float | None = None
+    created_at: datetime = Field(default_factory=now)
+    error_stage: str | None = None
+
+
 class Event(BaseModel):
     id: str = Field(default_factory=new_id)
     type: str
