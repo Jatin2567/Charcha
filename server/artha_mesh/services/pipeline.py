@@ -12,6 +12,7 @@ from ..providers.demo import sample_for
 from ..store import RoomState, Store
 from .performance import counts, milliseconds
 from .routing import recipients_for, target_languages
+from .usage import provider_eligibility
 
 
 @dataclass
@@ -149,6 +150,10 @@ class Pipeline:
             state.broadcast("metrics.updated", state.metrics.model_dump(mode="json"))
 
     async def _translate_target(self, item: WorkItem, target: str) -> dict:
+        with provider_eligibility(lambda: self._require_delivery_active(item.state, item.speaker.id, target)):
+            return await self._translate_target_scoped(item, target)
+
+    async def _translate_target_scoped(self, item: WorkItem, target: str) -> dict:
         state, turn, speaker = item.state, item.turn, item.speaker
         sample = self._new_sample(item, target)
         stage = "delivery"

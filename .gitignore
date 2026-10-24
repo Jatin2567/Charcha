@@ -20,3 +20,6 @@ __pycache__/
 work/
 .openai/local.json
 .openai/.local/
+server/data/
+*.sqlite3
+*.sqlite3-*

@@ -41,6 +41,21 @@ class Settings(BaseSettings):
     event_queue_size: int = Field(default=128, ge=4, le=1024)
     audio_queue_frames: int = Field(default=100, ge=10, le=500)
     audio_sample_rate: int = 24000
+    # Application safeguards count reserved attempts/units, not vendor billing.
+    usage_db_path: Path = Path(__file__).resolve().parents[1] / "data" / "usage.sqlite3"
+    usage_stt_seconds_per_day: int = Field(default=600, ge=0, le=864000)
+    usage_stt_connections_per_day: int = Field(default=30, ge=0, le=100000)
+    usage_mt_requests_per_day: int = Field(default=100, ge=0, le=1000000)
+    usage_mt_characters_per_day: int = Field(default=30000, ge=0, le=100000000)
+    usage_tts_requests_per_day: int = Field(default=100, ge=0, le=1000000)
+    usage_tts_characters_per_day: int = Field(default=30000, ge=0, le=100000000)
+    usage_voice_enrollments_per_day: int = Field(default=3, ge=0, le=100000)
+    usage_max_concurrent_stt: int = Field(default=3, ge=1, le=32)
+    usage_max_concurrent_operations: int = Field(default=2, ge=1, le=32)
+    usage_max_queued_operations: int = Field(default=16, ge=0, le=256)
+    usage_provider_admission_timeout_seconds: float = Field(default=5, ge=0.01, le=30)
+    usage_stt_max_retries: int = Field(default=3, ge=0, le=10)
+    usage_max_live_room_seconds: int = Field(default=900, ge=60, le=86400)
 
     @field_validator("cors_origins", mode="before")
     @classmethod

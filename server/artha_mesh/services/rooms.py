@@ -20,9 +20,16 @@ class RoomService:
         current = time.time()
         expired_members = [(session.room_code, session.participant_id)
                            for session in self.store.sessions.values() if session.expires_at <= current]
+        expired_room_members = {
+            code: [p.id for p in state.room.participants if not p.is_demo and not p.is_agent]
+            for code, state in self.store.rooms.items() if state.expires_at <= current
+        }
         expired_rooms = self.store.prune()
         for code in expired_rooms:
             await self.pipeline.close_room(code)
+            if self.store.settings.mode == "live":
+                for participant_id in expired_room_members.get(code, []):
+                    await self.transport.remove(code, participant_id)
             await self.transport.close_room(code)
             self.locks.pop(code, None)
         for code, participant_id in expired_members:
@@ -67,7 +74,8 @@ class RoomService:
             if self.store.settings.mode == "live":
                 livekit = {
                     "url": self.store.settings.livekit_url,
-                    "token": room_token(self.store.settings, code, participant.id, participant.name),
+                    "token": room_token(self.store.settings, code, participant.id, participant.name,
+                                        ttl_seconds=state.expires_at - time.time()),
                     "agent_identity": agent_identity(state.room.id),
                 }
                 await self.transport.reconfigure(code)

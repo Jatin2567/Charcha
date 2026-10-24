@@ -8,6 +8,8 @@ import { Prejoin } from './pages/Prejoin';
 import { Meeting } from './pages/Meeting';
 import { Settings } from './pages/Settings';
 import { Performance } from './pages/Performance';
+import { Usage } from './pages/Usage';
+import { DeveloperJournal } from './pages/DeveloperJournal';
 import { VoiceStudio } from './pages/VoiceStudio';
 import { RecapPage, HistoryPage } from './pages/Recap';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -24,6 +26,8 @@ createRoot(document.getElementById('root')!).render(
               <Route path="voices" element={<VoiceStudio />} />
               <Route path="settings" element={<Settings />} />
               <Route path="performance" element={<Performance />} />
+              <Route path="usage" element={<Usage />} />
+              <Route path="development" element={<DeveloperJournal />} />
               <Route path="history" element={<HistoryPage />} />
               <Route path="recap/:id" element={<RecapPage />} />
             </Route>

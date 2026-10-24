@@ -167,13 +167,13 @@ export function Performance() {
     {
       key: 'mt_ms',
       label: 'Translation',
-      detail: 'Translation request → translated text',
+      detail: 'Translation stage → text, including provider admission wait',
       color: '#b1b85d',
     },
     {
       key: 'tts_first_pcm_ms',
       label: 'First speech audio',
-      detail: 'Synthesis request → first PCM dispatched to LiveKit',
+      detail: 'Synthesis stage → first PCM dispatched to LiveKit',
       color: '#d9a768',
     },
   ] as const;

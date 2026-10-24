@@ -42,6 +42,7 @@ from .services.performance import performance_snapshot
 from .services.pipeline import Pipeline
 from .services.readiness import readiness_snapshot
 from .services.rooms import RoomService
+from .services.usage import UsageGuard
 from .services.voice import MAX_REFERENCE_BYTES, VoiceService
 from .store import Consumer, Store, token_digest
 from .transport.livekit import TransportManager
@@ -50,8 +51,9 @@ from .transport.livekit import TransportManager
 def create_app(settings: Settings | None = None) -> FastAPI:
     config = settings or Settings()
     store = Store(config)
-    speech = GnaniSpeech(config)
-    translator = DemoTranslator() if config.mode == "demo" else EvonTranslator(config)
+    usage = UsageGuard(config)
+    speech = GnaniSpeech(config, usage)
+    translator = DemoTranslator() if config.mode == "demo" else EvonTranslator(config, usage)
     pipeline = Pipeline(store, translator, speech)
     transport = TransportManager(store, speech, pipeline)
     pipeline.transport = transport
@@ -84,11 +86,13 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 await translator.aclose()
             store.voices.clear()
             store.sessions.clear()
+            usage.close()
 
     app = FastAPI(title="Artha-Mesh", version=__version__, lifespan=lifespan)
     app.state.settings, app.state.store = config, store
     app.state.pipeline, app.state.transport = pipeline, transport
     app.state.service, app.state.voices = service, voices
+    app.state.usage = usage
     app.add_middleware(RequestBodyLimitMiddleware)
     app.add_middleware(
         CORSMiddleware, allow_origins=config.cors_origins,
@@ -128,6 +132,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @app.get("/api/demo/samples")
     async def demo_samples():
         return {"samples": SAMPLES, "simulated": True}
+
+    @app.get("/api/usage")
+    async def usage_summary():
+        return usage.snapshot()
 
     @app.get("/api/readiness")
     async def readiness():

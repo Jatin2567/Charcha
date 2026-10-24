@@ -7,7 +7,8 @@ def agent_identity(room_id: str) -> str:
     return f"artha-agent-{room_id}"
 
 
-def room_token(settings: Settings, code: str, identity: str, name: str, agent=False) -> str:
+def room_token(settings: Settings, code: str, identity: str, name: str, agent=False,
+               ttl_seconds: float | None = None) -> str:
     from livekit import api
 
     grants = api.VideoGrants(
@@ -15,10 +16,15 @@ def room_token(settings: Settings, code: str, identity: str, name: str, agent=Fa
         can_publish_data=False, can_update_own_metadata=False,
         can_publish_sources=None if agent else ["microphone"],
     )
+    duration = settings.session_ttl_seconds
+    if settings.mode == "live":
+        duration = min(duration, settings.usage_max_live_room_seconds)
+    if ttl_seconds is not None:
+        duration = min(duration, max(1, int(ttl_seconds)))
     token = (
         api.AccessToken(settings.livekit_api_key.get_secret_value(), settings.livekit_api_secret.get_secret_value())
         .with_identity(identity).with_name(name).with_grants(grants)
-        .with_ttl(timedelta(seconds=settings.session_ttl_seconds))
+        .with_ttl(timedelta(seconds=duration))
     )
     if agent:
         token.with_kind("agent")

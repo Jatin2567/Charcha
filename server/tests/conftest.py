@@ -10,6 +10,12 @@ from fastapi.testclient import TestClient
 from artha_mesh.config import Settings
 
 
+@pytest.fixture(autouse=True)
+def isolated_usage_storage(monkeypatch, tmp_path):
+    # Protocol fixtures must never spend or overwrite the operator's real ledger.
+    monkeypatch.setenv("USAGE_DB_PATH", str(tmp_path / "usage.sqlite3"))
+
+
 @pytest.fixture
 def client():
     from artha_mesh.main import create_app

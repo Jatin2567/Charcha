@@ -626,6 +626,12 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
                       : 'Hear translated speech addressed to your language.'}
                   </li>
                   <li>Confirm your understanding of important details.</li>
+                  {!isDemo && (
+                    <li>
+                      When everyone uses the same language, audio is forwarded directly and
+                      generated captions pause to save recognition credits.
+                    </li>
+                  )}
                 </ol>
                 <button className="button secondary full" onClick={reconnect}>
                   <RotateCcw size={14} />

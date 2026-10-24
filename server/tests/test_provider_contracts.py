@@ -46,7 +46,7 @@ async def test_translation_wraps_utterance_as_data_and_preserves_language_contra
     {"choices": [{"message": {"content": {"private": "secret"}}}]},
 ])
 async def test_malformed_translation_is_rejected_without_leaking_provider_body(body):
-    translator = EvonTranslator(Settings(evon_base_url="https://example.test/v1", evon_model="evon", _env_file=None))
+    translator = EvonTranslator(Settings(mode="live", evon_base_url="https://example.test/v1", evon_model="evon", _env_file=None))
     await translator.client.aclose()
     translator.client = httpx.AsyncClient(transport=httpx.MockTransport(lambda _: httpx.Response(200, json=body)))
     try:
@@ -59,7 +59,7 @@ async def test_malformed_translation_is_rejected_without_leaking_provider_body(b
 
 
 async def test_embedding_parses_documented_nested_response_without_exposing_raw_clip():
-    speech = GnaniSpeech(Settings(gnani_api_key="test-key", _env_file=None))
+    speech = GnaniSpeech(Settings(mode="live", gnani_api_key="test-key", _env_file=None))
     await speech.client.aclose()
     expected = {"embedding": "base64-fixture", "shape": [1, 768], "dtype": "torch.bfloat16"}
 
@@ -78,7 +78,7 @@ async def test_embedding_parses_documented_nested_response_without_exposing_raw_
 
 @pytest.mark.parametrize("embedding", ["malformed-value", [], None, {"embedding": ""}])
 async def test_malformed_embedding_response_fails_with_sanitized_provider_error(embedding):
-    speech = GnaniSpeech(Settings(_env_file=None))
+    speech = GnaniSpeech(Settings(mode="live", _env_file=None))
     await speech.client.aclose()
     speech.client = httpx.AsyncClient(transport=httpx.MockTransport(lambda _: httpx.Response(
         200, json={"success": True, "data": {"voice_clone_embedding": embedding}},
@@ -141,7 +141,7 @@ async def test_tts_requests_raw_pcm_and_keeps_audio_chunk_order(monkeypatch):
         return socket
 
     monkeypatch.setattr("artha_mesh.providers.gnani.websockets.connect", connect)
-    speech = GnaniSpeech(Settings(gnani_api_key="local-fixture-key", _env_file=None))
+    speech = GnaniSpeech(Settings(mode="live", gnani_api_key="local-fixture-key", _env_file=None))
     try:
         assert [chunk async for chunk in speech.synthesize("வணக்கம்", "ta")] == chunks
         payload = json.loads(socket.sent[0])
@@ -157,7 +157,7 @@ async def test_tts_requests_raw_pcm_and_keeps_audio_chunk_order(monkeypatch):
 async def test_tts_fails_closed_on_upstream_error_without_secret_text(monkeypatch):
     socket = FixtureSocket([{"type": "error", "message": "private-provider-key-and-body"}])
     monkeypatch.setattr("artha_mesh.providers.gnani.websockets.connect", lambda *_a, **_kw: socket)
-    speech = GnaniSpeech(Settings(_env_file=None))
+    speech = GnaniSpeech(Settings(mode="live", _env_file=None))
     try:
         with pytest.raises(ProviderError) as error:
             _ = [chunk async for chunk in speech.synthesize("hello", "en")]
@@ -172,7 +172,7 @@ async def test_cloned_tts_uses_embedding_not_stock_voice(monkeypatch):
         {"type": "complete", "data": {"is_final": True}},
     ])
     monkeypatch.setattr("artha_mesh.providers.gnani.websockets.connect", lambda *_a, **_kw: socket)
-    speech = GnaniSpeech(Settings(_env_file=None))
+    speech = GnaniSpeech(Settings(mode="live", _env_file=None))
     embedding = {"embedding": "fixture", "shape": [1, 768], "dtype": "torch.bfloat16"}
     try:
         assert [chunk async for chunk in speech.synthesize("வணக்கம்", "ta", embedding)]
@@ -205,7 +205,7 @@ async def test_stt_frames_arbitrary_pcm_input_and_deduplicates_final_segments(mo
         # Keep source open to model a real microphone until receiver exits.
         await asyncio.Event().wait()
 
-    speech = GnaniSpeech(Settings(_env_file=None))
+    speech = GnaniSpeech(Settings(mode="live", _env_file=None))
     try:
         transcripts = [item async for item in speech.transcribe(audio(), "hi")]
         assert [item.text for item in transcripts] == ["पहला वाक्य", "दूसरा वाक्य"]

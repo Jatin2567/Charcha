@@ -4,6 +4,9 @@ services:
       context: .
       dockerfile: Dockerfile.api
     env_file: .env
+    environment:
+      USAGE_DB_PATH: /app/data/usage.sqlite3
+    volumes: ['usage-ledger:/app/data']
     ports: ['127.0.0.1:8000:8000']
     restart: unless-stopped
     healthcheck:
@@ -57,3 +60,4 @@ services:
               capabilities: [gpu]
 volumes:
   evon-models:
+  usage-ledger:

@@ -10,6 +10,8 @@ import {
   Languages,
   PanelLeftClose,
   Gauge,
+  Coins,
+  Wrench,
 } from 'lucide-react';
 import { Logo, Avatar, Badge } from './ui';
 import { useApp } from '../state/AppContext';
@@ -32,6 +34,8 @@ export function Shell() {
             { to: '/voices', name: 'Voice studio', icon: AudioLines },
             { to: '/history', name: 'Conversations', icon: History },
             { to: '/performance', name: 'Performance', icon: Gauge },
+            { to: '/usage', name: 'Usage & limits', icon: Coins },
+            { to: '/development', name: 'Developer journal', icon: Wrench },
             { to: '/settings', name: 'Settings', icon: Settings2 },
           ].map((item) => (
             <NavLink
@@ -102,13 +106,17 @@ export function Shell() {
                   ? 'Settings'
                   : location.pathname === '/performance'
                     ? 'Performance'
-                    : location.pathname === '/history'
-                      ? 'Conversations'
-                      : location.pathname.startsWith('/join')
-                        ? 'Ready to join'
-                        : location.pathname.startsWith('/recap')
-                          ? 'Conversation recap'
-                          : 'Overview'}
+                    : location.pathname === '/usage'
+                      ? 'Usage & limits'
+                      : location.pathname === '/development'
+                        ? 'Developer journal'
+                        : location.pathname === '/history'
+                          ? 'Conversations'
+                          : location.pathname.startsWith('/join')
+                            ? 'Ready to join'
+                            : location.pathname.startsWith('/recap')
+                              ? 'Conversation recap'
+                              : 'Overview'}
             </strong>
           </div>
           <div className="topbar-right">

@@ -5,6 +5,8 @@ dist
 web/dist
 server/.venv
 server/.pytest_cache
+server/data
+**/*.sqlite3*
 **/__pycache__
 **/.env
 **/.env.*

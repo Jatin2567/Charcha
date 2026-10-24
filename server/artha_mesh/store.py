@@ -87,9 +87,12 @@ class Store:
             raise HTTPException(503, "Conversation capacity reached; please try later")
         code = secrets.token_hex(6)
         room = Room(code=code, title=title, mode=self.settings.mode)
+        duration = self.settings.room_ttl_seconds
+        if self.settings.mode == "live":
+            duration = min(duration, self.settings.usage_max_live_room_seconds)
         state = RoomState(
             room=room,
-            expires_at=time.time() + self.settings.room_ttl_seconds,
+            expires_at=time.time() + duration,
             metrics=Metrics(simulated=self.settings.mode == "demo"),
         )
         self.rooms[code] = state

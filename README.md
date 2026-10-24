@@ -15,6 +15,8 @@ The application separates its React pages, reusable UI, hooks, domain state, API
 - Explicit processing consent, opt-in 5–30-second spoken voice enrollment, validation, session-scoped embeddings and deletion.
 - Per-turn understanding confirmation, transcript export, explicit browser-local recap saving and deletion.
 - Configuration diagnostics, bounded queues, provider errors/timeouts, session expiry, scoped tokens and cancellation on leave.
+- Persistent daily provider-usage caps, bounded provider concurrency/retries, and recognition shutdown for muted or listener-free streams.
+- Separate Usage & limits and Developer journal pages for counters, safeguards, bugs, fixes and verification evidence.
 - Separate Performance & readiness page with room-level stage timings, rolling p50/p95, branch failures, downloadable measurements and the live acceptance checklist.
 - Labelled scripted demonstration, provider protocol tests, actual local RTC verification utility, and reproducible evaluation tools.
 
@@ -97,7 +99,7 @@ The live server rejects incomplete setup; it does not silently return demo trans
 
 ```text
 web/src/
-  pages/          home, prejoin, meeting, voice studio, settings, performance, recap/history
+  pages/          home, prejoin, meeting, voice studio, settings, performance, usage, developer journal, recap/history
   components/     reusable controls, dialogs, participant and transcript UI
   hooks/          devices, meeting audio, WebSocket lifecycle, recording
   services/       HTTP client, explicit scripted demo, LiveKit adapter
@@ -118,6 +120,12 @@ scripts/         setup, development, configuration and actual RTC verification
 ```
 
 See [product/page specification](docs/PRODUCT.md), [architecture](docs/ARCHITECTURE.md), [API/event contract](docs/CONTRACT.md) and [evaluation guide](docs/EVALUATION.md).
+
+### Keep provider usage controlled
+
+Open `/#/usage` for the current application's reserved usage and configured daily caps. Defaults limit combined STT connection time to 600 seconds, 30 STT connection attempts, 100 MT attempts, 100 TTS attempts, 30,000 source/synthesis characters each, and three voice enrollments per UTC day. Live rooms expire after 15 minutes by default. Configure the `USAGE_*` fields in the server environment to match your actual allowance before live testing; zero blocks that resource. These are development safeguards, not provider balance readings or rupee spending limits. LiveKit usage and running GPU infrastructure also need limits in their own provider consoles. See [credit controls](docs/CREDIT_CONTROLS.md).
+
+Open `/#/development` for the maintained engineering journal: causes, changes, evidence and remaining checks. It is a source-maintained record and makes no inference calls. The [journal maintenance guide](docs/DEVELOPMENT.md) explains how to keep entries accurate.
 
 Open **`/#/performance`** for setup readiness and the measurement reference. A joined room exposes authenticated, room-scoped timing samples there. Live first-PCM percentiles exclude scripted demo values, same-language forwarding and unsuccessful branches; microphone and typed inputs must be reviewed separately. The [measurement definitions and listener-delay procedure](docs/GO_LIVE.md#what-the-performance-page-measures) explain how server timing differs from actual audible output.
 
@@ -170,6 +178,7 @@ Requires a compatible NVIDIA GPU/runtime, sufficient model memory, model access 
 ## Deployment and privacy boundaries
 
 - Run a **single API worker**. Rooms, memberships and voice embeddings are in memory, expire, and are lost on restart. Durable storage and distributed room ownership are future deployment work.
+- Provider-usage reservations persist separately in a small local SQLite ledger so an API restart cannot silently reset the daily counters. Keep its Docker volume/local data directory. The ledger stores only dates, resource names and reserved unit totals.
 - Invitations permit joining a room. Host admission, user accounts, SSO and organisation policies are not implemented.
 - Reference uploads are bounded and processed in memory. This application retains only session-scoped embeddings, which are deleted on leave/expiry or explicit deletion. External API retention is governed by your provider's settings and terms.
 - Recaps are only persisted in the current browser after an explicit save. Downloaded exports remain wherever the user saves them.

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import time
 from dataclasses import dataclass
 
 from fastapi import HTTPException
@@ -55,7 +56,8 @@ class RoomTransport:
         self.room.on("disconnected", self._disconnected)
         settings = self.store.settings
         identity = agent_identity(self.state.room.id)
-        token = room_token(settings, self.state.room.code, identity, "Artha interpreter", agent=True)
+        token = room_token(settings, self.state.room.code, identity, "Artha interpreter", agent=True,
+                           ttl_seconds=self.state.expires_at - time.time())
         try:
             async with asyncio.timeout(20):
                 await self.room.connect(
@@ -172,11 +174,17 @@ class RoomTransport:
                 speaker = self._speaker(speaker_id)
                 if not speaker:
                     return
-                try:
-                    self.state.broadcast("pipeline.status", {"speaker_id": speaker_id, "stage": "listening"})
-                    def processing():
-                        self.state.broadcast("pipeline.status", {"speaker_id": speaker_id, "stage": "transcribing"})
+                # An empty room or server-muted microphone must never open a paid
+                # recognizer. Waiting audio is discarded, never replayed later.
+                if not self._recognition_eligible(speaker_id):
+                    recognition_ready.clear()
+                    while not pcm_queue.empty():
+                        pcm_queue.get_nowait()
+                    await asyncio.sleep(0.25)
+                    continue
 
+                async def consume():
+                    nonlocal retry
                     async for segment in self.speech.transcribe(audio(), speaker.language, processing):
                         retry = 0
                         current = self._speaker(speaker_id)
@@ -185,23 +193,57 @@ class RoomTransport:
                                 await self.pipeline.submit(self.state, current, segment.text, segment.stt_ms, True)
                             except HTTPException as exc:
                                 self.state.broadcast("pipeline.error", {"message": str(exc.detail), "retryable": True})
+
+                async def eligibility_watch():
+                    while self._recognition_eligible(speaker_id):
+                        await asyncio.sleep(0.25)
+
+                pending = []
+                try:
+                    self.state.broadcast("pipeline.status", {"speaker_id": speaker_id, "stage": "listening"})
+                    def processing():
+                        self.state.broadcast("pipeline.status", {"speaker_id": speaker_id, "stage": "transcribing"})
+
+                    consuming = asyncio.create_task(consume())
+                    watching = asyncio.create_task(eligibility_watch())
+                    pending = [consuming, watching]
+                    done, _ = await asyncio.wait(pending, return_when=asyncio.FIRST_COMPLETED)
+                    if watching in done:
+                        # Mute, membership expiry or the last listener leaving closes
+                        # even a completely idle provider socket within 250 ms.
+                        retry = 0
+                        continue
+                    consuming.result()
                     # A normally closed upstream stream still requires reconnect.
                     raise ProviderError("Speech recognition stream ended; reconnecting")
                 except asyncio.CancelledError:
                     raise
-                except Exception:
+                except Exception as exc:
                     recognition_ready.clear()
                     retry += 1
+                    terminal = ((isinstance(exc, ProviderError) and not exc.retryable)
+                                or retry > self.store.settings.usage_stt_max_retries)
                     self.state.broadcast("pipeline.error", {
-                        "message": "Speech recognition interrupted; reconnecting. Repeat the last phrase.",
-                        "retryable": True,
+                        "message": (exc.message if isinstance(exc, ProviderError) and not exc.retryable
+                                    else "Speech recognition stopped after repeated failures; check setup before toggling the microphone to restart"
+                                    if terminal else "Speech recognition interrupted; reconnecting. Repeat the last phrase."),
+                        "retryable": not terminal,
                     })
                     # Audio during outages is discarded, never replayed in a burst.
                     while not pcm_queue.empty():
                         pcm_queue.get_nowait()
+                    if terminal:
+                        # Keep cost-free same-language forwarding alive. Only an
+                        # explicit microphone restart may request another recognizer.
+                        await asyncio.Event().wait()
                     await asyncio.sleep(min(2 ** min(retry, 4), 15))
                     while not pcm_queue.empty():
                         pcm_queue.get_nowait()
+                finally:
+                    recognition_ready.clear()
+                    for task in pending:
+                        task.cancel()
+                    await asyncio.gather(*pending, return_exceptions=True)
 
         tasks = [asyncio.create_task(receive()), asyncio.create_task(recognize()), asyncio.create_task(forward())]
         try:
@@ -224,6 +266,15 @@ class RoomTransport:
         if not self.store.is_active(self.state.room.code, speaker_id):
             return None
         return next((p for p in self.state.room.participants if p.id == speaker_id), None)
+
+    def _recognition_eligible(self, speaker_id: str) -> bool:
+        speaker = self._speaker(speaker_id)
+        if not speaker or speaker.muted:
+            return False
+        return any(p.id != speaker_id and not p.is_agent and not p.is_demo
+                   and p.language != speaker.language
+                   and self.store.is_active(self.state.room.code, p.id)
+                   for p in self.state.room.participants)
 
     def _permissions(self):
         from livekit import rtc
