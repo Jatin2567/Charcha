@@ -1,0 +1,3 @@
+# CLI tools only. Use Python 3.12 in work/modal-cli-py312/.venv to match the image.
+# Kept separate from the application Python environment; see scripts/setup_modal.ps1.
+modal==1.6.3

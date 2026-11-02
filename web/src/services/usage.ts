@@ -187,7 +187,7 @@ export function validateUsage(value: unknown, now = new Date()): UsageReport {
       'The workspace returned an invalid usage report. Update the server and refresh.',
     );
   };
-  if (!record(value) || !['demo', 'live'].includes(String(value.mode))) return invalid();
+  if (!record(value) || !['demo', 'live', 'transport'].includes(String(value.mode))) return invalid();
   const { period, enforcement, resources, billing } = value;
   if (
     !record(period) ||
@@ -204,7 +204,8 @@ export function validateUsage(value: unknown, now = new Date()): UsageReport {
     !record(enforcement) ||
     enforcement.enabled !== true ||
     typeof enforcement.persistent !== 'boolean' ||
-    !['ready', 'unavailable', 'demo'].includes(String(enforcement.status)) ||
+    !['ready', 'unavailable', 'demo', 'disabled'].includes(String(enforcement.status)) ||
+    (enforcement.status === 'disabled' && value.mode !== 'transport') ||
     typeof enforcement.detail !== 'string'
   )
     return invalid();
@@ -298,7 +299,8 @@ function validateApproval(
   if (
     !record(value) ||
     typeof value.required !== 'boolean' ||
-    !['locked', 'approved', 'unavailable', 'demo'].includes(String(value.status)) ||
+    !['locked', 'approved', 'unavailable', 'demo', 'disabled'].includes(String(value.status)) ||
+    (value.status === 'disabled' && mode !== 'transport') ||
     typeof value.detail !== 'string' ||
     (value.active_flow_id !== null && !flowId(value.active_flow_id)) ||
     (value.expires_at !== null && !timestamp(value.expires_at))

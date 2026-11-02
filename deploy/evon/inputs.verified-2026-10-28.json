@@ -1,0 +1,8 @@
+{
+  "image": "vllm/vllm-openai@sha256:6ee133356d49ed24cee03dd0cda3d3980279a11c107ce3e752c89e76540f41c9",
+  "model": "gnani/gnani-evon-v3.3-30B-A3B",
+  "model_revision": "fb9ddb6b58f2d235684388a9260671fca5ebccaf",
+  "trust_remote_code": false,
+  "platform": "linux/amd64",
+  "port": 8001
+}

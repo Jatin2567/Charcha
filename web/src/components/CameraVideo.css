@@ -1,0 +1,68 @@
+.participant-card.has-camera .participant-portrait {
+  padding: 0;
+  min-height: 140px;
+}
+.camera-video-wrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--call-bg);
+}
+.camera-video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.camera-mirrored {
+  transform: scaleX(-1);
+}
+.camera-play {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--call-ink);
+  background: #24272eea;
+  cursor: pointer;
+}
+.camera-off-note {
+  position: absolute;
+  bottom: 5px;
+  color: var(--call-muted);
+  font-size: 10px;
+}
+.camera-state-note {
+  color: var(--call-muted);
+  font-size: 11px;
+}
+.camera-preview-wrap {
+  position: absolute;
+  inset: 0;
+  background: var(--call-bg);
+}
+.camera-preview-wrap video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+.prejoin-preview .preview-top,
+.prejoin-preview .preview-name,
+.prejoin-preview .preview-bottom,
+.prejoin-preview .preview-sound,
+.prejoin-preview .preview-caption {
+  position: relative;
+  z-index: 1;
+}
+.camera-preview-wrap {
+  border-radius: inherit;
+}
+.prejoin-preview:has(.camera-preview-wrap) .preview-caption,
+.prejoin-preview:has(.camera-preview-wrap) .preview-name {
+  color: #fff;
+  text-shadow: 0 1px 4px var(--call-bg);
+}

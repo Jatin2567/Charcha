@@ -1,0 +1,8 @@
+{
+  "image": "vllm/vllm-openai@sha256:REPLACE_WITH_VERIFIED_IMAGE_DIGEST",
+  "model": "gnani/gnani-evon-v3.3-30B-A3B",
+  "model_revision": "REPLACE_WITH_VERIFIED_40_CHARACTER_COMMIT",
+  "trust_remote_code": false,
+  "platform": "linux/amd64",
+  "port": 8001
+}

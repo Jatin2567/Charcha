@@ -17,6 +17,7 @@ from fastapi import (
     WebSocketDisconnect,
 )
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from . import __version__
@@ -35,12 +36,16 @@ from .models import (
     UpdateParticipant,
 )
 from .providers.demo import SAMPLES, DemoTranslator
+from .providers.disabled import DisabledProviders
 from .providers.evon import EvonTranslator
 from .providers.gnani import GnaniSpeech
 from .security import RequestBodyLimitMiddleware
 from .services.performance import performance_snapshot
+from .services.audio_lab import audio_lab_router
+from .services.screening_runtime import ScreeningRuntime
+from .services.listener_metrics import ListenerMetrics, ProbeReport
 from .services.pipeline import Pipeline
-from .services.readiness import readiness_snapshot
+from .services.readiness import ConferenceReadiness, readiness_snapshot
 from .services.rooms import RoomService
 from .services.usage import UsageGuard
 from .services.voice import MAX_REFERENCE_BYTES, VoiceService
@@ -51,14 +56,20 @@ from .transport.livekit import TransportManager
 def create_app(settings: Settings | None = None) -> FastAPI:
     config = settings or Settings()
     store = Store(config)
+    screening = ScreeningRuntime(config)
+    listener_metrics = ListenerMetrics(store)
     usage = UsageGuard(config)
-    speech = GnaniSpeech(config, usage)
-    translator = DemoTranslator() if config.mode == "demo" else EvonTranslator(config, usage)
+    if config.mode == "transport":
+        # Construct no provider clients even when a private .env contains real keys.
+        speech = translator = DisabledProviders()
+    else:
+        speech = GnaniSpeech(config, usage)
+        translator = DemoTranslator() if config.mode == "demo" else EvonTranslator(config, usage)
     pipeline = Pipeline(store, translator, speech)
-    transport = TransportManager(store, speech, pipeline)
+    transport = TransportManager(store, speech, pipeline, screening)
     pipeline.transport = transport
     voices = VoiceService(store, speech)
-    service = RoomService(store, pipeline, transport, voices)
+    service = RoomService(store, pipeline, transport, voices, usage)
 
     async def cleanup():
         while True:
@@ -93,6 +104,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.pipeline, app.state.transport = pipeline, transport
     app.state.service, app.state.voices = service, voices
     app.state.usage = usage
+    app.state.screening = screening
+    app.state.listener_metrics = listener_metrics
+    app.include_router(audio_lab_router(config, store, screening))
     app.add_middleware(RequestBodyLimitMiddleware)
     app.add_middleware(
         CORSMiddleware, allow_origins=config.cors_origins,
@@ -112,11 +126,25 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     async def provider_failure(request, error: ProviderError):
         return JSONResponse({"detail": error.message, "retryable": error.retryable}, status_code=502)
 
+    @app.exception_handler(RequestValidationError)
+    async def invalid_request(request, error: RequestValidationError):
+        # Do not echo credentials, audio, or non-finite JSON inputs in errors.
+        return JSONResponse({"detail": [
+            {"loc": item["loc"], "msg": item["msg"], "type": item["type"]}
+            for item in error.errors()
+        ]}, status_code=422)
+
     @app.get("/api/health")
     async def health():
         if config.mode == "demo":
             providers = [{"name": name, "status": "demo", "detail": "Scripted local examples; no provider calls"}
                          for name in ["LiveKit", "Prisma STT", "Evon MT", "Timbre TTS"]]
+        elif config.mode == "transport":
+            providers = [{
+                "name": "LiveKit", "status": "missing" if config.missing_transport_config() else "configured",
+                "detail": "Local original-audio relay; connectivity is checked on room join",
+            }] + [{"name": name, "status": "disabled", "detail": "Transport test makes no speech-provider calls"}
+                  for name in ["Prisma STT", "Evon MT", "Timbre TTS"]]
         else:
             def configured(name, ready, detail):
                 return {"name": name, "status": "configured" if ready else "missing", "detail": detail}
@@ -175,6 +203,49 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     async def performance(code: str, token: str = Depends(bearer_token)):
         store.authenticate(token, code)
         return performance_snapshot(store.room(code))
+
+    @app.get("/api/rooms/{code}/conference-readiness", response_model=ConferenceReadiness)
+    async def room_conference_readiness(code: str, token: str = Depends(bearer_token)):
+        return service.conference_readiness(code.lower(), token)
+
+    @app.get("/api/rooms/{code}/screening")
+    async def screening_report(code: str, token: str = Depends(bearer_token)):
+        store.authenticate(token, code)
+        state = store.room(code)
+        return {**screening.status(), "latest": state.screening_latest,
+                "samples": list(state.screening_samples), "experimental": True,
+                "limitation": "A model flag is not proof of a deepfake. Indian-language accuracy is unverified."}
+
+    @app.post("/api/rooms/{code}/audio-probes", status_code=201)
+    async def issue_probe(code: str, token: str = Depends(bearer_token)):
+        return listener_metrics.issue(token, code)
+
+    @app.post("/api/rooms/{code}/audio-probes/{probe_id}/start", status_code=202)
+    async def start_probe(code: str, probe_id: str, token: str = Depends(bearer_token)):
+        store.authenticate(token, code)
+        audio_room = transport.rooms.get(code.lower())
+        if not audio_room or audio_room.closed or audio_room.disconnected:
+            raise HTTPException(409, "Join a connected audio room before starting a receiver probe")
+        challenge = listener_metrics.start(token, code, probe_id)
+        try:
+            async with asyncio.timeout(9):
+                await audio_room.send_probe(challenge)
+        except (ProviderError, asyncio.CancelledError):
+            listener_metrics.fail(code.lower(), probe_id)
+            raise
+        except Exception:
+            listener_metrics.fail(code.lower(), probe_id)
+            raise ProviderError("Receiver tone delivery timed out or failed; reconnect and try again", False) from None
+        return {"started": True, "provider_calls": 0}
+
+    @app.post("/api/rooms/{code}/audio-probes/report")
+    async def report_probe(code: str, body: ProbeReport, token: str = Depends(bearer_token)):
+        return listener_metrics.record(token, code, body)
+
+    @app.get("/api/rooms/{code}/audio-probes")
+    async def probe_report(code: str, token: str = Depends(bearer_token)):
+        store.authenticate(token, code)
+        return listener_metrics.snapshot(code)
 
     @app.post("/api/rooms/{code}/text", status_code=202)
     async def text_turn(code: str, body: SubmitText, token: str = Depends(bearer_token)):
@@ -278,6 +349,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 "room": state.room.model_dump(mode="json"),
                 "turns": [turn.model_dump(mode="json") for turn in state.turns],
                 "metrics": state.metrics.model_dump(mode="json"),
+                "screening": state.screening_latest,
+                "screening_status": screening.status(),
             })
             await websocket.send_json(snapshot.model_dump(mode="json"))
             tasks = [asyncio.create_task(sender()), asyncio.create_task(receiver()),

@@ -1,0 +1,23 @@
+.invitation-help {
+  margin: 14px 0;
+  padding: 14px;
+  border: 1px solid #b3a780;
+  border-radius: 9px;
+  background: #f8f4e9;
+  color: #4f4c37;
+}
+.invitation-help strong {
+  font-size: 13px;
+}
+.invitation-help p {
+  font-size: 12px;
+  line-height: 1.7;
+  margin: 8px 0;
+}
+.invitation-help a {
+  color: var(--muted);
+  text-decoration: underline;
+  font-size: 12px;
+  display: inline-block;
+  padding: 5px 0;
+}

@@ -301,7 +301,7 @@ async def test_pipeline_rechecks_delivery_after_provider_admission_before_reserv
 
     def translate_request(request):
         paid_calls.append("mt")
-        return httpx.Response(200, json={"choices": [{"message": {"content": "fixture"}}]})
+        return httpx.Response(200, json={"choices": [{"finish_reason": "stop", "message": {"content": "fixture"}}]})
 
     def synthesize_request(*_args, **_kwargs):
         paid_calls.append("tts")

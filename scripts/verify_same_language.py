@@ -122,7 +122,11 @@ async def main():
             # 16kHz original PCM onto that same speaker/language track.
             first = memberships[0]["participant"]
             await app.state.pipeline.submit(state, first, "Synthetic typed fallback")
-            await asyncio.wait_for(app.state.pipeline.queues[(state.room.code, first.id)].join(), 10)
+            # Initial track publication now includes a bounded subscriber-ready
+            # gate before the unchanged two-second fixture is sent. Allow that
+            # setup time; do not lengthen the clip to hide a clipped beginning.
+            await asyncio.wait_for(app.state.pipeline.queues[(state.room.code, first.id)].join(), 20)
+            assert state.turns[-1].status == "complete", "Initial typed fallback did not complete"
             fixture.translations.clear()
             for counters in received.values():
                 counters.clear()

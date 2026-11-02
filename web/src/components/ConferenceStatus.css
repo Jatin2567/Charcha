@@ -1,0 +1,116 @@
+.conference-status {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin: 12px 0 17px;
+  background: var(--canvas);
+}
+.conference-status-main {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 15px;
+}
+.conference-status-main strong {
+  color: var(--muted);
+  font-size: 12px;
+}
+.conference-status-main p,
+.conference-playback-note {
+  margin: 6px 0 0;
+  font-size: 11px;
+  line-height: 1.8;
+  color: var(--muted);
+}
+.conference-status-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+.conference-status-actions:not(:empty) {
+  margin-top: 11px;
+}
+.conference-status-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 35px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: #fff;
+  color: var(--muted);
+  font-size: 11px;
+  cursor: pointer;
+}
+.conference-status-actions button:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+.conference-status-stale {
+  background: #fcf7ed;
+  border-color: #ebdfc5;
+}
+.conference-window {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 10px 0 0;
+}
+.conference-allowance {
+  margin-top: 12px;
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+  color: var(--muted);
+}
+.conference-allowance summary {
+  cursor: pointer;
+  font-size: 12px;
+  padding: 5px 0;
+  font-weight: 600;
+}
+.conference-allowance p,
+.conference-allowance li {
+  font-size: 12px;
+  line-height: 1.7;
+}
+.conference-allowance h4 {
+  margin: 15px 0 5px;
+  font-size: 12px;
+}
+.conference-allowance ol {
+  padding-left: 20px;
+}
+.conference-allowance a {
+  color: var(--muted);
+  font-size: 12px;
+  text-decoration: underline;
+}
+.conference-setup-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 14px 0;
+}
+.conference-setup-grid div {
+  min-width: 0;
+}
+.conference-setup-grid dt {
+  font-size: 11px;
+  color: var(--muted);
+}
+.conference-setup-grid dd {
+  margin: 4px 0 0;
+  font-size: 12px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 600px) {
+  .conference-status-main {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .conference-setup-grid {
+    grid-template-columns: 1fr;
+  }
+}

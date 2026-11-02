@@ -4,6 +4,7 @@ import { useVoiceRecorder } from '../hooks/useVoiceRecorder';
 import { useApp } from '../state/AppContext';
 import { deleteVoice, updateParticipant, uploadVoice } from '../services/api';
 import { ErrorNotice, Badge } from './ui';
+import { Link } from 'react-router-dom';
 export function VoiceEnrollment({ onSuccess }: { onSuccess?: () => void }) {
   const app = useApp();
   const recorder = useVoiceRecorder();
@@ -14,6 +15,8 @@ export function VoiceEnrollment({ onSuccess }: { onSuccess?: () => void }) {
   const [success, setSuccess] = useState('');
   const file = useRef<HTMLInputElement>(null);
   const profile = app.voiceProfile;
+  if (app.health?.mode === 'transport' || app.membership?.room.mode === 'transport')
+    return <div className="notice warning"><span>Voice cloning is disabled during local audio tests. Complete the interpretation and device checks in <Link to="/tests">Test lab</Link> first.</span></div>;
   const enroll = async () => {
     if (!app.membership || !recorder.blob || !consent) return;
     setBusy(true);

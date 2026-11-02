@@ -8,18 +8,18 @@ An additional development verification script, `scripts/verify_routing.py`, conn
 
 The separate [Performance & readiness reference](GO_LIVE.md#what-the-performance-page-measures) documents each in-app timing field and the nearest-rank p50/p95 calculation. Room measurements retain at most 1,000 terminal language branches. Completed live first-PCM branches contribute to latency percentiles; simulated, failed, cancelled and same-language-forwarded samples do not. Keep typed and microphone observations separate. The original blueprint's under-800-ms end-to-end budget remains an unverified goal; these server measurements cannot establish audible listener latency.
 
-`evaluation/trade_cases.jsonl` contains a small synthetic set of purchasing utterances across Hindi, Tamil and Bengali. Each case includes a draft target translation, critical values and a meaning/negation check. These drafts are **unreviewed author examples**, not bilingual-validated gold labels. No personal speech, customer data or recordings are included. Do not quote an accuracy percentage on this set before qualified bilingual review. A short script is useful for smoke testing, not a population-level quality claim.
+`evaluation/everyday_cases.jsonl` contains 18 synthetic everyday utterances across Hindi, Tamil and Bengali: meeting times, directions, names, classroom objects, quantities, units, polite requests, corrections, conditions and code mixing. Each case includes a draft target translation, critical values and a meaning/negation check. These drafts are **unreviewed author examples**, not bilingual-validated gold labels. No personal speech, customer data or recordings are included. Do not quote an accuracy percentage on this set before qualified bilingual review. A short script is useful for smoke testing, not a population-level quality claim.
 
 ## Collect real results
 
 From the project folder, with the live API running and credentials configured:
 
 ```powershell
-python evaluation/run.py collect --api-url http://localhost:8000 --expected-mode live --output evaluation/results/live-run.jsonl
+python evaluation/run.py collect --api-url http://localhost:8000 --expected-mode live --limit 1 --output evaluation/results/live-run.jsonl
 python evaluation/run.py template --output evaluation/review-template.csv
 ```
 
-The collector checks server mode, creates a fresh two-member room per case, submits the actual typed source text, polls for the matching completed turn, records returned translation and timing, then leaves both memberships. It never invents a translation for failed requests. Running `collect` in live mode consumes the configured providers' credits. Credentials stay in the server environment; the output records neither membership nor LiveKit tokens.
+The collector checks server mode, creates a fresh two-member room per case, submits the actual typed source text, polls for the matching completed turn, records returned translation and timing, then leaves both memberships. It never invents a translation for failed requests. Running `collect` in live mode consumes the configured providers' credits and requires an existing approved bounded flow. Start with one case, then approve the next intended group; removing `--limit 1` runs the whole dataset. Credentials stay in the server environment; the output records neither membership nor LiveKit tokens.
 
 Live collection submits processing consent for its synthetic test memberships. It never enrolls a cloned voice or opens a microphone. The included 18 cases exercise six Hindi→Tamil, six Tamil→Hindi, three Bengali→Hindi and three Hindi→Bengali phrases. English and the remaining pairings need separate evaluation cases before claiming equivalent coverage.
 
@@ -31,8 +31,8 @@ Give reviewers the source, target output and `reference_draft` side by side. Fil
 
 | Field                        | Rule                                                                                       |
 | ---------------------------- | ------------------------------------------------------------------------------------------ |
-| `meaning_1_to_5`             | 1=commercial meaning wrong; 3=understandable with clarification; 5=all meaning retained    |
-| `critical_values_correct`    | `yes`/`no`; quantities, amounts, names and identifiers match the source                    |
+| `meaning_1_to_5`             | 1=meaning wrong; 3=understandable with clarification; 5=all meaning retained               |
+| `critical_values_correct`    | `yes`/`no`; times, quantities, units, names and identifiers match the source               |
 | `negation_condition_correct` | `yes`/`no`; refusal, only-if, before/after and conditions are preserved                    |
 | `naturalness_1_to_5`         | 1=unusable wording; 5=natural and clear                                                    |
 | `reference_approved`         | `yes`/`no`; approve the draft reference itself separately from the prediction              |
@@ -48,11 +48,11 @@ Outputs are `case_report.csv` and `summary.json`. They keep unreviewed cases exp
 
 ## Actual voice and browser acceptance
 
-Run these with two or three real browser contexts and fresh credentials before submission:
+Follow the gates in [TEST_FLOWS.md](TEST_FLOWS.md): local transport first, typed interpretation next, two-way microphone speech, second-device and Sites checks, then multi-party and cloning. Run each later stage only after the preceding stage passes. Use standard voices until the separate cloning gate.
 
 1. Hindi A speaks while Tamil B listens; repeat in reverse; add Bengali C. Confirm each listener hears their selected language and the speaker does not hear their own translation.
 2. Add two listeners with the same language. Confirm one synthesis per unique language and both intended recipients receive it. Test two participants with the same source/listening language.
-3. Speak quantities, ₹ amounts, negation, conditional dispatch and an unfamiliar business name. Review the original audio, STT transcript and each target translation separately. Wrong STT cannot be repaired by merely comparing target numbers.
+3. Speak meeting times, classroom-object counts, distances, negation, conditional plans, names and mixed-language room identifiers. Review the original audio, STT transcript and each target translation separately. Wrong STT cannot be repaired by merely comparing target numbers. Check the contrast pairs in [TEST_FLOWS.md](TEST_FLOWS.md#everyday-speech-scripts).
 4. Measure phrase-end to first audible translated sample at the receiver using synchronized capture/instrumentation. Record hardware, browser, network, endpoint, voice mode and segmentation settings. Report p50/p95 plus sample count. Do not replace this with server timing.
 5. Try mic denial, device removal, autoplay restriction, reconnect, provider timeout, one member leaving mid-turn and a saturated queue. Confirm understandable recovery and no stale audio after leaving.
 6. Enroll a clean, consented spoken reference; compare stock and cloned target speech. Let the speaker judge similarity; bilingual listeners judge intelligibility. Confirm rejection/deletion and ownership isolation. A reference waveform check is not a consent or identity proof.

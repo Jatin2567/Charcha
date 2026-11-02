@@ -6,6 +6,8 @@ from typing import Annotated, Literal
 from pydantic import Field, SecretStr, field_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
+from .voice_catalog import LEGACY_DEFAULT_TIMBRE_VOICE
+
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
@@ -13,7 +15,7 @@ class Settings(BaseSettings):
         extra="ignore", populate_by_name=True,
     )
 
-    mode: Literal["demo", "live"] = Field(default="demo", validation_alias="ARTHA_MODE")
+    mode: Literal["demo", "transport", "live"] = Field(default="demo", validation_alias="ARTHA_MODE")
     cors_origins: Annotated[list[str], NoDecode] = [
         "http://localhost:5173", "http://127.0.0.1:5173"
     ]
@@ -24,12 +26,27 @@ class Settings(BaseSettings):
     gnani_api_key: SecretStr = SecretStr("")
     evon_base_url: str = ""
     evon_api_key: SecretStr = SecretStr("")
+    evon_modal_key: SecretStr = SecretStr("")
+    evon_modal_secret: SecretStr = SecretStr("")
     evon_model: str = ""
     gnani_stt_url: str = "wss://api.vachana.ai/stt/v3/stream"
+    # Unset preserves the provider-selected legacy default; opt in explicitly.
+    gnani_stt_model: Literal["prisma-v2.5", "prisma-v3.0"] | None = None
     gnani_tts_url: str = "wss://api.vachana.ai/api/v1/tts"
     gnani_embedding_url: str = "https://api.vachana.ai/api/v1/tts/voice-clone/embeddings"
     timbre_model: str = "timbre-v2.5"
-    timbre_voice: str = "Nalini"
+    timbre_voice: str = LEGACY_DEFAULT_TIMBRE_VOICE
+    # Optional language-specific stock voices, from the selected model's catalog.
+    timbre_voice_hi: str = ""
+    timbre_voice_ta: str = ""
+    timbre_voice_bn: str = ""
+    timbre_voice_en: str = ""
+    timbre_voice_te: str = ""
+    timbre_voice_kn: str = ""
+    timbre_voice_ml: str = ""
+    timbre_voice_mr: str = ""
+    timbre_voice_gu: str = ""
+    timbre_voice_pa: str = ""
     voice_clone_model: str = "vachana-vc-v1"
     room_ttl_seconds: int = Field(default=14400, ge=60, le=86400)
     session_ttl_seconds: int = Field(default=14400, ge=60, le=86400)
@@ -41,6 +58,12 @@ class Settings(BaseSettings):
     event_queue_size: int = Field(default=128, ge=4, le=1024)
     audio_queue_frames: int = Field(default=100, ge=10, le=500)
     audio_sample_rate: int = 24000
+    # Local experiments are opt-in. Monitor reports scores without blocking speech.
+    local_audio_lab_enabled: bool = False
+    audio_screening_mode: Literal["off", "monitor", "enforce"] = "off"
+    # Retain the deployment default; local CPU tuning must be measured per host.
+    audio_screening_cpu_threads: int = Field(default=1, ge=1, le=4)
+    audio_screening_model_path: Path = Path(__file__).resolve().parents[1] / "models" / "aasist" / "model.onnx"
     # Application safeguards count reserved attempts/units, not vendor billing.
     usage_db_path: Path = Path(__file__).resolve().parents[1] / "data" / "usage.sqlite3"
     usage_require_flow_approval: bool = True
@@ -72,6 +95,12 @@ class Settings(BaseSettings):
             return [origin.strip().rstrip("/") for origin in value.split(",") if origin.strip()]
         return value
 
+    @field_validator("gnani_stt_model", mode="before")
+    @classmethod
+    def blank_stt_model_is_unselected(cls, value):
+        # Empty optional .env entries preserve the existing provider default.
+        return None if isinstance(value, str) and not value.strip() else value
+
     def missing_live_config(self) -> list[str]:
         required = {
             "LIVEKIT_URL": self.livekit_url,
@@ -82,3 +111,7 @@ class Settings(BaseSettings):
             "EVON_MODEL": self.evon_model,
         }
         return [name for name, value in required.items() if not value]
+
+    def missing_transport_config(self) -> list[str]:
+        """Local raw-audio tests need an SFU, never speech-provider credentials."""
+        return [name for name in self.missing_live_config() if name.startswith("LIVEKIT_")]

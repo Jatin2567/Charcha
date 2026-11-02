@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "record_type": "saved_public_human_screening_pilot",
+  "status": "complete",
+  "measured_at": "2026-10-29T12:06:13.381702Z",
+  "source": {
+    "dataset": "google/fleurs",
+    "revision": "70bb2e84b976b7e960aa89f1c648e09c59f894dd",
+    "license": "cc-by-4.0",
+    "split": "test",
+    "url": "https://huggingface.co/datasets/google/fleurs"
+  },
+  "model": {
+    "id": "SpeechAntiSpoofingBenchmarks/AASIST",
+    "sha256": "130e536266b7c537f9a13029e1612a9f392fd1cc827783683b6d1c062a3db5e1"
+  },
+  "baseline_ms": 4037.5,
+  "baseline_by_language": [
+    {
+      "language": "hi",
+      "recordings": 10,
+      "allow": 3,
+      "suspicious": 5,
+      "unknown": 2,
+      "errors": 0,
+      "unattempted": 0,
+      "compute_p50_ms": 240.5115,
+      "compute_p95_ms": 316.897
+    },
+    {
+      "language": "ta",
+      "recordings": 10,
+      "allow": 3,
+      "suspicious": 2,
+      "unknown": 5,
+      "errors": 0,
+      "unattempted": 0,
+      "compute_p50_ms": 242.45600000000002,
+      "compute_p95_ms": 256.444
+    },
+    {
+      "language": "bn",
+      "recordings": 10,
+      "allow": 7,
+      "suspicious": 2,
+      "unknown": 1,
+      "errors": 0,
+      "unattempted": 0,
+      "compute_p50_ms": 245.438,
+      "compute_p95_ms": 544.756
+    },
+    {
+      "language": "te",
+      "recordings": 10,
+      "allow": 6,
+      "suspicious": 1,
+      "unknown": 3,
+      "errors": 0,
+      "unattempted": 0,
+      "compute_p50_ms": 283.8905,
+      "compute_p95_ms": 728.145
+    },
+    {
+      "language": "mr",
+      "recordings": 10,
+      "allow": 5,
+      "suspicious": 4,
+      "unknown": 1,
+      "errors": 0,
+      "unattempted": 0,
+      "compute_p50_ms": 340.4385,
+      "compute_p95_ms": 620.74
+    }
+  ],
+  "prefix_summary": [
+    {
+      "observed_audio_ms": 500,
+      "recordings": 50,
+      "suspicious": 7,
+      "unknown": 31,
+      "errors": 0,
+      "unattempted": 0,
+      "verdict_changes_from_full": 40,
+      "paired_comparisons": 50
+    },
+    {
+      "observed_audio_ms": 1000,
+      "recordings": 50,
+      "suspicious": 16,
+      "unknown": 15,
+      "errors": 0,
+      "unattempted": 0,
+      "verdict_changes_from_full": 20,
+      "paired_comparisons": 50
+    },
+    {
+      "observed_audio_ms": 2000,
+      "recordings": 50,
+      "suspicious": 20,
+      "unknown": 15,
+      "errors": 0,
+      "unattempted": 0,
+      "verdict_changes_from_full": 16,
+      "paired_comparisons": 50
+    },
+    {
+      "observed_audio_ms": 3000,
+      "recordings": 50,
+      "suspicious": 20,
+      "unknown": 8,
+      "errors": 0,
+      "unattempted": 0,
+      "verdict_changes_from_full": 9,
+      "paired_comparisons": 50
+    }
+  ],
+  "provider_calls": 0,
+  "voice_cloning": false,
+  "independent_speaker_count": null,
+  "synthetic_recordings": 0,
+  "ai_detection_rate": null,
+  "accuracy": null,
+  "live_window_changed": false
+}

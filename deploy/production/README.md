@@ -4,6 +4,22 @@ This prepares the frontend, one API/RTC worker, open-source LiveKit and Caddy on
 
 The preparation step is offline. It does not provision a VM, modify DNS/firewalls, start containers, request certificates or spend provider credits. The current delivered evidence covers generated configuration and tests. Real DNS, certificates, restrictive-network TURN and Gnani/Evon access require acceptance on your actual server.
 
+For the current standard-voice pilot, see
+[the 30 October conference stage](../../docs/CONFERENCE_STAGE_ONE.md). It keeps
+screening off and cloning deferred. When using the authenticated Modal endpoint,
+the private input environment can supply `EVON_MODAL_KEY` and
+`EVON_MODAL_SECRET` alongside the separate `EVON_API_KEY`. The generator preserves
+that complete pair only for an HTTPS `*.modal.run` destination on port 443; it
+rejects incomplete/unsafe pairs before writing deployment files. Per-language
+`TIMBRE_VOICE_HI/TA/BN/TE/MR` overrides are preserved too. None of these credentials
+belongs in the browser bundle.
+
+Use `USAGE_VOICE_ENROLLMENTS_PER_DAY=0` for this stage. The two-person speech
+check keeps existing admission defaults; five active microphones require an
+explicitly reviewed `USAGE_MAX_CONCURRENT_STT=5` and measured operation/queue
+capacity within the provider's limits. Five language selections do not prove
+that five simultaneously speaking participants have passed acceptance.
+
 ## Inputs from the owner
 
 - A Linux VM with a stable public IPv4 and inbound TCP/UDP control. Start with 4 vCPU, 8 GB RAM and 40 GB disk for a small pilot, then size from measurements; this is a starting estimate, not a tested capacity guarantee. No GPU is needed here when Evon runs elsewhere.

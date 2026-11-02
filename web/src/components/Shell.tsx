@@ -13,6 +13,7 @@ import {
   Coins,
   Wrench,
   Server,
+  ClipboardCheck,
 } from 'lucide-react';
 import { Logo, Avatar, Badge } from './ui';
 import { useApp } from '../state/AppContext';
@@ -25,7 +26,7 @@ export function Shell() {
   return (
     <div className={`app-shell ${preferences.highContrast ? 'high-contrast' : ''}`}>
       <aside className={`sidebar ${menu ? 'sidebar-open' : ''}`}>
-        <Link to="/" className="brand-link" onClick={() => setMenu(false)}>
+        <Link to="/" className="brand-link" aria-label="Artha-Mesh home" onClick={() => setMenu(false)}>
           <Logo />
         </Link>
         <div className="workspace-label">YOUR WORKSPACE</div>
@@ -35,6 +36,8 @@ export function Shell() {
             { to: '/voices', name: 'Voice studio', icon: AudioLines },
             { to: '/history', name: 'Conversations', icon: History },
             { to: '/performance', name: 'Performance', icon: Gauge },
+            { to: '/tests', name: 'Test lab', icon: ClipboardCheck },
+            { to: '/audio-lab', name: 'Audio lab', icon: AudioLines },
             { to: '/usage', name: 'Usage & limits', icon: Coins },
             { to: '/development', name: 'Developer journal', icon: Wrench },
             { to: '/deployment', name: 'Deployment setup', icon: Server },
@@ -49,6 +52,7 @@ export function Shell() {
             >
               <item.icon size={19} />
               {item.name}
+              {item.to === '/voices' && <Badge tone="neutral">Later</Badge>}
               {item.to === '/' && <span className="nav-dot" />}
             </NavLink>
           ))}
@@ -73,9 +77,11 @@ export function Shell() {
                 ? 'Checking workspace'
                 : health?.mode === 'live'
                   ? 'Connected workspace'
-                  : health
-                    ? 'Demonstration workspace'
-                    : 'Setup required'}
+                  : health?.mode === 'transport'
+                    ? 'Local audio test'
+                    : health
+                      ? 'Demonstration workspace'
+                      : 'Setup required'}
             </span>
           </div>
           <a
@@ -99,28 +105,33 @@ export function Shell() {
             >
               <PanelLeftClose size={20} />
             </button>
-            <span>Workspace</span>
+            <span className="workspace-crumb">Workspace</span>
+            <span className="mobile-workspace-mark"><Logo compact /></span>
             <span className="crumb-slash">/</span>
             <strong>
               {location.pathname === '/voices'
                 ? 'Voice studio'
+                : location.pathname === '/audio-lab'
+                  ? 'Audio lab'
                 : location.pathname === '/settings'
                   ? 'Settings'
                   : location.pathname === '/performance'
                     ? 'Performance'
-                    : location.pathname === '/usage'
-                      ? 'Usage & limits'
-                      : location.pathname === '/development'
-                        ? 'Developer journal'
-                        : location.pathname === '/deployment'
-                          ? 'Deployment setup'
-                          : location.pathname === '/history'
-                            ? 'Conversations'
-                            : location.pathname.startsWith('/join')
-                              ? 'Ready to join'
-                              : location.pathname.startsWith('/recap')
-                                ? 'Conversation recap'
-                                : 'Overview'}
+                    : location.pathname === '/tests'
+                      ? 'Test lab'
+                      : location.pathname === '/usage'
+                        ? 'Usage & limits'
+                        : location.pathname === '/development'
+                          ? 'Developer journal'
+                          : location.pathname === '/deployment'
+                            ? 'Deployment setup'
+                            : location.pathname === '/history'
+                              ? 'Conversations'
+                              : location.pathname.startsWith('/join')
+                                ? 'Ready to join'
+                                : location.pathname.startsWith('/recap')
+                                  ? 'Conversation recap'
+                                  : 'Overview'}
             </strong>
           </div>
           <div className="topbar-right">
@@ -128,9 +139,11 @@ export function Shell() {
               <span className="status-dot" />
               {health?.mode === 'live'
                 ? 'Live mode'
-                : healthLoading
-                  ? 'Connecting'
-                  : 'Demo workspace'}
+                : health?.mode === 'transport'
+                  ? 'Raw audio test'
+                  : healthLoading
+                    ? 'Connecting'
+                    : 'Demo workspace'}
             </Badge>
             <Link to="/settings" className="profile-button" aria-label="Open profile settings">
               <Avatar name={preferences.name || 'You'} index={2} />
@@ -146,7 +159,7 @@ export function Shell() {
             <Headphones size={13} />
             Made for conversations that matter.
           </span>
-          <span>Hindi · Tamil · Bengali · English</span>
+          <span>10 language choices · standard voices first</span>
         </footer>
       </div>
     </div>

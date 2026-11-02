@@ -1,4 +1,4 @@
-export type Language = 'hi' | 'ta' | 'bn' | 'en';
+export type Language = 'hi' | 'ta' | 'bn' | 'en' | 'te' | 'kn' | 'ml' | 'mr' | 'gu' | 'pa';
 export type VoiceMode = 'standard' | 'cloned';
 export interface Participant {
   id: string;
@@ -15,7 +15,7 @@ export interface Room {
   code: string;
   title: string;
   created_at: string;
-  mode: 'demo' | 'live';
+  mode: 'demo' | 'live' | 'transport';
   participants: Participant[];
 }
 export interface Turn {
@@ -41,7 +41,7 @@ export interface Metrics {
 }
 export interface Health {
   status: string;
-  mode: 'demo' | 'live';
+  mode: 'demo' | 'live' | 'transport';
   providers: { name: string; status: string; detail: string }[];
   languages: { code: Language; name: string; native_name: string }[];
   version: string;
@@ -71,6 +71,7 @@ export interface Preferences {
   inputDevice: string;
   outputDevice: string;
   autoCaptions: boolean;
+  largeCaptions: boolean;
   micEnabled: boolean;
   highContrast: boolean;
 }
@@ -89,6 +90,17 @@ export const LANGUAGES: { code: Language; name: string; native: string; short: s
   { code: 'ta', name: 'Tamil', native: 'தமிழ்', short: 'TA' },
   { code: 'bn', name: 'Bengali', native: 'বাংলা', short: 'BN' },
   { code: 'en', name: 'English', native: 'English', short: 'EN' },
+  { code: 'te', name: 'Telugu', native: 'తెలుగు', short: 'TE' },
+  { code: 'kn', name: 'Kannada', native: 'ಕನ್ನಡ', short: 'KN' },
+  { code: 'ml', name: 'Malayalam', native: 'മലയാളം', short: 'ML' },
+  { code: 'mr', name: 'Marathi', native: 'मराठी', short: 'MR' },
+  { code: 'gu', name: 'Gujarati', native: 'ગુજરાતી', short: 'GU' },
+  { code: 'pa', name: 'Punjabi', native: 'ਪੰਜਾਬੀ', short: 'PA' },
 ];
+export const isLanguage = (value: unknown): value is Language =>
+  typeof value === 'string' && LANGUAGES.some((entry) => entry.code === value);
+export const SCRIPTED_LANGUAGE_CODES: readonly Language[] = ['hi', 'ta', 'bn', 'en'];
+export const isScriptedLanguage = (code: Language) => SCRIPTED_LANGUAGE_CODES.includes(code);
+export const SCRIPTED_LANGUAGES = LANGUAGES.filter((entry) => isScriptedLanguage(entry.code));
 export const languageName = (code: Language) =>
   LANGUAGES.find((l) => l.code === code)?.name ?? code;

@@ -1,0 +1,306 @@
+{
+  "schema_version": 1,
+  "note": "Draft recording scripts for paired human and standard synthetic speech. A fluent speaker must review each text before collection. Duration targets are approximate; do not speed up, stretch or pad recordings to meet them.",
+  "prompts": [
+    {
+      "language": "hi",
+      "id": "C01",
+      "split": "calibration",
+      "topic": "library_meeting_time",
+      "text": "कल सुबह पुस्तकालय के सामने मुझसे दस बजे मिलना, ग्यारह बजे नहीं। अगर सामने का दरवाज़ा बंद हो, तो बाईं ओर बड़े पेड़ के पास इंतज़ार करना।",
+      "expected_meaning_en": "Meet outside the library tomorrow morning at ten, not eleven. If the front door is closed, wait near the large tree on the left.",
+      "review_status": "native_speaker_review_required",
+      "target_duration_seconds": [8, 15]
+    },
+    {
+      "language": "hi",
+      "id": "C02",
+      "split": "calibration",
+      "topic": "books_and_water",
+      "text": "नीली किताब मेज़ पर रख दो, लाल वाली नहीं। साथ में दो खाली बोतलें और आधा लीटर पानी ले आना। बाकी सामान अलमारी में ही रहने देना।",
+      "expected_meaning_en": "Put the blue book on the table, not the red one. Bring two empty bottles and half a litre of water. Leave the other things in the cupboard.",
+      "review_status": "native_speaker_review_required",
+      "target_duration_seconds": [8, 15]
+    },
+    {
+      "language": "hi",
+      "id": "C03",
+      "split": "calibration",
+      "topic": "park_directions",
+      "text": "मैं पार्क के मुख्य दरवाज़े के पास हूँ। बाईं ओर की छोटी सड़क से आना, फिर चाय की दुकान के पास रुकना। पहुँचने पर मुझे बता देना।",
+      "expected_meaning_en": "I am near the park's main gate. Come along the small road on the left and stop near the tea shop. Tell me when you arrive.",
+      "review_status": "native_speaker_review_required",
+      "target_duration_seconds": [8, 15]
+    },
+    {
+      "language": "hi",
+      "id": "E01",
+      "split": "evaluation",
+      "topic": "classroom_plan",
+      "text": "आज दोपहर हमारी कक्षा ऊपर वाले कमरे में होगी। एक कॉपी और पेंसिल लाना, लेकिन बड़ा बैग नीचे छोड़ देना। सबके आने के बाद हम पढ़ाई शुरू करेंगे।",
+      "expected_meaning_en": "This afternoon's class is in the upstairs room. Bring a notebook and pencil, leave the large bag downstairs, and start studying after everyone arrives.",
+      "review_status": "native_speaker_review_required",
+      "target_duration_seconds": [8, 15]
+    },
+    {
+      "language": "hi",
+      "id": "E02",
+      "split": "evaluation",
+      "topic": "changed_garden_plan",
+      "text": "योजना बदल गई है। अब हम शनिवार की जगह रविवार को बगीचे में जाएँगे। तीन कप और पीने का पानी साथ लाना। अगर बारिश हुई, तो हम घर पर ही रहेंगे।",
+      "expected_meaning_en": "The garden visit changes from Saturday to Sunday. Bring three cups and drinking water. If it rains, stay at home.",
+      "review_status": "native_speaker_review_required",
+      "target_duration_seconds": [8, 15]
+    },
+    {
+      "language": "hi",
+      "id": "E03",
+      "split": "evaluation",
+      "topic": "room_instructions",
+      "text": "दरवाज़े के पास वाली खिड़की खोल दो और अलमारी के पास वाली बंद कर दो। छोटी कुर्सी कोने में रख देना। थोड़ा धीरे बोलना, ताकि सब लोग बात समझ सकें।",
+      "expected_meaning_en": "Open the window near the door, close the window near the cupboard, and put the small chair in the corner. Speak more slowly so everyone understands.",
+      "review_status": "native_speaker_review_required",
+      "target_duration_seconds": [8, 15]
+    },
+    {
+      "language": "ta",
+      "id": "C01",
+      "split": "calibration",
+      "topic": "library_meeting_time",
+      "text": "நாளை காலை நூலகத்தின் முன் என்னைப் பத்து மணிக்குச் சந்திக்கவும், பதினொரு மணிக்கு அல்ல. முன்பக்கக் கதவு மூடியிருந்தால், இடது பக்கத்தில் இருக்கும் பெரிய மரத்தின் அருகில் காத்திருக்கவும். நான் அங்கே வந்து உங்களைச் சந்திப்பேன்.",
+      "expected_meaning_en": "Meet outside the library tomorrow morning at ten, not eleven. If the front door is closed, wait near the large tree on the left; I will meet you there.",
+      "review_status": "native_speaker_review_required",
+      "target_duration_seconds": [8, 15]
+    },
+    {
+      "language": "ta",
+      "id": "C02",
+      "split": "calibration",
+      "topic": "books_and_water",
+      "text": "நீல நிறப் புத்தகத்தை மேசையின் மீது வைக்கவும், சிவப்பு நிறப் புத்தகத்தை அல்ல. இரண்டு காலி பாட்டில்களையும் அரை லிட்டர் தண்ணீரையும் கொண்டு வரவும். மற்ற பொருட்களை எடுத்துவர வேண்டாம்; அவை அலமாரியிலேயே இருக்கட்டும்.",
+      "expected_meaning_en": "Put the blue book on the table, not the red one. Bring two empty bottles and half a litre of water. Leave the other items in the cupboard.",
+      "review_status": "native_speaker_review_required",
+      "target_duration_seconds": [8, 15]
+    },
+    {
+      "language": "ta",
+      "id": "C03",
+      "split": "calibration",
+      "topic": "park_directions",
+      "text": "நான் பூங்காவின் முக்கிய நுழைவாயிலுக்கு அருகில் நிற்கிறேன். இடது பக்கத்தில் உள்ள சிறிய சாலை வழியாக வந்து, தேநீர்க் கடைக்கு அருகில் நிற்கவும். நீங்கள் அங்கே வந்தவுடன் எனக்குத் தெரிவிக்கவும்; நான் உங்களைப் பார்க்கிறேன்.",
+      "expected_meaning_en": "I am near the park's main entrance. Come along the small road on the left and stop near the tea shop. Tell me when you arrive so I can find you.",
+      "review_status": "native_speaker_review_required",
+      "target_duration_seconds": [8, 15]
+    },
+    {
+      "language": "ta",
+      "id": "E01",
+      "split": "evaluation",
+      "topic": "classroom_plan",
+      "text": "இன்று பிற்பகல் நமது வகுப்பு மாடியில் உள்ள அறையில் நடைபெறும். ஒரு குறிப்பேடும் பென்சிலும் கொண்டு வரவும், ஆனால் பெரிய பையைக் கீழே விட்டுவிடவும். அனைவரும் வந்து சேர்ந்த பிறகு நாம் பாடத்தைத் தொடங்கலாம்.",
+      "expected_meaning_en": "This afternoon's class is in the upstairs room. Bring a notebook and pencil, leave the large bag downstairs, and begin the lesson after everyone arrives.",
+      "review_status": "native_speaker_review_required",
+      "target_duration_seconds": [8, 15]
+    },
+    {
+      "language": "ta",
+      "id": "E02",
+      "split": "evaluation",
+      "topic": "changed_garden_plan",
+      "text": "நமது திட்டம் மாறிவிட்டது. சனிக்கிழமைக்குப் பதிலாக ஞாயிற்றுக்கிழமை தோட்டத்திற்குச் செல்வோம். மூன்று கோப்பைகளையும் குடிப்பதற்குத் தண்ணீரையும் கொண்டு வரவும். அன்று மழை பெய்தால், நாம் வெளியே செல்லாமல் வீட்டிலேயே இருப்போம்; வேறொரு நாளில் செல்லலாம்.",
+      "expected_meaning_en": "The garden visit changes from Saturday to Sunday. Bring three cups and drinking water. If it rains, stay home and go another day.",
+      "review_status": "native_speaker_review_required",
+      "target_duration_seconds": [8, 15]
+    },
+    {
+      "language": "ta",
+      "id": "E03",
+      "split": "evaluation",
+      "topic": "room_instructions",
+      "text": "கதவுக்கு அருகில் உள்ள ஜன்னலைத் திறந்து, அலமாரிக்கு அருகில் உள்ள ஜன்னலை மூடவும். சிறிய நாற்காலியை அறையின் மூலையில் வைக்கவும். அனைவருக்கும் புரியும் வகையில் கொஞ்சம் மெதுவாகப் பேசவும்; முக்கியமான விவரங்களைத் தெளிவாகச் சொல்லவும்.",
+      "expected_meaning_en": "Open the window near the door, close the one near the cupboard, and put the small chair in the corner. Speak slowly and clearly so everyone understands the details.",
+      "review_status": "native_speaker_review_required",
+      "target_duration_seconds": [8, 15]
+    },
+    {
+      "language": "bn",
+      "id": "C01",
+      "split": "calibration",
+      "topic": "library_meeting_time",
+      "text": "কাল সকালে গ্রন্থাগারের সামনে আমার সঙ্গে দশটায় দেখা করো, এগারোটায় নয়। সামনের দরজা বন্ধ থাকলে বাঁ দিকের বড় গাছটার কাছে অপেক্ষা করো। আমি সেখানেই তোমার সঙ্গে দেখা করব।",
+      "expected_meaning_en": "Meet outside the library tomorrow morning at ten, not eleven. If the front door is closed, wait by the large tree on the left; I will meet you there.",
+      "review_status": "native_speaker_review_required",
+      "target_duration_seconds": [8, 15]
+    },
+    {
+      "language": "bn",
+      "id": "C02",
+      "split": "calibration",
+      "topic": "books_and_water",
+      "text": "নীল বইটা টেবিলের ওপর রেখে দাও, লালটা নয়। সঙ্গে দুটো খালি বোতল আর আধা লিটার জল নিয়ে এসো। অন্য জিনিসগুলো আলমারিতেই থাকতে দাও, সেগুলো আনার দরকার নেই।",
+      "expected_meaning_en": "Put the blue book on the table, not the red one. Bring two empty bottles and half a litre of water. Leave the other items in the cupboard.",
+      "review_status": "native_speaker_review_required",
+      "target_duration_seconds": [8, 15]
+    },
+    {
+      "language": "bn",
+      "id": "C03",
+      "split": "calibration",
+      "topic": "park_directions",
+      "text": "আমি পার্কের প্রধান ফটকের কাছে দাঁড়িয়ে আছি। বাঁ দিকের ছোট রাস্তা দিয়ে এসো, তারপর চায়ের দোকানের পাশে দাঁড়াও। সেখানে পৌঁছে আমাকে জানিয়ো, আমি তোমাকে খুঁজে নেব।",
+      "expected_meaning_en": "I am near the park's main gate. Come along the small road on the left and stop beside the tea shop. Tell me when you arrive so I can find you.",
+      "review_status": "native_speaker_review_required",
+      "target_duration_seconds": [8, 15]
+    },
+    {
+      "language": "bn",
+      "id": "E01",
+      "split": "evaluation",
+      "topic": "classroom_plan",
+      "text": "আজ বিকেলে আমাদের ক্লাস ওপরের ঘরে হবে। একটা খাতা আর পেন্সিল নিয়ে এসো, কিন্তু বড় ব্যাগটা নিচে রেখে দাও। সবাই এসে পৌঁছানোর পরে আমরা পড়া শুরু করব।",
+      "expected_meaning_en": "This afternoon's class is in the upstairs room. Bring a notebook and pencil, leave the large bag downstairs, and start studying after everyone arrives.",
+      "review_status": "native_speaker_review_required",
+      "target_duration_seconds": [8, 15]
+    },
+    {
+      "language": "bn",
+      "id": "E02",
+      "split": "evaluation",
+      "topic": "changed_garden_plan",
+      "text": "আমাদের পরিকল্পনা বদলেছে। শনিবারের বদলে রবিবার বাগানে যাব। সঙ্গে তিনটে কাপ আর খাওয়ার জল নিয়ে এসো। সেদিন বৃষ্টি হলে আমরা বাড়িতেই থাকব, অন্য একদিন যাওয়া যাবে।",
+      "expected_meaning_en": "The garden visit changes from Saturday to Sunday. Bring three cups and drinking water. If it rains, stay home and go another day.",
+      "review_status": "native_speaker_review_required",
+      "target_duration_seconds": [8, 15]
+    },
+    {
+      "language": "bn",
+      "id": "E03",
+      "split": "evaluation",
+      "topic": "room_instructions",
+      "text": "দরজার কাছের জানলাটা খুলে দাও আর আলমারির পাশের জানলাটা বন্ধ করো। ছোট চেয়ারটা ঘরের কোণে রাখো। একটু ধীরে কথা বলো, যাতে সবাই তোমার কথা ভালো করে বুঝতে পারে।",
+      "expected_meaning_en": "Open the window near the door, close the window beside the cupboard, and put the small chair in the corner. Speak more slowly so everyone understands.",
+      "review_status": "native_speaker_review_required",
+      "target_duration_seconds": [8, 15]
+    },
+    {
+      "language": "te",
+      "id": "C01",
+      "split": "calibration",
+      "topic": "library_meeting_time",
+      "text": "రేపు ఉదయం గ్రంథాలయం ముందు నన్ను పది గంటలకు కలవండి, పదకొండు గంటలకు కాదు. ముందున్న తలుపు మూసి ఉంటే, ఎడమ వైపున ఉన్న పెద్ద చెట్టు దగ్గర వేచి ఉండండి. నేను అక్కడికి వస్తాను.",
+      "expected_meaning_en": "Meet outside the library tomorrow morning at ten, not eleven. If the front door is closed, wait near the large tree on the left; I will come there.",
+      "review_status": "native_speaker_review_required",
+      "target_duration_seconds": [8, 15]
+    },
+    {
+      "language": "te",
+      "id": "C02",
+      "split": "calibration",
+      "topic": "books_and_water",
+      "text": "నీలం రంగు పుస్తకాన్ని బల్ల మీద పెట్టండి, ఎరుపు రంగు పుస్తకాన్ని కాదు. రెండు ఖాళీ సీసాలు, అర లీటరు నీళ్లు తీసుకురండి. మిగతా వస్తువులు అలమారాలోనే ఉండనివ్వండి, వాటిని ఇప్పుడు తీసుకురావాల్సిన అవసరం లేదు.",
+      "expected_meaning_en": "Put the blue book on the table, not the red one. Bring two empty bottles and half a litre of water. Leave the other items in the cupboard.",
+      "review_status": "native_speaker_review_required",
+      "target_duration_seconds": [8, 15]
+    },
+    {
+      "language": "te",
+      "id": "C03",
+      "split": "calibration",
+      "topic": "park_directions",
+      "text": "నేను పార్కు ప్రధాన ద్వారం దగ్గర నిలబడి ఉన్నాను. ఎడమ వైపున ఉన్న చిన్న రోడ్డు మీదుగా వచ్చి, టీ దుకాణం పక్కన ఆగండి. మీరు అక్కడికి చేరుకున్న వెంటనే నాకు చెప్పండి, నేను మిమ్మల్ని కలుస్తాను.",
+      "expected_meaning_en": "I am near the park's main gate. Come along the small road on the left and stop beside the tea shop. Tell me when you arrive; I will meet you.",
+      "review_status": "native_speaker_review_required",
+      "target_duration_seconds": [8, 15]
+    },
+    {
+      "language": "te",
+      "id": "E01",
+      "split": "evaluation",
+      "topic": "classroom_plan",
+      "text": "ఈ రోజు మధ్యాహ్నం మన తరగతి మేడ మీద ఉన్న గదిలో జరుగుతుంది. ఒక నోటు పుస్తకం, పెన్సిల్ తీసుకురండి, కానీ పెద్ద సంచిని కిందే ఉంచండి. అందరూ వచ్చిన తర్వాత మనం పాఠం మొదలుపెడదాం.",
+      "expected_meaning_en": "This afternoon's class is in the upstairs room. Bring a notebook and pencil, leave the large bag downstairs, and begin the lesson after everyone arrives.",
+      "review_status": "native_speaker_review_required",
+      "target_duration_seconds": [8, 15]
+    },
+    {
+      "language": "te",
+      "id": "E02",
+      "split": "evaluation",
+      "topic": "changed_garden_plan",
+      "text": "మన ప్రణాళిక మారింది. శనివారం బదులు ఆదివారం తోటకు వెళ్దాం. మూడు కప్పులు, తాగడానికి నీళ్లు తీసుకురండి. ఆ రోజు వర్షం పడితే బయటకు వెళ్లకుండా ఇంట్లోనే ఉందాం, మరో రోజు వెళ్లడానికి సమయం చూసుకుందాం.",
+      "expected_meaning_en": "The garden visit changes from Saturday to Sunday. Bring three cups and drinking water. If it rains, stay home and find another day to go.",
+      "review_status": "native_speaker_review_required",
+      "target_duration_seconds": [8, 15]
+    },
+    {
+      "language": "te",
+      "id": "E03",
+      "split": "evaluation",
+      "topic": "room_instructions",
+      "text": "తలుపు దగ్గర ఉన్న కిటికీని తెరిచి, అలమారా పక్కన ఉన్న కిటికీని మూసేయండి. చిన్న కుర్చీని గది మూలలో పెట్టండి. అందరికీ అర్థమయ్యేలా కొంచెం నెమ్మదిగా మాట్లాడండి, ముఖ్యమైన విషయాలు స్పష్టంగా చెప్పండి. నేను జాగ్రత్తగా వింటాను.",
+      "expected_meaning_en": "Open the window near the door, close the one beside the cupboard, and put the small chair in the corner. Speak slowly and clearly so everyone understands; I will listen carefully.",
+      "review_status": "native_speaker_review_required",
+      "target_duration_seconds": [8, 15]
+    },
+    {
+      "language": "mr",
+      "id": "C01",
+      "split": "calibration",
+      "topic": "library_meeting_time",
+      "text": "उद्या सकाळी ग्रंथालयासमोर मला दहा वाजता भेटा, अकरा वाजता नाही. समोरचा दरवाजा बंद असेल, तर डाव्या बाजूच्या मोठ्या झाडाजवळ थांबा. मी तिथे येऊन तुम्हाला भेटेन, तोपर्यंत तिथेच थांबा.",
+      "expected_meaning_en": "Meet outside the library tomorrow morning at ten, not eleven. If the front door is closed, wait near the large tree on the left until I arrive.",
+      "review_status": "native_speaker_review_required",
+      "target_duration_seconds": [8, 15]
+    },
+    {
+      "language": "mr",
+      "id": "C02",
+      "split": "calibration",
+      "topic": "books_and_water",
+      "text": "निळे पुस्तक टेबलावर ठेवा, लाल पुस्तक नाही. सोबत दोन रिकाम्या बाटल्या आणि अर्धा लिटर पाणी आणा. बाकीच्या वस्तू कपाटातच राहू द्या, त्या वस्तू आत्ता आणण्याची गरज नाही.",
+      "expected_meaning_en": "Put the blue book on the table, not the red one. Bring two empty bottles and half a litre of water. Leave the other items in the cupboard.",
+      "review_status": "native_speaker_review_required",
+      "target_duration_seconds": [8, 15]
+    },
+    {
+      "language": "mr",
+      "id": "C03",
+      "split": "calibration",
+      "topic": "park_directions",
+      "text": "मी उद्यानाच्या मुख्य प्रवेशद्वाराजवळ तुमची वाट पाहत आहे. डाव्या बाजूच्या छोट्या रस्त्याने या आणि चहाच्या दुकानाजवळ थांबा. तुम्ही तिथे पोहोचल्यावर मला कळवा, मग मी तुम्हाला भेटायला येईन. घाई करण्याची गरज नाही.",
+      "expected_meaning_en": "I am waiting near the park's main gate. Come along the small road on the left and stop near the tea shop. Tell me when you arrive; there is no need to hurry.",
+      "review_status": "native_speaker_review_required",
+      "target_duration_seconds": [8, 15]
+    },
+    {
+      "language": "mr",
+      "id": "E01",
+      "split": "evaluation",
+      "topic": "classroom_plan",
+      "text": "आज दुपारी आपला वर्ग वरच्या खोलीत होईल. एक वही आणि पेन्सिल आणा, पण मोठी पिशवी खालीच ठेवा. सर्वजण आल्यावर आपण अभ्यास सुरू करू. तोपर्यंत आपल्या जागेवर शांतपणे बसा.",
+      "expected_meaning_en": "This afternoon's class is in the upstairs room. Bring a notebook and pencil, leave the large bag downstairs, and begin studying after everyone arrives. Sit quietly until then.",
+      "review_status": "native_speaker_review_required",
+      "target_duration_seconds": [8, 15]
+    },
+    {
+      "language": "mr",
+      "id": "E02",
+      "split": "evaluation",
+      "topic": "changed_garden_plan",
+      "text": "आपला बेत बदलला आहे. शनिवारी जाण्याऐवजी आपण रविवारी बागेत जाऊ. सोबत तीन कप आणि पिण्याचे पाणी आणा. त्या दिवशी पाऊस पडला, तर आपण घरीच थांबू आणि दुसऱ्या दिवशी जाण्याचा विचार करू.",
+      "expected_meaning_en": "The garden visit changes from Saturday to Sunday. Bring three cups and drinking water. If it rains, stay home and consider going on another day.",
+      "review_status": "native_speaker_review_required",
+      "target_duration_seconds": [8, 15]
+    },
+    {
+      "language": "mr",
+      "id": "E03",
+      "split": "evaluation",
+      "topic": "room_instructions",
+      "text": "दरवाजाजवळची खिडकी उघडा आणि कपाटाजवळची खिडकी बंद करा. लहान खुर्ची खोलीच्या कोपऱ्यात ठेवा. सगळ्यांना तुमचे बोलणे समजावे म्हणून थोडे हळू बोला आणि महत्त्वाचे मुद्दे स्पष्ट सांगा. मी लक्ष देऊन ऐकेन.",
+      "expected_meaning_en": "Open the window near the door, close the window near the cupboard, and put the small chair in the corner. Speak slowly and clearly so everyone understands; I will listen carefully.",
+      "review_status": "native_speaker_review_required",
+      "target_duration_seconds": [8, 15]
+    }
+  ]
+}

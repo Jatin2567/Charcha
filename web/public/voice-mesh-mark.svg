@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-labelledby="name">
+  <title id="name">Artha-Mesh voice mesh</title>
+  <g fill="none" stroke="#b47a12" stroke-linecap="round" stroke-linejoin="round">
+    <path stroke-width="4" d="M5 12v8M12 5v22M20 8v16M27 12v8"/>
+    <path stroke-width="3" d="M5 17c3 0 4-6 7-6s5 10 8 10 4-6 7-6"/>
+  </g>
+</svg>

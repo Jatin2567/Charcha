@@ -38,6 +38,7 @@ export function Settings() {
             </label>
             <LanguageSelect
               value={preferences.language}
+              scriptedOnly={health?.mode === 'demo'}
               onChange={(language) => setPreferences({ language })}
             />
             <button
@@ -67,7 +68,7 @@ export function Settings() {
           <section className="panel">
             <div className="panel-head">
               <h2>Microphone & speaker</h2>
-              <Headphones size={18} color="#849676" />
+              <Headphones size={18} color="var(--accent)" />
             </div>
             <p className="panel-intro">
               Device access is requested only when you test your microphone.
@@ -146,19 +147,23 @@ export function Settings() {
           <section className="panel">
             <div className="panel-head">
               <h2>Workspace connection</h2>
-              <Server size={18} color="#849676" />
+              <Server size={18} color="var(--accent)" />
             </div>
             <Badge tone={health?.mode === 'live' ? 'green' : 'orange'}>
               {health?.mode === 'live'
-                ? 'Live services available'
-                : health
-                  ? 'Scripted demonstration'
-                  : 'Service unavailable'}
+                ? 'Live configuration present'
+                : health?.mode === 'transport'
+                  ? 'Local original audio test'
+                  : health
+                    ? 'Scripted demonstration'
+                    : 'Service unavailable'}
             </Badge>
             <p className="panel-intro">
               {health?.mode === 'live'
-                ? 'The server reports live provider configuration. Join a room to test audio and interpretation.'
-                : 'Demo conversations use a fixed script. Connect the backend and provider keys for live interpretation.'}
+                ? 'The server reports provider configuration; service availability is unverified. Join a room to check devices, and use an approved flow to test interpretation.'
+                : health?.mode === 'transport'
+                  ? 'The local media server relays original microphone audio. Speech APIs, translation and cloning are disabled in this stage.'
+                  : 'Demo conversations use a fixed script. Connect the backend and provider keys for live interpretation.'}
             </p>
             <ErrorNotice message={serviceError} />
             <div className="divider" />

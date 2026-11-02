@@ -21,12 +21,12 @@ def test_report_excludes_demo_and_failed_timings_and_requires_bilingual_rater(tm
     predictions = tmp_path / "predictions.jsonl"
     ratings = tmp_path / "ratings.csv"
     dataset.write_text("\n".join(json.dumps({
-        "id": case_id, "source_text": "50 cartons", "reference_draft": "draft",
+        "id": case_id, "source_text": "50 pencils", "reference_draft": "draft",
         "reference_status": "unreviewed_draft", "critical_values": {"numeric": ["50"]},
     }) for case_id in ("live", "demo", "failed")), encoding="utf-8")
     predictions.write_text("\n".join(json.dumps(row) for row in [
-        {"case_id": "live", "mode": "live", "status": "complete", "translation": "50 boxes", "server_pipeline_ms": 900, "measurement": "server_pipeline"},
-        {"case_id": "demo", "mode": "demo", "status": "complete", "translation": "50 boxes", "server_pipeline_ms": 1, "measurement": "server_pipeline"},
+        {"case_id": "live", "mode": "live", "status": "complete", "translation": "50 pencils", "server_pipeline_ms": 900, "measurement": "server_pipeline"},
+        {"case_id": "demo", "mode": "demo", "status": "complete", "translation": "50 pencils", "server_pipeline_ms": 1, "measurement": "server_pipeline"},
         {"case_id": "failed", "mode": "live", "status": "error", "translation": "", "server_pipeline_ms": 5, "measurement": "server_pipeline"},
     ]), encoding="utf-8")
     evaluation.write_csv(ratings, evaluation.RATING_COLUMNS, [

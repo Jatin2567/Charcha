@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-labelledby="name">
+  <title id="name">Artha-Mesh</title>
+  <style>path{stroke:#365bd6}@media(prefers-color-scheme:dark){path{stroke:#8db5ff}}</style>
+  <path d="M3 14v4M6.25 11v10M9.5 13v6M12.75 9v14M16 3v26M19.25 5v22M22.5 9v14M25.75 7v18M29 13v6" fill="none" stroke-width="2" stroke-linecap="round"/>
+</svg>

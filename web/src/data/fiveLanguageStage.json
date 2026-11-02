@@ -1,0 +1,27 @@
+{
+  "id": "five-language-conference-20261031",
+  "modal_usd_limit": 5,
+  "flow_limit": 10,
+  "standard_voice_only": true,
+  "routes": [
+    ["hi", "ta"],
+    ["ta", "bn"],
+    ["bn", "te"],
+    ["te", "mr"],
+    ["mr", "hi"],
+    ["hi", "bn"],
+    ["ta", "te"],
+    ["bn", "mr"],
+    ["te", "hi"],
+    ["mr", "ta"]
+  ],
+  "per_flow": {
+    "stt_connections": 1,
+    "stt_seconds": 25,
+    "mt_requests": 1,
+    "mt_characters": 500,
+    "tts_requests": 1,
+    "tts_characters": 300,
+    "voice_enrollments": 0
+  }
+}

@@ -15,6 +15,7 @@ from ..config import Settings
 from ..errors import ProviderError
 from ..models import BCP47
 from ..services.usage import UsageGuard, provider_error
+from ..voice_catalog import select_stock_voice
 
 
 @dataclass
@@ -46,6 +47,10 @@ class GnaniSpeech:
             "lang_code": BCP47[language], "x-sample-rate": "16000", "x-format": "transcribe",
             "x-min-silence-ms": "600", "x-max-speech-s": "20",
         }
+        if self.settings.gnani_stt_model is not None:
+            # The streaming endpoint selects v3.0 through the upgrade header,
+            # not a query parameter or an additional websocket message.
+            headers["model"] = self.settings.gnani_stt_model
         meter = sender = None
 
         async def metering():
@@ -152,7 +157,11 @@ class GnaniSpeech:
         if embedding:
             request["speaker_embedding"] = embedding
         else:
-            request.update(voice=self.settings.timbre_voice, language=BCP47[language], speed=1.0)
+            overrides = {code: getattr(self.settings, f"timbre_voice_{code}") for code in BCP47}
+            request.update(voice=select_stock_voice(
+                language, model=self.settings.timbre_model,
+                global_voice=self.settings.timbre_voice, overrides=overrides,
+            ), language=BCP47[language], speed=1.0)
         try:
             async with self.usage.operation({"tts_requests": 1, "tts_characters": len(text)}), websockets.connect(
                 self.settings.gnani_tts_url,

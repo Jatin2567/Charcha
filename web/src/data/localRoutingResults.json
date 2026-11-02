@@ -1,0 +1,212 @@
+{
+  "schema_version": 1,
+  "record_type": "local_synthetic_first_audio_evidence",
+  "recorded_on": "2026-10-30",
+  "source_report_sha256": "342ae5b17b545ae4ebb9dd741188a4ff5c19ce90113cf2c04e6326de9f57002b",
+  "synthetic": true,
+  "scope": "first_nonzero_decoded_pcm_per_route",
+  "languages": [
+    "hi",
+    "ta",
+    "bn",
+    "te",
+    "mr"
+  ],
+  "local_peers": 6,
+  "sequential_sources": 5,
+  "translation_branches": 20,
+  "first_audible_recipient_routes": 25,
+  "same_language_forwarding_routes": 1,
+  "synthetic_camera_receivers": 5,
+  "camera_toggle_preserved_microphones": true,
+  "wall_seconds": 40.738,
+  "provider_requests": 0,
+  "screening": "off",
+  "voice_cloning": false,
+  "simultaneous_speech_verified": false,
+  "continuous_playback_verified": false,
+  "live_provider_capacity_verified": false,
+  "physical_device_acceptance_verified": false,
+  "listener_playback_latency_ms": null,
+  "observation_boundary": "Same-process source capture to received decoded PCM. Includes fixture recognition threshold, local RTC negotiation/codec/buffering and test-double synthesis; not human/listener/hardware/Gnani/Evon or real translation latency.",
+  "fixture_revision_note": "The corrected receiver fixture closes each decoded-audio observer after its first nonzero frame while keeping subscriptions and routing checks active.",
+  "shutdown_warning": "After fixture cleanup reported no failures, the SDK logged a late publisher negotiation error: the SDP offer reached an already closed connection. This remains a shutdown regression to investigate.",
+  "prior_stress_failures_preserved": true,
+  "observations": [
+    {
+      "source_language": "ta",
+      "target_language": "hi",
+      "listener_label": "Hindi listener",
+      "kind": "synthetic_translation",
+      "capture_to_first_received_pcm_ms": 1226.58
+    },
+    {
+      "source_language": "bn",
+      "target_language": "hi",
+      "listener_label": "Hindi listener",
+      "kind": "synthetic_translation",
+      "capture_to_first_received_pcm_ms": 843.88
+    },
+    {
+      "source_language": "te",
+      "target_language": "hi",
+      "listener_label": "Hindi listener",
+      "kind": "synthetic_translation",
+      "capture_to_first_received_pcm_ms": 846.85
+    },
+    {
+      "source_language": "mr",
+      "target_language": "hi",
+      "listener_label": "Hindi listener",
+      "kind": "synthetic_translation",
+      "capture_to_first_received_pcm_ms": 1121.39
+    },
+    {
+      "source_language": "hi",
+      "target_language": "ta",
+      "listener_label": "Tamil listener A",
+      "kind": "synthetic_translation",
+      "capture_to_first_received_pcm_ms": 2011.55
+    },
+    {
+      "source_language": "bn",
+      "target_language": "ta",
+      "listener_label": "Tamil listener A",
+      "kind": "synthetic_translation",
+      "capture_to_first_received_pcm_ms": 968.61
+    },
+    {
+      "source_language": "te",
+      "target_language": "ta",
+      "listener_label": "Tamil listener A",
+      "kind": "synthetic_translation",
+      "capture_to_first_received_pcm_ms": 846.88
+    },
+    {
+      "source_language": "mr",
+      "target_language": "ta",
+      "listener_label": "Tamil listener A",
+      "kind": "synthetic_translation",
+      "capture_to_first_received_pcm_ms": 1121.71
+    },
+    {
+      "source_language": "hi",
+      "target_language": "bn",
+      "listener_label": "Bengali listener",
+      "kind": "synthetic_translation",
+      "capture_to_first_received_pcm_ms": 944.52
+    },
+    {
+      "source_language": "ta",
+      "target_language": "bn",
+      "listener_label": "Bengali listener",
+      "kind": "synthetic_translation",
+      "capture_to_first_received_pcm_ms": 1151.47
+    },
+    {
+      "source_language": "te",
+      "target_language": "bn",
+      "listener_label": "Bengali listener",
+      "kind": "synthetic_translation",
+      "capture_to_first_received_pcm_ms": 746.46
+    },
+    {
+      "source_language": "mr",
+      "target_language": "bn",
+      "listener_label": "Bengali listener",
+      "kind": "synthetic_translation",
+      "capture_to_first_received_pcm_ms": 921.93
+    },
+    {
+      "source_language": "hi",
+      "target_language": "te",
+      "listener_label": "Telugu listener",
+      "kind": "synthetic_translation",
+      "capture_to_first_received_pcm_ms": 2375.93
+    },
+    {
+      "source_language": "ta",
+      "target_language": "te",
+      "listener_label": "Telugu listener",
+      "kind": "synthetic_translation",
+      "capture_to_first_received_pcm_ms": 1414.94
+    },
+    {
+      "source_language": "bn",
+      "target_language": "te",
+      "listener_label": "Telugu listener",
+      "kind": "synthetic_translation",
+      "capture_to_first_received_pcm_ms": 968.75
+    },
+    {
+      "source_language": "mr",
+      "target_language": "te",
+      "listener_label": "Telugu listener",
+      "kind": "synthetic_translation",
+      "capture_to_first_received_pcm_ms": 1202.63
+    },
+    {
+      "source_language": "hi",
+      "target_language": "mr",
+      "listener_label": "Marathi listener",
+      "kind": "synthetic_translation",
+      "capture_to_first_received_pcm_ms": 2185.4
+    },
+    {
+      "source_language": "ta",
+      "target_language": "mr",
+      "listener_label": "Marathi listener",
+      "kind": "synthetic_translation",
+      "capture_to_first_received_pcm_ms": 1414.9
+    },
+    {
+      "source_language": "bn",
+      "target_language": "mr",
+      "listener_label": "Marathi listener",
+      "kind": "synthetic_translation",
+      "capture_to_first_received_pcm_ms": 949.03
+    },
+    {
+      "source_language": "te",
+      "target_language": "mr",
+      "listener_label": "Marathi listener",
+      "kind": "synthetic_translation",
+      "capture_to_first_received_pcm_ms": 846.91
+    },
+    {
+      "source_language": "hi",
+      "target_language": "ta",
+      "listener_label": "Tamil listener B",
+      "kind": "synthetic_translation",
+      "capture_to_first_received_pcm_ms": 2159.39
+    },
+    {
+      "source_language": "ta",
+      "target_language": "ta",
+      "listener_label": "Tamil listener B",
+      "kind": "same_language_forwarding",
+      "capture_to_first_received_pcm_ms": 792.54
+    },
+    {
+      "source_language": "bn",
+      "target_language": "ta",
+      "listener_label": "Tamil listener B",
+      "kind": "synthetic_translation",
+      "capture_to_first_received_pcm_ms": 968.78
+    },
+    {
+      "source_language": "te",
+      "target_language": "ta",
+      "listener_label": "Tamil listener B",
+      "kind": "synthetic_translation",
+      "capture_to_first_received_pcm_ms": 847.01
+    },
+    {
+      "source_language": "mr",
+      "target_language": "ta",
+      "listener_label": "Tamil listener B",
+      "kind": "synthetic_translation",
+      "capture_to_first_received_pcm_ms": 1255.82
+    }
+  ]
+}

@@ -1,0 +1,254 @@
+.voice-shield {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.shield-intro {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.shield-intro h3 {
+  margin: 0 0 6px;
+}
+.shield-emblem {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  border: 1px solid var(--accent-outline);
+  border-radius: 14px;
+  color: var(--accent-hover);
+  background: var(--accent-soft);
+}
+.shield-description,
+.shield-example p,
+.shield-signals p {
+  margin: 0;
+  line-height: 1.65;
+}
+.meeting-app .voice-shield .shield-intro h3 {
+  font-size: 15px;
+}
+.shield-example {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+}
+.shield-example-title {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 15px;
+}
+.shield-tone-blue {
+  border-color: var(--accent-outline);
+  background: var(--accent-soft);
+}
+.shield-tone-blue .shield-example-title {
+  color: var(--accent-hover);
+}
+.shield-footnote {
+  margin: -6px 0 0;
+  line-height: 1.5;
+}
+.shield-validation {
+  border-top: 1px solid var(--border);
+  padding-top: 18px;
+}
+.voice-shield dl {
+  display: grid;
+  gap: 12px;
+  margin: 14px 0 16px;
+}
+.voice-shield dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.voice-shield dd {
+  margin: 0;
+  text-align: right;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.voice-shield dt {
+  font-size: 12px;
+}
+.voice-shield .text-link {
+  font-size: 12px;
+  line-height: 1.6;
+}
+.shield-signals {
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+.shield-signals summary {
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+}
+.shield-signals summary span {
+  margin-left: 8px;
+  color: var(--muted);
+}
+.shield-signals p {
+  margin: 12px 0;
+}
+.shield-stale {
+  border-left: 3px solid var(--warning-border);
+  padding: 8px 10px;
+  background: var(--warning-bg);
+}
+.shield-observations {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 0;
+}
+.shield-observations li {
+  padding: 12px 0;
+  border-top: 1px solid var(--border);
+}
+.shield-observations small {
+  overflow-wrap: anywhere;
+}
+.shield-observations .button {
+  margin-top: 12px;
+}
+.shield-observations p,
+.shield-validation p,
+.shield-empty {
+  line-height: 1.65;
+  margin: 12px 0;
+}
+.shield-observation-flagged {
+  border-left: 3px solid var(--warning-border);
+  padding-left: 12px !important;
+}
+.shield-signal-label {
+  font-weight: 650;
+}
+.shield-validation .text-link {
+  display: flex;
+  margin-top: 10px;
+}
+.shield-model-details {
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.shield-call-alert {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 14px;
+  border: 1px solid var(--warning-border);
+  border-radius: 10px;
+  background: var(--warning-bg);
+  color: var(--warning-ink);
+  margin: 0 0 16px;
+}
+.shield-call-alert > svg {
+  flex-shrink: 0;
+}
+.shield-call-alert > div {
+  flex: 1;
+  min-width: 180px;
+}
+.shield-call-alert strong {
+  font-size: 14px;
+}
+.shield-call-alert p {
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 5px 0 0;
+  color: var(--warning-ink);
+}
+.shield-alert-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--accent-hover);
+  background: var(--accent-soft);
+  padding: 10px;
+  border-radius: 6px;
+}
+.shield-alert-message {
+  display: flex;
+  gap: 14px;
+  margin: 22px 0 16px;
+  padding: 16px;
+  border: 1px solid var(--warning-border);
+  border-radius: 10px;
+  background: var(--warning-bg);
+  color: var(--warning-ink);
+}
+.shield-alert-message > svg {
+  flex-shrink: 0;
+}
+.shield-alert-message h3 {
+  margin: 0 0 8px;
+  font-size: 17px;
+}
+.shield-alert-message p,
+.shield-alert-note {
+  font-size: 13px;
+  line-height: 1.65;
+}
+.shield-alert-message p {
+  margin: 0;
+}
+.shield-alert-note {
+  margin-bottom: 20px;
+}
+.meeting-app .shield-launch {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  padding: 7px 10px;
+  min-height: 34px;
+  border: 1px solid var(--call-border);
+  border-radius: 8px;
+  color: var(--call-ink);
+  background: var(--call-surface);
+  font-size: 12px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.meeting-app .shield-launch:hover,
+.meeting-app .shield-launch[aria-expanded='true'] {
+  background: var(--accent);
+  border-color: var(--accent-outline);
+}
+.meeting-app .shield-launch small {
+  color: var(--call-muted);
+  font-size: 10px;
+}
+.meeting-app .meeting-stage-heading {
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.meeting-app .screening-card-badge {
+  position: absolute;
+  top: 45px;
+  left: 14px;
+  z-index: 3;
+  max-width: calc(100% - 28px);
+  margin: 0;
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-size: 11px;
+  line-height: 1.5;
+  background: var(--surface-soft);
+  color: var(--ink);
+}
+.meeting-app .screening-card-review {
+  background: var(--warning-bg);
+  color: var(--warning-ink);
+  border: 1px solid var(--warning-border);
+}

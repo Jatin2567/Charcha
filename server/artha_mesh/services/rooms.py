@@ -9,11 +9,13 @@ from ..models import JoinRoom, Participant, UpdateParticipant
 from ..providers.demo import SAMPLES
 from ..store import RoomState, Store
 from ..transport.tokens import agent_identity, room_token
+from .readiness import conference_readiness
 
 
 class RoomService:
-    def __init__(self, store: Store, pipeline, transport, voices):
+    def __init__(self, store: Store, pipeline, transport, voices, usage=None):
         self.store, self.pipeline, self.transport, self.voices = store, pipeline, transport, voices
+        self.usage = usage
         self.locks: dict[str, asyncio.Lock] = {}
 
     async def prune_expired(self):
@@ -27,7 +29,7 @@ class RoomService:
         expired_rooms = self.store.prune()
         for code in expired_rooms:
             await self.pipeline.close_room(code)
-            if self.store.settings.mode == "live":
+            if self.store.settings.mode in {"live", "transport"}:
                 for participant_id in expired_room_members.get(code, []):
                     await self.transport.remove(code, participant_id)
             await self.transport.close_room(code)
@@ -50,11 +52,13 @@ class RoomService:
 
     async def join(self, code: str, request: JoinRoom, token: str | None = None):
         state = self.store.room(code)
-        if self.store.settings.mode == "live":
-            missing = self.store.settings.missing_live_config()
+        if self.store.settings.mode in {"live", "transport"}:
+            # Joining the SFU is free; missing translation providers must not
+            # prevent an original-audio conference or a muted setup session.
+            missing = self.store.settings.missing_transport_config()
             if missing:
-                raise HTTPException(503, "Live setup incomplete. Configure: " + ", ".join(missing))
-        if self.store.settings.mode == "live" and not request.consent:
+                raise HTTPException(503, "Audio setup incomplete. Configure: " + ", ".join(missing))
+        if self.store.settings.mode in {"live", "transport"} and not request.consent:
             raise HTTPException(422, "Consent to process your conversation audio is required")
         if request.voice_mode == "cloned":
             # Enrollment belongs to an existing member. Do not transfer biometric
@@ -65,13 +69,13 @@ class RoomService:
             if len(humans) >= self.store.settings.max_participants:
                 raise HTTPException(409, "This conversation is full")
             participant = Participant(name=request.name, language=request.language, muted=True)
-            if self.store.settings.mode == "live":
+            if self.store.settings.mode in {"live", "transport"}:
                 # Connect first, so a failed agent cannot yield a success-looking room.
                 await self.transport.ensure_room(state)
             state.room.participants.append(participant)
             session_token = self.store.issue_session(state, participant.id)
             livekit = None
-            if self.store.settings.mode == "live":
+            if self.store.settings.mode in {"live", "transport"}:
                 livekit = {
                     "url": self.store.settings.livekit_url,
                     "token": room_token(self.store.settings, code, participant.id, participant.name,
@@ -108,11 +112,28 @@ class RoomService:
         session = self.store.authenticate(token, code)
         state = self.store.room(code)
         participant = next(p for p in state.room.participants if p.id == session.participant_id)
+        language_changed = request.language is not None and request.language != participant.language
+        voice_changed = request.voice_mode is not None and request.voice_mode != participant.voice_mode
+        profile_changed = request.voice_profile_id is not None and request.voice_profile_id != state.voice_profiles.get(participant.id)
+        mute_changed = request.muted is not None and request.muted != participant.muted
+        starts_source = ((request.muted is False and participant.muted)
+                         or (request.muted is not True and not participant.muted
+                             and (language_changed or voice_changed or profile_changed)))
+        if (starts_source and self.usage is not None
+                and self.store.settings.mode == "live" and self.store.settings.usage_require_flow_approval):
+            candidate = participant.model_copy(update={"muted": True,
+                "language": request.language or participant.language,
+                "voice_mode": request.voice_mode or participant.voice_mode})
+            readiness = conference_readiness(self.store, state, candidate, self.transport, self.usage)
+            if not readiness.microphone.can_unmute:
+                raise HTTPException(409, {"code": readiness.microphone.reason_code, "message": readiness.microphone.detail})
         selected = request.voice_mode or participant.voice_mode
+        if self.store.settings.mode == "transport" and selected == "cloned":
+            raise HTTPException(409, "Voice cloning is disabled during the original-audio transport test")
         profile_id = request.voice_profile_id or state.voice_profiles.get(participant.id)
         if selected == "cloned":
             self.voices.require_owned(profile_id, token)
-        if request.language is not None or request.voice_mode is not None or request.voice_profile_id is not None:
+        if language_changed or voice_changed or profile_changed:
             await self.pipeline.cancel_speaker(code, participant.id)
         if request.language is not None:
             participant.language = request.language
@@ -124,15 +145,18 @@ class RoomService:
             state.voice_profiles.pop(participant.id, None)
         if request.muted is not None:
             participant.muted = request.muted
-        if (request.language is not None or request.voice_mode is not None
-                or request.voice_profile_id is not None or request.muted is not None):
+        if language_changed or voice_changed or profile_changed or mute_changed:
             if request.muted is True:
                 await self.pipeline.cancel_speaker(code, participant.id)
             await self.transport.reconfigure(code, participant.id)
-        else:
-            await self.transport.reconfigure(code)
         state.broadcast("participant.updated", {"participant": participant.model_dump(mode="json")})
         return participant
+
+    def conference_readiness(self, code: str, token: str):
+        session = self.store.authenticate(token, code)
+        state = self.store.room(code)
+        member = next(row for row in state.room.participants if row.id == session.participant_id)
+        return conference_readiness(self.store, state, member, self.transport, self.usage)
 
     async def start_demo(self, code: str):
         if self.store.settings.mode != "demo":

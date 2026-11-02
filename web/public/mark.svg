@@ -1,1 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" rx="12" fill="#0c7561"/><path d="M11 25 20 10l9 15M14 21h12M11 30l9-15 9 15" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-labelledby="name">
+  <title id="name">Artha-Mesh</title>
+  <path fill="#365bd6" d="M14 2h20c7.2 0 12 4.8 12 12v15c0 7.2-4.8 12-12 12H19l-9.5 5.1c-1 .6-2.3-.2-2.3-1.4v-6C3.9 36.7 2 33.3 2 29V14C2 6.8 6.8 2 14 2Z"/>
+  <g fill="none" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round">
+    <path stroke="#cbd8ff" d="m24 29 6-11 4.8 8.6H39"/>
+    <path stroke="#fff" d="M9 26.6h3.3L18.7 13 24 29"/>
+  </g>
+</svg>

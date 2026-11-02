@@ -40,6 +40,17 @@ import { languageName } from '../types/domain';
 import type { Language } from '../types/domain';
 import type { PerformanceFilter, PerformanceSample } from '../types/performance';
 import './Performance.css';
+import { ColdStartComparison } from '../components/ColdStartComparison';
+import { LatencyGroups } from '../components/LatencyGroups';
+import { FiveLanguagePlan } from '../components/FiveLanguagePlan';
+import { FiveLanguageResults } from '../components/FiveLanguageResults';
+import { ReceiverAudioMetrics } from '../components/ReceiverAudioMetrics';
+import { LocalRoutingEvidence } from '../components/LocalRoutingEvidence';
+import { HindiTamilProviderEvidence } from '../components/HindiTamilProviderEvidence';
+import { TamilHindiFollowupEvidence } from '../components/TamilHindiFollowupEvidence';
+import { SpeechEndLatencyEvidence } from '../components/SpeechEndLatencyEvidence';
+import { LatencyLanguageGate } from '../components/LatencyLanguageGate';
+import { LaterWork } from '../components/LaterWork';
 
 const ms = (value: number | null) =>
   value === null || !Number.isFinite(value) ? 'N/A' : `${Math.round(value).toLocaleString()} ms`;
@@ -57,12 +68,12 @@ const acceptance = [
     'Hindi → Tamil and Tamil → Hindi. Each listener hears the chosen language, with no original-track leakage or self echo.',
   ],
   [
-    'Three-person conversation',
-    'Add Bengali. Check all six directed paths and a same-language pair; verify one recognition stream per speaker.',
+    'Five-language routing',
+    'Check Hindi, Tamil, Bengali, Telugu and Marathi across all 20 directed paths and a same-language pair. Keep untested directions pending.',
   ],
   [
-    'Consented voice cloning',
-    'Enroll a 5–30 second spoken reference, verify the translated voice with its owner, then delete it and confirm standard-voice fallback.',
+    'Video and multi-person calls',
+    'Verify camera on/off, mute, rejoin and a five-person call. Each person hears the selected language without wrong-language audio, original double playback or self echo.',
   ],
   [
     'Accuracy with human review',
@@ -156,25 +167,26 @@ export function Performance() {
       key: 'queue_ms',
       label: 'Queue',
       detail: 'Utterance job waiting for its speaker’s pipeline',
-      color: '#7a9a8c',
+      color: 'var(--chart-queue)',
     },
     {
       key: 'stt_ms',
-      label: 'Recognition',
+      label: 'Speech recognition · STT',
       detail: 'Processing event received → final transcript received',
-      color: '#80a572',
+      color: 'var(--chart-speech)',
     },
     {
       key: 'mt_ms',
-      label: 'Translation',
+      label: 'Translation · MT',
       detail: 'Translation stage → text, including provider admission wait',
-      color: '#b1b85d',
+      color: 'var(--chart-translation)',
     },
     {
       key: 'tts_first_pcm_ms',
-      label: 'First speech audio',
-      detail: 'Synthesis stage → first PCM dispatched to LiveKit',
-      color: '#d9a768',
+      label: 'Speech synthesis · TTS',
+      detail:
+        'Output setup + synthesis → first PCM dispatched to LiveKit; includes subscriber wait',
+      color: 'var(--chart-synthesis)',
     },
   ] as const;
   const stageValues = stages.map((stage) => ({
@@ -189,9 +201,9 @@ export function Performance() {
   return (
     <div className="performance-page">
       <PageHeading
-        eyebrow="EVIDENCE, AT A GLANCE"
-        title="Performance & readiness."
-        description="See what is measured, what is configured, and what still needs a real conversation."
+        eyebrow="CALL QUALITY & MEASUREMENTS"
+        title="Call performance."
+        description="Review translation speed, receiver audio and connection health. Missing measurements stay visible."
         action={
           <button
             className="button secondary"
@@ -200,11 +212,32 @@ export function Performance() {
             }
           >
             <Settings2 size={16} />
-            Setup requirements
+            Setup checklist
             <ChevronDown size={14} />
           </button>
         }
       />
+
+      <nav className="performance-section-nav" aria-label="Performance sections">
+        {[
+          ['Translation', 'live-latency'],
+          ['Connection health', 'connection-health'],
+          ['Test plan', 'test-plan'],
+          ['Saved checks', 'saved-checks'],
+          ['Setup', 'readiness'],
+        ].map(([label, id]) => (
+          <button
+            key={id}
+            className="button secondary"
+            aria-controls={id}
+            onClick={() =>
+              document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            }
+          >
+            {label}
+          </button>
+        ))}
+      </nav>
 
       <section className="performance-scope">
         <span className="performance-scope-icon">
@@ -215,12 +248,20 @@ export function Performance() {
             <h2>
               {mode === 'live'
                 ? 'Live workspace · server measurements'
-                : mode === 'demo'
-                  ? 'Scripted demo · no live benchmark'
-                  : 'Workspace not connected'}
+                : mode === 'transport'
+                  ? 'Original audio · network checks only'
+                  : mode === 'demo'
+                    ? 'Scripted demo · no live benchmark'
+                    : 'Workspace not connected'}
             </h2>
             <Badge tone={mode === 'live' ? 'green' : 'orange'}>
-              {mode === 'live' ? 'Live mode' : mode === 'demo' ? 'Demonstration' : 'Setup required'}
+              {mode === 'transport'
+                ? 'Raw audio test'
+                : mode === 'live'
+                  ? 'Live mode'
+                  : mode === 'demo'
+                    ? 'Demonstration'
+                    : 'Setup required'}
             </Badge>
           </div>
           <p>
@@ -249,7 +290,7 @@ export function Performance() {
       </div>
       <ErrorNotice message={perf.error} />
 
-      <div className="performance-controls">
+      <div className="performance-controls" id="live-latency">
         <div className="performance-live-status">
           <span
             className={`status-dot ${perf.autoRefresh && perf.visible && membership && !membership.localDemo ? '' : 'performance-dot-paused'}`}
@@ -359,7 +400,7 @@ export function Performance() {
         <article>
           <span>
             <Timer size={16} />
-            Typical · p50
+            Server first audio · p50
           </span>
           <strong>{ms(summary.p50_ms)}</strong>
           <small>
@@ -371,7 +412,7 @@ export function Performance() {
         <article>
           <span>
             <Activity size={16} />
-            Tail · p95
+            Server first audio · p95
           </span>
           <strong>{ms(summary.p95_ms)}</strong>
           <small>Nearest-rank percentile</small>
@@ -401,6 +442,7 @@ export function Performance() {
           <small>Failures remain in the record</small>
         </article>
       </div>
+      <LatencyGroups samples={filtered} />
       <div className="performance-analysis-grid">
         <section className="panel performance-trend">
           <div className="panel-head">
@@ -417,7 +459,7 @@ export function Performance() {
         </section>
         <section className="panel performance-stage-panel">
           <div className="panel-head">
-            <h2>Where time goes</h2>
+            <h2>Translation stages</h2>
             <Badge tone="neutral">Stage p50</Badge>
           </div>
           <p className="panel-intro">
@@ -450,10 +492,10 @@ export function Performance() {
         </section>
       </div>
 
-      <section className="panel performance-transport">
+      <section className="panel performance-transport" id="connection-health">
         <div className="panel-head">
           <div>
-            <h2>This browser’s media connection</h2>
+            <h2>Connection health</h2>
             <p className="panel-intro">
               WebRTC diagnostics shared by the open call tab. These measure the network and audio
               transport; they are separate from translation latency.
@@ -504,6 +546,8 @@ export function Performance() {
           transferred to this page.
         </p>
       </section>
+
+      <ReceiverAudioMetrics membership={membership} />
 
       <section className="panel performance-directions">
         <div className="panel-head">
@@ -648,18 +692,22 @@ export function Performance() {
             </span>
             <div>
               <h3>
-                {perf.report?.mode === 'demo'
-                  ? 'The demo is a walkthrough.'
-                  : membership
-                    ? 'Your measurements will appear here.'
-                    : 'No active room in this tab.'}
+                {perf.report?.mode === 'transport'
+                  ? 'No translation timings in raw audio mode.'
+                  : perf.report?.mode === 'demo'
+                    ? 'The demo is a walkthrough.'
+                    : membership
+                      ? 'Your measurements will appear here.'
+                      : 'No active room in this tab.'}
               </h3>
               <p>
-                {perf.report?.mode === 'demo'
-                  ? 'Scripted conversations show the experience; they do not establish model speed, quality or voice-clone performance.'
-                  : membership
-                    ? 'Use the call tab for live microphone speech or typed turns. This page reads measurements only.'
-                    : 'Open Performance from a live call to keep the call running and share its room access with the report tab.'}
+                {perf.report?.mode === 'transport'
+                  ? 'Keep the call open to view network statistics above. Record audible listener delay separately in Test lab; a network round trip is not speech-to-listener latency.'
+                  : perf.report?.mode === 'demo'
+                    ? 'Scripted conversations show the experience; they do not establish model speed, quality or voice-clone performance.'
+                    : membership
+                      ? 'Use the call tab for live microphone speech or typed turns. This page reads measurements only.'
+                      : 'Open Performance from a live call to keep the call running and share its room access with the report tab.'}
               </p>
             </div>
             {!membership && (
@@ -717,6 +765,43 @@ export function Performance() {
             </p>
           </div>
         </div>
+      </section>
+
+      <FiveLanguagePlan />
+
+      <div id="saved-checks" className="performance-checks-anchor" aria-hidden="true" />
+      <FiveLanguageResults />
+      <LaterWork>
+        <SpeechEndLatencyEvidence />
+        <LatencyLanguageGate />
+      </LaterWork>
+      <HindiTamilProviderEvidence />
+
+      <TamilHindiFollowupEvidence />
+
+      <LocalRoutingEvidence />
+
+      <section className="panel performance-saved-results">
+        <div className="panel-head">
+          <div>
+            <h2>Saved local test results</h2>
+            <p className="panel-intro">
+              Historical transport tests stay separate from this room’s current measurements.
+            </p>
+          </div>
+          <Badge tone="neutral">Reference evidence</Badge>
+        </div>
+        <details>
+          <summary>Review the local cold-start audio comparison</summary>
+          <ColdStartComparison />
+        </details>
+        <p className="performance-export-note">
+          Deepfake screening and voice cloning are outside the current translation stage. The saved
+          screening studies remain in Audio lab.
+        </p>
+        <Link className="text-link" to="/audio-lab">
+          Open Audio lab →
+        </Link>
       </section>
 
       <section className="performance-readiness" id="readiness">
@@ -812,7 +897,7 @@ export function Performance() {
       <section className="panel performance-acceptance">
         <div className="panel-head">
           <div>
-            <h2>Track B live acceptance</h2>
+            <h2>Standard-voice call acceptance</h2>
             <p className="panel-intro">
               A reviewer’s checklist. Tick only after witnessing the result; these marks are
               temporary and are not automated verification.
@@ -848,8 +933,8 @@ export function Performance() {
         </div>
         <p className="performance-export-note">
           <Info size={13} />
-          Track B covers interpretation and consented voice cloning. Voice-deepfake detection
-          belongs to Track A.
+          Complete these checks with standard voices and screening off. Deepfake screening and voice
+          cloning remain separate later stages.
         </p>
       </section>
       <div className="performance-reference-links">

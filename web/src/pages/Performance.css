@@ -7,6 +7,31 @@
 .performance-page .page-heading {
   margin-bottom: 4px;
 }
+.performance-section-nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.performance-section-nav .button {
+  color: var(--muted);
+  background: var(--canvas);
+}
+.performance-page #live-latency,
+.performance-page #connection-health,
+.performance-page #test-plan,
+.performance-page #readiness {
+  scroll-margin-top: 24px;
+}
+.performance-saved-results summary {
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  padding: 18px 0;
+}
+.performance-saved-results details > section {
+  margin-top: 12px;
+}
 .performance-page .panel {
   min-width: 0;
   margin: 0;
@@ -35,8 +60,8 @@
   align-items: center;
   gap: 18px;
   padding: 24px;
-  background: #edf3e9;
-  border: 1px solid #dce6d6;
+  background: var(--accent-soft);
+  border: 1px solid var(--border);
   border-radius: 13px;
 }
 .performance-scope-icon {
@@ -46,7 +71,7 @@
   place-items: center;
   background: #fff;
   border-radius: 14px;
-  color: var(--green);
+  color: var(--accent);
   flex-shrink: 0;
 }
 .performance-scope > div {
@@ -66,23 +91,23 @@
 .performance-scope p {
   font-size: 12px;
   line-height: 1.9;
-  color: #617561;
+  color: var(--muted);
   margin-top: 7px;
 }
 .performance-boundary {
   display: flex;
   gap: 11px;
   align-items: flex-start;
-  color: #6b796d;
+  color: var(--muted);
   font-size: 12px;
   line-height: 1.85;
 }
 .performance-boundary > svg {
-  color: #799078;
+  color: var(--muted);
   margin-top: 3px;
 }
 .performance-boundary strong {
-  color: #52644e;
+  color: var(--muted);
   font-weight: 600;
 }
 .performance-controls {
@@ -102,15 +127,15 @@
   flex-wrap: wrap;
   gap: 8px;
   font-size: 12px;
-  color: #526952;
+  color: var(--muted);
 }
 .performance-live-status small {
   font-size: 11px;
-  color: #85917f;
+  color: var(--muted);
   margin-left: 9px;
 }
 .status-dot.performance-dot-paused {
-  background: #b1b8ab;
+  background: var(--silver);
 }
 .performance-filters {
   display: grid;
@@ -142,19 +167,19 @@
   min-width: 0;
 }
 .performance-stats article:first-child {
-  background: #0e5b4b;
+  background: var(--call-bg);
   color: #fff;
-  border-color: #0e5b4b;
+  border-color: var(--call-bg);
 }
 .performance-stats article > span {
   display: flex;
   gap: 8px;
   align-items: center;
   font-size: 11px;
-  color: #70816f;
+  color: var(--muted);
 }
 .performance-stats article:first-child > span {
-  color: #c6dfc2;
+  color: var(--call-ink);
 }
 .performance-stats article > strong {
   display: block;
@@ -168,14 +193,14 @@
   font-size: 18px;
   font-style: normal;
   font-weight: 450;
-  color: #93a08e;
+  color: var(--muted);
 }
 .performance-stats small {
   font-size: 10px;
-  color: #8a9584;
+  color: var(--muted);
 }
 .performance-stats article:first-child small {
-  color: #b3d1ae;
+  color: var(--call-muted);
 }
 .performance-analysis-grid {
   display: grid;
@@ -189,7 +214,7 @@
   margin-top: 24px;
 }
 .performance-transport-stats > div {
-  border-left: 1px solid #e7ecdf;
+  border-left: 1px solid var(--border);
   padding-left: 18px;
 }
 .performance-transport-stats > div:first-child {
@@ -198,7 +223,7 @@
 }
 .performance-transport-stats span {
   font-size: 11px;
-  color: #718467;
+  color: var(--muted);
 }
 .performance-transport-stats strong {
   display: block;
@@ -211,7 +236,7 @@
   display: block;
   font-size: 10px;
   line-height: 1.8;
-  color: #91a084;
+  color: var(--muted);
   margin-top: 4px;
 }
 .performance-trend,
@@ -228,17 +253,17 @@
   gap: 11px;
 }
 .performance-chart-empty > svg {
-  color: #b4c3a3;
+  color: var(--muted);
 }
 .performance-chart-empty strong {
-  color: #657b5f;
+  color: var(--muted);
   font-size: 13px;
   font-weight: 550;
 }
 .performance-chart-empty p {
   font-size: 11px;
   line-height: 1.8;
-  color: #8b9684;
+  color: var(--muted);
   max-width: 280px;
 }
 .performance-chart {
@@ -254,19 +279,19 @@
   flex-direction: column;
   justify-content: space-between;
   font-size: 10px;
-  color: #91a088;
+  color: var(--muted);
 }
 .performance-chart-bars {
   display: flex;
   gap: 4px;
   align-items: flex-end;
   height: 100%;
-  border-bottom: 1px solid #dfe6d8;
+  border-bottom: 1px solid var(--border);
   background: repeating-linear-gradient(
     to bottom,
     transparent,
     transparent calc(50% - 1px),
-    #eef2e9 50%
+    var(--surface-soft) 50%
   );
 }
 .performance-chart-bars > div {
@@ -278,7 +303,7 @@
 }
 .performance-chart-bars i {
   width: 100%;
-  background: #5c9879;
+  background: var(--accent-outline);
   border-radius: 3px 3px 0 0;
   display: block;
   max-width: 26px;
@@ -289,15 +314,15 @@
   justify-content: space-between;
   gap: 8px;
   font-size: 9px;
-  color: #8b9983;
+  color: var(--muted);
   margin-top: 9px;
 }
 .performance-chart-note {
   padding-top: 13px;
-  border-top: 1px solid #eef1e8;
+  border-top: 1px solid var(--surface-soft);
   font-size: 10px;
   line-height: 1.8;
-  color: #92a084;
+  color: var(--muted);
 }
 .performance-stages {
   display: flex;
@@ -313,7 +338,7 @@
 }
 .performance-stages strong {
   font-weight: 550;
-  color: #5f7258;
+  color: var(--muted);
 }
 .performance-stages b {
   font-weight: 600;
@@ -321,7 +346,7 @@
 .performance-stage-bar {
   height: 6px;
   border-radius: 4px;
-  background: #f1f3ec;
+  background: var(--surface-soft);
   margin-top: 8px;
   overflow: hidden;
 }
@@ -333,19 +358,19 @@
 .performance-stages small {
   font-size: 10px;
   display: block;
-  color: #92a084;
+  color: var(--muted);
   margin-top: 6px;
   line-height: 1.7;
 }
 .performance-small {
-  color: #8d9984;
+  color: var(--muted);
   font-size: 10px;
 }
 .performance-table-wrap {
   overflow-x: auto;
   max-width: 100%;
   margin-top: 18px;
-  border: 1px solid #e8ece2;
+  border: 1px solid var(--border);
   border-radius: 8px;
 }
 .performance-page table {
@@ -359,25 +384,25 @@
   font-weight: 550;
 }
 .performance-page thead {
-  background: #f6f8f1;
-  color: #7c8a70;
+  background: var(--canvas);
+  color: var(--muted);
   font-size: 10px;
 }
 .performance-page th,
 .performance-page td {
   padding: 13px 14px;
-  border-bottom: 1px solid #edf0e7;
+  border-bottom: 1px solid var(--surface-soft);
 }
 .performance-page tbody tr:last-child th,
 .performance-page tbody tr:last-child td {
   border-bottom: 0;
 }
 .performance-page tbody tr:hover {
-  background: #fafbf7;
+  background: var(--canvas);
 }
 .performance-table-empty {
   padding: 30px 8px 10px;
-  color: #8a9980;
+  color: var(--muted);
   text-align: center;
   font-size: 12px;
 }
@@ -391,7 +416,7 @@
   gap: 7px;
   font-size: 10px;
   line-height: 1.8;
-  color: #8b9a80;
+  color: var(--muted);
   margin-top: 18px;
 }
 .performance-export-note > svg {
@@ -400,7 +425,7 @@
 .performance-sample-id {
   display: block;
   font-size: 10px;
-  color: #95a38a;
+  color: var(--muted);
   font-weight: 400;
   margin-top: 2px;
 }
@@ -416,8 +441,8 @@
   border-radius: 50%;
   display: grid;
   place-items: center;
-  background: #edf3e6;
-  color: #82a16c;
+  background: var(--surface-soft);
+  color: var(--muted);
   flex-shrink: 0;
 }
 .performance-log-empty h3 {
@@ -427,7 +452,7 @@
 .performance-log-empty p {
   font-size: 12px;
   line-height: 1.9;
-  color: #8c9a81;
+  color: var(--muted);
   margin-top: 7px;
   max-width: 550px;
 }
@@ -450,7 +475,7 @@
 .performance-definition-grid p {
   font-size: 12px;
   line-height: 1.9;
-  color: #7d8b73;
+  color: var(--muted);
   margin-top: 8px;
 }
 .performance-readiness {
@@ -471,7 +496,7 @@
 }
 .performance-section-heading p {
   font-size: 12px;
-  color: #89977f;
+  color: var(--muted);
   margin-top: 9px;
 }
 .performance-requirement-grid {
@@ -485,7 +510,7 @@
 }
 .performance-requirements > div {
   padding: 16px 0;
-  border-top: 1px solid #ecf0e4;
+  border-top: 1px solid var(--surface-soft);
 }
 .performance-requirements > div:first-child {
   padding-top: 0;
@@ -507,17 +532,17 @@
 .performance-requirements code {
   display: inline-block;
   font-size: 10px;
-  background: #f2f5ec;
+  background: var(--surface-soft);
   border-radius: 4px;
   padding: 3px 5px;
-  color: #74876a;
+  color: var(--muted);
   margin: 8px 0 4px;
   overflow-wrap: anywhere;
 }
 .performance-requirements p {
   font-size: 12px;
   line-height: 1.85;
-  color: #8a9980;
+  color: var(--muted);
 }
 .performance-manual-grid {
   display: grid;
@@ -535,9 +560,9 @@
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  background: #eaf1e1;
+  background: var(--surface-soft);
   border-radius: 8px;
-  color: #789566;
+  color: var(--muted);
 }
 .performance-manual-grid h3 {
   font-size: 12px;
@@ -550,7 +575,7 @@
 .performance-manual-grid p {
   font-size: 12px;
   line-height: 1.9;
-  color: #8c9a80;
+  color: var(--muted);
   margin-top: 8px;
 }
 .performance-acceptance > div:nth-child(2) {
@@ -560,7 +585,7 @@
   display: flex;
   gap: 13px;
   padding: 15px 0;
-  border-top: 1px solid #edf1e5;
+  border-top: 1px solid var(--surface-soft);
   position: relative;
   cursor: pointer;
 }
@@ -576,7 +601,7 @@
 .performance-check-icon {
   width: 20px;
   height: 20px;
-  border: 1px solid #ccd8c1;
+  border: 1px solid var(--border);
   border-radius: 5px;
   color: #fff;
   display: grid;
@@ -584,11 +609,11 @@
   flex-shrink: 0;
 }
 .performance-acceptance input:checked + .performance-check-icon {
-  background: #318266;
-  border-color: #318266;
+  background: var(--accent);
+  border-color: var(--accent);
 }
 .performance-acceptance input:focus-visible + .performance-check-icon {
-  outline: 3px solid #b3cf49;
+  outline: 3px solid var(--focus);
   outline-offset: 3px;
 }
 .performance-acceptance label strong {
@@ -600,7 +625,7 @@
   display: block;
   font-size: 12px;
   line-height: 1.9;
-  color: #8a9980;
+  color: var(--muted);
   margin-top: 4px;
 }
 .performance-reference-links {
@@ -609,11 +634,11 @@
   align-items: center;
   flex-wrap: wrap;
   font-size: 11px;
-  color: #79916c;
+  color: var(--muted);
   padding: 4px 0;
 }
 .performance-reference-links > span {
-  color: #9aa58f;
+  color: var(--muted);
 }
 .performance-reference-links a {
   display: flex;
@@ -621,12 +646,12 @@
   gap: 5px;
 }
 .performance-reference-links a:hover {
-  color: var(--green);
+  color: var(--accent);
   text-decoration: underline;
 }
 .high-contrast .performance-page p,
 .high-contrast .performance-page small {
-  color: #52634c;
+  color: var(--muted);
 }
 @media (max-width: 1100px) {
   .performance-stats {
@@ -821,4 +846,7 @@
   .performance-reference-links > span {
     width: 100%;
   }
+}
+.performance-checks-anchor {
+  scroll-margin-top: 90px;
 }

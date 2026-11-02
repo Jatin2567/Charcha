@@ -1,26 +1,22 @@
 import type { ReactNode } from 'react';
 import { X, Check, ArrowUpRight, LoaderCircle } from 'lucide-react';
-import { LANGUAGES } from '../types/domain';
+import { LANGUAGES, SCRIPTED_LANGUAGES, languageName } from '../types/domain';
 import type { Language } from '../types/domain';
 import { useEffect, useId, useRef } from 'react';
 export function Logo({ compact = false }: { compact?: boolean }) {
   return (
-    <span className="brand">
-      <svg viewBox="0 0 40 40" aria-hidden="true">
-        <rect width="40" height="40" rx="12" fill="currentColor" />
-        <path
-          d="M11 25 20 10l9 15M14 21h12M11 30l9-15 9 15"
-          stroke="white"
-          strokeWidth="2.3"
-          fill="none"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
+    <span className="brand" role="img" aria-label="Artha-Mesh">
+      <span
+        className="brand-mark"
+        aria-hidden="true"
+        style={{
+          maskImage: `url("${import.meta.env.BASE_URL}artha-waveform.svg")`,
+          WebkitMaskImage: `url("${import.meta.env.BASE_URL}artha-waveform.svg")`,
+        }}
+      />
       {!compact && (
-        <span>
-          artha<span className="brand-light">mesh</span>
-          <small>EVERY VOICE. UNDERSTOOD.</small>
+        <span className="brand-wordmark" aria-hidden="true">
+          Artha<span className="brand-light">-Mesh</span>
         </span>
       )}
     </span>
@@ -31,17 +27,32 @@ export function LanguageSelect({
   onChange,
   id = 'language',
   label = 'I want to hear',
+  scriptedOnly = false,
+  disabled = false,
 }: {
   value: Language;
   onChange: (l: Language) => void;
   id?: string;
   label?: string;
+  scriptedOnly?: boolean;
+  disabled?: boolean;
 }) {
+  const choices = scriptedOnly ? SCRIPTED_LANGUAGES : LANGUAGES;
   return (
     <label className="field" htmlFor={id}>
       <span>{label}</span>
-      <select id={id} value={value} onChange={(e) => onChange(e.target.value as Language)}>
-        {LANGUAGES.map((l) => (
+      <select
+        id={id}
+        value={value}
+        disabled={disabled}
+        onChange={(e) => onChange(e.target.value as Language)}
+      >
+        {!choices.some((entry) => entry.code === value) && (
+          <option value={value} disabled>
+            {languageName(value)} · requires live setup
+          </option>
+        )}
+        {choices.map((l) => (
           <option key={l.code} value={l.code}>
             {l.name} · {l.native}
           </option>
@@ -140,10 +151,14 @@ export function Modal({
   );
 }
 export function Toast({ message, onDone }: { message: string; onDone: () => void }) {
+  const dismiss = useRef(onDone);
   useEffect(() => {
-    const t = setTimeout(onDone, 4500);
+    dismiss.current = onDone;
+  }, [onDone]);
+  useEffect(() => {
+    const t = setTimeout(() => dismiss.current(), 4500);
     return () => clearTimeout(t);
-  }, [message, onDone]);
+  }, [message]);
   return (
     <div className="toast" role="status">
       <Check size={17} />

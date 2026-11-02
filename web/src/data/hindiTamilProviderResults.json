@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "record_type": "controlled_hindi_tamil_provider_evidence",
+  "recorded_on": "2026-10-30",
+  "source_report_sha256": "67d57e0072056216f7477909d0498a16b4bb7d22a632c32889cb11c0a5d19d65",
+  "plan_sha256": "1a417ec922ac7ec282e392ace944108748e00ab884ae2231f45324fb090a8041",
+  "source_provenance": "deliberately_generated_stock_voice_utterances",
+  "voice_mode": "standard",
+  "status": "stopped_no_retry",
+  "error_stage": "stt",
+  "cases": [
+    {
+      "case_id": "hi-ta-meeting-time",
+      "source_language": "hi",
+      "target_language": "ta",
+      "status": "provider_chain_complete_meaning_review_pending",
+      "meaning_review": "pending",
+      "source_preparation": {
+        "first_pcm_ms": 457.477,
+        "complete_ms": 2186.975
+      },
+      "stt_final_ms": 4348.833,
+      "mt_complete_ms": 630.005,
+      "target_synthesis": {
+        "first_pcm_ms": 478.525,
+        "complete_ms": 1853.365
+      },
+      "stt_start_to_target_first_pcm_ms": 5457.414,
+      "stt_start_to_target_complete_ms": 6832.315
+    },
+    {
+      "case_id": "ta-hi-book-colour",
+      "source_language": "ta",
+      "target_language": "hi",
+      "status": "error",
+      "meaning_review": "pending",
+      "source_preparation": {
+        "first_pcm_ms": 470.459,
+        "complete_ms": 1875.44
+      },
+      "stt_final_ms": null,
+      "mt_complete_ms": null,
+      "target_synthesis": null,
+      "stt_start_to_target_first_pcm_ms": null,
+      "stt_start_to_target_complete_ms": null
+    }
+  ],
+  "used": {
+    "stt_seconds": 19,
+    "stt_connections": 2,
+    "mt_requests": 1,
+    "mt_characters": 37,
+    "tts_requests": 3,
+    "tts_characters": 132,
+    "voice_enrollments": 0
+  },
+  "caps": {
+    "stt_seconds": 30,
+    "stt_connections": 2,
+    "mt_requests": 2,
+    "mt_characters": 1000,
+    "tts_requests": 4,
+    "tts_characters": 800,
+    "voice_enrollments": 0
+  },
+  "wall_seconds": 24.56,
+  "wall_target_seconds": 240,
+  "wall_target_exceeded": false,
+  "cleanup_complete": true,
+  "meaning_review": "pending",
+  "rtc_tested": false,
+  "physical_microphone_tested": false,
+  "listener_latency_ms": null,
+  "voice_cloning": false,
+  "screening_mode": "off",
+  "automatic_retries": 0,
+  "cost_reference": {
+    "currency": "INR",
+    "stt_per_hour": 27,
+    "tts_per_10000_characters": 27,
+    "local_usage_reference_inr": 0.4989,
+    "approved_maximum_reference_inr": 2.385,
+    "actual_provider_charge_inr": null,
+    "actual_modal_charge_usd": null,
+    "programme_credits_used": null
+  },
+  "boundary": "Stock-source TTS preparation is separate. STT-start to first target PCM includes connection setup and real-time source-audio transmission; it is not speech-end delay. RTC, physical capture and listener playback are excluded.",
+  "usage_boundary": "Exact local request/character reservations. STT seconds are reserved connection units, not verified provider-billed audio time. Reference pricing excludes Modal compute, rounding and taxes."
+}

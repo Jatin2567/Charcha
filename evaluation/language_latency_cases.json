@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "record_type": "ten_language_latency_draft_cases",
+  "source_reference_status": "draft_pending_fluent_review",
+  "purpose": "Ordinary conversation test prompts; no provider calls or accepted translations.",
+  "categories": {
+    "ordinary": {"expected_meaning": ["A greeting", "Ask whether the voice is clear"], "review_focus": ["polite question", "intent"]},
+    "negation": {"expected_meaning": ["Preserve the requested fact", "Keep the explicit rejection"], "review_focus": ["negation", "contrast"]},
+    "names": {"expected_meaning": ["Give the red book to Meena", "Give the green book to Ravi"], "review_focus": ["names", "colour-to-person association", "natural transliteration allowed"]},
+    "numbers": {"expected_meaning": ["Meet in Room AM-204", "Meeting time is 10:30"], "review_focus": ["room identifier AM-204", "time 10:30", "no invented date or time zone"]}
+  },
+  "languages": {
+    "hi": {
+      "ordinary": "नमस्ते। क्या आपको मेरी आवाज़ साफ़ सुनाई दे रही है?",
+      "negation": "हम 10 बजे मिलेंगे, 11 बजे नहीं।",
+      "negation_meaning": ["Meet at 10", "11 is explicitly rejected"],
+      "names": "लाल किताब मीना को और हरी किताब रवि को दीजिए।",
+      "numbers": "हम Room AM-204 में 10:30 बजे मिलेंगे।"
+    },
+    "ta": {
+      "ordinary": "வணக்கம். என் குரல் தெளிவாகக் கேட்கிறதா?",
+      "negation": "எனக்கு நீலப் புத்தகம் வேண்டும், சிவப்பு வேண்டாம்.",
+      "negation_meaning": ["The speaker wants the blue book", "Red is explicitly rejected"],
+      "names": "சிவப்புப் புத்தகத்தை மீனாவுக்கும் பச்சைப் புத்தகத்தை ரவிக்கும் கொடுங்கள்.",
+      "numbers": "நாம் Room AM-204 இல் 10:30 மணிக்குச் சந்திப்போம்."
+    },
+    "bn": {
+      "ordinary": "নমস্কার। আমার কথা কি স্পষ্ট শোনা যাচ্ছে?",
+      "negation": "আমরা আজ নয়, কাল দেখা করব।",
+      "negation_meaning": ["Meet tomorrow", "Today is explicitly rejected"],
+      "names": "লাল বইটি মীনাকে এবং সবুজ বইটি রবিকে দিন।",
+      "numbers": "আমরা Room AM-204-এ 10:30-এ দেখা করব।"
+    },
+    "en": {
+      "ordinary": "Hello. Can you hear my voice clearly?",
+      "negation": "Please bring the blue book, not the red one.",
+      "negation_meaning": ["Bring the blue book", "Red is explicitly rejected"],
+      "names": "Give the red book to Meena and the green book to Ravi.",
+      "numbers": "We will meet in Room AM-204 at 10:30."
+    },
+    "te": {
+      "ordinary": "నమస్కారం. నా గొంతు స్పష్టంగా వినిపిస్తోందా?",
+      "negation": "నీలం పుస్తకం తీసుకురండి, ఎరుపు పుస్తకం కాదు.",
+      "negation_meaning": ["Bring the blue book", "Red is explicitly rejected"],
+      "names": "ఎరుపు పుస్తకం మీనాకు, ఆకుపచ్చ పుస్తకం రవికి ఇవ్వండి.",
+      "numbers": "మనం Room AM-204 లో 10:30 కి కలుద్దాం."
+    },
+    "kn": {
+      "ordinary": "ನಮಸ್ಕಾರ. ನನ್ನ ಧ್ವನಿ ಸ್ಪಷ್ಟವಾಗಿ ಕೇಳಿಸುತ್ತಿದೆಯೇ?",
+      "negation": "ನೀಲಿ ಪುಸ್ತಕವನ್ನು ತಂದುಕೊಡಿ, ಕೆಂಪು ಪುಸ್ತಕವನ್ನಲ್ಲ.",
+      "negation_meaning": ["Bring the blue book", "Red is explicitly rejected"],
+      "names": "ಕೆಂಪು ಪುಸ್ತಕವನ್ನು ಮೀನಾಗೆ ಮತ್ತು ಹಸಿರು ಪುಸ್ತಕವನ್ನು ರವಿಗೆ ಕೊಡಿ.",
+      "numbers": "ನಾವು Room AM-204 ರಲ್ಲಿ 10:30 ಕ್ಕೆ ಭೇಟಿಯಾಗೋಣ."
+    },
+    "ml": {
+      "ordinary": "നമസ്കാരം. എന്റെ ശബ്ദം വ്യക്തമായി കേൾക്കുന്നുണ്ടോ?",
+      "negation": "നീല പുസ്തകം കൊണ്ടുവരൂ, ചുവന്നതല്ല.",
+      "negation_meaning": ["Bring the blue book", "Red is explicitly rejected"],
+      "names": "ചുവന്ന പുസ്തകം മീനയ്ക്കും പച്ച പുസ്തകം രവിക്കും കൊടുക്കൂ.",
+      "numbers": "നമുക്ക് Room AM-204 ൽ 10:30 ന് കാണാം."
+    },
+    "mr": {
+      "ordinary": "नमस्कार. माझा आवाज तुम्हाला स्पष्ट ऐकू येतो का?",
+      "negation": "निळे पुस्तक आणा, लाल पुस्तक नको.",
+      "negation_meaning": ["Bring the blue book", "Red is explicitly rejected"],
+      "names": "लाल पुस्तक मीनाला आणि हिरवे पुस्तक रवीला द्या.",
+      "numbers": "आपण Room AM-204 मध्ये 10:30 वाजता भेटू."
+    },
+    "gu": {
+      "ordinary": "નમસ્તે. શું મારો અવાજ તમને સ્પષ્ટ સંભળાય છે?",
+      "negation": "વાદળી પુસ્તક લાવો, લાલ નહીં.",
+      "negation_meaning": ["Bring the blue book", "Red is explicitly rejected"],
+      "names": "લાલ પુસ્તક મીનાને અને લીલું પુસ્તક રવિને આપો.",
+      "numbers": "આપણે Room AM-204 માં 10:30 વાગ્યે મળીશું."
+    },
+    "pa": {
+      "ordinary": "ਸਤ ਸ੍ਰੀ ਅਕਾਲ। ਕੀ ਮੇਰੀ ਆਵਾਜ਼ ਸਾਫ਼ ਸੁਣਾਈ ਦੇ ਰਹੀ ਹੈ?",
+      "negation": "ਨੀਲੀ ਕਿਤਾਬ ਲਿਆਓ, ਲਾਲ ਨਹੀਂ।",
+      "negation_meaning": ["Bring the blue book", "Red is explicitly rejected"],
+      "names": "ਲਾਲ ਕਿਤਾਬ ਮੀਨਾ ਨੂੰ ਅਤੇ ਹਰੀ ਕਿਤਾਬ ਰਵੀ ਨੂੰ ਦਿਓ।",
+      "numbers": "ਅਸੀਂ Room AM-204 ਵਿੱਚ 10:30 ਵਜੇ ਮਿਲਾਂਗੇ।"
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{"id":"hi-genuine-clean","wav":"recordings/hi-genuine-clean.wav","label":"genuine","language":"hi","condition":"clean","fixture":false}
+{"id":"ta-genuine-clean","wav":"recordings/ta-genuine-clean.wav","label":"genuine","language":"ta","condition":"clean","fixture":false}
+{"id":"hi-genuine-noisy","wav":"recordings/hi-genuine-noisy.wav","label":"genuine","language":"hi","condition":"background-noise","fixture":false}
+{"id":"ta-genuine-webrtc","wav":"recordings/ta-genuine-webrtc.wav","label":"genuine","language":"ta","condition":"opus-webrtc","fixture":false}
+{"id":"hi-spoof-unseen","wav":"recordings/hi-spoof-unseen.wav","label":"spoof","language":"hi","condition":"unseen-generator","fixture":false}
+{"id":"ta-spoof-replay","wav":"recordings/ta-spoof-replay.wav","label":"spoof","language":"ta","condition":"speaker-replay","fixture":false}

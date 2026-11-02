@@ -22,7 +22,7 @@ Labels describe what the product actually does. Demo rooms say they are scripted
 ## Important interaction details
 
 - A participant language means the source transcription language and preferred output language. Code-mixed content remains an evaluation concern, not automatic unrestricted language detection.
-- Every original speaker's stream is transcribed once. The server translates and synthesizes once per unique listener language. Same-language listeners receive an agent-forwarded original PCM stream.
+- An active original speaker's stream is transcribed once when a different-language listener is present. The server translates and synthesizes once per unique target listener language. Same-language listeners receive an agent-forwarded original PCM stream without recognition or synthesis when they are the only audience.
 - Source audio is routed to the translation participant. Other users hear the appropriate translated/forwarded agent track. Original and translated audio are not both played.
 - Translated audio is never transcribed again. A participant does not hear the interpretation of their own speech.
 - Source segment order is preserved. Backpressure and failures are visible; the system must not silently build an unlimited audio queue.
@@ -38,7 +38,7 @@ The single-process server keeps active room state in memory and expires it. Expl
 
 ## Scope
 
-Included: Hindi, Tamil, Bengali and English selection; one-way, bidirectional and multi-party routing; configurable real providers; streaming transcription and speech synthesis; optional voice cloning; transcripts and confirmation; diagnostics; reproducible evaluation tools.
+Included: ten configurable language choices (Hindi, Tamil, Bengali, English, Telugu, Kannada, Malayalam, Marathi, Gujarati and Punjabi); one-way, bidirectional and multi-party routing; configurable real providers; streaming transcription and language-appropriate stock synthesis; transcripts and confirmation; diagnostics and reproducible offline evaluation plans. The existing cloning adapters remain a later acceptance gate. Ten language choices and ninety designed directions do not establish completed real-provider or human-listening acceptance.
 
 Excluded: Track A spoof detection, fraud verdicts, PSTN/SIP calling, regulated identity verification, guaranteed translation accuracy, guaranteed latency, verified nationwide data residency, billing, and multi-replica durable room orchestration.
 
@@ -50,6 +50,7 @@ Excluded: Track A spoof detection, fraud verdicts, PSTN/SIP calling, regulated i
 4. Toggle audio controls, copy an invitation, leave, download and explicitly save a recap.
 5. Start the backend in demo mode and repeat against real HTTP/WebSocket room state.
 6. Configure the live environment; join from two browsers, speak both directions, and verify target-only audio.
-7. Add a third language, enroll a consented voice, verify fan-out, and measure actual output quality and delay.
+7. After two-person standard-voice acceptance, add a third language, verify fan-out with standard voices, and measure actual output quality and delay.
+8. After standard-voice and multi-party acceptance, enroll a consented voice and evaluate cloned output separately.
 
-Steps 6–7 require working provider accounts/compute and microphone access. A passing scripted demo cannot verify those live properties.
+Steps 6–8 require working provider accounts/compute and microphone access. A passing scripted demo cannot verify those live properties.

@@ -76,7 +76,7 @@ const object = (value: unknown): value is Record<string, unknown> =>
 export function validateDeployment(value: unknown): DeploymentSnapshot {
   if (
     !object(value) ||
-    (value.mode !== 'live' && value.mode !== 'demo') ||
+    !['live', 'demo', 'transport'].includes(String(value.mode)) ||
     typeof value.generated_at !== 'string' ||
     !Number.isFinite(Date.parse(value.generated_at)) ||
     value.provider_verification !== 'not_checked' ||
@@ -124,7 +124,7 @@ export function validateDeployment(value: unknown): DeploymentSnapshot {
   }
 
   return {
-    mode: value.mode,
+    mode: value.mode as DeploymentSnapshot['mode'],
     generated_at: value.generated_at,
     fields: DEPLOYMENT_FIELDS.map((field) => ({
       key: field.key,

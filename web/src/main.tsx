@@ -11,10 +11,13 @@ import { Performance } from './pages/Performance';
 import { Usage } from './pages/Usage';
 import { DeveloperJournal } from './pages/DeveloperJournal';
 import { Deployment } from './pages/Deployment';
+import { TestLab } from './pages/TestLab';
+import { AudioLab } from './pages/AudioLab';
 import { VoiceStudio } from './pages/VoiceStudio';
 import { RecapPage, HistoryPage } from './pages/Recap';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import './styles.css';
+import './theme.css';
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ErrorBoundary>
@@ -27,6 +30,8 @@ createRoot(document.getElementById('root')!).render(
               <Route path="voices" element={<VoiceStudio />} />
               <Route path="settings" element={<Settings />} />
               <Route path="performance" element={<Performance />} />
+              <Route path="tests" element={<TestLab />} />
+              <Route path="audio-lab" element={<AudioLab />} />
               <Route path="usage" element={<Usage />} />
               <Route path="development" element={<DeveloperJournal />} />
               <Route path="deployment" element={<Deployment />} />

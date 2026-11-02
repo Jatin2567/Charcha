@@ -2,14 +2,19 @@ from __future__ import annotations
 
 import asyncio
 import time
+import math
+import struct
 from dataclasses import dataclass
 
 from fastapi import HTTPException
 
 from ..errors import ProviderError
 from ..services.routing import recipients_for
+from ..services.screening_runtime import ScreeningGate
 from ..store import RoomState, Store
 from .tokens import agent_identity, room_token
+
+LISTENER_READY_TIMEOUT_SECONDS = 5
 
 
 @dataclass
@@ -25,16 +30,21 @@ class OutputTrack:
 class RoomTransport:
     """One server participant per room; never subscribes to its generated tracks."""
 
-    def __init__(self, store: Store, state: RoomState, speech, pipeline):
+    def __init__(self, store: Store, state: RoomState, speech, pipeline, screening=None):
         self.store, self.state, self.speech, self.pipeline = store, state, speech, pipeline
         self.room = None
         self.closed = False
         self.disconnected = False
+        self.reconnecting = False
+        # Local task lifecycle, not a claim that the remote model is healthy.
+        self.recognition_active: dict[str, asyncio.Task] = {}
         self.readers: dict[str, asyncio.Task] = {}
         self.outputs: dict[tuple[str, str], OutputTrack] = {}
         self.output_lock = asyncio.Lock()
         self.tasks: set[asyncio.Task] = set()
         self.permission_signature = None
+        self.screening = screening
+        self.probe_tracks: dict[str, tuple[str, object]] = {}
 
     def _task(self, coroutine):
         task = asyncio.create_task(coroutine)
@@ -78,8 +88,13 @@ class RoomTransport:
 
         if self.closed or participant.identity.startswith("artha-agent-"):
             return
+        # Camera video is delivered directly between browsers. The interpreter
+        # never needs a video subscription or its bandwidth.
+        if track.kind != rtc.TrackKind.KIND_AUDIO:
+            publication.set_subscribed(False)
+            return
         member = next((p for p in self.state.room.participants if p.id == participant.identity), None)
-        if not member or member.is_demo or track.kind != rtc.TrackKind.KIND_AUDIO:
+        if not member or member.is_demo:
             return
         if publication.source != rtc.TrackSource.SOURCE_MICROPHONE:
             return
@@ -89,6 +104,13 @@ class RoomTransport:
         self.readers[member.id] = self._task(self._read_audio(track, member.id))
 
     def _track_unsubscribed(self, track, publication, participant):
+        from livekit import rtc
+
+        # Camera disable/unsubscribe must not cancel this speaker's independent
+        # microphone reader or recognition stream.
+        if (track.kind != rtc.TrackKind.KIND_AUDIO
+                or publication.source != rtc.TrackSource.SOURCE_MICROPHONE):
+            return
         task = self.readers.pop(participant.identity, None)
         if task:
             task.cancel()
@@ -101,16 +123,19 @@ class RoomTransport:
         # membership merely because a browser is reconnecting.
 
     def _reconnecting(self):
+        self.reconnecting = True
         self.state.broadcast("pipeline.error", {"message": "Audio network interrupted; reconnecting", "retryable": True})
 
     def _reconnected(self):
         self.disconnected = False
+        self.reconnecting = False
         self._permissions()
         for p in self.state.room.participants:
             self.state.broadcast("pipeline.status", {"speaker_id": p.id, "stage": "listening"})
 
     def _disconnected(self, *args):
         self.disconnected = True
+        self.reconnecting = False
         if not self.closed:
             self.state.broadcast("pipeline.error", {
                 "message": "Interpreter disconnected. Leave and rejoin to reconnect audio", "retryable": True,
@@ -122,46 +147,125 @@ class RoomTransport:
         stream = rtc.AudioStream(
             track=track, sample_rate=16000, num_channels=1,
             capacity=self.store.settings.audio_queue_frames,
+            frame_size_ms=20,
         )
-        pcm_queue: asyncio.Queue = asyncio.Queue(maxsize=self.store.settings.audio_queue_frames)
-        same_language_queue: asyncio.Queue = asyncio.Queue(maxsize=20)
+        pcm_queue: asyncio.Queue = asyncio.Queue(maxsize=max(
+            self.store.settings.audio_queue_frames,
+            220 if self.screening and self.screening.mode == "enforce" else 0,
+        ))
+        # Preserve the beginning of original speech while the first subscriber
+        # negotiates. Six seconds of 20-ms PCM is bounded (~192 KiB), longer than
+        # the five-second readiness gate; a timed-out gate stops this stream.
+        forwarding_queue: asyncio.Queue = asyncio.Queue(maxsize=300)
+        transport_only = self.store.settings.mode == "transport"
         recognition_ready = asyncio.Event()
         overflow_reported = False
+        forwarding_overflow_reported = False
+
+        async def dispatch(data):
+            nonlocal overflow_reported, forwarding_overflow_reported
+            speaker = self._speaker(speaker_id)
+            if not speaker or speaker.muted:
+                return
+            if recognition_ready.is_set():
+                if pcm_queue.full():
+                    pcm_queue.get_nowait()
+                    if not overflow_reported:
+                        overflow_reported = True
+                        self.state.broadcast("pipeline.error", {
+                            "message": "Audio arrived faster than recognition; repeat the last phrase",
+                            "retryable": True,
+                        })
+                pcm_queue.put_nowait(data)
+            language = "all" if transport_only else speaker.language
+            if self._output_recipients(speaker_id, language):
+                if forwarding_queue.full():
+                    forwarding_queue.get_nowait()
+                    if not forwarding_overflow_reported:
+                        forwarding_overflow_reported = True
+                        self.state.broadcast("pipeline.error", {
+                            "message": "Original audio could not keep up; repeat the last phrase",
+                            "retryable": True,
+                        })
+                forwarding_queue.put_nowait((data, language))
+
+        async def screening_result(result):
+            payload = {**result, "speaker_id": speaker_id}
+            self.state.screening_latest[speaker_id] = payload
+            self.state.screening_samples.append(payload)
+            self.state.broadcast("screening.updated", payload)
+            if payload["action"] == "withheld":
+                for queue in (pcm_queue, forwarding_queue):
+                    while not queue.empty():
+                        queue.get_nowait()
+                for output in self.outputs.values():
+                    if output.speaker_id == speaker_id:
+                        output.source.clear_queue()
+                await self.pipeline.cancel_speaker(self.state.room.code, speaker_id)
+                # An in-flight synthesized capture may have completed during
+                # cancellation. Flush again after its worker has stopped.
+                for output in self.outputs.values():
+                    if output.speaker_id == speaker_id:
+                        output.source.clear_queue()
+            elif (payload["action"] == "released" and self._recognition_eligible(speaker_id)
+                  and not recognition_ready.is_set()):
+                # Allow the recognizer to attach before releasing this first window.
+                try:
+                    await asyncio.wait_for(recognition_ready.wait(), 1)
+                except TimeoutError:
+                    self.state.broadcast("pipeline.error", {
+                        "message": "Recognition was not ready for the screened audio; repeat the phrase",
+                        "retryable": True,
+                    })
+
+        def screening_active():
+            speaker = self._speaker(speaker_id)
+            return bool(speaker and not speaker.muted and not self.closed)
+
+        gate = ScreeningGate(self.screening, dispatch, screening_result, screening_active) if self.screening else None
 
         async def receive():
-            nonlocal overflow_reported
             async for event in stream:
-                speaker = self._speaker(speaker_id)
-                if not speaker:
+                if not self._speaker(speaker_id):
                     return
-                if speaker.muted:
-                    continue
                 data = bytes(event.frame.data)
-                if recognition_ready.is_set():
-                    if pcm_queue.full():
-                        pcm_queue.get_nowait()
-                        if not overflow_reported:
-                            overflow_reported = True
-                            self.state.broadcast("pipeline.error", {
-                                "message": "Audio arrived faster than recognition; repeat the last phrase",
-                                "retryable": True,
-                            })
-                    pcm_queue.put_nowait(data)
-                if recipients_for(self.state.room.participants, speaker_id, speaker.language):
-                    if same_language_queue.full():
-                        same_language_queue.get_nowait()
-                    same_language_queue.put_nowait((data, speaker.language))
+                if gate:
+                    await gate.feed(data)
+                elif screening_active():
+                    await dispatch(data)
 
         async def forward():
             resampler = rtc.AudioResampler(16000, self.store.settings.audio_sample_rate, num_channels=1)
+            source_started = False
             while True:
-                data, language = await same_language_queue.get()
+                data, language = await forwarding_queue.get()
+                speaker = self._speaker(speaker_id)
+                if not speaker or speaker.muted or not self._output_recipients(speaker_id, language):
+                    continue
                 self._permissions()
                 output = await self._output(speaker_id, language, self.store.settings.audio_sample_rate)
+                await self._wait_for_listener(output, speaker_id, language)
+                speaker = self._speaker(speaker_id)
+                if not speaker or speaker.muted or not self._output_recipients(speaker_id, language):
+                    continue
                 if output.tts_active:
                     continue
+                if not self._screening_allows_output(speaker_id):
+                    continue
+                # The decoder can emit zero PCM while a newly subscribed source
+                # has not captured anything yet. Negotiate the output using those
+                # frames, but do not replay their backlog in real time ahead of
+                # the first sound. Exact zero only: quiet speech is never gated,
+                # and pauses after the first nonzero sample remain unchanged.
+                if not source_started:
+                    if not any(data):
+                        continue
+                    source_started = True
                 for frame in resampler.push(rtc.AudioFrame(data, 16000, 1, len(data) // 2)):
                     await output.source.capture_frame(frame)
+                    if not self._screening_allows_output(speaker_id):
+                        output.source.clear_queue()
+                        break
 
         async def audio():
             recognition_ready.set()
@@ -183,16 +287,24 @@ class RoomTransport:
                     await asyncio.sleep(0.25)
                     continue
 
-                async def consume():
+                async def consume(language=speaker.language):
                     nonlocal retry
-                    async for segment in self.speech.transcribe(audio(), speaker.language, processing):
-                        retry = 0
-                        current = self._speaker(speaker_id)
-                        if current and not current.muted:
-                            try:
-                                await self.pipeline.submit(self.state, current, segment.text, segment.stt_ms, True)
-                            except HTTPException as exc:
-                                self.state.broadcast("pipeline.error", {"message": str(exc.detail), "retryable": True})
+                    owner = asyncio.current_task()
+                    self.recognition_active[speaker_id] = owner
+                    try:
+                        async for segment in self.speech.transcribe(audio(), language, processing):
+                            retry = 0
+                            current = self._speaker(speaker_id)
+                            if current and not current.muted and self._recognition_eligible(speaker_id):
+                                try:
+                                    await self.pipeline.submit(self.state, current, segment.text, segment.stt_ms, True)
+                                except HTTPException as exc:
+                                    self.state.broadcast("pipeline.error", {"message": str(exc.detail), "retryable": True})
+                    finally:
+                        # An old, cancelled reader must not erase a replacement
+                        # reader's state after a track reconnect.
+                        if self.recognition_active.get(speaker_id) is owner:
+                            self.recognition_active.pop(speaker_id, None)
 
                 async def eligibility_watch():
                     while self._recognition_eligible(speaker_id):
@@ -245,7 +357,9 @@ class RoomTransport:
                         task.cancel()
                     await asyncio.gather(*pending, return_exceptions=True)
 
-        tasks = [asyncio.create_task(receive()), asyncio.create_task(recognize()), asyncio.create_task(forward())]
+        tasks = [asyncio.create_task(receive()), asyncio.create_task(forward())]
+        if not transport_only:
+            tasks.append(asyncio.create_task(recognize()))
         try:
             done, _ = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
             for task in done:
@@ -260,6 +374,8 @@ class RoomTransport:
             for task in tasks:
                 task.cancel()
             await asyncio.gather(*tasks, return_exceptions=True)
+            if gate:
+                await gate.close()
             await stream.aclose()
 
     def _speaker(self, speaker_id):
@@ -268,13 +384,43 @@ class RoomTransport:
         return next((p for p in self.state.room.participants if p.id == speaker_id), None)
 
     def _recognition_eligible(self, speaker_id: str) -> bool:
+        if self.store.settings.mode == "transport" or self.closed or self.disconnected or self.reconnecting:
+            return False
         speaker = self._speaker(speaker_id)
         if not speaker or speaker.muted:
             return False
-        return any(p.id != speaker_id and not p.is_agent and not p.is_demo
-                   and p.language != speaker.language
-                   and self.store.is_active(self.state.room.code, p.id)
-                   for p in self.state.room.participants)
+        if (self.screening and self.screening.mode == "enforce"
+                and self.state.screening_latest.get(speaker_id, {}).get("action") != "released"):
+            return False
+        listeners = [p for p in self.state.room.participants if p.id != speaker_id and not p.is_agent and not p.is_demo
+                     and p.language != speaker.language and self.store.is_active(self.state.room.code, p.id)]
+        remote = self.room.remote_participants if self.room else None
+        if remote is not None:
+            listeners = [p for p in listeners if p.id in remote]
+        if not listeners:
+            return False
+        if self.store.settings.usage_require_flow_approval:
+            # A source already running keeps its reserved connection. New sources
+            # wait while approval is locked, including after an audience change.
+            usage = getattr(self.speech, "usage", None)
+            if usage is None or self.store.settings.missing_live_config():
+                return False
+            if speaker_id not in self.recognition_active:
+                return usage.conference_capacity(len({p.language for p in listeners}))["status"] == "approved"
+        return True
+
+    def _screening_allows_output(self, speaker_id: str) -> bool:
+        return (not self.screening or self.screening.mode != "enforce"
+                or self.state.screening_latest.get(speaker_id, {}).get("action") == "released")
+
+    def _output_recipients(self, speaker_id: str, language: str) -> list[str]:
+        active = [p for p in self.state.room.participants
+                  if not p.is_demo and self.store.is_active(self.state.room.code, p.id)]
+        if self.store.settings.mode == "transport":
+            if language != "all" or not self._speaker(speaker_id):
+                return []
+            return [p.id for p in active if p.id != speaker_id and not p.is_agent]
+        return recipients_for(active, speaker_id, language)
 
     def _permissions(self):
         from livekit import rtc
@@ -289,8 +435,10 @@ class RoomTransport:
                 continue
             allowed = [
                 output.publication.sid for output in self.outputs.values()
-                if participant.id in recipients_for(self.state.room.participants, output.speaker_id, output.language)
+                if participant.id in self._output_recipients(output.speaker_id, output.language)
             ]
+            allowed.extend(publication.sid for listener, publication in self.probe_tracks.values()
+                           if listener == participant.id)
             permissions.append(rtc.ParticipantTrackPermission(
                 participant_identity=participant.id, allow_all=False, allowed_track_sids=allowed,
             ))
@@ -301,6 +449,51 @@ class RoomTransport:
             allow_all_participants=False, participant_permissions=permissions,
         )
         self.permission_signature = signature
+
+    async def send_probe(self, challenge: dict):
+        """Generate a dedicated tone for one consenting listener, never a provider call."""
+        from livekit import rtc
+
+        listener = challenge["listener_id"]
+        probe_id = challenge["probe_id"]
+        if not self.room or self.closed or not self._speaker(listener):
+            raise ProviderError("Receiver disconnected before the tone started", False)
+        source = rtc.AudioSource(24000, 1, queue_size_ms=100)
+        publication = None
+        try:
+            self._permissions()
+            track = rtc.LocalAudioTrack.create_audio_track(challenge["track_name"], source)
+            publication = await self.room.local_participant.publish_track(
+                track, rtc.TrackPublishOptions(source=rtc.TrackSource.SOURCE_MICROPHONE)
+            )
+            self.probe_tracks[probe_id] = (listener, publication)
+            self._permissions()
+            async with asyncio.timeout(5):
+                await publication.wait_for_subscription()
+            for frame_index in range(50):
+                if self.closed or not self._speaker(listener):
+                    raise ProviderError("Receiver disconnected during the tone", False)
+                data = struct.pack("<480h", *(int(2600 * math.sin(2 * math.pi * 950 * (frame_index * 480 + n) / 24000))
+                                             for n in range(480)))
+                await source.capture_frame(rtc.AudioFrame(data, 24000, 1, 480))
+            await source.wait_for_playout()
+            await asyncio.sleep(.3)  # Leave time for the receiver's analyser poll.
+        except asyncio.CancelledError:
+            raise
+        except Exception:
+            self.state.broadcast("probe.error", {"probe_id": probe_id, "listener_id": listener,
+                                                 "message": "Receiver tone was not delivered; retry after reconnecting"})
+            raise ProviderError("Receiver tone was not delivered; reconnect and try again", False) from None
+        finally:
+            self.probe_tracks.pop(probe_id, None)
+            source.clear_queue()
+            if publication and self.room and not self.closed:
+                try:
+                    await self.room.local_participant.unpublish_track(publication.sid)
+                except Exception:
+                    pass
+            await source.aclose()
+            self._permissions()
 
     async def _output(self, speaker_id: str, language: str, sample_rate: int) -> OutputTrack:
         from livekit import rtc
@@ -313,8 +506,12 @@ class RoomTransport:
             if self.closed or not self.room:
                 raise ProviderError("Audio room is disconnected")
             self._permissions()  # Explicit deny for the soon-to-be-published unknown SID.
-            source = rtc.AudioSource(sample_rate, 1, queue_size_ms=250)
-            track = rtc.LocalAudioTrack.create_audio_track(f"translated:{speaker_id}:{language}", source)
+            # Raw audio already arrives in paced 20-ms frames. A synthesis-sized
+            # output queue adds unnecessary delay to that path.
+            source = rtc.AudioSource(sample_rate, 1, queue_size_ms=60
+                                     if self.store.settings.mode == "transport" else 250)
+            prefix = "raw" if self.store.settings.mode == "transport" else "translated"
+            track = rtc.LocalAudioTrack.create_audio_track(f"{prefix}:{speaker_id}:{language}", source)
             try:
                 publication = await self.room.local_participant.publish_track(
                     track, rtc.TrackPublishOptions(source=rtc.TrackSource.SOURCE_MICROPHONE)
@@ -327,17 +524,34 @@ class RoomTransport:
             self._permissions()
             return output
 
+    async def _wait_for_listener(self, output: OutputTrack, speaker_id: str, language: str):
+        """Gate PCM on a real subscriber; do not consume paid synthesis early."""
+        if not self._speaker(speaker_id) or not self._output_recipients(speaker_id, language):
+            raise ProviderError("The listener left before audio was ready", False)
+        try:
+            async with asyncio.timeout(LISTENER_READY_TIMEOUT_SECONDS):
+                await output.publication.wait_for_subscription()
+        except TimeoutError:
+            raise ProviderError("Listener audio is not ready; reconnect and repeat the last phrase", False) from None
+        if not self._speaker(speaker_id) or not self._output_recipients(speaker_id, language):
+            raise ProviderError("The listener left before audio was ready", False)
+
     async def speak(self, speaker_id, language, chunks, on_first_audio):
         from livekit import rtc
 
+        if self.store.settings.mode == "transport":
+            raise ProviderError("Synthesized audio is disabled in the original-audio transport test", False)
         active = [p for p in self.state.room.participants
                   if self.store.is_active(self.state.room.code, p.id)]
         if not self._speaker(speaker_id) or not recipients_for(active, speaker_id, language):
             return
         rate = self.store.settings.audio_sample_rate
         output = await self._output(speaker_id, language, rate)
+        await self._wait_for_listener(output, speaker_id, language)
         if not self._speaker(speaker_id):
             return
+        if not self._screening_allows_output(speaker_id):
+            raise ProviderError("Experimental screening is withholding this speaker's audio", False)
         # A same-language typed fallback can share the forwarded-source track.
         # Suspend raw frames (including decoder silence) for the duration, otherwise
         # AudioSource.wait_for_playout never drains and two producers interleave PCM.
@@ -358,7 +572,12 @@ class RoomTransport:
             frame = rtc.AudioFrame(data, rate, 1, len(data) // 2)
             frames = resampler.push(frame) if resampler else [frame]
             for converted in frames:
+                if not self._screening_allows_output(speaker_id):
+                    raise ProviderError("Experimental screening withheld this audio", False)
                 await output.source.capture_frame(converted)
+                if not self._screening_allows_output(speaker_id):
+                    output.source.clear_queue()
+                    raise ProviderError("Experimental screening withheld this audio", False)
                 if first:
                     first = False
                     on_first_audio()
@@ -367,17 +586,34 @@ class RoomTransport:
             async for chunk in chunks:
                 if not self._speaker(speaker_id):
                     return
+                if not self._screening_allows_output(speaker_id):
+                    raise ProviderError("Experimental screening withheld this audio", False)
                 buffer.extend(chunk)
                 while len(buffer) >= frame_bytes:
                     await capture(bytes(buffer[:frame_bytes]))
                     del buffer[:frame_bytes]
+                # The first provider chunk may contain less than 20 ms of PCM.
+                # Dispatch its whole samples now rather than waiting for a later
+                # chunk (or completion). Retain a split sample's final byte and
+                # keep normal 20 ms batching after the first actual dispatch.
+                if first and len(buffer) >= 2:
+                    whole_sample_bytes = len(buffer) - len(buffer) % 2
+                    await capture(bytes(buffer[:whole_sample_bytes]))
+                    del buffer[:whole_sample_bytes]
             if buffer:
                 if len(buffer) % 2:
                     raise ProviderError("Synthesis returned malformed PCM audio")
                 await capture(bytes(buffer))
             if resampler:
                 for final in resampler.flush():
+                    if not self._screening_allows_output(speaker_id):
+                        raise ProviderError("Experimental screening withheld this audio", False)
                     await output.source.capture_frame(final)
+                    if not self._screening_allows_output(speaker_id):
+                        output.source.clear_queue()
+                        raise ProviderError("Experimental screening withheld this audio", False)
+            if not self._screening_allows_output(speaker_id):
+                raise ProviderError("Experimental screening withheld this audio", False)
             await output.source.wait_for_playout()
         except BaseException:
             output.source.clear_queue()
@@ -387,6 +623,7 @@ class RoomTransport:
 
     async def reconfigure(self, speaker_id: str | None = None):
         if speaker_id:
+            self.state.screening_latest.pop(speaker_id, None)
             task = self.readers.pop(speaker_id, None)
             if task:
                 task.cancel()
@@ -394,8 +631,11 @@ class RoomTransport:
             async with self.output_lock:
                 for key, output in list(self.outputs.items()):
                     if output.speaker_id == speaker_id:
-                        self.outputs.pop(key)
                         output.source.clear_queue()
+                        # Unpublish on mute as well: clearing the source queue
+                        # alone cannot clear an already negotiated receiver's
+                        # jitter buffer or codec concealment output.
+                        self.outputs.pop(key)
                         try:
                             await self.room.local_participant.unpublish_track(output.publication.sid)
                         finally:
@@ -440,10 +680,11 @@ class RoomTransport:
 
 
 class TransportManager:
-    def __init__(self, store: Store, speech, pipeline):
+    def __init__(self, store: Store, speech, pipeline, screening=None):
         self.store, self.speech, self.pipeline = store, speech, pipeline
         self.rooms: dict[str, RoomTransport] = {}
         self.lock = asyncio.Lock()
+        self.screening = screening
 
     async def ensure_room(self, state: RoomState):
         async with self.lock:
@@ -452,7 +693,7 @@ class TransportManager:
                 return existing
             if existing:
                 await existing.aclose()
-            transport = RoomTransport(self.store, state, self.speech, self.pipeline)
+            transport = RoomTransport(self.store, state, self.speech, self.pipeline, self.screening)
             await transport.connect()
             self.rooms[state.room.code] = transport
             return transport

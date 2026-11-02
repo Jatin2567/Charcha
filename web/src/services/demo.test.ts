@@ -12,9 +12,9 @@ describe('honest standalone demo', () => {
   });
   it('does not fabricate translations for unknown input', () =>
     expect(demoLookup('An arbitrary sentence never in the script', 'ta')).toBeNull());
-  it('only looks up a known script sentence across its reviewed target languages', () =>
+  it('only looks up a known script sentence across its supplied target languages', () =>
     expect(demoLookup(SCRIPTED_TURNS[1].text, 'en')).toBe(
-      'Yes. We need 50 cartons at ₹1,500 each.',
+      'Yes, tomorrow at 10 in the morning, not today.',
     ));
   it('never preconfirms sample content on behalf of a human', () =>
     expect(makeDemoTurn(1).confirmed_by).toEqual([]));

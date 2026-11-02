@@ -44,7 +44,7 @@ export interface PerformanceSummary {
 }
 export interface PerformanceReport {
   room_code: string;
-  mode: 'demo' | 'live';
+  mode: 'demo' | 'live' | 'transport';
   generated_at: string;
   measurement: {
     boundary: 'server_first_pcm';
@@ -71,7 +71,7 @@ export interface DeploymentCheck {
   detail: string;
 }
 export interface ReadinessReport {
-  mode: 'demo' | 'live';
+  mode: 'demo' | 'live' | 'transport';
   generated_at: string;
   requirements: ReadinessRequirement[];
   provider_verification: 'not_checked';

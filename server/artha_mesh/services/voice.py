@@ -55,6 +55,8 @@ class VoiceService:
 
     async def enroll(self, clip: bytes, mime: str, name: str, consent: bool, token: str) -> VoiceProfile:
         self.store.authenticate(token)
+        if self.store.settings.mode == "transport":
+            raise HTTPException(409, "Voice cloning is disabled during the original-audio transport test")
         if not consent:
             raise HTTPException(422, "Explicit consent to clone your own voice is required")
         if not name.strip() or len(name) > 60:

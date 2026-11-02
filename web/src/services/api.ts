@@ -9,6 +9,7 @@ import type {
   Metrics,
 } from '../types/domain';
 import { createDemoRoom, getDemoRoom, joinDemo } from './demo';
+import { isLanguage } from '../types/domain';
 export const API_BASE = (import.meta.env.VITE_API_BASE_URL as string | undefined) || '/api';
 export const DEMO_ALLOWED = import.meta.env.VITE_DEMO_MODE === 'true';
 let fallback = false;
@@ -57,9 +58,23 @@ export async function checkHealth(): Promise<Health> {
   try {
     const result = await request<Health>('/health');
     if (
-      !['demo', 'live'].includes(result.mode) ||
+      !['demo', 'live', 'transport'].includes(result.mode) ||
       !Array.isArray(result.providers) ||
-      !Array.isArray(result.languages)
+      !Array.isArray(result.languages) ||
+      result.languages.some(
+        (language) =>
+          !language ||
+          !isLanguage(language.code) ||
+          typeof language.name !== 'string' ||
+          typeof language.native_name !== 'string',
+      ) ||
+      result.providers.some(
+        (provider) =>
+          !provider ||
+          typeof provider.name !== 'string' ||
+          typeof provider.status !== 'string' ||
+          typeof provider.detail !== 'string',
+      )
     )
       throw new Error('This endpoint is not an Artha Mesh workspace service.');
     fallback = false;
@@ -124,7 +139,7 @@ export const getTranscript = (m: Membership) =>
 export const startServerDemo = (m: Membership) =>
   request(
     `/rooms/${m.room.code}/demo`,
-    { method: 'POST', body: JSON.stringify({ scenario: 'trade' }) },
+    { method: 'POST', body: JSON.stringify({ scenario: 'everyday' }) },
     m.session_token,
   );
 export const submitText = (m: Membership, text: string) =>

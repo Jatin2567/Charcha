@@ -49,7 +49,10 @@ PROVIDER_DEFAULTS = {
     "GNANI_EMBEDDING_URL": "https://api.vachana.ai/api/v1/tts/voice-clone/embeddings",
     "TIMBRE_MODEL": "timbre-v2.5", "TIMBRE_VOICE": "Nalini", "VOICE_CLONE_MODEL": "vachana-vc-v1",
 }
-PROVIDER_KEYS = {"GNANI_API_KEY", "EVON_BASE_URL", "EVON_MODEL", "EVON_API_KEY", *PROVIDER_DEFAULTS, *BOUNDS, *FLOAT_BOUNDS, *REFERENCE_PRICES}
+STOCK_VOICE_KEYS = {"TIMBRE_VOICE_" + language for language in ("HI", "TA", "BN", "EN", "TE", "KN", "ML", "MR", "GU", "PA")}
+PROVIDER_KEYS = {"GNANI_API_KEY", "GNANI_STT_MODEL", "EVON_BASE_URL", "EVON_MODEL", "EVON_API_KEY",
+                 "EVON_MODAL_KEY", "EVON_MODAL_SECRET", *STOCK_VOICE_KEYS,
+                 *PROVIDER_DEFAULTS, *BOUNDS, *FLOAT_BOUNDS, *REFERENCE_PRICES}
 
 
 class PreparationError(ValueError):
@@ -140,11 +143,26 @@ def validate_url(name: str, value: str, *, websocket: bool = False, private_http
 def runtime_env(config: dict[str, str], supplied: dict[str, str], api_key: str, api_secret: str) -> dict[str, str]:
     settings = dict(PROVIDER_DEFAULTS)
     settings.update({name: value for name, value in supplied.items() if name in PROVIDER_KEYS and value != ""})
+    if "GNANI_STT_MODEL" in settings:
+        if not settings["GNANI_STT_MODEL"].strip():
+            settings.pop("GNANI_STT_MODEL")
+        elif settings["GNANI_STT_MODEL"] not in {"prisma-v2.5", "prisma-v3.0"}:
+            raise PreparationError("GNANI_STT_MODEL requires prisma-v2.5 or prisma-v3.0, or leave it unset.")
     for name in ("GNANI_API_KEY", "EVON_BASE_URL", "EVON_MODEL"):
         if not settings.get(name, "").strip():
             raise PreparationError(f"{name} is required in the server environment file.")
     for name in ("GNANI_STT_URL", "GNANI_TTS_URL", "GNANI_EMBEDDING_URL", "EVON_BASE_URL"):
         validate_url(name, settings[name], websocket=name in {"GNANI_STT_URL", "GNANI_TTS_URL"}, private_http=name == "EVON_BASE_URL")
+    modal_key, modal_secret = settings.get("EVON_MODAL_KEY", ""), settings.get("EVON_MODAL_SECRET", "")
+    if modal_key or modal_secret:
+        destination = urlsplit(settings["EVON_BASE_URL"])
+        hostname = destination.hostname or ""
+        if (not modal_key or not modal_secret
+                or any(len(value) > 4096 or any(not 33 <= ord(char) <= 126 for char in value)
+                       for value in (modal_key, modal_secret))
+                or destination.scheme != "https" or destination.port not in (None, 443)
+                or not hostname.endswith(".modal.run") or not hostname.removesuffix(".modal.run")):
+            raise PreparationError("EVON_MODAL_KEY/EVON_MODAL_SECRET require a complete header-safe pair and an HTTPS Modal endpoint.")
     for name, (default, minimum, maximum) in BOUNDS.items():
         value = settings.get(name, str(default))
         if not re.fullmatch(r"[0-9]+", value) or not minimum <= int(value) <= maximum:

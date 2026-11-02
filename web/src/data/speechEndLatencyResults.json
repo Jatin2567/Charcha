@@ -1,0 +1,144 @@
+{
+  "record_type": "speech_end_latency_evidence",
+  "acceptance": "not_verified",
+  "schema_version": 1,
+  "boundary": "source_end_to_first_decoded_rtc",
+  "source_end_reference": "last_voiced_source_frame_playout",
+  "provider_calls": 0,
+  "screening_mode": "off",
+  "recorded_on": "2026-10-30",
+  "evidence_kind": "synthetic_local_rtc",
+  "physical_playback_measured": false,
+  "voice_cloning": false,
+  "target_ms": 2000,
+  "clock": "single_process_monotonic",
+  "samples": [
+    {
+      "trial_id": "local-01",
+      "status": "complete",
+      "source_end_to_render_estimate_ms": null,
+      "target_language": "ta",
+      "source_language": "hi",
+      "source_end_to_physical_playback_ms": null,
+      "condition": "first_route",
+      "source_end_to_decoded_ms": 1042.113
+    },
+    {
+      "trial_id": "local-02",
+      "status": "complete",
+      "source_end_to_render_estimate_ms": null,
+      "target_language": "ta",
+      "source_language": "hi",
+      "source_end_to_physical_playback_ms": null,
+      "condition": "warm_route",
+      "source_end_to_decoded_ms": 926.287
+    },
+    {
+      "trial_id": "local-03",
+      "status": "complete",
+      "source_end_to_render_estimate_ms": null,
+      "target_language": "ta",
+      "source_language": "hi",
+      "source_end_to_physical_playback_ms": null,
+      "condition": "warm_route",
+      "source_end_to_decoded_ms": 898.392
+    },
+    {
+      "trial_id": "local-04",
+      "status": "complete",
+      "source_end_to_render_estimate_ms": null,
+      "target_language": "ta",
+      "source_language": "hi",
+      "source_end_to_physical_playback_ms": null,
+      "condition": "warm_route",
+      "source_end_to_decoded_ms": 934.957
+    },
+    {
+      "trial_id": "local-05",
+      "status": "complete",
+      "source_end_to_render_estimate_ms": null,
+      "target_language": "ta",
+      "source_language": "hi",
+      "source_end_to_physical_playback_ms": null,
+      "condition": "warm_route",
+      "source_end_to_decoded_ms": 933.847
+    },
+    {
+      "trial_id": "local-06",
+      "status": "complete",
+      "source_end_to_render_estimate_ms": null,
+      "target_language": "ta",
+      "source_language": "hi",
+      "source_end_to_physical_playback_ms": null,
+      "condition": "warm_route",
+      "source_end_to_decoded_ms": 927.99
+    },
+    {
+      "trial_id": "local-07",
+      "status": "complete",
+      "source_end_to_render_estimate_ms": null,
+      "target_language": "ta",
+      "source_language": "hi",
+      "source_end_to_physical_playback_ms": null,
+      "condition": "warm_route",
+      "source_end_to_decoded_ms": 914.798
+    },
+    {
+      "trial_id": "local-08",
+      "status": "complete",
+      "source_end_to_render_estimate_ms": null,
+      "target_language": "ta",
+      "source_language": "hi",
+      "source_end_to_physical_playback_ms": null,
+      "condition": "warm_route",
+      "source_end_to_decoded_ms": 915.956
+    },
+    {
+      "trial_id": "local-09",
+      "status": "complete",
+      "source_end_to_render_estimate_ms": null,
+      "target_language": "ta",
+      "source_language": "hi",
+      "source_end_to_physical_playback_ms": null,
+      "condition": "warm_route",
+      "source_end_to_decoded_ms": 956.797
+    },
+    {
+      "trial_id": "local-10",
+      "status": "complete",
+      "source_end_to_render_estimate_ms": null,
+      "target_language": "ta",
+      "source_language": "hi",
+      "source_end_to_physical_playback_ms": null,
+      "condition": "warm_route",
+      "source_end_to_decoded_ms": 946.72
+    },
+    {
+      "trial_id": "local-11",
+      "status": "complete",
+      "source_end_to_render_estimate_ms": null,
+      "target_language": "ta",
+      "source_language": "hi",
+      "source_end_to_physical_playback_ms": null,
+      "condition": "warm_route",
+      "source_end_to_decoded_ms": 915.426
+    }
+  ],
+  "summary": {
+    "failed": 0,
+    "p50_decoded_ms": 927.99,
+    "completed": 11,
+    "attempted": 11,
+    "p95_decoded_ms": 1042.113
+  },
+  "limitations": [
+    "Synthetic tones and provider doubles, not human speech or Gnani/Evon performance.",
+    "Known source-frame SDK playout to received decoded PCM on one process clock; no physical microphone or speaker.",
+    "20-ms decoder frames and callback scheduling limit timing precision.",
+    "The fixture waits for 600 ms of silence, then uses fixed 100-ms MT and 50-ms TTS delays.",
+    "First-route and warm-route conditions stay separate; failures remain in the attempted counts.",
+    "Intertrial quiet is fixture pacing, not a measured receiver-silence guarantee.",
+    "No render estimate, acoustic result, meaning acceptance or under-two-second live claim is inferred."
+  ],
+  "source_report_sha256": "50c33876b761698c1e101b4eaea8f3bfb0c60eb0a7779039d1dced0c1b8f0ba4"
+}

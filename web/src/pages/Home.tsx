@@ -16,6 +16,7 @@ import {
   Globe2,
 } from 'lucide-react';
 import { Avatar, Badge, ErrorNotice, Modal } from '../components/ui';
+import { ConversationIllustration } from '../components/ConversationIllustration';
 import { useApp } from '../state/AppContext';
 import { createRoom } from '../services/api';
 import { languageName } from '../types/domain';
@@ -123,40 +124,16 @@ export function Home() {
           </div>
         </div>
         <div
-          className="conversation-art"
+          className="conversation-art conversation-art-illustrated"
           aria-label="Illustration of Hindi, Tamil and Bengali voices meeting in one conversation"
         >
-          <div className="orbit orbit-one" />
-          <div className="orbit orbit-two" />
-          <div className="art-speck speck-one" />
-          <div className="art-speck speck-two" />
-          <div className="language-orb orb-hi">
-            <span>नमस्ते</span>
-            <small>HINDI</small>
-            <span className="orb-dot" />
+          <div className="illustration-languages" aria-hidden="true">
+            <span lang="hi">नमस्ते</span>
+            <span lang="ta">வணக்கம்</span>
+            <span lang="bn">নমস্কার</span>
           </div>
-          <div className="language-orb orb-ta">
-            <span>வணக்கம்</span>
-            <small>TAMIL</small>
-            <span className="orb-dot" />
-          </div>
-          <div className="language-orb orb-bn">
-            <span>নমস্কার</span>
-            <small>BENGALI</small>
-            <span className="orb-dot" />
-          </div>
-          <div className="art-center">
-            <AudioLines size={39} strokeWidth={1.7} />
-            <div className="art-center-bars">
-              {[9, 19, 29, 17, 35, 23, 12].map((h, i) => (
-                <i key={i} style={{ height: h }} />
-              ))}
-            </div>
-          </div>
-          <div className="art-caption">
-            <span className="status-dot" />
-            One conversation. Many perspectives.
-          </div>
+          <ConversationIllustration />
+          <p className="illustration-caption">One conversation. Many perspectives.</p>
         </div>
       </section>
       <section className="feature-strip" aria-label="Workspace capabilities">
@@ -166,7 +143,7 @@ export function Home() {
           </span>
           <span>
             <strong>Listen in your language</strong>
-            <small>Hindi, Tamil, Bengali & English</small>
+            <small>10 language choices · live review pending</small>
           </span>
         </div>
         <div>
@@ -174,8 +151,8 @@ export function Home() {
             <AudioLines size={21} />
           </span>
           <span>
-            <strong>Keep the human connection</strong>
-            <small>Optional, consent-based voice enrollment</small>
+            <strong>See and hear each other</strong>
+            <small>Camera and standard-voice interpretation</small>
           </span>
         </div>
         <div>
@@ -184,7 +161,7 @@ export function Home() {
           </span>
           <span>
             <strong>Confirm what matters</strong>
-            <small>Review details, amounts & commitments</small>
+            <small>Names, numbers and key details</small>
           </span>
         </div>
       </section>
@@ -286,9 +263,11 @@ export function Home() {
               <strong>
                 {app.health?.mode === 'live'
                   ? 'Live interpretation'
-                  : app.health
-                    ? 'Scripted demonstration'
-                    : 'Service setup needed'}
+                  : app.health?.mode === 'transport'
+                    ? 'Local original audio test'
+                    : app.health
+                      ? 'Scripted demonstration'
+                      : 'Service setup needed'}
               </strong>
             </div>
             <Link to="/settings" aria-label="View workspace setup">
@@ -306,13 +285,19 @@ export function Home() {
           <Sparkles size={19} />
         </span>
         <div>
-          <strong>Explore the conversation before connecting your services.</strong>
+          <strong>
+            {app.health?.mode === 'transport'
+              ? 'Start with a local audio check.'
+              : 'Explore the conversation before connecting your services.'}
+          </strong>
           <p>
-            The demo uses clearly labelled, scripted examples. It does not perform live translation.
+            {app.health?.mode === 'transport'
+              ? 'Join from two browser profiles, use headphones and test one microphone at a time. Speech APIs are disabled.'
+              : 'The demo uses clearly labelled, scripted examples. It does not perform live translation.'}
           </p>
         </div>
         <button className="text-link" onClick={() => void start()}>
-          Try the workspace
+          {app.health?.mode === 'transport' ? 'Start audio check' : 'Try the workspace'}
           <ArrowRight size={16} />
         </button>
       </div>

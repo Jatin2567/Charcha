@@ -1,0 +1,671 @@
+/* Shared visual tokens and final presentation layer. No media or provider behavior. */
+:root {
+  --canvas: #f4f5f8;
+  --surface: #ffffff;
+  --surface-soft: #edf0f5;
+  --ink: #24272e;
+  --muted: #535e70;
+  --border: #d6dbe4;
+  --line-strong: #8490a4;
+  --silver: #c0c9d8;
+  --accent: #365bd6;
+  --accent-hover: #2847b3;
+  --accent-soft: #eaf0ff;
+  --accent-outline: #829bef;
+  --accent-light: #cbd8ff;
+  --focus: #3158d0;
+  --success-ink: var(--accent-hover);
+  --success-bg: var(--accent-soft);
+  --success-border: var(--accent-outline);
+  --orange: #d48a44;
+  --warning-ink: #815111;
+  --warning-bg: #fff4dc;
+  --warning-border: #b38b48;
+  --danger: #b43d36;
+  --danger-ink: #922e28;
+  --danger-bg: #fff0ed;
+  --danger-border: #c47670;
+  --call-deep: #1b1d23;
+  --call-bg: #25282f;
+  --call-surface: #30343d;
+  --call-hover: #3d4350;
+  --call-divider: #4e5665;
+  --call-border: #78859c;
+  --call-ink: #f3f5fa;
+  --call-muted: #c1c9d8;
+  --call-active: var(--accent);
+  --call-active-border: #9db4ff;
+  --chart-queue: #626d81;
+  --chart-speech: var(--accent);
+  --chart-translation: #7363a8;
+  --chart-synthesis: #547da5;
+  accent-color: var(--accent);
+  color: var(--ink);
+  background: var(--canvas);
+}
+
+/* Workspace: readable supporting text on light surfaces, with restrained accents. */
+.app-shell {
+  background: var(--canvas);
+  color: var(--ink);
+}
+.app-shell .topbar,
+.app-shell .panel {
+  background: var(--surface);
+  border-color: var(--border);
+}
+.app-shell .main-content :is(p, small, dt, td, th, li),
+.app-shell
+  :is(
+    .muted,
+    .source-note,
+    .today,
+    .sidebar-note,
+    .sidebar-help,
+    .workspace-label,
+    .breadcrumb,
+    .app-footer,
+    .keyboard-hints,
+    .hero-footnote,
+    .feature-strip small,
+    .section-title p,
+    .join-inline
+  ) {
+  color: var(--muted);
+}
+.app-shell .main-content :is(h1, h2, h3, h4),
+.app-shell :is(.breadcrumb strong, .field > span, .people-row strong) {
+  color: var(--ink);
+}
+.app-shell .main-content p {
+  font-size: 13px;
+  line-height: 1.75;
+}
+.app-shell .main-content :is(small, dt, td, th),
+.app-shell
+  :is(
+    .field small,
+    .source-note,
+    .app-footer,
+    .keyboard-hints,
+    .hero-footnote,
+    .feature-strip small,
+    .section-title p
+  ) {
+  font-size: 12px;
+}
+.app-shell :is(.workspace-label, .sidebar-language small) {
+  color: var(--muted);
+  font-size: 11px;
+}
+.app-shell .nav-item {
+  color: var(--muted);
+  font-size: 13px;
+}
+.app-shell .home-heading h1 span,
+.app-shell .eyebrow,
+.app-shell .crumb-slash {
+  color: var(--muted);
+}
+.app-shell .avatar {
+  color: var(--ink);
+}
+.app-shell .language-orb > span:first-child {
+  color: var(--accent-hover);
+}
+.app-shell .orb-ta > span:first-child { color: var(--ink); }
+.app-shell .art-caption {
+  color: var(--muted);
+}
+.app-shell .performance-stats article:first-child :is(span, strong, em, small, p) {
+  color: #fff;
+}
+.app-shell .deployment-flow-server :is(h3, p, small, span, strong) {
+  color: var(--call-ink);
+}
+.app-shell .nav-item:hover {
+  background: var(--surface-soft);
+}
+.app-shell .nav-item.active {
+  color: var(--accent-hover);
+  background: var(--accent-soft);
+}
+.app-shell :is(.sidebar-help, .text-link, .join-inline strong) {
+  color: var(--accent-hover);
+}
+.app-shell .sidebar-help:hover,
+.app-shell .text-link:hover {
+  text-decoration: underline;
+}
+
+/* The navigation and the meeting share a charcoal surface. */
+.app-shell .sidebar {
+  --muted: var(--call-muted);
+  --ink: var(--call-ink);
+  --border: var(--call-divider);
+  --focus: var(--call-active-border);
+  background: var(--call-bg);
+  color: var(--call-ink);
+  border-color: var(--call-divider);
+  scrollbar-color: var(--call-border) var(--call-bg);
+  scrollbar-width: thin;
+}
+.app-shell .sidebar .brand,
+.meeting-app .meeting-logo .brand {
+  --brand-wave-from: #8db5ff;
+  --brand-wave-to: #67d8ed;
+  color: var(--call-ink);
+}
+.sidebar .brand-light,
+.meeting-logo .brand-light {
+  color: var(--accent-light);
+}
+.app-shell .sidebar .sidebar-language strong {
+  color: var(--call-ink);
+}
+.app-shell .sidebar :is(.tiny-icon, .sidebar-language a, .sidebar-help) {
+  color: var(--accent-light);
+}
+.app-shell .sidebar .nav-item:hover { background: var(--call-hover); color: var(--call-ink); }
+.app-shell .sidebar .nav-item.active { background: var(--accent); color: white; }
+.app-shell .sidebar .nav-dot { background: currentColor; }
+.app-shell .sidebar .status-dot { background: var(--call-active-border); }
+.app-shell .sidebar .badge-neutral { color: var(--call-muted); background: var(--call-hover); }
+
+.app-shell .home-hero {
+  background: linear-gradient(110deg, var(--call-bg) 46%, #28375f);
+  color: var(--call-ink);
+  border-color: var(--call-divider);
+}
+.app-shell .home-hero .hero-copy h2 { color: var(--call-ink); }
+.app-shell .home-hero :is(.hero-copy p, .hero-footnote, .art-caption, .illustration-caption, .join-inline) { color: var(--call-muted); }
+.app-shell .home-hero .join-inline strong { color: var(--accent-light); }
+.app-shell .home-hero .hero-copy > .badge { background: var(--call-hover); color: var(--accent-light); }
+.app-shell .home-hero .orbit { border-color: #56698f; }
+.app-shell .home-hero .art-center { background: transparent; border: 0; box-shadow: none; }
+.app-shell .home-hero .language-orb small { color: var(--muted); }
+.app-shell .home-hero :focus-visible { outline-color: var(--call-active-border); }
+.app-shell
+  :is(
+    .recap-details span,
+    .turn-meta > span,
+    .history-details > span,
+    .turn-confirmation,
+    .recap-turn details
+  ) {
+  color: var(--muted);
+}
+.app-shell :is(.turn-meta > span, .turn-confirmation, .recap-turn details > summary) {
+  font-size: 12px;
+}
+.app-shell .recap-details strong {
+  color: var(--ink);
+}
+.app-shell
+  :is(.prejoin-device, .prejoin-device span, .check-line, .check-line span, .join-privacy) {
+  color: var(--muted);
+  font-size: 12px;
+}
+input::placeholder,
+textarea::placeholder {
+  color: var(--muted);
+  opacity: 1;
+}
+input,
+select,
+textarea {
+  border-color: var(--line-strong);
+}
+.button.secondary,
+.button.ghost {
+  color: var(--accent-hover);
+  border-color: var(--line-strong);
+}
+.button.danger,
+.leave-button {
+  color: #fff;
+  background: var(--danger);
+}
+.button.danger:hover:not(:disabled),
+.leave-button:hover:not(:disabled) {
+  background: #922e28;
+}
+.button:disabled {
+  opacity: 1;
+  color: var(--muted);
+  background: var(--surface-soft);
+  border: 1px dashed var(--line-strong);
+}
+.app-shell .badge,
+.meeting-side-panel .badge {
+  font-size: 11px;
+}
+.app-shell .badge-green,
+.meeting-side-panel .badge-green,
+.conference-status .badge-green {
+  color: var(--success-ink);
+  background: var(--success-bg);
+}
+.app-shell .badge-orange,
+.meeting-side-panel .badge-orange,
+.conference-status .badge-orange {
+  color: var(--warning-ink);
+  background: var(--warning-bg);
+}
+.app-shell .badge-neutral,
+.meeting-side-panel .badge-neutral,
+.conference-status .badge-neutral {
+  color: var(--muted);
+  background: var(--surface-soft);
+}
+.notice.info {
+  color: var(--accent-hover);
+  background: var(--accent-soft);
+  border-color: var(--accent-outline);
+}
+.notice.warning,
+.invitation-help {
+  color: var(--warning-ink);
+  background: var(--warning-bg);
+  border-color: var(--warning-border);
+}
+.notice.error,
+.meeting-error {
+  color: var(--danger-ink);
+  background: var(--danger-bg);
+  border-color: var(--danger-border);
+}
+.app-shell .notice.info :is(p, small) {
+  color: var(--accent-hover);
+}
+.app-shell .notice.warning :is(p, small),
+.app-shell .invitation-help :is(p, strong) {
+  color: var(--warning-ink);
+}
+.app-shell .notice.error :is(p, small) {
+  color: var(--danger-ink);
+}
+.app-shell .main-content .transcript-text {
+  font-size: 15px;
+  color: var(--ink);
+}
+.high-contrast {
+  --muted: var(--ink);
+  --border: var(--line-strong);
+}
+.high-contrast small,
+.high-contrast .muted {
+  color: var(--muted);
+}
+:is(button, a, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+/* The preview retains a dark canvas inside the light workspace. */
+.app-shell .preview-stage {
+  color: var(--call-ink);
+  background: var(--call-bg);
+  border-color: var(--call-border);
+}
+.app-shell
+  .preview-stage
+  :is(
+    p,
+    small,
+    .preview-room-code,
+    .preview-name > span,
+    .preview-caption,
+    .preview-bottom,
+    .preview-sound > span
+  ) {
+  color: var(--call-muted);
+  font-size: 12px;
+}
+.app-shell .preview-stage .preview-name {
+  color: var(--call-ink);
+}
+.app-shell .preview-stage .badge {
+  color: var(--call-ink);
+  background: var(--call-surface);
+}
+.app-shell .preview-stage button {
+  color: var(--call-ink);
+  border: 1px solid var(--call-border);
+  background: var(--call-surface);
+}
+.app-shell .preview-stage button:disabled {
+  color: var(--call-muted);
+  background: var(--call-surface);
+  border-style: dashed;
+  opacity: 1;
+}
+.preview-stage :focus-visible {
+  outline-color: var(--call-active-border);
+}
+.app-shell .preview-stage button[aria-pressed='true']:not(:disabled) {
+  background: var(--call-active);
+  color: #fff;
+  border-color: var(--call-active-border);
+}
+
+/* Call canvas: neutral tiles keep faces, captions and controls visually prominent. */
+.meeting-app,
+.meeting-app .meeting-toolbar {
+  background: var(--call-bg);
+  color: var(--call-ink);
+}
+.meeting-app .meeting-stage { scrollbar-color: var(--call-border) var(--call-bg); }
+.meeting-app .meeting-header,
+.meeting-app .meeting-toolbar {
+  border-color: var(--call-divider);
+}
+.meeting-app .meeting-title h1 {
+  color: var(--call-ink);
+  font-size: 14px;
+}
+.meeting-app
+  :is(
+    .meeting-title > div,
+    .meeting-language,
+    .meeting-stage-heading > div,
+    .meeting-stage-foot,
+    .meeting-room-code,
+    .caption-placeholder,
+    .camera-off-note,
+    .camera-state-note
+  ) {
+  color: var(--call-muted);
+  font-size: 12px;
+}
+.meeting-app .meeting-language > strong {
+  color: var(--call-ink);
+}
+.meeting-app .meeting-header-divider {
+  color: var(--call-muted);
+}
+.meeting-app .participant-portrait .avatar {
+  color: var(--ink);
+}
+.meeting-app .meeting-invite {
+  color: var(--call-ink);
+  background: var(--call-active);
+  border-color: var(--call-active-border);
+  font-size: 12px;
+}
+.meeting-app .meeting-invite:hover {
+  background: var(--accent-hover);
+}
+.meeting-app .meeting-stage-heading > .badge {
+  color: var(--call-muted);
+  background: var(--call-surface);
+  border-color: var(--call-border);
+  font-size: 11px;
+}
+.meeting-app .meeting-demo-banner {
+  color: #f4dfb4;
+  background: #342f23;
+  border-color: #9f854f;
+}
+.meeting-app .meeting-demo-banner :is(strong, small, a, button) {
+  color: #f4dfb4;
+  font-size: 12px;
+}
+.meeting-app .meeting-demo-banner strong {
+  font-size: 13px;
+  font-weight: 600;
+}
+.meeting-app .participant-card {
+  background: var(--call-surface);
+  border-color: var(--call-divider);
+}
+.meeting-app .participant-theme-1 {
+  background: var(--call-surface);
+}
+.meeting-app .participant-theme-2 {
+  background: var(--call-surface);
+}
+.meeting-app .participant-theme-3 {
+  background: var(--call-surface);
+}
+.meeting-app .participant-card.is-speaking {
+  border-color: var(--call-active-border);
+  box-shadow: 0 0 0 2px var(--call-active-border);
+}
+.meeting-app .participant-language {
+  color: var(--call-ink);
+  background: var(--call-hover);
+  border-color: var(--call-border);
+  font-size: 12px;
+}
+.meeting-app .participant-status {
+  color: var(--call-muted);
+  font-size: 10px;
+  letter-spacing: 0.6px;
+}
+.meeting-app .participant-card-bottom h3 {
+  color: var(--call-ink);
+  font-size: 15px;
+}
+.meeting-app .participant-card-bottom :is(p, h3 > span) {
+  color: var(--call-muted);
+  font-size: 12px;
+}
+.meeting-app .card-mic {
+  color: var(--call-ink);
+  background: var(--call-hover);
+  border-color: var(--call-border);
+}
+.meeting-app .live-level {
+  color: var(--call-ink);
+  background: var(--call-active);
+  border-color: var(--call-active-border);
+}
+.meeting-app .live-level i {
+  background: var(--accent-light);
+}
+.meeting-app .live-caption > span {
+  color: var(--call-muted);
+  font-size: 12px;
+}
+.meeting-app .live-caption > p {
+  color: var(--call-ink);
+  font-size: 16px;
+}
+.meeting-app .waiting-note :is(strong, p, button) {
+  color: var(--call-muted);
+  font-size: 13px;
+}
+
+/* Explicit states avoid positional rules confusing camera-off with an error. */
+.meeting-app .meeting-tool,
+.meeting-app .meeting-tool:first-child:not(.tool-active) {
+  background: var(--call-surface);
+  color: var(--call-ink);
+  border: 1px solid var(--call-border);
+  opacity: 1;
+}
+.meeting-app .meeting-tool:hover:not(:disabled) {
+  background: var(--call-hover);
+}
+.meeting-app .meeting-tool[data-state='on'] {
+  background: var(--call-active);
+  color: #fff;
+  border-color: var(--call-active-border);
+  box-shadow: inset 0 -3px 0 var(--call-active-border);
+}
+.meeting-app .meeting-tool[data-state='on']:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+.meeting-app .meeting-header .avatar {
+  background: var(--call-hover);
+  color: var(--call-ink);
+}
+.meeting-app .meeting-tool[data-state='unavailable'] {
+  background: var(--call-surface);
+  color: var(--call-muted);
+  border: 1px dashed var(--call-border);
+  opacity: 1;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.meeting-app .meeting-tool > span {
+  font-size: 12px;
+}
+.meeting-app .leave-button {
+  background: var(--danger);
+  color: #fff;
+  border-color: #efaaa4;
+}
+.meeting-app .leave-button > span {
+  font-size: 12px;
+}
+.meeting-app .toolbar-info {
+  color: var(--call-ink);
+}
+.meeting-app .toolbar-info.selected {
+  color: #fff;
+  background: var(--call-active);
+}
+.meeting-app :focus-visible {
+  outline-color: var(--call-active-border);
+}
+.meeting-app .meeting-side-panel,
+.meeting-app .modal,
+.meeting-app .conference-status {
+  --focus: var(--accent-hover);
+}
+.meeting-app :is(.meeting-side-panel, .modal, .conference-status) :focus-visible {
+  outline-color: var(--focus);
+}
+
+/* Light call panels and transcripts use the same hierarchy as the workspace. */
+.meeting-app .meeting-side-panel {
+  color: var(--ink);
+  background: var(--canvas);
+  border-color: var(--border);
+}
+.meeting-app
+  .meeting-side-panel
+  :is(
+    p,
+    small,
+    li,
+    dt,
+    .source-note,
+    .people-count,
+    .room-howto,
+    .shortcut-row,
+    .transcript-panel-info,
+    .transcript-empty-note,
+    .text-composer small
+  ) {
+  color: var(--muted);
+  font-size: 12px;
+}
+.meeting-app .meeting-side-panel :is(h2, h3, h4, strong, .field > span) {
+  color: var(--ink);
+}
+.meeting-app .meeting-side-panel .transcript-text {
+  color: var(--ink);
+  font-size: 15px;
+}
+.meeting-app .meeting-side-panel .icon-button {
+  color: var(--muted);
+}
+.meeting-app .meeting-side-panel .segmented button {
+  color: var(--muted);
+  font-size: 12px;
+}
+.meeting-app .meeting-side-panel .segmented button.selected {
+  color: var(--accent-hover);
+  background: var(--accent-soft);
+}
+.meeting-app .meeting-side-panel .people-row :is(strong, small) {
+  font-size: 13px;
+}
+.meeting-app .meeting-side-panel .invitation-help :is(strong, p) {
+  color: var(--warning-ink);
+}
+.meeting-app .meeting-side-panel .invitation-help a {
+  color: var(--accent-hover);
+}
+.meeting-app .meeting-side-panel .button {
+  font-size: 12px;
+}
+.meeting-app .modal :is(p, small, .muted) {
+  color: var(--muted);
+}
+.meeting-app .modal h2 {
+  color: var(--ink);
+}
+.meeting-app .conference-status {
+  background: var(--surface);
+  border-color: var(--line-strong);
+  border-left-width: 4px;
+}
+.meeting-app .conference-status[data-tone='success'] {
+  border-left-color: var(--success-ink);
+}
+.meeting-app .conference-status[data-tone='warning'] {
+  background: #fffaf0;
+  border-color: var(--warning-border);
+}
+.meeting-app .conference-status[data-tone='danger'] {
+  background: var(--danger-bg);
+  border-color: var(--danger-border);
+}
+.meeting-app .conference-status :is(strong, h4, dd) {
+  color: var(--ink);
+}
+.meeting-app .conference-status :is(p, li, dt, summary) {
+  color: var(--muted);
+  font-size: 13px;
+}
+.meeting-app .conference-status-main strong {
+  font-size: 14px;
+}
+.meeting-app .conference-status[data-tone='warning'] .conference-status-main strong {
+  color: var(--warning-ink);
+}
+.meeting-app .conference-status[data-tone='danger'] .conference-status-main strong {
+  color: var(--danger-ink);
+}
+.meeting-app .conference-status .conference-status-actions button {
+  color: var(--accent-hover);
+  border-color: var(--call-border);
+  font-size: 12px;
+}
+.meeting-app .conference-status .badge {
+  font-size: 11px;
+}
+.meeting-app .conference-status .conference-allowance a {
+  color: var(--accent-hover);
+}
+
+@media (max-width: 650px) {
+  .meeting-app .meeting-tool > span {
+    display: none;
+  }
+  .meeting-app .meeting-title h1 {
+    font-size: 13px;
+  }
+  .meeting-app .meeting-title > div {
+    font-size: 11px;
+  }
+  .meeting-app .participant-status {
+    font-size: 10px;
+  }
+  .meeting-app .participant-card-bottom h3 {
+    font-size: 13px;
+  }
+  .meeting-app .meeting-language {
+    font-size: 11px;
+  }
+  .meeting-app .meeting-demo-banner {
+    align-items: flex-start;
+  }
+}
+.call-waveforms { margin-block: .7rem; }
+.call-waveforms p { margin-block: .6rem; }
+.call-waveforms canvas { display: block; background: var(--canvas); width: 100%; height: 40px; border-radius: 4px; }

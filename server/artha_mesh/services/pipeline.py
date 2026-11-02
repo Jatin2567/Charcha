@@ -43,6 +43,8 @@ class Pipeline:
         self, state: RoomState, speaker: Participant, text: str,
         stt_ms: float | None = None, from_audio: bool = False,
     ) -> str:
+        if self.store.settings.mode == "transport":
+            raise HTTPException(409, "Interpretation is disabled in transport mode; use the microphone for original audio")
         text = text.strip()
         if not text or len(text) > 2000:
             raise HTTPException(422, "Utterances must contain 1–2000 characters")
@@ -272,7 +274,16 @@ class Pipeline:
     def _active_participants(self, state: RoomState):
         if self.store.settings.mode == "demo":
             return state.room.participants
-        return [p for p in state.room.participants if self.store.is_active(state.room.code, p.id)]
+        participants = [p for p in state.room.participants if self.store.is_active(state.room.code, p.id)]
+        audio = getattr(self.transport, "rooms", {}).get(state.room.code) if self.transport else None
+        if self.store.settings.mode == "live" and audio and audio.room:
+            # An HTTP membership alone is not a connected listener. Do not spend
+            # MT/TTS attempts on a peer that has not joined (or has lost) media.
+            if audio.closed or audio.disconnected or getattr(audio, "reconnecting", False):
+                return []
+            remote = audio.room.remote_participants
+            return [p for p in participants if p.id in remote and not p.is_agent]
+        return participants
 
     def _require_delivery_active(self, state: RoomState, speaker_id: str, target: str):
         if not self._source_active(state, speaker_id):

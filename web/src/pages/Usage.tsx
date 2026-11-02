@@ -28,6 +28,8 @@ import type {
   UsageResource,
 } from '../types/usage';
 import './Usage.css';
+import { SavedSpeechTests } from '../components/SavedSpeechTests';
+import { FiveLanguageResults } from '../components/FiveLanguageResults';
 
 const amount = (value: number | null) => (value === null ? 'Unknown' : value.toLocaleString());
 const balanceAmount = (value: number | null, unit: BalanceUnit | null) =>
@@ -206,6 +208,8 @@ function ProviderEvidence({ report }: { report: UsageReport }) {
             <Badge tone={approved ? 'green' : 'neutral'}>
               {approved
                 ? 'One bounded flow approved'
+                : approval.status === 'disabled'
+                  ? 'Transport · speech APIs disabled'
                 : approval.status === 'demo'
                   ? 'Demo · no provider use'
                   : approval.status === 'unavailable'
@@ -481,6 +485,8 @@ export function Usage() {
             <h2 id="usage-scope-title">
               {reference
                 ? 'Reference limits · consumption unknown'
+                : report.mode === 'transport'
+                  ? 'Local audio · speech APIs disabled'
                 : demo
                   ? 'Demo workspace · no paid inference'
                   : ready
@@ -490,6 +496,8 @@ export function Usage() {
             <Badge tone={ready ? 'green' : reference || demo ? 'neutral' : 'orange'}>
               {reference
                 ? 'Reference only'
+                : report.mode === 'transport'
+                  ? 'No speech inference'
                 : demo
                   ? 'Demo counters'
                   : ready
@@ -522,6 +530,9 @@ export function Usage() {
       )}
 
       <ProviderEvidence report={report} />
+
+      <SavedSpeechTests />
+      <FiveLanguageResults />
 
       <div className="usage-controls">
         <div className="usage-refresh-status">

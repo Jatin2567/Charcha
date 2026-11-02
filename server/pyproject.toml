@@ -16,10 +16,12 @@ dependencies = [
   "python-multipart>=0.0.20,<1.0",
   "livekit-api>=1.0,<2.0",
   "livekit>=1.0,<2.0",
+  "numpy>=1.26,<3.0",
 ]
 
 [project.optional-dependencies]
 live = [] # RTC dependencies are included so the installed app always supports live mode.
+screening = ["onnxruntime>=1.22,<2.0"] # Optional local CPU classifier; never an API.
 dev = ["pytest>=8.3,<10", "pytest-asyncio>=0.25,<2", "ruff>=0.9,<1"]
 
 [tool.hatch.build.targets.wheel]

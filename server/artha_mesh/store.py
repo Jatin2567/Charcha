@@ -55,6 +55,8 @@ class RoomState:
     voice_profiles: dict[str, str] = field(default_factory=dict)
     demo_task: asyncio.Task | None = None
     demo_started: bool = False
+    screening_latest: dict[str, dict] = field(default_factory=dict)
+    screening_samples: deque[dict] = field(default_factory=lambda: deque(maxlen=MAX_PERFORMANCE_SAMPLES))
 
     def broadcast(self, event_type: str, payload: dict) -> None:
         event = Event(type=event_type, payload=payload).model_dump(mode="json")

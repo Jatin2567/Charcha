@@ -6,17 +6,24 @@ from uuid import uuid4
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-LanguageCode = Literal["hi", "ta", "bn", "en"]
+LanguageCode = Literal["hi", "ta", "bn", "en", "te", "kn", "ml", "mr", "gu", "pa"]
 VoiceMode = Literal["standard", "cloned"]
+ApplicationMode = Literal["demo", "transport", "live"]
 
 LANGUAGES = [
     {"code": "hi", "name": "Hindi", "native_name": "हिन्दी"},
     {"code": "ta", "name": "Tamil", "native_name": "தமிழ்"},
     {"code": "bn", "name": "Bengali", "native_name": "বাংলা"},
     {"code": "en", "name": "English", "native_name": "English"},
+    {"code": "te", "name": "Telugu", "native_name": "తెలుగు"},
+    {"code": "kn", "name": "Kannada", "native_name": "ಕನ್ನಡ"},
+    {"code": "ml", "name": "Malayalam", "native_name": "മലയാളം"},
+    {"code": "mr", "name": "Marathi", "native_name": "मराठी"},
+    {"code": "gu", "name": "Gujarati", "native_name": "ગુજરાતી"},
+    {"code": "pa", "name": "Punjabi", "native_name": "ਪੰਜਾਬੀ"},
 ]
 LANGUAGE_NAMES = {item["code"]: item["name"] for item in LANGUAGES}
-BCP47 = {"hi": "hi-IN", "ta": "ta-IN", "bn": "bn-IN", "en": "en-IN"}
+BCP47 = {item["code"]: f"{item['code']}-IN" for item in LANGUAGES}
 
 
 def now() -> datetime:
@@ -66,7 +73,7 @@ class SubmitText(RequestModel):
 
 
 class DemoScenario(RequestModel):
-    scenario: Literal["trade"] = "trade"
+    scenario: Literal["everyday"] = "everyday"
 
 
 class ConfirmTurn(RequestModel):
@@ -89,7 +96,7 @@ class Room(BaseModel):
     code: str
     title: str
     created_at: datetime = Field(default_factory=now)
-    mode: Literal["demo", "live"]
+    mode: ApplicationMode
     participants: list[Participant] = Field(default_factory=list)
 
 
@@ -148,4 +155,4 @@ class VoiceProfile(BaseModel):
     id: str = Field(default_factory=new_id)
     name: str
     created_at: datetime = Field(default_factory=now)
-    mode: Literal["demo", "live"]
+    mode: ApplicationMode

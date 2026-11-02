@@ -1,0 +1,24 @@
+{
+  "captured_at": null,
+  "host": {
+    "os": null,
+    "architecture": null,
+    "ram_gib": null,
+    "free_disk_gib": null,
+    "docker_daemon_access": false,
+    "compose_version": null,
+    "nvidia_container_runtime": false,
+    "gpus": [{"total_mib": null, "free_mib": null, "driver_version": null}]
+  },
+  "session": {
+    "resource": "projects/PROJECT_ID/zones/ZONE/instances/VM_NAME",
+    "maximum_seconds": 7200,
+    "maximum_cost_inr": null,
+    "stop_guard": {
+      "verified_in_provider": false,
+      "action": "STOP",
+      "resource": "projects/PROJECT_ID/zones/ZONE/instances/VM_NAME",
+      "maximum_seconds": 7200
+    }
+  }
+}

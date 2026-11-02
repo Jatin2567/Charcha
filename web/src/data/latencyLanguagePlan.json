@@ -1,0 +1,3335 @@
+{
+  "schema_version": 1,
+  "record_type": "latency_language_workflow_plan",
+  "plan_id": "physical-gated-common-ten-v1",
+  "plan_only": true,
+  "provider_calls_made": 0,
+  "approval_granted": false,
+  "automatic_matrix_runner": false,
+  "full_matrix_authorized": false,
+  "full_matrix_eligible_for_test_review": false,
+  "catalog_checked_on": "2026-10-30",
+  "catalog_source": "server/artha_mesh/voice_catalog.py:TIMBRE_V25_STOCK_VOICES",
+  "language_count": 10,
+  "languages": [
+    {
+      "code": "hi",
+      "name": "Hindi",
+      "locale": "hi-IN",
+      "standard_voice": "Nalini",
+      "providers": {
+        "stt": {
+          "requested_model": "prisma-v3.0",
+          "catalog_status": "documented",
+          "account_access": "not_verified",
+          "live_language_acceptance": "not_assessed_by_this_plan"
+        },
+        "mt": {
+          "model": "gnani/gnani-evon-v3.3-30B-A3B",
+          "catalog_status": "documented",
+          "live_language_acceptance": "not_assessed_by_this_plan"
+        },
+        "tts": {
+          "model": "timbre-v2.5",
+          "voice": "Nalini",
+          "catalog_status": "documented",
+          "account_access": "not_verified",
+          "live_language_acceptance": "not_assessed_by_this_plan"
+        }
+      },
+      "source_review": "pending",
+      "meaning_review": "pending",
+      "physical_device_acceptance": "pending"
+    },
+    {
+      "code": "ta",
+      "name": "Tamil",
+      "locale": "ta-IN",
+      "standard_voice": "Trisha",
+      "providers": {
+        "stt": {
+          "requested_model": "prisma-v3.0",
+          "catalog_status": "documented",
+          "account_access": "not_verified",
+          "live_language_acceptance": "not_assessed_by_this_plan"
+        },
+        "mt": {
+          "model": "gnani/gnani-evon-v3.3-30B-A3B",
+          "catalog_status": "documented",
+          "live_language_acceptance": "not_assessed_by_this_plan"
+        },
+        "tts": {
+          "model": "timbre-v2.5",
+          "voice": "Trisha",
+          "catalog_status": "documented",
+          "account_access": "not_verified",
+          "live_language_acceptance": "not_assessed_by_this_plan"
+        }
+      },
+      "source_review": "pending",
+      "meaning_review": "pending",
+      "physical_device_acceptance": "pending"
+    },
+    {
+      "code": "bn",
+      "name": "Bengali",
+      "locale": "bn-IN",
+      "standard_voice": "Kirra",
+      "providers": {
+        "stt": {
+          "requested_model": "prisma-v3.0",
+          "catalog_status": "documented",
+          "account_access": "not_verified",
+          "live_language_acceptance": "not_assessed_by_this_plan"
+        },
+        "mt": {
+          "model": "gnani/gnani-evon-v3.3-30B-A3B",
+          "catalog_status": "documented",
+          "live_language_acceptance": "not_assessed_by_this_plan"
+        },
+        "tts": {
+          "model": "timbre-v2.5",
+          "voice": "Kirra",
+          "catalog_status": "documented",
+          "account_access": "not_verified",
+          "live_language_acceptance": "not_assessed_by_this_plan"
+        }
+      },
+      "source_review": "pending",
+      "meaning_review": "pending",
+      "physical_device_acceptance": "pending"
+    },
+    {
+      "code": "en",
+      "name": "English",
+      "locale": "en-IN",
+      "standard_voice": "Pranav",
+      "providers": {
+        "stt": {
+          "requested_model": "prisma-v3.0",
+          "catalog_status": "documented",
+          "account_access": "not_verified",
+          "live_language_acceptance": "not_assessed_by_this_plan"
+        },
+        "mt": {
+          "model": "gnani/gnani-evon-v3.3-30B-A3B",
+          "catalog_status": "documented",
+          "live_language_acceptance": "not_assessed_by_this_plan"
+        },
+        "tts": {
+          "model": "timbre-v2.5",
+          "voice": "Pranav",
+          "catalog_status": "documented",
+          "account_access": "not_verified",
+          "live_language_acceptance": "not_assessed_by_this_plan"
+        }
+      },
+      "source_review": "pending",
+      "meaning_review": "pending",
+      "physical_device_acceptance": "pending"
+    },
+    {
+      "code": "te",
+      "name": "Telugu",
+      "locale": "te-IN",
+      "standard_voice": "Suhana",
+      "providers": {
+        "stt": {
+          "requested_model": "prisma-v3.0",
+          "catalog_status": "documented",
+          "account_access": "not_verified",
+          "live_language_acceptance": "not_assessed_by_this_plan"
+        },
+        "mt": {
+          "model": "gnani/gnani-evon-v3.3-30B-A3B",
+          "catalog_status": "documented",
+          "live_language_acceptance": "not_assessed_by_this_plan"
+        },
+        "tts": {
+          "model": "timbre-v2.5",
+          "voice": "Suhana",
+          "catalog_status": "documented",
+          "account_access": "not_verified",
+          "live_language_acceptance": "not_assessed_by_this_plan"
+        }
+      },
+      "source_review": "pending",
+      "meaning_review": "pending",
+      "physical_device_acceptance": "pending"
+    },
+    {
+      "code": "kn",
+      "name": "Kannada",
+      "locale": "kn-IN",
+      "standard_voice": "Saanvi",
+      "providers": {
+        "stt": {
+          "requested_model": "prisma-v3.0",
+          "catalog_status": "documented",
+          "account_access": "not_verified",
+          "live_language_acceptance": "not_assessed_by_this_plan"
+        },
+        "mt": {
+          "model": "gnani/gnani-evon-v3.3-30B-A3B",
+          "catalog_status": "documented",
+          "live_language_acceptance": "not_assessed_by_this_plan"
+        },
+        "tts": {
+          "model": "timbre-v2.5",
+          "voice": "Saanvi",
+          "catalog_status": "documented",
+          "account_access": "not_verified",
+          "live_language_acceptance": "not_assessed_by_this_plan"
+        }
+      },
+      "source_review": "pending",
+      "meaning_review": "pending",
+      "physical_device_acceptance": "pending"
+    },
+    {
+      "code": "ml",
+      "name": "Malayalam",
+      "locale": "ml-IN",
+      "standard_voice": "Reshma",
+      "providers": {
+        "stt": {
+          "requested_model": "prisma-v3.0",
+          "catalog_status": "documented",
+          "account_access": "not_verified",
+          "live_language_acceptance": "not_assessed_by_this_plan"
+        },
+        "mt": {
+          "model": "gnani/gnani-evon-v3.3-30B-A3B",
+          "catalog_status": "documented",
+          "live_language_acceptance": "not_assessed_by_this_plan"
+        },
+        "tts": {
+          "model": "timbre-v2.5",
+          "voice": "Reshma",
+          "catalog_status": "documented",
+          "account_access": "not_verified",
+          "live_language_acceptance": "not_assessed_by_this_plan"
+        }
+      },
+      "source_review": "pending",
+      "meaning_review": "pending",
+      "physical_device_acceptance": "pending"
+    },
+    {
+      "code": "mr",
+      "name": "Marathi",
+      "locale": "mr-IN",
+      "standard_voice": "Zahira",
+      "providers": {
+        "stt": {
+          "requested_model": "prisma-v3.0",
+          "catalog_status": "documented",
+          "account_access": "not_verified",
+          "live_language_acceptance": "not_assessed_by_this_plan"
+        },
+        "mt": {
+          "model": "gnani/gnani-evon-v3.3-30B-A3B",
+          "catalog_status": "documented",
+          "live_language_acceptance": "not_assessed_by_this_plan"
+        },
+        "tts": {
+          "model": "timbre-v2.5",
+          "voice": "Zahira",
+          "catalog_status": "documented",
+          "account_access": "not_verified",
+          "live_language_acceptance": "not_assessed_by_this_plan"
+        }
+      },
+      "source_review": "pending",
+      "meaning_review": "pending",
+      "physical_device_acceptance": "pending"
+    },
+    {
+      "code": "gu",
+      "name": "Gujarati",
+      "locale": "gu-IN",
+      "standard_voice": "Falak",
+      "providers": {
+        "stt": {
+          "requested_model": "prisma-v3.0",
+          "catalog_status": "documented",
+          "account_access": "not_verified",
+          "live_language_acceptance": "not_assessed_by_this_plan"
+        },
+        "mt": {
+          "model": "gnani/gnani-evon-v3.3-30B-A3B",
+          "catalog_status": "documented",
+          "live_language_acceptance": "not_assessed_by_this_plan"
+        },
+        "tts": {
+          "model": "timbre-v2.5",
+          "voice": "Falak",
+          "catalog_status": "documented",
+          "account_access": "not_verified",
+          "live_language_acceptance": "not_assessed_by_this_plan"
+        }
+      },
+      "source_review": "pending",
+      "meaning_review": "pending",
+      "physical_device_acceptance": "pending"
+    },
+    {
+      "code": "pa",
+      "name": "Punjabi",
+      "locale": "pa-IN",
+      "standard_voice": "Mehuli",
+      "providers": {
+        "stt": {
+          "requested_model": "prisma-v3.0",
+          "catalog_status": "documented",
+          "account_access": "not_verified",
+          "live_language_acceptance": "not_assessed_by_this_plan"
+        },
+        "mt": {
+          "model": "gnani/gnani-evon-v3.3-30B-A3B",
+          "catalog_status": "documented",
+          "live_language_acceptance": "not_assessed_by_this_plan"
+        },
+        "tts": {
+          "model": "timbre-v2.5",
+          "voice": "Mehuli",
+          "catalog_status": "documented",
+          "account_access": "not_verified",
+          "live_language_acceptance": "not_assessed_by_this_plan"
+        }
+      },
+      "source_review": "pending",
+      "meaning_review": "pending",
+      "physical_device_acceptance": "pending"
+    }
+  ],
+  "planned_directed_pairs": 90,
+  "optional_same_language_routes": 10,
+  "draft_case_count": 40,
+  "draft_cases": [
+    {
+      "case_id": "hi-ordinary",
+      "source_language": "hi",
+      "category": "ordinary",
+      "source_text": "\u0928\u092e\u0938\u094d\u0924\u0947\u0964 \u0915\u094d\u092f\u093e \u0906\u092a\u0915\u094b \u092e\u0947\u0930\u0940 \u0906\u0935\u093e\u091c\u093c \u0938\u093e\u092b\u093c \u0938\u0941\u0928\u093e\u0908 \u0926\u0947 \u0930\u0939\u0940 \u0939\u0948?",
+      "source_characters": 50,
+      "expected_meaning": [
+        "A greeting",
+        "Ask whether the voice is clear"
+      ],
+      "review_focus": [
+        "polite question",
+        "intent"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "hi-negation",
+      "source_language": "hi",
+      "category": "negation",
+      "source_text": "\u0939\u092e 10 \u092c\u091c\u0947 \u092e\u093f\u0932\u0947\u0902\u0917\u0947, 11 \u092c\u091c\u0947 \u0928\u0939\u0940\u0902\u0964",
+      "source_characters": 31,
+      "expected_meaning": [
+        "Meet at 10",
+        "11 is explicitly rejected"
+      ],
+      "review_focus": [
+        "negation",
+        "contrast"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "hi-names",
+      "source_language": "hi",
+      "category": "names",
+      "source_text": "\u0932\u093e\u0932 \u0915\u093f\u0924\u093e\u092c \u092e\u0940\u0928\u093e \u0915\u094b \u0914\u0930 \u0939\u0930\u0940 \u0915\u093f\u0924\u093e\u092c \u0930\u0935\u093f \u0915\u094b \u0926\u0940\u091c\u093f\u090f\u0964",
+      "source_characters": 44,
+      "expected_meaning": [
+        "Give the red book to Meena",
+        "Give the green book to Ravi"
+      ],
+      "review_focus": [
+        "names",
+        "colour-to-person association",
+        "natural transliteration allowed"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "hi-numbers",
+      "source_language": "hi",
+      "category": "numbers",
+      "source_text": "\u0939\u092e Room AM-204 \u092e\u0947\u0902 10:30 \u092c\u091c\u0947 \u092e\u093f\u0932\u0947\u0902\u0917\u0947\u0964",
+      "source_characters": 37,
+      "expected_meaning": [
+        "Meet in Room AM-204",
+        "Meeting time is 10:30"
+      ],
+      "review_focus": [
+        "room identifier AM-204",
+        "time 10:30",
+        "no invented date or time zone"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "ta-ordinary",
+      "source_language": "ta",
+      "category": "ordinary",
+      "source_text": "\u0bb5\u0ba3\u0b95\u0bcd\u0b95\u0bae\u0bcd. \u0b8e\u0ba9\u0bcd \u0b95\u0bc1\u0bb0\u0bb2\u0bcd \u0ba4\u0bc6\u0bb3\u0bbf\u0bb5\u0bbe\u0b95\u0b95\u0bcd \u0b95\u0bc7\u0b9f\u0bcd\u0b95\u0bbf\u0bb1\u0ba4\u0bbe?",
+      "source_characters": 39,
+      "expected_meaning": [
+        "A greeting",
+        "Ask whether the voice is clear"
+      ],
+      "review_focus": [
+        "polite question",
+        "intent"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "ta-negation",
+      "source_language": "ta",
+      "category": "negation",
+      "source_text": "\u0b8e\u0ba9\u0b95\u0bcd\u0b95\u0bc1 \u0ba8\u0bc0\u0bb2\u0baa\u0bcd \u0baa\u0bc1\u0ba4\u0bcd\u0ba4\u0b95\u0bae\u0bcd \u0bb5\u0bc7\u0ba3\u0bcd\u0b9f\u0bc1\u0bae\u0bcd, \u0b9a\u0bbf\u0bb5\u0baa\u0bcd\u0baa\u0bc1 \u0bb5\u0bc7\u0ba3\u0bcd\u0b9f\u0bbe\u0bae\u0bcd.",
+      "source_characters": 49,
+      "expected_meaning": [
+        "The speaker wants the blue book",
+        "Red is explicitly rejected"
+      ],
+      "review_focus": [
+        "negation",
+        "contrast"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "ta-names",
+      "source_language": "ta",
+      "category": "names",
+      "source_text": "\u0b9a\u0bbf\u0bb5\u0baa\u0bcd\u0baa\u0bc1\u0baa\u0bcd \u0baa\u0bc1\u0ba4\u0bcd\u0ba4\u0b95\u0ba4\u0bcd\u0ba4\u0bc8 \u0bae\u0bc0\u0ba9\u0bbe\u0bb5\u0bc1\u0b95\u0bcd\u0b95\u0bc1\u0bae\u0bcd \u0baa\u0b9a\u0bcd\u0b9a\u0bc8\u0baa\u0bcd \u0baa\u0bc1\u0ba4\u0bcd\u0ba4\u0b95\u0ba4\u0bcd\u0ba4\u0bc8 \u0bb0\u0bb5\u0bbf\u0b95\u0bcd\u0b95\u0bc1\u0bae\u0bcd \u0b95\u0bca\u0b9f\u0bc1\u0b99\u0bcd\u0b95\u0bb3\u0bcd.",
+      "source_characters": 73,
+      "expected_meaning": [
+        "Give the red book to Meena",
+        "Give the green book to Ravi"
+      ],
+      "review_focus": [
+        "names",
+        "colour-to-person association",
+        "natural transliteration allowed"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "ta-numbers",
+      "source_language": "ta",
+      "category": "numbers",
+      "source_text": "\u0ba8\u0bbe\u0bae\u0bcd Room AM-204 \u0b87\u0bb2\u0bcd 10:30 \u0bae\u0ba3\u0bbf\u0b95\u0bcd\u0b95\u0bc1\u0b9a\u0bcd \u0b9a\u0ba8\u0bcd\u0ba4\u0bbf\u0baa\u0bcd\u0baa\u0bcb\u0bae\u0bcd.",
+      "source_characters": 49,
+      "expected_meaning": [
+        "Meet in Room AM-204",
+        "Meeting time is 10:30"
+      ],
+      "review_focus": [
+        "room identifier AM-204",
+        "time 10:30",
+        "no invented date or time zone"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "bn-ordinary",
+      "source_language": "bn",
+      "category": "ordinary",
+      "source_text": "\u09a8\u09ae\u09b8\u09cd\u0995\u09be\u09b0\u0964 \u0986\u09ae\u09be\u09b0 \u0995\u09a5\u09be \u0995\u09bf \u09b8\u09cd\u09aa\u09b7\u09cd\u099f \u09b6\u09cb\u09a8\u09be \u09af\u09be\u099a\u09cd\u099b\u09c7?",
+      "source_characters": 40,
+      "expected_meaning": [
+        "A greeting",
+        "Ask whether the voice is clear"
+      ],
+      "review_focus": [
+        "polite question",
+        "intent"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "bn-negation",
+      "source_language": "bn",
+      "category": "negation",
+      "source_text": "\u0986\u09ae\u09b0\u09be \u0986\u099c \u09a8\u09af\u09bc, \u0995\u09be\u09b2 \u09a6\u09c7\u0996\u09be \u0995\u09b0\u09ac\u0964",
+      "source_characters": 26,
+      "expected_meaning": [
+        "Meet tomorrow",
+        "Today is explicitly rejected"
+      ],
+      "review_focus": [
+        "negation",
+        "contrast"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "bn-names",
+      "source_language": "bn",
+      "category": "names",
+      "source_text": "\u09b2\u09be\u09b2 \u09ac\u0987\u099f\u09bf \u09ae\u09c0\u09a8\u09be\u0995\u09c7 \u098f\u09ac\u0982 \u09b8\u09ac\u09c1\u099c \u09ac\u0987\u099f\u09bf \u09b0\u09ac\u09bf\u0995\u09c7 \u09a6\u09bf\u09a8\u0964",
+      "source_characters": 40,
+      "expected_meaning": [
+        "Give the red book to Meena",
+        "Give the green book to Ravi"
+      ],
+      "review_focus": [
+        "names",
+        "colour-to-person association",
+        "natural transliteration allowed"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "bn-numbers",
+      "source_language": "bn",
+      "category": "numbers",
+      "source_text": "\u0986\u09ae\u09b0\u09be Room AM-204-\u098f 10:30-\u098f \u09a6\u09c7\u0996\u09be \u0995\u09b0\u09ac\u0964",
+      "source_characters": 36,
+      "expected_meaning": [
+        "Meet in Room AM-204",
+        "Meeting time is 10:30"
+      ],
+      "review_focus": [
+        "room identifier AM-204",
+        "time 10:30",
+        "no invented date or time zone"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "en-ordinary",
+      "source_language": "en",
+      "category": "ordinary",
+      "source_text": "Hello. Can you hear my voice clearly?",
+      "source_characters": 37,
+      "expected_meaning": [
+        "A greeting",
+        "Ask whether the voice is clear"
+      ],
+      "review_focus": [
+        "polite question",
+        "intent"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "en-negation",
+      "source_language": "en",
+      "category": "negation",
+      "source_text": "Please bring the blue book, not the red one.",
+      "source_characters": 44,
+      "expected_meaning": [
+        "Bring the blue book",
+        "Red is explicitly rejected"
+      ],
+      "review_focus": [
+        "negation",
+        "contrast"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "en-names",
+      "source_language": "en",
+      "category": "names",
+      "source_text": "Give the red book to Meena and the green book to Ravi.",
+      "source_characters": 54,
+      "expected_meaning": [
+        "Give the red book to Meena",
+        "Give the green book to Ravi"
+      ],
+      "review_focus": [
+        "names",
+        "colour-to-person association",
+        "natural transliteration allowed"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "en-numbers",
+      "source_language": "en",
+      "category": "numbers",
+      "source_text": "We will meet in Room AM-204 at 10:30.",
+      "source_characters": 37,
+      "expected_meaning": [
+        "Meet in Room AM-204",
+        "Meeting time is 10:30"
+      ],
+      "review_focus": [
+        "room identifier AM-204",
+        "time 10:30",
+        "no invented date or time zone"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "te-ordinary",
+      "source_language": "te",
+      "category": "ordinary",
+      "source_text": "\u0c28\u0c2e\u0c38\u0c4d\u0c15\u0c3e\u0c30\u0c02. \u0c28\u0c3e \u0c17\u0c4a\u0c02\u0c24\u0c41 \u0c38\u0c4d\u0c2a\u0c37\u0c4d\u0c1f\u0c02\u0c17\u0c3e \u0c35\u0c3f\u0c28\u0c3f\u0c2a\u0c3f\u0c38\u0c4d\u0c24\u0c4b\u0c02\u0c26\u0c3e?",
+      "source_characters": 43,
+      "expected_meaning": [
+        "A greeting",
+        "Ask whether the voice is clear"
+      ],
+      "review_focus": [
+        "polite question",
+        "intent"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "te-negation",
+      "source_language": "te",
+      "category": "negation",
+      "source_text": "\u0c28\u0c40\u0c32\u0c02 \u0c2a\u0c41\u0c38\u0c4d\u0c24\u0c15\u0c02 \u0c24\u0c40\u0c38\u0c41\u0c15\u0c41\u0c30\u0c02\u0c21\u0c3f, \u0c0e\u0c30\u0c41\u0c2a\u0c41 \u0c2a\u0c41\u0c38\u0c4d\u0c24\u0c15\u0c02 \u0c15\u0c3e\u0c26\u0c41.",
+      "source_characters": 44,
+      "expected_meaning": [
+        "Bring the blue book",
+        "Red is explicitly rejected"
+      ],
+      "review_focus": [
+        "negation",
+        "contrast"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "te-names",
+      "source_language": "te",
+      "category": "names",
+      "source_text": "\u0c0e\u0c30\u0c41\u0c2a\u0c41 \u0c2a\u0c41\u0c38\u0c4d\u0c24\u0c15\u0c02 \u0c2e\u0c40\u0c28\u0c3e\u0c15\u0c41, \u0c06\u0c15\u0c41\u0c2a\u0c1a\u0c4d\u0c1a \u0c2a\u0c41\u0c38\u0c4d\u0c24\u0c15\u0c02 \u0c30\u0c35\u0c3f\u0c15\u0c3f \u0c07\u0c35\u0c4d\u0c35\u0c02\u0c21\u0c3f.",
+      "source_characters": 52,
+      "expected_meaning": [
+        "Give the red book to Meena",
+        "Give the green book to Ravi"
+      ],
+      "review_focus": [
+        "names",
+        "colour-to-person association",
+        "natural transliteration allowed"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "te-numbers",
+      "source_language": "te",
+      "category": "numbers",
+      "source_text": "\u0c2e\u0c28\u0c02 Room AM-204 \u0c32\u0c4b 10:30 \u0c15\u0c3f \u0c15\u0c32\u0c41\u0c26\u0c4d\u0c26\u0c3e\u0c02.",
+      "source_characters": 37,
+      "expected_meaning": [
+        "Meet in Room AM-204",
+        "Meeting time is 10:30"
+      ],
+      "review_focus": [
+        "room identifier AM-204",
+        "time 10:30",
+        "no invented date or time zone"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "kn-ordinary",
+      "source_language": "kn",
+      "category": "ordinary",
+      "source_text": "\u0ca8\u0cae\u0cb8\u0ccd\u0c95\u0cbe\u0cb0. \u0ca8\u0ca8\u0ccd\u0ca8 \u0ca7\u0ccd\u0cb5\u0ca8\u0cbf \u0cb8\u0ccd\u0caa\u0cb7\u0ccd\u0c9f\u0cb5\u0cbe\u0c97\u0cbf \u0c95\u0cc7\u0cb3\u0cbf\u0cb8\u0cc1\u0ca4\u0ccd\u0ca4\u0cbf\u0ca6\u0cc6\u0caf\u0cc7?",
+      "source_characters": 46,
+      "expected_meaning": [
+        "A greeting",
+        "Ask whether the voice is clear"
+      ],
+      "review_focus": [
+        "polite question",
+        "intent"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "kn-negation",
+      "source_language": "kn",
+      "category": "negation",
+      "source_text": "\u0ca8\u0cc0\u0cb2\u0cbf \u0caa\u0cc1\u0cb8\u0ccd\u0ca4\u0c95\u0cb5\u0ca8\u0ccd\u0ca8\u0cc1 \u0ca4\u0c82\u0ca6\u0cc1\u0c95\u0cca\u0ca1\u0cbf, \u0c95\u0cc6\u0c82\u0caa\u0cc1 \u0caa\u0cc1\u0cb8\u0ccd\u0ca4\u0c95\u0cb5\u0ca8\u0ccd\u0ca8\u0cb2\u0ccd\u0cb2.",
+      "source_characters": 47,
+      "expected_meaning": [
+        "Bring the blue book",
+        "Red is explicitly rejected"
+      ],
+      "review_focus": [
+        "negation",
+        "contrast"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "kn-names",
+      "source_language": "kn",
+      "category": "names",
+      "source_text": "\u0c95\u0cc6\u0c82\u0caa\u0cc1 \u0caa\u0cc1\u0cb8\u0ccd\u0ca4\u0c95\u0cb5\u0ca8\u0ccd\u0ca8\u0cc1 \u0cae\u0cc0\u0ca8\u0cbe\u0c97\u0cc6 \u0cae\u0ca4\u0ccd\u0ca4\u0cc1 \u0cb9\u0cb8\u0cbf\u0cb0\u0cc1 \u0caa\u0cc1\u0cb8\u0ccd\u0ca4\u0c95\u0cb5\u0ca8\u0ccd\u0ca8\u0cc1 \u0cb0\u0cb5\u0cbf\u0c97\u0cc6 \u0c95\u0cca\u0ca1\u0cbf.",
+      "source_characters": 60,
+      "expected_meaning": [
+        "Give the red book to Meena",
+        "Give the green book to Ravi"
+      ],
+      "review_focus": [
+        "names",
+        "colour-to-person association",
+        "natural transliteration allowed"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "kn-numbers",
+      "source_language": "kn",
+      "category": "numbers",
+      "source_text": "\u0ca8\u0cbe\u0cb5\u0cc1 Room AM-204 \u0cb0\u0cb2\u0ccd\u0cb2\u0cbf 10:30 \u0c95\u0ccd\u0c95\u0cc6 \u0cad\u0cc7\u0c9f\u0cbf\u0caf\u0cbe\u0c97\u0ccb\u0ca3.",
+      "source_characters": 44,
+      "expected_meaning": [
+        "Meet in Room AM-204",
+        "Meeting time is 10:30"
+      ],
+      "review_focus": [
+        "room identifier AM-204",
+        "time 10:30",
+        "no invented date or time zone"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "ml-ordinary",
+      "source_language": "ml",
+      "category": "ordinary",
+      "source_text": "\u0d28\u0d2e\u0d38\u0d4d\u0d15\u0d3e\u0d30\u0d02. \u0d0e\u0d28\u0d4d\u0d31\u0d46 \u0d36\u0d2c\u0d4d\u0d26\u0d02 \u0d35\u0d4d\u0d2f\u0d15\u0d4d\u0d24\u0d2e\u0d3e\u0d2f\u0d3f \u0d15\u0d47\u0d7e\u0d15\u0d4d\u0d15\u0d41\u0d28\u0d4d\u0d28\u0d41\u0d23\u0d4d\u0d1f\u0d4b?",
+      "source_characters": 49,
+      "expected_meaning": [
+        "A greeting",
+        "Ask whether the voice is clear"
+      ],
+      "review_focus": [
+        "polite question",
+        "intent"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "ml-negation",
+      "source_language": "ml",
+      "category": "negation",
+      "source_text": "\u0d28\u0d40\u0d32 \u0d2a\u0d41\u0d38\u0d4d\u0d24\u0d15\u0d02 \u0d15\u0d4a\u0d23\u0d4d\u0d1f\u0d41\u0d35\u0d30\u0d42, \u0d1a\u0d41\u0d35\u0d28\u0d4d\u0d28\u0d24\u0d32\u0d4d\u0d32.",
+      "source_characters": 34,
+      "expected_meaning": [
+        "Bring the blue book",
+        "Red is explicitly rejected"
+      ],
+      "review_focus": [
+        "negation",
+        "contrast"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "ml-names",
+      "source_language": "ml",
+      "category": "names",
+      "source_text": "\u0d1a\u0d41\u0d35\u0d28\u0d4d\u0d28 \u0d2a\u0d41\u0d38\u0d4d\u0d24\u0d15\u0d02 \u0d2e\u0d40\u0d28\u0d2f\u0d4d\u0d15\u0d4d\u0d15\u0d41\u0d02 \u0d2a\u0d1a\u0d4d\u0d1a \u0d2a\u0d41\u0d38\u0d4d\u0d24\u0d15\u0d02 \u0d30\u0d35\u0d3f\u0d15\u0d4d\u0d15\u0d41\u0d02 \u0d15\u0d4a\u0d1f\u0d41\u0d15\u0d4d\u0d15\u0d42.",
+      "source_characters": 57,
+      "expected_meaning": [
+        "Give the red book to Meena",
+        "Give the green book to Ravi"
+      ],
+      "review_focus": [
+        "names",
+        "colour-to-person association",
+        "natural transliteration allowed"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "ml-numbers",
+      "source_language": "ml",
+      "category": "numbers",
+      "source_text": "\u0d28\u0d2e\u0d41\u0d15\u0d4d\u0d15\u0d4d Room AM-204 \u0d7d 10:30 \u0d28\u0d4d \u0d15\u0d3e\u0d23\u0d3e\u0d02.",
+      "source_characters": 37,
+      "expected_meaning": [
+        "Meet in Room AM-204",
+        "Meeting time is 10:30"
+      ],
+      "review_focus": [
+        "room identifier AM-204",
+        "time 10:30",
+        "no invented date or time zone"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "mr-ordinary",
+      "source_language": "mr",
+      "category": "ordinary",
+      "source_text": "\u0928\u092e\u0938\u094d\u0915\u093e\u0930. \u092e\u093e\u091d\u093e \u0906\u0935\u093e\u091c \u0924\u0941\u092e\u094d\u0939\u093e\u0932\u093e \u0938\u094d\u092a\u0937\u094d\u091f \u0910\u0915\u0942 \u092f\u0947\u0924\u094b \u0915\u093e?",
+      "source_characters": 47,
+      "expected_meaning": [
+        "A greeting",
+        "Ask whether the voice is clear"
+      ],
+      "review_focus": [
+        "polite question",
+        "intent"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "mr-negation",
+      "source_language": "mr",
+      "category": "negation",
+      "source_text": "\u0928\u093f\u0933\u0947 \u092a\u0941\u0938\u094d\u0924\u0915 \u0906\u0923\u093e, \u0932\u093e\u0932 \u092a\u0941\u0938\u094d\u0924\u0915 \u0928\u0915\u094b.",
+      "source_characters": 32,
+      "expected_meaning": [
+        "Bring the blue book",
+        "Red is explicitly rejected"
+      ],
+      "review_focus": [
+        "negation",
+        "contrast"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "mr-names",
+      "source_language": "mr",
+      "category": "names",
+      "source_text": "\u0932\u093e\u0932 \u092a\u0941\u0938\u094d\u0924\u0915 \u092e\u0940\u0928\u093e\u0932\u093e \u0906\u0923\u093f \u0939\u093f\u0930\u0935\u0947 \u092a\u0941\u0938\u094d\u0924\u0915 \u0930\u0935\u0940\u0932\u093e \u0926\u094d\u092f\u093e.",
+      "source_characters": 46,
+      "expected_meaning": [
+        "Give the red book to Meena",
+        "Give the green book to Ravi"
+      ],
+      "review_focus": [
+        "names",
+        "colour-to-person association",
+        "natural transliteration allowed"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "mr-numbers",
+      "source_language": "mr",
+      "category": "numbers",
+      "source_text": "\u0906\u092a\u0923 Room AM-204 \u092e\u0927\u094d\u092f\u0947 10:30 \u0935\u093e\u091c\u0924\u093e \u092d\u0947\u091f\u0942.",
+      "source_characters": 39,
+      "expected_meaning": [
+        "Meet in Room AM-204",
+        "Meeting time is 10:30"
+      ],
+      "review_focus": [
+        "room identifier AM-204",
+        "time 10:30",
+        "no invented date or time zone"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "gu-ordinary",
+      "source_language": "gu",
+      "category": "ordinary",
+      "source_text": "\u0aa8\u0aae\u0ab8\u0acd\u0aa4\u0ac7. \u0ab6\u0ac1\u0a82 \u0aae\u0abe\u0ab0\u0acb \u0a85\u0ab5\u0abe\u0a9c \u0aa4\u0aae\u0aa8\u0ac7 \u0ab8\u0acd\u0aaa\u0ab7\u0acd\u0a9f \u0ab8\u0a82\u0aad\u0ab3\u0abe\u0aaf \u0a9b\u0ac7?",
+      "source_characters": 44,
+      "expected_meaning": [
+        "A greeting",
+        "Ask whether the voice is clear"
+      ],
+      "review_focus": [
+        "polite question",
+        "intent"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "gu-negation",
+      "source_language": "gu",
+      "category": "negation",
+      "source_text": "\u0ab5\u0abe\u0aa6\u0ab3\u0ac0 \u0aaa\u0ac1\u0ab8\u0acd\u0aa4\u0a95 \u0ab2\u0abe\u0ab5\u0acb, \u0ab2\u0abe\u0ab2 \u0aa8\u0ab9\u0ac0\u0a82.",
+      "source_characters": 28,
+      "expected_meaning": [
+        "Bring the blue book",
+        "Red is explicitly rejected"
+      ],
+      "review_focus": [
+        "negation",
+        "contrast"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "gu-names",
+      "source_language": "gu",
+      "category": "names",
+      "source_text": "\u0ab2\u0abe\u0ab2 \u0aaa\u0ac1\u0ab8\u0acd\u0aa4\u0a95 \u0aae\u0ac0\u0aa8\u0abe\u0aa8\u0ac7 \u0a85\u0aa8\u0ac7 \u0ab2\u0ac0\u0ab2\u0ac1\u0a82 \u0aaa\u0ac1\u0ab8\u0acd\u0aa4\u0a95 \u0ab0\u0ab5\u0abf\u0aa8\u0ac7 \u0a86\u0aaa\u0acb.",
+      "source_characters": 45,
+      "expected_meaning": [
+        "Give the red book to Meena",
+        "Give the green book to Ravi"
+      ],
+      "review_focus": [
+        "names",
+        "colour-to-person association",
+        "natural transliteration allowed"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "gu-numbers",
+      "source_language": "gu",
+      "category": "numbers",
+      "source_text": "\u0a86\u0aaa\u0aa3\u0ac7 Room AM-204 \u0aae\u0abe\u0a82 10:30 \u0ab5\u0abe\u0a97\u0acd\u0aaf\u0ac7 \u0aae\u0ab3\u0ac0\u0ab6\u0ac1\u0a82.",
+      "source_characters": 41,
+      "expected_meaning": [
+        "Meet in Room AM-204",
+        "Meeting time is 10:30"
+      ],
+      "review_focus": [
+        "room identifier AM-204",
+        "time 10:30",
+        "no invented date or time zone"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "pa-ordinary",
+      "source_language": "pa",
+      "category": "ordinary",
+      "source_text": "\u0a38\u0a24 \u0a38\u0a4d\u0a30\u0a40 \u0a05\u0a15\u0a3e\u0a32\u0964 \u0a15\u0a40 \u0a2e\u0a47\u0a30\u0a40 \u0a06\u0a35\u0a3e\u0a1c\u0a3c \u0a38\u0a3e\u0a2b\u0a3c \u0a38\u0a41\u0a23\u0a3e\u0a08 \u0a26\u0a47 \u0a30\u0a39\u0a40 \u0a39\u0a48?",
+      "source_characters": 49,
+      "expected_meaning": [
+        "A greeting",
+        "Ask whether the voice is clear"
+      ],
+      "review_focus": [
+        "polite question",
+        "intent"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "pa-negation",
+      "source_language": "pa",
+      "category": "negation",
+      "source_text": "\u0a28\u0a40\u0a32\u0a40 \u0a15\u0a3f\u0a24\u0a3e\u0a2c \u0a32\u0a3f\u0a06\u0a13, \u0a32\u0a3e\u0a32 \u0a28\u0a39\u0a40\u0a02\u0964",
+      "source_characters": 26,
+      "expected_meaning": [
+        "Bring the blue book",
+        "Red is explicitly rejected"
+      ],
+      "review_focus": [
+        "negation",
+        "contrast"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "pa-names",
+      "source_language": "pa",
+      "category": "names",
+      "source_text": "\u0a32\u0a3e\u0a32 \u0a15\u0a3f\u0a24\u0a3e\u0a2c \u0a2e\u0a40\u0a28\u0a3e \u0a28\u0a42\u0a70 \u0a05\u0a24\u0a47 \u0a39\u0a30\u0a40 \u0a15\u0a3f\u0a24\u0a3e\u0a2c \u0a30\u0a35\u0a40 \u0a28\u0a42\u0a70 \u0a26\u0a3f\u0a13\u0964",
+      "source_characters": 45,
+      "expected_meaning": [
+        "Give the red book to Meena",
+        "Give the green book to Ravi"
+      ],
+      "review_focus": [
+        "names",
+        "colour-to-person association",
+        "natural transliteration allowed"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    },
+    {
+      "case_id": "pa-numbers",
+      "source_language": "pa",
+      "category": "numbers",
+      "source_text": "\u0a05\u0a38\u0a40\u0a02 Room AM-204 \u0a35\u0a3f\u0a71\u0a1a 10:30 \u0a35\u0a1c\u0a47 \u0a2e\u0a3f\u0a32\u0a3e\u0a02\u0a17\u0a47\u0964",
+      "source_characters": 40,
+      "expected_meaning": [
+        "Meet in Room AM-204",
+        "Meeting time is 10:30"
+      ],
+      "review_focus": [
+        "room identifier AM-204",
+        "time 10:30",
+        "no invented date or time zone"
+      ],
+      "source_reference_status": "draft_pending_fluent_review",
+      "target_reference": null,
+      "meaning_acceptance": "pending"
+    }
+  ],
+  "gate_policy": {
+    "minimum_warm_attempts": 10,
+    "all_warm_attempts_complete": true,
+    "maximum_warm_failure_rate": 0,
+    "p50_strictly_under_ms": 2000,
+    "p95_strictly_under_ms": 2000,
+    "percentile_method": "nearest_rank",
+    "clock": "single_recording_sample_index",
+    "boundary": "source_speech_end_to_listener_output",
+    "provider_kind": "live",
+    "capture_kinds": [
+      "acoustic_single_channel",
+      "acoustic_two_channel",
+      "electrical_loopback_two_channel"
+    ],
+    "capture_attestation_required": true,
+    "meaning_review_required": true,
+    "annotations_review_required": true,
+    "voice_mode": "standard",
+    "negative_latency_policy": "preserve_signed_value_and_mark_overlap_requires_review",
+    "duplicate_policy": "reject_repeated_observation_id_or_recording_and_source_end_within_direction",
+    "first_route_policy": "report_separately_never_substitute_for_warm_attempts",
+    "provenance_limit": "Provider and capture provenance are operator-attested, not cryptographic proof of live providers or physical hardware."
+  },
+  "gates": {
+    "hi_to_ta": {
+      "source_language": "hi",
+      "target_language": "ta",
+      "passed": false,
+      "status": "blocked",
+      "reason_codes": [
+        "minimum_warm_attempts_not_met",
+        "p50_not_strictly_under_goal",
+        "p95_not_strictly_under_goal"
+      ],
+      "counts": {
+        "warm_attempts": 0,
+        "warm_complete": 0,
+        "warm_qualifying": 0,
+        "warm_failures": 0,
+        "first_route_attempts": 0,
+        "duplicate_observations": 0,
+        "overlap_observations": 0
+      },
+      "metrics": {
+        "p50_ms": null,
+        "p95_ms": null,
+        "warm_failure_rate": null,
+        "basis": "qualifying_warm_attempts_only",
+        "first_route_ms": null
+      },
+      "observed_warm_latency_ms": [],
+      "approval_granted": false,
+      "physical_provenance": "operator_attested_not_cryptographic_proof"
+    },
+    "ta_to_hi": {
+      "source_language": "ta",
+      "target_language": "hi",
+      "passed": false,
+      "status": "blocked",
+      "reason_codes": [
+        "minimum_warm_attempts_not_met",
+        "p50_not_strictly_under_goal",
+        "p95_not_strictly_under_goal"
+      ],
+      "counts": {
+        "warm_attempts": 0,
+        "warm_complete": 0,
+        "warm_qualifying": 0,
+        "warm_failures": 0,
+        "first_route_attempts": 0,
+        "duplicate_observations": 0,
+        "overlap_observations": 0
+      },
+      "metrics": {
+        "p50_ms": null,
+        "p95_ms": null,
+        "warm_failure_rate": null,
+        "basis": "qualifying_warm_attempts_only",
+        "first_route_ms": null
+      },
+      "observed_warm_latency_ms": [],
+      "approval_granted": false,
+      "physical_provenance": "operator_attested_not_cryptographic_proof"
+    }
+  },
+  "sequence": [
+    {
+      "id": "hi_to_ta",
+      "title": "Optimize Hindi to Tamil first",
+      "eligible_for_test_review": true,
+      "requires": "fresh_explicit_bounded_operator_approval"
+    },
+    {
+      "id": "ta_to_hi",
+      "title": "Review the reverse direction",
+      "eligible_for_test_review": false,
+      "requires": "forward_physical_gate_and_fresh_explicit_bounded_operator_approval"
+    },
+    {
+      "id": "remaining_88",
+      "title": "Other language pairs for test purposes",
+      "eligible_for_test_review": false,
+      "requires": "both_physical_gates_and_new_individual_test_approvals"
+    }
+  ],
+  "routes": [
+    {
+      "route_id": "hi-ta",
+      "source_language": "hi",
+      "target_language": "ta",
+      "phase": "optimize_hindi_tamil",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": true,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "hi-ordinary",
+        "hi-negation",
+        "hi-names",
+        "hi-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Trisha"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "hi-bn",
+      "source_language": "hi",
+      "target_language": "bn",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "hi-ordinary",
+        "hi-negation",
+        "hi-names",
+        "hi-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Kirra"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "hi-en",
+      "source_language": "hi",
+      "target_language": "en",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "hi-ordinary",
+        "hi-negation",
+        "hi-names",
+        "hi-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Pranav"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "hi-te",
+      "source_language": "hi",
+      "target_language": "te",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "hi-ordinary",
+        "hi-negation",
+        "hi-names",
+        "hi-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Suhana"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "hi-kn",
+      "source_language": "hi",
+      "target_language": "kn",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "hi-ordinary",
+        "hi-negation",
+        "hi-names",
+        "hi-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Saanvi"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "hi-ml",
+      "source_language": "hi",
+      "target_language": "ml",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "hi-ordinary",
+        "hi-negation",
+        "hi-names",
+        "hi-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Reshma"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "hi-mr",
+      "source_language": "hi",
+      "target_language": "mr",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "hi-ordinary",
+        "hi-negation",
+        "hi-names",
+        "hi-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Zahira"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "hi-gu",
+      "source_language": "hi",
+      "target_language": "gu",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "hi-ordinary",
+        "hi-negation",
+        "hi-names",
+        "hi-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Falak"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "hi-pa",
+      "source_language": "hi",
+      "target_language": "pa",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "hi-ordinary",
+        "hi-negation",
+        "hi-names",
+        "hi-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Mehuli"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "ta-hi",
+      "source_language": "ta",
+      "target_language": "hi",
+      "phase": "reverse_after_forward",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "ta-ordinary",
+        "ta-negation",
+        "ta-names",
+        "ta-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Nalini"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "ta-bn",
+      "source_language": "ta",
+      "target_language": "bn",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "ta-ordinary",
+        "ta-negation",
+        "ta-names",
+        "ta-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Kirra"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "ta-en",
+      "source_language": "ta",
+      "target_language": "en",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "ta-ordinary",
+        "ta-negation",
+        "ta-names",
+        "ta-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Pranav"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "ta-te",
+      "source_language": "ta",
+      "target_language": "te",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "ta-ordinary",
+        "ta-negation",
+        "ta-names",
+        "ta-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Suhana"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "ta-kn",
+      "source_language": "ta",
+      "target_language": "kn",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "ta-ordinary",
+        "ta-negation",
+        "ta-names",
+        "ta-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Saanvi"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "ta-ml",
+      "source_language": "ta",
+      "target_language": "ml",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "ta-ordinary",
+        "ta-negation",
+        "ta-names",
+        "ta-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Reshma"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "ta-mr",
+      "source_language": "ta",
+      "target_language": "mr",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "ta-ordinary",
+        "ta-negation",
+        "ta-names",
+        "ta-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Zahira"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "ta-gu",
+      "source_language": "ta",
+      "target_language": "gu",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "ta-ordinary",
+        "ta-negation",
+        "ta-names",
+        "ta-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Falak"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "ta-pa",
+      "source_language": "ta",
+      "target_language": "pa",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "ta-ordinary",
+        "ta-negation",
+        "ta-names",
+        "ta-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Mehuli"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "bn-hi",
+      "source_language": "bn",
+      "target_language": "hi",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "bn-ordinary",
+        "bn-negation",
+        "bn-names",
+        "bn-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Nalini"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "bn-ta",
+      "source_language": "bn",
+      "target_language": "ta",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "bn-ordinary",
+        "bn-negation",
+        "bn-names",
+        "bn-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Trisha"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "bn-en",
+      "source_language": "bn",
+      "target_language": "en",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "bn-ordinary",
+        "bn-negation",
+        "bn-names",
+        "bn-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Pranav"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "bn-te",
+      "source_language": "bn",
+      "target_language": "te",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "bn-ordinary",
+        "bn-negation",
+        "bn-names",
+        "bn-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Suhana"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "bn-kn",
+      "source_language": "bn",
+      "target_language": "kn",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "bn-ordinary",
+        "bn-negation",
+        "bn-names",
+        "bn-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Saanvi"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "bn-ml",
+      "source_language": "bn",
+      "target_language": "ml",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "bn-ordinary",
+        "bn-negation",
+        "bn-names",
+        "bn-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Reshma"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "bn-mr",
+      "source_language": "bn",
+      "target_language": "mr",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "bn-ordinary",
+        "bn-negation",
+        "bn-names",
+        "bn-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Zahira"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "bn-gu",
+      "source_language": "bn",
+      "target_language": "gu",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "bn-ordinary",
+        "bn-negation",
+        "bn-names",
+        "bn-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Falak"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "bn-pa",
+      "source_language": "bn",
+      "target_language": "pa",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "bn-ordinary",
+        "bn-negation",
+        "bn-names",
+        "bn-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Mehuli"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "en-hi",
+      "source_language": "en",
+      "target_language": "hi",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "en-ordinary",
+        "en-negation",
+        "en-names",
+        "en-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Nalini"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "en-ta",
+      "source_language": "en",
+      "target_language": "ta",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "en-ordinary",
+        "en-negation",
+        "en-names",
+        "en-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Trisha"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "en-bn",
+      "source_language": "en",
+      "target_language": "bn",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "en-ordinary",
+        "en-negation",
+        "en-names",
+        "en-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Kirra"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "en-te",
+      "source_language": "en",
+      "target_language": "te",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "en-ordinary",
+        "en-negation",
+        "en-names",
+        "en-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Suhana"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "en-kn",
+      "source_language": "en",
+      "target_language": "kn",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "en-ordinary",
+        "en-negation",
+        "en-names",
+        "en-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Saanvi"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "en-ml",
+      "source_language": "en",
+      "target_language": "ml",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "en-ordinary",
+        "en-negation",
+        "en-names",
+        "en-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Reshma"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "en-mr",
+      "source_language": "en",
+      "target_language": "mr",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "en-ordinary",
+        "en-negation",
+        "en-names",
+        "en-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Zahira"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "en-gu",
+      "source_language": "en",
+      "target_language": "gu",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "en-ordinary",
+        "en-negation",
+        "en-names",
+        "en-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Falak"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "en-pa",
+      "source_language": "en",
+      "target_language": "pa",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "en-ordinary",
+        "en-negation",
+        "en-names",
+        "en-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Mehuli"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "te-hi",
+      "source_language": "te",
+      "target_language": "hi",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "te-ordinary",
+        "te-negation",
+        "te-names",
+        "te-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Nalini"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "te-ta",
+      "source_language": "te",
+      "target_language": "ta",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "te-ordinary",
+        "te-negation",
+        "te-names",
+        "te-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Trisha"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "te-bn",
+      "source_language": "te",
+      "target_language": "bn",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "te-ordinary",
+        "te-negation",
+        "te-names",
+        "te-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Kirra"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "te-en",
+      "source_language": "te",
+      "target_language": "en",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "te-ordinary",
+        "te-negation",
+        "te-names",
+        "te-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Pranav"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "te-kn",
+      "source_language": "te",
+      "target_language": "kn",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "te-ordinary",
+        "te-negation",
+        "te-names",
+        "te-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Saanvi"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "te-ml",
+      "source_language": "te",
+      "target_language": "ml",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "te-ordinary",
+        "te-negation",
+        "te-names",
+        "te-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Reshma"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "te-mr",
+      "source_language": "te",
+      "target_language": "mr",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "te-ordinary",
+        "te-negation",
+        "te-names",
+        "te-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Zahira"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "te-gu",
+      "source_language": "te",
+      "target_language": "gu",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "te-ordinary",
+        "te-negation",
+        "te-names",
+        "te-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Falak"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "te-pa",
+      "source_language": "te",
+      "target_language": "pa",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "te-ordinary",
+        "te-negation",
+        "te-names",
+        "te-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Mehuli"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "kn-hi",
+      "source_language": "kn",
+      "target_language": "hi",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "kn-ordinary",
+        "kn-negation",
+        "kn-names",
+        "kn-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Nalini"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "kn-ta",
+      "source_language": "kn",
+      "target_language": "ta",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "kn-ordinary",
+        "kn-negation",
+        "kn-names",
+        "kn-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Trisha"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "kn-bn",
+      "source_language": "kn",
+      "target_language": "bn",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "kn-ordinary",
+        "kn-negation",
+        "kn-names",
+        "kn-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Kirra"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "kn-en",
+      "source_language": "kn",
+      "target_language": "en",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "kn-ordinary",
+        "kn-negation",
+        "kn-names",
+        "kn-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Pranav"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "kn-te",
+      "source_language": "kn",
+      "target_language": "te",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "kn-ordinary",
+        "kn-negation",
+        "kn-names",
+        "kn-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Suhana"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "kn-ml",
+      "source_language": "kn",
+      "target_language": "ml",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "kn-ordinary",
+        "kn-negation",
+        "kn-names",
+        "kn-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Reshma"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "kn-mr",
+      "source_language": "kn",
+      "target_language": "mr",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "kn-ordinary",
+        "kn-negation",
+        "kn-names",
+        "kn-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Zahira"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "kn-gu",
+      "source_language": "kn",
+      "target_language": "gu",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "kn-ordinary",
+        "kn-negation",
+        "kn-names",
+        "kn-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Falak"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "kn-pa",
+      "source_language": "kn",
+      "target_language": "pa",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "kn-ordinary",
+        "kn-negation",
+        "kn-names",
+        "kn-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Mehuli"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "ml-hi",
+      "source_language": "ml",
+      "target_language": "hi",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "ml-ordinary",
+        "ml-negation",
+        "ml-names",
+        "ml-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Nalini"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "ml-ta",
+      "source_language": "ml",
+      "target_language": "ta",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "ml-ordinary",
+        "ml-negation",
+        "ml-names",
+        "ml-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Trisha"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "ml-bn",
+      "source_language": "ml",
+      "target_language": "bn",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "ml-ordinary",
+        "ml-negation",
+        "ml-names",
+        "ml-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Kirra"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "ml-en",
+      "source_language": "ml",
+      "target_language": "en",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "ml-ordinary",
+        "ml-negation",
+        "ml-names",
+        "ml-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Pranav"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "ml-te",
+      "source_language": "ml",
+      "target_language": "te",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "ml-ordinary",
+        "ml-negation",
+        "ml-names",
+        "ml-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Suhana"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "ml-kn",
+      "source_language": "ml",
+      "target_language": "kn",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "ml-ordinary",
+        "ml-negation",
+        "ml-names",
+        "ml-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Saanvi"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "ml-mr",
+      "source_language": "ml",
+      "target_language": "mr",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "ml-ordinary",
+        "ml-negation",
+        "ml-names",
+        "ml-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Zahira"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "ml-gu",
+      "source_language": "ml",
+      "target_language": "gu",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "ml-ordinary",
+        "ml-negation",
+        "ml-names",
+        "ml-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Falak"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "ml-pa",
+      "source_language": "ml",
+      "target_language": "pa",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "ml-ordinary",
+        "ml-negation",
+        "ml-names",
+        "ml-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Mehuli"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "mr-hi",
+      "source_language": "mr",
+      "target_language": "hi",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "mr-ordinary",
+        "mr-negation",
+        "mr-names",
+        "mr-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Nalini"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "mr-ta",
+      "source_language": "mr",
+      "target_language": "ta",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "mr-ordinary",
+        "mr-negation",
+        "mr-names",
+        "mr-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Trisha"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "mr-bn",
+      "source_language": "mr",
+      "target_language": "bn",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "mr-ordinary",
+        "mr-negation",
+        "mr-names",
+        "mr-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Kirra"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "mr-en",
+      "source_language": "mr",
+      "target_language": "en",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "mr-ordinary",
+        "mr-negation",
+        "mr-names",
+        "mr-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Pranav"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "mr-te",
+      "source_language": "mr",
+      "target_language": "te",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "mr-ordinary",
+        "mr-negation",
+        "mr-names",
+        "mr-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Suhana"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "mr-kn",
+      "source_language": "mr",
+      "target_language": "kn",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "mr-ordinary",
+        "mr-negation",
+        "mr-names",
+        "mr-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Saanvi"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "mr-ml",
+      "source_language": "mr",
+      "target_language": "ml",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "mr-ordinary",
+        "mr-negation",
+        "mr-names",
+        "mr-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Reshma"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "mr-gu",
+      "source_language": "mr",
+      "target_language": "gu",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "mr-ordinary",
+        "mr-negation",
+        "mr-names",
+        "mr-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Falak"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "mr-pa",
+      "source_language": "mr",
+      "target_language": "pa",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "mr-ordinary",
+        "mr-negation",
+        "mr-names",
+        "mr-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Mehuli"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "gu-hi",
+      "source_language": "gu",
+      "target_language": "hi",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "gu-ordinary",
+        "gu-negation",
+        "gu-names",
+        "gu-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Nalini"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "gu-ta",
+      "source_language": "gu",
+      "target_language": "ta",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "gu-ordinary",
+        "gu-negation",
+        "gu-names",
+        "gu-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Trisha"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "gu-bn",
+      "source_language": "gu",
+      "target_language": "bn",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "gu-ordinary",
+        "gu-negation",
+        "gu-names",
+        "gu-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Kirra"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "gu-en",
+      "source_language": "gu",
+      "target_language": "en",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "gu-ordinary",
+        "gu-negation",
+        "gu-names",
+        "gu-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Pranav"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "gu-te",
+      "source_language": "gu",
+      "target_language": "te",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "gu-ordinary",
+        "gu-negation",
+        "gu-names",
+        "gu-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Suhana"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "gu-kn",
+      "source_language": "gu",
+      "target_language": "kn",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "gu-ordinary",
+        "gu-negation",
+        "gu-names",
+        "gu-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Saanvi"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "gu-ml",
+      "source_language": "gu",
+      "target_language": "ml",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "gu-ordinary",
+        "gu-negation",
+        "gu-names",
+        "gu-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Reshma"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "gu-mr",
+      "source_language": "gu",
+      "target_language": "mr",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "gu-ordinary",
+        "gu-negation",
+        "gu-names",
+        "gu-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Zahira"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "gu-pa",
+      "source_language": "gu",
+      "target_language": "pa",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "gu-ordinary",
+        "gu-negation",
+        "gu-names",
+        "gu-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Mehuli"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "pa-hi",
+      "source_language": "pa",
+      "target_language": "hi",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "pa-ordinary",
+        "pa-negation",
+        "pa-names",
+        "pa-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Nalini"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "pa-ta",
+      "source_language": "pa",
+      "target_language": "ta",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "pa-ordinary",
+        "pa-negation",
+        "pa-names",
+        "pa-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Trisha"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "pa-bn",
+      "source_language": "pa",
+      "target_language": "bn",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "pa-ordinary",
+        "pa-negation",
+        "pa-names",
+        "pa-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Kirra"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "pa-en",
+      "source_language": "pa",
+      "target_language": "en",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "pa-ordinary",
+        "pa-negation",
+        "pa-names",
+        "pa-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Pranav"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "pa-te",
+      "source_language": "pa",
+      "target_language": "te",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "pa-ordinary",
+        "pa-negation",
+        "pa-names",
+        "pa-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Suhana"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "pa-kn",
+      "source_language": "pa",
+      "target_language": "kn",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "pa-ordinary",
+        "pa-negation",
+        "pa-names",
+        "pa-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Saanvi"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "pa-ml",
+      "source_language": "pa",
+      "target_language": "ml",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "pa-ordinary",
+        "pa-negation",
+        "pa-names",
+        "pa-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Reshma"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "pa-mr",
+      "source_language": "pa",
+      "target_language": "mr",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "pa-ordinary",
+        "pa-negation",
+        "pa-names",
+        "pa-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Zahira"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    },
+    {
+      "route_id": "pa-gu",
+      "source_language": "pa",
+      "target_language": "gu",
+      "phase": "expanded_test_purpose_only",
+      "purpose": "bounded_acceptance_test",
+      "eligible_for_test_review": false,
+      "approval_granted": false,
+      "automatic_execution": false,
+      "case_options": [
+        "pa-ordinary",
+        "pa-negation",
+        "pa-names",
+        "pa-numbers"
+      ],
+      "voice": {
+        "mode": "standard",
+        "model": "timbre-v2.5",
+        "name": "Falak"
+      },
+      "semantic_acceptance": "pending",
+      "physical_latency_acceptance": "pending"
+    }
+  ],
+  "same_language_routes": [
+    {
+      "route_id": "hi-hi",
+      "source_language": "hi",
+      "target_language": "hi",
+      "microphone_path": "forward_original_without_stt_mt_tts",
+      "self_output": false,
+      "optional_test": true,
+      "automatic_execution": false
+    },
+    {
+      "route_id": "ta-ta",
+      "source_language": "ta",
+      "target_language": "ta",
+      "microphone_path": "forward_original_without_stt_mt_tts",
+      "self_output": false,
+      "optional_test": true,
+      "automatic_execution": false
+    },
+    {
+      "route_id": "bn-bn",
+      "source_language": "bn",
+      "target_language": "bn",
+      "microphone_path": "forward_original_without_stt_mt_tts",
+      "self_output": false,
+      "optional_test": true,
+      "automatic_execution": false
+    },
+    {
+      "route_id": "en-en",
+      "source_language": "en",
+      "target_language": "en",
+      "microphone_path": "forward_original_without_stt_mt_tts",
+      "self_output": false,
+      "optional_test": true,
+      "automatic_execution": false
+    },
+    {
+      "route_id": "te-te",
+      "source_language": "te",
+      "target_language": "te",
+      "microphone_path": "forward_original_without_stt_mt_tts",
+      "self_output": false,
+      "optional_test": true,
+      "automatic_execution": false
+    },
+    {
+      "route_id": "kn-kn",
+      "source_language": "kn",
+      "target_language": "kn",
+      "microphone_path": "forward_original_without_stt_mt_tts",
+      "self_output": false,
+      "optional_test": true,
+      "automatic_execution": false
+    },
+    {
+      "route_id": "ml-ml",
+      "source_language": "ml",
+      "target_language": "ml",
+      "microphone_path": "forward_original_without_stt_mt_tts",
+      "self_output": false,
+      "optional_test": true,
+      "automatic_execution": false
+    },
+    {
+      "route_id": "mr-mr",
+      "source_language": "mr",
+      "target_language": "mr",
+      "microphone_path": "forward_original_without_stt_mt_tts",
+      "self_output": false,
+      "optional_test": true,
+      "automatic_execution": false
+    },
+    {
+      "route_id": "gu-gu",
+      "source_language": "gu",
+      "target_language": "gu",
+      "microphone_path": "forward_original_without_stt_mt_tts",
+      "self_output": false,
+      "optional_test": true,
+      "automatic_execution": false
+    },
+    {
+      "route_id": "pa-pa",
+      "source_language": "pa",
+      "target_language": "pa",
+      "microphone_path": "forward_original_without_stt_mt_tts",
+      "self_output": false,
+      "optional_test": true,
+      "automatic_execution": false
+    }
+  ],
+  "excluded": [
+    {
+      "code": "or",
+      "reason": "Not in the current stock-voice speech catalog; Evon text support alone does not establish a full speech path."
+    }
+  ],
+  "evidence_note": "Existing paid protocol reports remain separate and immutable. STT-start/first-PCM, decoded RTC, synthetic tones and browser render estimates cannot satisfy this physical playback gate.",
+  "approval_note": "No passing result grants API permission, creates a server or runs any matrix. Each next test needs fresh bounded human approval.",
+  "sources": [
+    "https://docs.gnani.ai/api/STT/stt-websocket",
+    "https://docs.gnani.ai/api/TTS/available-voices",
+    "https://huggingface.co/gnani/gnani-evon-v3.3-30B-A3B"
+  ],
+  "plan_sha256": "f1baefb74ef04ed89fca1074ba6f577f3eaf4b694bf31a8024afb266753ebadb"
+}

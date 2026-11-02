@@ -1,4 +1,4 @@
-param([switch]$Live)
+param([switch]$Live, [switch]$Screening)
 $ErrorActionPreference = 'Stop'
 $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 Push-Location -LiteralPath $projectRoot
@@ -10,10 +10,14 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Frontend dependency installation failed.' }
     $syncArguments = @('sync', '--project', 'server', '--extra', 'dev')
     if ($Live) { $syncArguments += @('--extra', 'live') }
+    if ($Screening) { $syncArguments += @('--extra', 'screening') }
     & uv @syncArguments
     if ($LASTEXITCODE -ne 0) { throw 'Backend dependency installation failed.' }
     Write-Host 'Ready. Start the application with: npm run dev'
     Write-Host 'Live setup values belong in server/.env; keep that file private.'
+    if ($Screening) {
+        Write-Host 'CPU screening runtime installed. Download the pinned free model explicitly with: .\server\.venv\Scripts\python.exe scripts/fetch_audio_screening_model.py'
+    }
 } finally {
     Pop-Location
 }

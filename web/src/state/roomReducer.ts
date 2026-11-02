@@ -1,4 +1,5 @@
 import type { AppEvent, Metrics, Participant, Room, Turn } from '../types/domain';
+import type { RoomScreeningSample, RoomScreeningStatus } from '../services/localDiagnostics';
 export interface RoomState {
   room: Room | null;
   turns: Turn[];
@@ -6,6 +7,8 @@ export interface RoomState {
   stages: Record<string, string>;
   error: string;
   demoComplete: boolean;
+  screening: Record<string, RoomScreeningSample>;
+  screeningStatus: RoomScreeningStatus | null;
 }
 export const initialRoomState: RoomState = {
   room: null,
@@ -14,6 +17,8 @@ export const initialRoomState: RoomState = {
   stages: {},
   error: '',
   demoComplete: false,
+  screening: {},
+  screeningStatus: null,
 };
 export function roomReducer(state: RoomState, event: AppEvent): RoomState {
   const p = event.payload;
@@ -25,13 +30,18 @@ export function roomReducer(state: RoomState, event: AppEvent): RoomState {
         turns: p.turns as Turn[],
         metrics: (p.metrics as Metrics) || null,
         stages: {},
+        screening: (p.screening as Record<string, RoomScreeningSample>) || {},
+        screeningStatus: (p.screening_status as RoomScreeningStatus) || null,
         error: '',
       };
     case 'participant.joined':
     case 'participant.updated': {
       const participant = p.participant as Participant;
+      const screening = { ...state.screening };
+      delete screening[participant.id];
       return {
         ...state,
+        screening,
         room: state.room
           ? {
               ...state.room,
@@ -43,9 +53,12 @@ export function roomReducer(state: RoomState, event: AppEvent): RoomState {
           : null,
       };
     }
-    case 'participant.left':
+    case 'participant.left': {
+      const screening = { ...state.screening };
+      delete screening[p.participant_id as string];
       return {
         ...state,
+        screening,
         room: state.room
           ? {
               ...state.room,
@@ -53,6 +66,7 @@ export function roomReducer(state: RoomState, event: AppEvent): RoomState {
             }
           : null,
       };
+    }
     case 'transcript.final': {
       const turn = p.turn as Turn;
       return {
@@ -79,6 +93,9 @@ export function roomReducer(state: RoomState, event: AppEvent): RoomState {
       };
     case 'pipeline.status':
       return { ...state, stages: { ...state.stages, [p.speaker_id as string]: p.stage as string } };
+    case 'screening.updated':
+      if (!state.room?.participants.some((member) => member.id === p.speaker_id)) return state;
+      return { ...state, screening: { ...state.screening, [p.speaker_id as string]: p as unknown as RoomScreeningSample } };
     case 'metrics.updated':
       return { ...state, metrics: p as unknown as Metrics };
     case 'confirmation.updated':

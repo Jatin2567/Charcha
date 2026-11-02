@@ -15,8 +15,14 @@
     "build:demo": "node scripts/build-demo.mjs",
     "test:web": "npm run test --workspace web",
     "test:server": "uv run --project server --extra dev pytest server/tests -q",
-    "test": "npm run test:web && npm run test:server",
-    "format": "prettier --write web/src scripts/*.mjs docs/*.md README.md package.json compose.yaml"
+    "test": "npm run test:conference-runtime && npm run test:web && npm run test:server",
+    "format": "prettier --write web/src scripts/*.mjs docs/*.md README.md package.json compose.yaml",
+    "dev:local": "node scripts/local.mjs",
+    "dev:shield": "node scripts/local.mjs --screening-monitor",
+    "dev:live": "node scripts/local.mjs --live",
+    "check:conference": "node scripts/local.mjs --check",
+    "test:rtc": "node scripts/local.mjs --verify",
+    "test:conference-runtime": "node --test scripts/test_conference_runtime.mjs"
   },
   "devDependencies": {
     "prettier": "3.6.2"

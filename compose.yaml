@@ -37,27 +37,7 @@ services:
       - '127.0.0.1:7880:7880'
       - '127.0.0.1:7881:7881'
       - '127.0.0.1:7882:7882/udp'
-  evon:
-    image: vllm/vllm-openai:v0.12.0
-    profiles: ['local-evon']
-    environment:
-      HF_TOKEN: ${HF_TOKEN:-}
-    volumes: ['evon-models:/root/.cache/huggingface']
-    ports: ['127.0.0.1:8001:8000']
-    ipc: host
-    command:
-      - '--model'
-      - 'gnani/gnani-evon-v3.3-30B-A3B'
-      - '--trust-remote-code'
-      - '--max-model-len'
-      - '8192'
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
+# Evon is deliberately a separate, pinned and authenticated GPU deployment.
+# Generate its configuration with scripts/evon_prepare.py; see docs/GPU_TESTING.md.
 volumes:
-  evon-models:
   usage-ledger:

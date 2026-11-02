@@ -2,13 +2,34 @@
 
 **Conversations without language barriers.** An Indic audio meeting application implementing Track B: streaming speech recognition, translation, speech synthesis, bidirectional and multi-party routing, and optional consent-based voice cloning.
 
-The application separates its React pages, reusable UI, hooks, domain state, API client and LiveKit media adapter from the Python API, room/session services, translation pipeline, provider adapters and RTC transport. No deepfake detector or Track A verdicts are included.
+The application separates its React pages, reusable UI, hooks, domain state, API client and LiveKit media adapter from the Python API, room/session services, translation pipeline, provider adapters and RTC transport. Experimental local audio anti-spoof screening is available; it is not a validated deepfake detector, liveness guarantee or Track A certification.
+
+**Current delivery:** standard-voice live audio/video conferencing with working
+experimental local VoiceShield monitoring. Further latency optimization,
+deepfake accuracy validation and voice cloning remain unfinished. Use
+[the conferencing guide](docs/LIVE_CONFERENCING.md) for the normal call flow,
+which does not depend on temporary canary controllers or a two-second gate.
+
+The five-language conference stage covers Hindi, Tamil, Bengali, Telugu and
+Marathi. **Test lab → Five-language calls** records independent listener checks
+for all 20 directions. **Performance → Saved checks** and **Usage & limits**
+show the bounded real-provider batch separately from the manual observations.
+See [the five-language stage guide](docs/FIVE_LANGUAGE_CALLS.md).
+
+### Current evidence — 31 October 2026
+
+- Nine of ten planned real-provider routes delivered decoded audio to an RTC listener across Hindi, Tamil, Bengali, Telugu and Marathi. Bengali→Marathi failed during local setup before provider usage. All 20 language directions and sustained real group calls still need acceptance.
+- Median server first translated PCM in that batch was **1.56 s** (range **1.37–2.32 s**). Capture-start to receiver audio was **12.70 s** median and includes the source clip. Physical speech-end-to-listener latency, including the under-two-second target, is **not verified**.
+- Recognition quality varies: the saved Marathi example changed **1976 to 1972**, and translation repeated it. Decoded audio delivery does not establish preserved meaning.
+- VoiceShield now uses real AASIST waveform scores for participant badges, warnings, observations and timings. The live local integration passed with diagnostic tones; the earlier 50-human-clip pilot falsely flagged **14/50** and returned **12/50** inconclusive. AI detection rate remains unknown. Monitor mode keeps audio flowing; blocking is not validated for normal use.
+- The saved five-language batch recorded **₹3.1359** reference Gnani usage and approximately **$0.60** Modal meter change. These are that batch's records, not invoices, current balances or lifetime project totals. Modal was stopped at its recorded shutdown.
+- Two-device certificate trust/listening, representative language and deepfake evaluation, final deployment and submission packaging remain pending. Voice cloning stays deferred.
 
 ## What is implemented
 
 - Home workspace, room creation/invitation, prejoin language and device selection.
 - Meeting stage with participant cards, microphone/speaker controls, captions, transcript/source views, language changes, room details, reconnect actions and explicit leave.
-- Hindi, Tamil, Bengali and English source/listening languages.
+- Ten configurable source/listening languages: Hindi, Tamil, Bengali, English, Telugu, Kannada, Malayalam, Marathi, Gujarati and Punjabi. Live quality still requires per-direction acceptance.
 - One persistent STT connection per original speaker, a bounded FIFO per speaker, and concurrent MT/TTS branches per unique target language.
 - Server-side LiveKit participant with restricted subscriptions; no self-echo or original/translated double playback. Same-language listeners receive forwarded original audio through the agent.
 - Gnani Prisma streaming transcription, Evon OpenAI-compatible translation adapter, Timbre streaming PCM synthesis, and voice-clone embedding/synthesis adapters.
@@ -20,6 +41,9 @@ The application separates its React pages, reusable UI, hooks, domain state, API
 - A Deployment setup page and offline Linux VM configuration generator for self-hosted LiveKit, HTTPS/TURN and the application.
 - Separate Performance & readiness page with room-level stage timings, rolling p50/p95, branch failures, downloadable measurements and the live acceptance checklist.
 - Labelled scripted demonstration, provider protocol tests, actual local RTC verification utility, and reproducible evaluation tools.
+- Local Audio lab: bounded consented WAV analysis with a checksum-pinned CPU AASIST model, diagnostic-only jitter/shimmer proxies, honest unknown outcomes and exports without recordings.
+- Monitor mode reports screening while audio continues. Optional experimental enforcement holds complete 4,037.5 ms windows and withholds suspicious, unknown, failed or overloaded windows on both original and synthesized paths.
+- Authenticated receiver-tone probes with one browser clock and separate percentiles; shared-recording manual annotations for actual listener timing. Neither server timing nor the tone probe is labelled end-to-end translation latency.
 
 **Implementation is not vendor validation.** Real Gnani/Evon speech quality, account permissions, clone intelligibility and receiver playback latency must be verified after configuring working credentials and compute. Demo participants and translations are scripted. Configured settings are not proof of a successful provider connection.
 
@@ -31,21 +55,46 @@ From the project directory in PowerShell:
 
 ```powershell
 .\scripts\setup.ps1
-npm run dev
+.\scripts\setup-livekit.ps1
+npm run dev:local
 ```
+
+Open **http://127.0.0.1:5180/#/tests** for the staged Test lab. This command starts the local LiveKit media server, API and frontend together, carries real original microphone audio, and disables all speech-provider clients. It needs no LiveKit Cloud account and does not use Gnani/Evon credits. Microphones start off. Create a room and join its invitation in a second browser profile to test both directions with headphones. Stop this stack with Ctrl+C before running another launcher or the RTC verification command.
+
+See [local testing](docs/LOCAL_TESTING.md) for the precise procedure, mode differences and later second-device/hosted prerequisites. The scripts and 18 draft evaluation cases use everyday conversation; cloning and multi-party speech acceptance are later gates.
+
+For original microphone audio **with working local VoiceShield monitoring**, use
+`npm run dev:shield` instead. The installed CPU model analyzes 4,037.5 ms windows;
+speech-provider clients remain disabled. Flags are experimental and require review.
+
+For real interpretation with configured providers, use **`npm run dev:live`**.
+It starts the local SFU/API/frontend together, keeps provider usage locked until
+an operator approves it, and starts no cloud model or paid server. Use
+`node scripts/local.mjs --live --check` for configuration-only preflight.
+
+While GPU access is pending, use the [offline GPU test package](docs/GPU_TESTING.md),
+[secure two-device preparation](docs/TWO_DEVICE_TESTING.md) and
+[detector dataset checks](evaluation/audio_screening.md). The GPU runner prints a
+plan by default and requires explicit approval to execute. Preparing these files
+does not start a server or validate model quality. The Test lab, Performance and
+Developer journal pages show the preparation steps, separate timing groups and
+remaining acceptance work.
+
+For the optional local classifier, install `uv sync --project server --extra dev --extra screening --frozen`, then run `server/.venv/Scripts/python.exe scripts/fetch_audio_screening_model.py` once (free public model download; no provider inference). On Linux use `server/.venv/bin/python`. The model is MIT/NAVER-origin, approximately 1.62 MB, runs on CPU and is **not Indian-trained**. Startup never downloads it automatically. Missing/corrupt models return unknown. Open **http://127.0.0.1:5180/#/audio-lab**; see [screening evaluation](evaluation/audio_screening.md). Voice cloning stays deferred.
 
 Or install manually:
 
 ```powershell
-npm install
-uv sync --project server --extra dev
-Copy-Item server/.env.example server/.env
-npm run dev
+npm ci --no-audit --no-fund
+uv sync --project server --extra dev --frozen
+if (-not (Test-Path server/.env)) { Copy-Item server/.env.example server/.env }
+.\scripts\setup-livekit.ps1
+npm run dev:local
 ```
 
-Do not overwrite an existing `server/.env`. The setup script only creates it when missing. The development launcher chooses a free API port from 8000, 8100 and 8200 and points the frontend proxy to it. It prints the selected API URL; Vite prints the frontend URL, normally `http://127.0.0.1:5173`.
+Do not overwrite an existing `server/.env`. Setup only creates it when missing. The local audio launcher chooses a free API port from 8000, 8100 and 8200 and points the frontend proxy to it. It prints the selected API URL and serves the audio test at `http://127.0.0.1:5180`. The separate scripted-demo launcher normally uses port 5173.
 
-The default server mode is `demo`. Create a room, choose a name/language, check the processing-consent box, join, and start the scripted example. Backend demo rooms share HTTP/WebSocket state between browsers but do not run speech recognition or synthesize translated audio.
+The saved default server mode is `demo`; use `npm run dev` for that scripted interface. It shares HTTP/WebSocket state but carries no microphone audio. `npm run dev:local` overrides the mode only for its child processes, leaves your saved environment unchanged and starts real raw-audio transport. `npm run dev:checks` opens local live-provider reports; it does not configure the missing Evon endpoint or grant paid API permission.
 
 ### Frontend-only demonstration
 
@@ -68,9 +117,9 @@ See the [go-live checklist](docs/GO_LIVE.md) for the exact inputs you supply, wh
 | ------------------------------ | ------------------------------------------------------------------------------------------- |
 | `ARTHA_MODE`                   | Set to `live` once the values below are configured                                          |
 | `GNANI_API_KEY`                | Gnani Speech API key with STT/TTS access; cloning requires the corresponding account access |
-| `LIVEKIT_URL`                  | Reachable self-hosted WSS endpoint; generated from your domain by the VM setup             |
-| `LIVEKIT_API_KEY`              | Generated locally by the self-hosted deployment tool                                       |
-| `LIVEKIT_API_SECRET`           | Generated locally by the self-hosted deployment tool                                       |
+| `LIVEKIT_URL`                  | Reachable self-hosted WSS endpoint; generated from your domain by the VM setup              |
+| `LIVEKIT_API_KEY`              | Generated locally by the self-hosted deployment tool                                        |
+| `LIVEKIT_API_SECRET`           | Generated locally by the self-hosted deployment tool                                        |
 | `EVON_BASE_URL`                | Reachable OpenAI-compatible Evon inference endpoint ending in `/v1`                         |
 | `EVON_MODEL`                   | Exact model identifier served by that endpoint                                              |
 | `EVON_API_KEY`                 | Inference endpoint key if it requires one; optional for a private local endpoint            |
@@ -104,7 +153,7 @@ The [test-flow catalogue](docs/TEST_FLOWS.md) separates the passed standard-spee
 
 ```text
 web/src/
-  pages/          home, prejoin, meeting, voice studio, settings, performance, usage, deployment, developer journal, recap/history
+  pages/          home, prejoin, meeting, test lab, voice studio, settings, performance, usage, deployment, developer journal, recap/history
   components/     reusable controls, dialogs, participant and transcript UI
   hooks/          devices, meeting audio, WebSocket lifecycle, recording
   services/       HTTP client, explicit scripted demo, LiveKit adapter
@@ -125,6 +174,8 @@ scripts/         setup, development, configuration and actual RTC verification
 ```
 
 See [product/page specification](docs/PRODUCT.md), [architecture](docs/ARCHITECTURE.md), [API/event contract](docs/CONTRACT.md) and [evaluation guide](docs/EVALUATION.md).
+
+The [Evon access guide](docs/EVON_ACCESS_GUIDE.md) separates verified public instructions from account-specific dashboard navigation. The [standard-voice language matrix](docs/LANGUAGE_TEST_MATRIX.md) designs all 90 directed routes across the common ten languages, with per-flow approval and no automatic provider run. Test lab shows this coverage as pending. Odia and dedicated code-mix modes are outside the verified common speech set.
 
 ### Keep provider usage controlled
 
@@ -182,13 +233,13 @@ docker compose --profile local-livekit up --build
 
 For that local profile set browser-facing `LIVEKIT_URL=ws://localhost:7880`, worker-facing `LIVEKIT_INTERNAL_URL=ws://livekit:7880`, and LiveKit's documented development values `LIVEKIT_API_KEY=devkey`, `LIVEKIT_API_SECRET=secret`. These public development credentials are only for local tests; use your own secrets and HTTPS/WSS in deployment. A remote phone cannot use your computer's localhost address.
 
-Optional Evon GPU service:
+Prepare the optional Evon GPU service without starting it:
 
 ```powershell
-docker compose --profile local-evon up --build
+.\server\.venv\Scripts\python.exe scripts/evon_prepare.py --config deploy/evon/inputs.verified-2026-10-28.json --output work/evon/compose.json
 ```
 
-Requires a compatible NVIDIA GPU/runtime, sufficient model memory, model access accepted by you, and `HF_TOKEN` when required for the download. The model is large; this profile is not started by default. The root `.env.example` points the containerized API to `http://evon:8000/v1`. For a separately run local API, use the exposed `http://127.0.0.1:8001/v1` instead. Validate GPU capacity and serving compatibility before a live demo.
+Follow [GPU_TESTING.md](docs/GPU_TESTING.md) for the pinned model/image evidence, authenticated loopback serving, bounded tests and shutdown plan. The old `local-evon` profile has been removed. Generating configuration downloads nothing. GPU memory, driver compatibility and actual inference still require the approved host. Set `EVON_BASE_URL` to the endpoint reachable from the API process: a host-side API can use an SSH tunnel at `http://127.0.0.1:8001/v1`; a container cannot use its own loopback to reach that host tunnel. Keep it blank until the appropriate private route is configured.
 
 ## Deployment and privacy boundaries
 

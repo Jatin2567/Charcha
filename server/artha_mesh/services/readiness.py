@@ -2,11 +2,144 @@
 from __future__ import annotations
 
 import re
+from typing import Literal
 from ipaddress import ip_address
 from urllib.parse import urlsplit
+from pydantic import BaseModel
 
 from ..config import Settings
 from ..models import now
+
+
+class ConferenceMembership(BaseModel):
+    active: bool
+    muted: bool
+    language: str
+    voice_mode: Literal["standard", "cloned"]
+
+
+class ConferenceMedia(BaseModel):
+    interpreter_connected: bool
+    member_connected: bool
+
+
+class ConferenceAudience(BaseModel):
+    other_participants: int
+    translation_target_languages: list[str]
+    connected_translation_target_languages: list[str]
+    same_language_listeners: int
+
+
+class ConferenceProviders(BaseModel):
+    configured: bool
+    missing: list[str]
+    verification: Literal["not_checked"] = "not_checked"
+
+
+class ConferenceFlow(BaseModel):
+    required: bool
+    status: Literal["locked", "approved", "expired", "exhausted", "unavailable", "not_required"]
+    expires_at: str | None
+    remaining: dict[str, int | None]
+
+
+class ConferenceSource(BaseModel):
+    recognizer_task_active: bool
+
+
+class ConferenceMicrophone(BaseModel):
+    can_unmute: bool
+    may_start_new_source: bool
+    reason_code: str
+    detail: str
+
+
+class ConferenceReadiness(BaseModel):
+    schema_version: Literal[1] = 1
+    room_code: str
+    mode: Literal["demo", "transport", "live"]
+    generated_at: str
+    membership: ConferenceMembership
+    media: ConferenceMedia
+    audience: ConferenceAudience
+    providers: ConferenceProviders
+    provider_flow: ConferenceFlow
+    source: ConferenceSource
+    microphone: ConferenceMicrophone
+
+
+CONFERENCE_DETAILS = {
+    "ready_for_attempt": "An operator grant permits a translation attempt. Provider access and speech quality are not verified.",
+    "source_already_active": "Your current source is active. New-source capacity is shown separately; you can always mute.",
+    "waiting_for_listener": "You can enable your microphone. Translation waits for a different-language listener.",
+    "original_audio_only": "This audience uses your language; original audio needs no speech-provider credits.",
+    "media_not_ready": "Wait for your room audio connection before enabling the microphone.",
+    "listener_media_not_ready": "Wait for a different-language listener to connect their room audio.",
+    "provider_configuration_missing": "Translation configuration is incomplete. Original same-language calls can still work.",
+    "provider_flow_locked": "An operator must approve a bounded provider flow before translated microphone audio can start.",
+    "provider_flow_expired": "The operator flow expired. A new approval is required before starting another translated source.",
+    "provider_flow_exhausted": "The current flow has insufficient remaining resources for this audience. Ask the operator for a new bounded flow.",
+    "provider_flow_unavailable": "Provider approval storage or enforcement is unavailable; translated sources are blocked.",
+    "standard_voice_required": "Choose a standard voice for this conference stage. Voice cloning is deferred.",
+    "demo_no_microphone": "This is a scripted demonstration. Use the original-audio or live conference mode for microphone calls.",
+}
+
+
+def conference_readiness(store, state, member, transport, usage) -> ConferenceReadiness:
+    """Local state only; no model probes and no provider/approval side effects."""
+    settings = store.settings
+    audio = getattr(transport, "rooms", {}).get(state.room.code) if transport else None
+    connected = bool(audio and audio.room and not audio.closed and not audio.disconnected
+                     and not getattr(audio, "reconnecting", False))
+    remote = audio.room.remote_participants if connected else {}
+    others = [row for row in state.room.participants if row.id != member.id and not row.is_agent and not row.is_demo
+              and store.is_active(state.room.code, row.id)]
+    targets = sorted({row.language for row in others if row.language != member.language})
+    connected_targets = sorted({row.language for row in others if row.language != member.language and row.id in remote})
+    active_source = bool(audio and member.id in getattr(audio, "recognition_active", set()) and not member.muted)
+    flow = usage.conference_capacity(len(connected_targets) if settings.mode == "live" else 0, source_active=active_source)
+    new_flow = usage.conference_capacity(len(connected_targets), source_active=False) if active_source and settings.mode == "live" else flow
+    missing = settings.missing_live_config() if settings.mode == "live" else settings.missing_transport_config() if settings.mode == "transport" else []
+    media_ready = connected and member.id in remote
+    allowed, new_allowed = False, False
+    if settings.mode == "demo":
+        reason = "demo_no_microphone"
+    elif not media_ready or settings.missing_transport_config():
+        reason = "media_not_ready"
+    elif member.voice_mode != "standard":
+        reason = "standard_voice_required"
+    elif settings.mode == "transport" or not targets:
+        allowed = new_allowed = True
+        reason = "original_audio_only" if others else "waiting_for_listener"
+        flow = usage.conference_capacity(0)
+    elif active_source:
+        allowed = True
+        new_allowed = not missing and bool(connected_targets) and new_flow["status"] == "approved"
+        reason = "source_already_active"
+    elif missing:
+        reason = "provider_configuration_missing"
+    elif not connected_targets:
+        reason = "listener_media_not_ready"
+    elif flow["status"] != "approved":
+        reason = "provider_flow_" + flow["status"]
+    else:
+        allowed = new_allowed = True
+        reason = "ready_for_attempt"
+    detail = CONFERENCE_DETAILS[reason]
+    if settings.mode == "transport" and reason == "original_audio_only":
+        detail = "Original audio is shared with connected participants. Speech providers are disabled in this mode."
+    elif settings.mode == "transport" and reason == "waiting_for_listener":
+        detail = "You can enable your microphone. Join another participant to hear original audio."
+    return ConferenceReadiness(room_code=state.room.code, mode=settings.mode, generated_at=now().isoformat(),
+        membership=ConferenceMembership(active=True, muted=member.muted, language=member.language, voice_mode=member.voice_mode),
+        media=ConferenceMedia(interpreter_connected=connected, member_connected=member.id in remote),
+        audience=ConferenceAudience(other_participants=len(others), translation_target_languages=targets,
+            connected_translation_target_languages=connected_targets,
+            same_language_listeners=sum(row.language == member.language for row in others)),
+        providers=ConferenceProviders(configured=not missing, missing=missing), provider_flow=ConferenceFlow(**flow),
+        source=ConferenceSource(recognizer_task_active=active_source),
+        microphone=ConferenceMicrophone(can_unmute=allowed, may_start_new_source=new_allowed,
+            reason_code=reason, detail=detail))
 
 
 def _private_host(host: str) -> bool:
@@ -117,7 +250,7 @@ def readiness_snapshot(settings: Settings) -> dict:
     requirement("USAGE_REQUIRE_FLOW_APPROVAL", "Provider flow permission", settings.usage_require_flow_approval, True,
                 "Application", "Every billable flow needs a local operator grant with an expiry and explicit resource budgets; daily caps remain enforced.")
     requirement("GNANI_API_KEY", "Gnani API access", settings.gnani_api_key.get_secret_value(), True,
-                "Gnani", "Account must have Prisma STT, Timbre TTS and voice-clone access; usage or quota is unverified.")
+                "Gnani", "Standard-voice calls need Prisma STT and Timbre TTS access; account quota and usage remain unverified. Voice cloning is a separate later stage.")
     requirement("LIVEKIT_URL", "LiveKit room URL", settings.livekit_url, True, "LiveKit",
                 "Public wss:// room endpoint for live audio; your self-hosted server does not require LiveKit Cloud credits.")
     requirement("LIVEKIT_API_KEY", "LiveKit API key", settings.livekit_api_key.get_secret_value(), True,
@@ -148,7 +281,7 @@ def readiness_snapshot(settings: Settings) -> dict:
             {"key": "COMPUTE", "label": "Evon compute and quota", "status": "manual",
              "detail": "Use your approved hosted Evon endpoint if compatible, or supply your own GPU model service. Confirm account access and quota; no model is downloaded automatically."},
             {"key": "SPEAKERS", "label": "Consenting test speakers", "status": "manual",
-             "detail": "Use at least two devices and Hindi/Tamil/Bengali speakers; cloning requires their own clean 5–30 second spoken reference."},
+             "detail": "Start with Hindi/Tamil speakers on two devices, then expand to Bengali, Telugu and Marathi. Voice cloning remains a later, separately consented stage."},
             {"key": "QUALITY", "label": "Quality and listener latency review", "status": "manual",
              "detail": "Review names, numbers, negation and voice quality. Server first-PCM metrics do not measure listener playback latency."},
             {"key": "RECOVERY", "label": "Recovery and deployment validation", "status": "manual",

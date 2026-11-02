@@ -11,6 +11,7 @@ export function TranscriptPanel({
   onSubmit,
   demo,
   submitting,
+  blockedReason = '',
 }: {
   turns: Turn[];
   language: Language;
@@ -19,6 +20,7 @@ export function TranscriptPanel({
   onSubmit: (text: string) => Promise<void>;
   demo: boolean;
   submitting: boolean;
+  blockedReason?: string;
 }) {
   const [tab, setTab] = useState<'translated' | 'source'>('translated');
   const [draft, setDraft] = useState('');
@@ -95,6 +97,8 @@ export function TranscriptPanel({
                   </time>
                 </div>
                 <p
+                  lang={tab === 'source' ? turn.source_language : translated ? language : 'en'}
+                  dir="auto"
                   className={`transcript-text ${!translated && tab === 'translated' ? 'pending-translation' : ''}`}
                 >
                   {tab === 'source'
@@ -110,7 +114,7 @@ export function TranscriptPanel({
                       Original
                       <ChevronDown size={10} />
                     </summary>
-                    <p>{turn.text}</p>
+                    <p lang={turn.source_language} dir="auto">{turn.text}</p>
                   </details>
                 )}
                 <button
@@ -144,7 +148,7 @@ export function TranscriptPanel({
         className="text-composer"
         onSubmit={(e) => {
           e.preventDefault();
-          if (draft.trim())
+          if (draft.trim() && !submitting && !blockedReason)
             void onSubmit(draft.trim())
               .then(() => setDraft(''))
               .catch(() => {});
@@ -159,6 +163,7 @@ export function TranscriptPanel({
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             maxLength={2000}
+            disabled={!!blockedReason || submitting}
             placeholder={
               demo ? 'Paste a sentence from the example' : 'Type in your speaking language…'
             }
@@ -166,16 +171,17 @@ export function TranscriptPanel({
           <button
             type="submit"
             className="composer-send"
-            disabled={!draft.trim() || submitting}
+            disabled={!draft.trim() || submitting || !!blockedReason}
             aria-label="Send text for interpretation"
           >
             <Send size={16} />
           </button>
         </div>
         <small>
-          {demo
-            ? 'Demo text accepts only sentences in the sample script.'
-            : 'Text uses your selected language and the live MT / TTS pipeline.'}
+          {blockedReason ||
+            (demo
+              ? 'Demo text accepts only sentences in the sample script.'
+              : 'Text uses your selected language and the live MT / TTS pipeline.')}
         </small>
       </form>
     </>

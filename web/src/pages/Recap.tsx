@@ -27,6 +27,7 @@ import {
 } from '../components/ui';
 import { languageName } from '../types/domain';
 import type { Language, Recap } from '../types/domain';
+import { recapServerTiming } from '../services/recapTiming';
 export function recapText(recap: Recap, language: Language): string {
   return `${recap.room.title}\n${recap.localDemo || recap.room.mode === 'demo' ? 'SCRIPTED DEMONSTRATION — example content\n' : ''}Ended: ${new Date(recap.ended_at).toLocaleString()}\nListening language: ${languageName(language)}\n\n${recap.turns.map((t) => `${t.speaker_name} (${languageName(t.source_language)})\nSource: ${t.text}\n${languageName(language)}: ${t.source_language === language ? t.text : t.translations[language] || '[Translation unavailable]'}\nConfirmed by: ${t.confirmed_by.length} participant(s)`).join('\n\n')}`;
 }
@@ -53,6 +54,7 @@ export function RecapPage() {
     );
   const saved = app.recaps.some((r) => r.id === recap.id);
   const participants = recap.room.participants.filter((p) => !p.is_agent);
+  const timing = recapServerTiming(recap);
   return (
     <>
       <Link className="text-link" to="/" style={{ marginBottom: 21 }}>
@@ -97,6 +99,7 @@ export function RecapPage() {
           </div>
           <LanguageSelect
             value={language}
+            scriptedOnly={recap.room.mode === 'demo'}
             onChange={setLanguage}
             label="Read translations in"
             id="recap-language"
@@ -153,19 +156,25 @@ export function RecapPage() {
                 </strong>
               </div>
               <div>
-                <span>Participants</span>
+                <span>{recap.room.mode === 'demo' ? 'Participants' : 'Participants at exit'}</span>
                 <strong>
                   {participants.length}
                   {recap.room.mode === 'demo' ? ' incl. samples' : ''}
                 </strong>
               </div>
               <div>
-                <span>Languages</span>
+                <span>{recap.room.mode === 'demo' ? 'Languages' : 'Languages at exit'}</span>
                 <strong>{new Set(participants.map((p) => p.language)).size}</strong>
               </div>
               <div>
                 <span>Mode</span>
-                <strong>{recap.room.mode === 'demo' ? 'Scripted demo' : 'Live room'}</strong>
+                <strong>
+                  {recap.room.mode === 'transport'
+                    ? 'Raw audio test'
+                    : recap.room.mode === 'demo'
+                      ? 'Scripted demo'
+                      : 'Live room'}
+                </strong>
               </div>
             </div>
             <div className="language-chips">
@@ -199,19 +208,30 @@ export function RecapPage() {
               Exports include participant names and conversation content. Share them intentionally.
             </p>
           </section>
-          {recap.metrics && recap.room.mode === 'live' && (
+          {recap.room.mode === 'live' && (
             <section className="panel" style={{ marginTop: 18 }}>
               <h3>Server processing timing</h3>
               <div className="recap-details">
                 <div>
                   <span>Median</span>
-                  <strong>{recap.metrics.p50_ms.toFixed(0)} ms</strong>
+                  <strong>
+                    {timing.p50_ms === null
+                      ? 'N/A'
+                      : `${timing.p50_ms.toLocaleString(undefined, { maximumFractionDigits: 2 })} ms`}
+                  </strong>
                 </div>
                 <div>
                   <span>95th percentile</span>
-                  <strong>{recap.metrics.p95_ms.toFixed(0)} ms</strong>
+                  <strong>
+                    {timing.p95_ms === null
+                      ? 'N/A'
+                      : `${timing.p95_ms.toLocaleString(undefined, { maximumFractionDigits: 2 })} ms`}
+                  </strong>
                 </div>
               </div>
+              {!timing.measured && (
+                <p className="source-note">No measured server turns were recorded.</p>
+              )}
               <p className="source-note">
                 Server pipeline measurements. They exclude the listener’s network and audible
                 playback delay.
@@ -250,7 +270,11 @@ export function HistoryPage() {
                   <AudioLines size={21} />
                 </span>
                 <Badge tone={r.room.mode === 'demo' ? 'orange' : 'green'}>
-                  {r.room.mode === 'demo' ? 'Scripted demo' : 'Live conversation'}
+                  {r.room.mode === 'transport'
+                    ? 'Raw audio test'
+                    : r.room.mode === 'demo'
+                      ? 'Scripted demo'
+                      : 'Live conversation'}
                 </Badge>
               </div>
               <h3>{r.room.title}</h3>

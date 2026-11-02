@@ -17,7 +17,7 @@ from pathlib import Path
 from urllib import error, request
 
 ROOT = Path(__file__).resolve().parent
-DEFAULT_DATASET = ROOT / "trade_cases.jsonl"
+DEFAULT_DATASET = ROOT / "everyday_cases.jsonl"
 RATING_COLUMNS = [
     "case_id", "reviewer_id", "source_fluent", "target_fluent", "meaning_1_to_5",
     "critical_values_correct", "negation_condition_correct", "naturalness_1_to_5",

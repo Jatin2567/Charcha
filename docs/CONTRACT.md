@@ -4,27 +4,27 @@ Workspace: `outputs/artha-mesh`. Frontend owns `web/`; backend owns `server/arth
 
 ## Product
 
-Meet-inspired, carefully designed Indic audio interpretation. Hindi (`hi`), Tamil (`ta`), Bengali (`bn`), English (`en`). Home, prejoin, meeting, recap/history, voice studio, settings/setup. Two modes: clearly labelled local demonstration (scripted examples, never represented as live AI) and real LiveKit + Prisma + Evon-compatible MT + Timbre/voice-clone. No Track A detector or invented security/sovereignty claims.
+Meet-inspired Indic audio interpretation. Ten configurable languages: Hindi (`hi`), Tamil (`ta`), Bengali (`bn`), English (`en`), Telugu (`te`), Kannada (`kn`), Malayalam (`ml`), Marathi (`mr`), Gujarati (`gu`) and Punjabi (`pa`). Three explicit modes: `demo` for the original four-language scripted dictionary, `transport` for provider-free original audio, and `live` for configured LiveKit + Prisma + Evon-compatible MT + Timbre. Individual language directions still need live acceptance; cloned voices remain a later gate. Home, prejoin, meeting, Test lab, recap/history, voice studio and setup remain separated.
 
 ## HTTP API (JSON snake_case)
 
 Base `/api`; default local backend port 8000 (development launcher selects a free fallback when needed). Auth for room-member operations is `Authorization: Bearer <session_token>`. Room codes are unguessable invitations, not user account identities. Do not log credentials.
 
-- GET `/health` -> `{status:"ok", mode:"demo"|"live", providers:[{name,status,detail}], languages:[{code,name,native_name}], version}`. No secret values.
+- GET `/health` -> `{status:"ok", mode:"demo"|"transport"|"live", providers:[{name,status,detail}], languages:[{code,name,native_name}], version}`. No secret values.
 - GET `/readiness` -> `{mode,generated_at,requirements:[{key,label,configured:boolean,required:boolean,group,detail}],provider_verification:"not_checked",deployment_checks:[{key,label,status:"manual",detail}]}`. Public redacted configuration presence, including in demo mode. Never returns keys, URLs, model values or credentials. `configured` indicates only a present setting; no paid connectivity probes run. Required keys: `ARTHA_MODE` (configured only when live), `GNANI_API_KEY`, `LIVEKIT_URL`, `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET`, `EVON_BASE_URL`, `EVON_MODEL`. Optional selections: `EVON_API_KEY` (host-dependent authentication), `TIMBRE_MODEL`, `TIMBRE_VOICE`. Defaults can satisfy optional model/voice presence but do not prove entitlement.
 - GET `/usage` -> global redacted UsageSnapshot below. Reading this endpoint does not contact a provider or consume credits. No browser endpoint edits/resets budgets.
 - POST `/rooms` `{title:string}` -> Room.
 - GET `/rooms/{code}` -> public Room with participants (no transcripts/tokens).
-- POST `/rooms/{code}/join` `{name,language:"hi"|"ta"|"bn"|"en",voice_mode:"standard"|"cloned",voice_profile_id?:string,consent:boolean}` -> `{room,participant,session_token,livekit:null|{url,token,agent_identity}}`.
+- POST `/rooms/{code}/join` `{name,language:"hi"|"ta"|"bn"|"en"|"te"|"kn"|"ml"|"mr"|"gu"|"pa",voice_mode:"standard"|"cloned",voice_profile_id?:string,consent:boolean}` -> `{room,participant,session_token,livekit:null|{url,token,agent_identity}}`. Join with a standard voice; enrollment is a separate session-owned operation. Dedicated Odia and code-mix codes are not accepted.
 - POST `/rooms/{code}/leave` `{participant_id}` + bearer -> `{ok:true}`.
 - PATCH `/rooms/{code}/participants/me` `{language?,voice_mode?,voice_profile_id?,muted?}` + bearer -> Participant. Member only; voice clone needs enrollment consent.
 - GET `/rooms/{code}/transcript` + bearer -> `{turns:Turn[],metrics:Metrics}`.
 - GET `/rooms/{code}/performance` + bearer -> PerformanceSnapshot below. Authenticated for the exact room; never includes conversation text, speaker names, voice references or credentials.
 - POST `/rooms/{code}/text` `{text:string}` + bearer -> `{utterance_id}`. Real MT/TTS in live mode; only known sample dictionary in demo. Not a fake speech recognizer.
-- POST `/rooms/{code}/demo` `{scenario:"trade"}` + bearer -> `{ok:true}`. Creates explicitly simulated participants and runs canned hi/ta/bn turns through event stream; demo mode only.
+- POST `/rooms/{code}/demo` `{scenario:"everyday"}` + bearer -> `{ok:true}`. Creates explicitly simulated participants and runs canned community-centre plans and directions in hi/ta/bn through the event stream; demo mode only.
 - POST `/voice-profiles` multipart `audio_file`, `name`, `consent=true`, `owner_token` (a room membership token) -> `{id,name,created_at,mode:"demo"|"live"}`. Server stores session-scoped embedding, not raw clip. Validate MIME/size/duration; documented Gnani reference 5–30s of clean spoken audio. Never return embedding to browser.
 - DELETE `/voice-profiles/{id}` + bearer -> `{ok:true}` owner only.
-- POST `/rooms/{code}/confirmations` `{utterance_id}` + bearer -> `{confirmed_by:string[]}` (every human participant confirms own understanding; no automatic order placement).
+- POST `/rooms/{code}/confirmations` `{utterance_id}` + bearer -> `{confirmed_by:string[]}` (every human participant confirms their own understanding; confirmation does not perform the spoken request).
 
 Room `{id,code,title,created_at,mode,participants:Participant[]}`.
 Participant `{id,name,language,voice_mode,muted:boolean,is_agent:boolean,is_demo:boolean,joined_at}`.
@@ -84,7 +84,7 @@ Envelope `{id,type,timestamp,payload}`:
 - `pipeline.error`: `{message,utterance_id?:string,retryable:boolean}` (no secrets or upstream raw error bodies)
 - `demo.complete`: `{}`
 
-Live audio always via LiveKit translated tracks, not browser TTS. Any browser speech synthesis in demo is optional, explicitly described as device voice, and language support is not guaranteed. Track names `translated:{speaker_id}:{target_language}`. Raw microphone publisher grants only `artha-agent-{room_id}` subscriber; agent publishes translations with participant-specific subscription permissions before publication. Agent filters its own generated tracks to avoid feedback. Same-language listeners get source forwarded as generated PCM agent track without MT. One STT stream per original speaker; one MT/TTS job per unique target language. Sequential source turns preserve order; target languages fan out concurrently with bounded queues, timeouts, cancellation on leave. Track routing never depends on frontend mute alone.
+Live audio always via LiveKit translated tracks, not browser TTS. Any browser speech synthesis in demo is optional, explicitly described as device voice, and language support is not guaranteed. Track names `translated:{speaker_id}:{target_language}`. Raw microphone publisher grants only `artha-agent-{room_id}` subscriber; agent publishes translations with participant-specific subscription permissions before publication. Agent filters its own generated tracks to avoid feedback. Same-language listeners get source forwarded as generated PCM agent track without MT. One STT stream per active original speaker with a different-language listener; one MT/TTS job per unique target language. Same-language-only audiences open no recognizer. Sequential source turns preserve order; target languages fan out concurrently with bounded queues, timeouts, cancellation on leave. Track routing never depends on frontend mute alone.
 
 ## Client behavior
 

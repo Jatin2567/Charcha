@@ -1,0 +1,237 @@
+{
+  "stage_id": "five-language-conference-20261031",
+  "recorded": true,
+  "routes": [
+    {
+      "source": "hi",
+      "target": "ta",
+      "status": "receiver_decoded",
+      "used": {
+        "stt_seconds": 11,
+        "stt_connections": 1,
+        "mt_requests": 1,
+        "mt_characters": 115,
+        "tts_requests": 1,
+        "tts_characters": 120,
+        "voice_enrollments": 0
+      },
+      "source_wer": 0.0417,
+      "year_review": null,
+      "stage": null,
+      "capture_start_to_receiver_first_pcm_ms": 13320.5,
+      "stt_processing_ms": null,
+      "mt_ms": 1481.5,
+      "tts_first_pcm_ms": 839.53,
+      "server_first_pcm_ms": 2322.61
+    },
+    {
+      "source": "ta",
+      "target": "bn",
+      "status": "receiver_decoded",
+      "used": {
+        "stt_seconds": 11,
+        "stt_connections": 1,
+        "mt_requests": 1,
+        "mt_characters": 95,
+        "tts_requests": 1,
+        "tts_characters": 100,
+        "voice_enrollments": 0
+      },
+      "source_wer": 0.2353,
+      "year_review": null,
+      "stage": null,
+      "capture_start_to_receiver_first_pcm_ms": 12511.9,
+      "stt_processing_ms": null,
+      "mt_ms": 869.35,
+      "tts_first_pcm_ms": 723.19,
+      "server_first_pcm_ms": 1593.78
+    },
+    {
+      "source": "bn",
+      "target": "te",
+      "status": "receiver_decoded",
+      "used": {
+        "stt_seconds": 13,
+        "stt_connections": 1,
+        "mt_requests": 1,
+        "mt_characters": 86,
+        "tts_requests": 1,
+        "tts_characters": 69,
+        "voice_enrollments": 0
+      },
+      "source_wer": 0.1765,
+      "year_review": null,
+      "stage": null,
+      "capture_start_to_receiver_first_pcm_ms": 14156.8,
+      "stt_processing_ms": null,
+      "mt_ms": 1369.01,
+      "tts_first_pcm_ms": 509.47,
+      "server_first_pcm_ms": 1879.58
+    },
+    {
+      "source": "te",
+      "target": "mr",
+      "status": "receiver_decoded",
+      "used": {
+        "stt_seconds": 11,
+        "stt_connections": 1,
+        "mt_requests": 1,
+        "mt_characters": 87,
+        "tts_requests": 1,
+        "tts_characters": 93,
+        "voice_enrollments": 0
+      },
+      "source_wer": 0.4,
+      "year_review": null,
+      "stage": null,
+      "capture_start_to_receiver_first_pcm_ms": 11876.3,
+      "stt_processing_ms": null,
+      "mt_ms": 903.35,
+      "tts_first_pcm_ms": 716.54,
+      "server_first_pcm_ms": 1621.4
+    },
+    {
+      "source": "mr",
+      "target": "hi",
+      "status": "receiver_decoded",
+      "used": {
+        "stt_seconds": 13,
+        "stt_connections": 1,
+        "mt_requests": 1,
+        "mt_characters": 90,
+        "tts_requests": 1,
+        "tts_characters": 79,
+        "voice_enrollments": 0
+      },
+      "source_wer": 0.4,
+      "year_review": {
+        "reference": "1976",
+        "recognized": "1972"
+      },
+      "stage": null,
+      "capture_start_to_receiver_first_pcm_ms": 13834.0,
+      "stt_processing_ms": null,
+      "mt_ms": 899.45,
+      "tts_first_pcm_ms": 473.54,
+      "server_first_pcm_ms": 1373.65
+    },
+    {
+      "source": "hi",
+      "target": "bn",
+      "status": "receiver_decoded",
+      "used": {
+        "stt_seconds": 12,
+        "stt_connections": 1,
+        "mt_requests": 1,
+        "mt_characters": 115,
+        "tts_requests": 1,
+        "tts_characters": 104,
+        "voice_enrollments": 0
+      },
+      "source_wer": 0.0417,
+      "year_review": null,
+      "stage": null,
+      "capture_start_to_receiver_first_pcm_ms": 12701.0,
+      "stt_processing_ms": null,
+      "mt_ms": 846.7,
+      "tts_first_pcm_ms": 609.74,
+      "server_first_pcm_ms": 1457.63
+    },
+    {
+      "source": "ta",
+      "target": "te",
+      "status": "receiver_decoded",
+      "used": {
+        "stt_seconds": 12,
+        "stt_connections": 1,
+        "mt_requests": 1,
+        "mt_characters": 95,
+        "tts_requests": 1,
+        "tts_characters": 100,
+        "voice_enrollments": 0
+      },
+      "source_wer": 0.2353,
+      "year_review": null,
+      "stage": null,
+      "capture_start_to_receiver_first_pcm_ms": 12673.7,
+      "stt_processing_ms": null,
+      "mt_ms": 828.04,
+      "tts_first_pcm_ms": 551.24,
+      "server_first_pcm_ms": 1380.19
+    },
+    {
+      "source": "bn",
+      "target": "mr",
+      "status": "failed",
+      "used": {
+        "stt_seconds": 0,
+        "stt_connections": 0,
+        "mt_requests": 0,
+        "mt_characters": 0,
+        "tts_requests": 0,
+        "tts_characters": 0,
+        "voice_enrollments": 0
+      },
+      "source_wer": null,
+      "year_review": null,
+      "stage": "local setup before API use",
+      "capture_start_to_receiver_first_pcm_ms": null,
+      "stt_processing_ms": null,
+      "mt_ms": null,
+      "tts_first_pcm_ms": null,
+      "server_first_pcm_ms": null
+    },
+    {
+      "source": "te",
+      "target": "hi",
+      "status": "receiver_decoded",
+      "used": {
+        "stt_seconds": 10,
+        "stt_connections": 1,
+        "mt_requests": 1,
+        "mt_characters": 87,
+        "tts_requests": 1,
+        "tts_characters": 85,
+        "voice_enrollments": 0
+      },
+      "source_wer": 0.4,
+      "year_review": null,
+      "stage": null,
+      "capture_start_to_receiver_first_pcm_ms": 11542.5,
+      "stt_processing_ms": null,
+      "mt_ms": 848.72,
+      "tts_first_pcm_ms": 712.28,
+      "server_first_pcm_ms": 1561.53
+    },
+    {
+      "source": "mr",
+      "target": "ta",
+      "status": "receiver_decoded",
+      "used": {
+        "stt_seconds": 13,
+        "stt_connections": 1,
+        "mt_requests": 1,
+        "mt_characters": 88,
+        "tts_requests": 1,
+        "tts_characters": 117,
+        "voice_enrollments": 0
+      },
+      "source_wer": 0.2667,
+      "year_review": {
+        "reference": "1976",
+        "recognized": "1972"
+      },
+      "stage": null,
+      "capture_start_to_receiver_first_pcm_ms": 13941.8,
+      "stt_processing_ms": null,
+      "mt_ms": 856.73,
+      "tts_first_pcm_ms": 557.95,
+      "server_first_pcm_ms": 1415.2
+    }
+  ],
+  "modal_stopped": true,
+  "workspace_meter_change_usd": 0.6,
+  "provider_invoice_inr": null,
+  "physical_listener_latency_ms": null,
+  "meaning_review": "pending"
+}

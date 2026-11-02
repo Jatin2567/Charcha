@@ -99,7 +99,7 @@ class UsageGuard:
 
     def require_live(self):
         if self.settings.mode != "live":
-            raise ProviderError("Provider calls are disabled in demo mode", False)
+            raise ProviderError(f"Provider calls are disabled in {self.settings.mode} mode", False)
 
     def reserve(self, units: dict[str, int]) -> str | None:
         """Reserve all supplied resources together before the external operation.
@@ -177,11 +177,13 @@ class UsageGuard:
     def snapshot(self) -> dict:
         period, reset = self._period()
         used: dict[str, int] | None = {}
-        status = "demo" if self.settings.mode == "demo" else "ready"
+        status = "demo" if self.settings.mode == "demo" else "disabled" if self.settings.mode == "transport" else "ready"
         approval = {"required": self.settings.usage_require_flow_approval,
-                    "status": "demo" if self.settings.mode == "demo" else "unavailable",
+                    "status": status if status in {"demo", "disabled"} else "unavailable",
                     "active_flow_id": None, "expires_at": None,
-                    "detail": "Demo makes no provider calls; live calls require explicit operator approval."}
+                    "detail": ("Transport mode relays original audio only; all speech-provider calls are disabled."
+                               if self.settings.mode == "transport" else
+                               "Demo makes no provider calls; live calls require explicit operator approval.")}
         programme = approvals.empty_programme(
             self.settings.usage_reported_request_rate_inr,
             stt_rate=self.settings.usage_stt_inr_per_hour,
@@ -216,6 +218,7 @@ class UsageGuard:
         detail = {
             "ready": "Persistent application reservations are enforced before provider calls. Failed or partial attempts remain counted.",
             "demo": "Demo makes no paid provider calls and writes no usage ledger. These are configured live limits.",
+            "disabled": "Transport mode makes no speech-provider calls and writes no usage ledger. These are configured live limits, not historical usage.",
             "unavailable": "Usage storage is unavailable. Live provider calls are blocked until the operator restores storage and restarts the API.",
         }[status]
         return {
@@ -267,6 +270,48 @@ class UsageGuard:
                             "balance_unit", "balance_delta", "credits_used"):
                     flow[key] = None
                 flow["credits_source"] = "unknown"
+        return result
+
+    def conference_capacity(self, target_count: int, *, source_active: bool = False) -> dict:
+        """Read-only admission hint; atomic reserve remains the final authority.
+
+        Distinct output languages, rather than audience size, consume MT/TTS
+        requests. No IDs, financial snapshots, credentials or provider calls.
+        """
+        keys = tuple(key for key, *_ in RESOURCES if key != "voice_enrollments")
+        result = {"required": target_count > 0, "status": "not_required", "expires_at": None,
+                  "remaining": {key: None for key in keys}}
+        if target_count <= 0:
+            return result
+        if not self.settings.usage_require_flow_approval:
+            result["status"] = "unavailable"
+            return result
+        snapshot = self.snapshot()
+        if snapshot["enforcement"]["status"] != "ready":
+            result["status"] = "unavailable"
+            return result
+        flows = snapshot["programme"]["flows"]
+        active = next((flow for flow in flows if flow["id"] == snapshot["approval"]["active_flow_id"]), None)
+        if active is None:
+            latest = flows[0]["status"] if flows else None
+            result["status"] = latest if latest in {"expired", "exhausted"} else "locked"
+            if result["status"] in {"expired", "exhausted"}:
+                result["expires_at"] = flows[0]["expires_at"]
+            return result
+        if active["purpose"] != "live_interpretation":
+            result["status"] = "locked"
+            return result
+        daily = {row["key"]: row["remaining"] for row in snapshot["resources"]}
+        remaining = {key: min(max(0, active["budgets"][key] - active["used"][key]), daily[key])
+                     if type(daily.get(key)) is int else None for key in keys}
+        result.update(expires_at=active["expires_at"], remaining=remaining)
+        if any(value is None for value in remaining.values()):
+            result["status"] = "unavailable"
+            return result
+        minimum = {"stt_seconds": 1, "stt_connections": 0 if source_active else 1,
+                   "mt_requests": target_count, "mt_characters": 1,
+                   "tts_requests": target_count, "tts_characters": 1}
+        result["status"] = "approved" if all(remaining[key] >= amount for key, amount in minimum.items()) else "exhausted"
         return result
 
     def approve_flow(self, **values) -> dict:

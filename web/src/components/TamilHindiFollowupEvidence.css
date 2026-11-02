@@ -1,0 +1,13 @@
+.controlled-provider-cases.followup-single-case {
+  grid-template-columns: 1fr;
+}
+.tamil-hindi-followup .followup-stt-models {
+  max-width: 560px;
+  margin: 16px 0;
+}
+.controlled-provider-body .followup-failure {
+  background: #fcf8ed;
+  border: 1px solid #eee5cb;
+  padding: 13px;
+  border-radius: 8px;
+}

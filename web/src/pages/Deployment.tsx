@@ -278,7 +278,7 @@ export function Deployment() {
             {loading
               ? 'Checking service'
               : snapshot
-                ? `${snapshot.mode === 'live' ? 'Live' : 'Demo'} server`
+                ? `${snapshot.mode === 'transport' ? 'Local transport' : snapshot.mode === 'live' ? 'Live' : 'Demo'} server`
                 : 'Service unavailable'}
           </Badge>
           <p>

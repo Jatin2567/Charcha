@@ -13,7 +13,9 @@ def test_health_identifies_demo_and_never_exposes_credentials(client):
     assert response.status_code == 200
     health = response.json()
     assert health["mode"] == "demo"
-    assert {language["code"] for language in health["languages"]} == {"hi", "ta", "bn", "en"}
+    assert {language["code"] for language in health["languages"]} == {
+        "hi", "ta", "bn", "en", "te", "kn", "ml", "mr", "gu", "pa",
+    }
     assert "session_token" not in response.text
     assert "embedding" not in response.text
 

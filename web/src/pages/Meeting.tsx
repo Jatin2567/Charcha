@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { CallWaveforms } from '../components/CallWaveforms';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import {
   ArrowRight,
@@ -18,6 +19,8 @@ import {
   RotateCcw,
   Settings2,
   ShieldCheck,
+  ShieldQuestion,
+  ShieldAlert,
   Users,
   Volume2,
   VolumeX,
@@ -26,6 +29,8 @@ import {
   Download,
   LoaderCircle,
   Gauge,
+  Video,
+  VideoOff,
 } from 'lucide-react';
 import { useApp } from '../state/AppContext';
 import { useRoomEvents } from '../hooks/useRoomEvents';
@@ -44,11 +49,17 @@ import {
 } from '../components/ui';
 import { ParticipantCard } from '../components/ParticipantCard';
 import { TranscriptPanel } from '../components/TranscriptPanel';
-import { VoiceEnrollment } from '../components/VoiceEnrollment';
+import { MeetingCaptions } from '../components/MeetingCaptions';
+import { ConferenceStatus } from '../components/ConferenceStatus';
+import { InvitationHelp } from '../components/InvitationHelp';
+import { VoiceShieldPanel } from '../components/VoiceShieldPanel';
+import { activeScreeningSamples, hasVoiceFlag } from '../services/voiceShield';
+import { invitationScope } from '../services/invitation';
+import { useDevices } from '../hooks/useDevices';
 import { openPerformancePage } from '../services/transportMetrics';
 import type { Language, Membership, Recap, Turn } from '../types/domain';
 import { LANGUAGES, languageName } from '../types/domain';
-type SidePanel = 'transcript' | 'participants' | 'settings' | 'info' | null;
+type SidePanel = 'transcript' | 'participants' | 'settings' | 'info' | 'shield' | null;
 export function Meeting() {
   const { code } = useParams();
   const { membership } = useApp();
@@ -77,22 +88,31 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
   const navigate = useNavigate();
   const { state, dispatch, connection, running, startDemo, reconnect } = useRoomEvents(m);
   const audio = useMeetingAudio(m);
-  const [panel, setPanel] = useState<SidePanel>('transcript');
+  const devices = useDevices();
+  const [panel, setPanel] = useState<SidePanel>(m.room.mode === 'demo' ? 'transcript' : null);
   const [captions, setCaptions] = useState(app.preferences.autoCaptions);
+  const resizeCaptions = useCallback(
+    () => app.setPreferences({ largeCaptions: !app.preferences.largeCaptions }),
+    [app.setPreferences, app.preferences.largeCaptions],
+  );
   const [leave, setLeave] = useState(false);
-  const [enroll, setEnroll] = useState(false);
   const [toast, setToast] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [leaving, setLeaving] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [copied, setCopied] = useState(false);
+  const [changingLanguage, setChangingLanguage] = useState(false);
   const isDemo = m.room.mode === 'demo';
+  const isTransport = m.room.mode === 'transport';
   const room = state.room || m.room;
   const participants = room.participants.filter((p) => !p.is_agent);
-  const latest = state.turns[state.turns.length - 1];
+  const shieldParticipants = participants.map((person) => person.id === m.participant.id ? { ...person, muted: audio.muted } : person);
+  const liveScreening = activeScreeningSamples(state.screening, shieldParticipants, state.screeningStatus, !isDemo && connection === 'Connected');
+  const shieldFlags = liveScreening.filter(({ sample }) => hasVoiceFlag(sample));
   const language = m.participant.language;
   const invitation = `${window.location.origin}${window.location.pathname}#/join/${room.code}`;
+  const inviteScope = invitationScope(invitation);
   useEffect(() => {
     const start = Date.now();
     const timer = setInterval(() => setElapsed(Math.floor((Date.now() - start) / 1000)), 1000);
@@ -116,19 +136,26 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
         e.preventDefault();
         void audio.toggleMic();
       }
-      if (e.key.toLowerCase() === 'c') setCaptions((c) => !c);
+      if (!isTransport && !e.repeat && e.key.toLowerCase() === 'c') setCaptions((c) => !c);
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [audio.toggleMic]);
-  const copyInvite = async () => {
+  }, [audio.toggleMic, isDemo, isTransport]);
+  const copyInvite = async (reviewed = false) => {
+    if (!reviewed && inviteScope.kind !== 'device-link' && !isDemo) {
+      setPanel('info');
+      setToast('Review where this invitation works before copying it.');
+      return;
+    }
     try {
       await navigator.clipboard.writeText(invitation);
       setCopied(true);
       setToast(
         isDemo && m.localDemo
           ? 'Demo invitation copied. Each browser has an independent scripted demo.'
-          : 'Invitation link copied.',
+          : inviteScope.kind === 'same-computer'
+            ? 'Same-computer invitation copied. Use another browser profile on this laptop.'
+            : 'Invitation link copied; device connectivity still needs checking.',
       );
       setTimeout(() => setCopied(false), 3000);
     } catch {
@@ -215,21 +242,45 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
     navigate(`/recap/${recap.id}`);
   };
   const changeLanguage = async (next: Language) => {
+    if (changingLanguage || next === language) return;
+    setChangingLanguage(true);
     try {
-      const updated = await updateParticipant(m, { language: next });
+      await audio.disconnect();
+      const updated = await updateParticipant(m, { language: next, muted: true });
       app.setMembership({
         ...m,
-        participant: { ...m.participant, ...(updated as object), language: next },
+        participant: { ...m.participant, ...(updated as object), language: next, muted: true },
       });
       app.setPreferences({ language: next });
       dispatch(
-        demoEvent('participant.updated', { participant: { ...m.participant, language: next } }),
+        demoEvent('participant.updated', {
+          participant: { ...m.participant, language: next, muted: true },
+        }),
       );
-      setToast(`Listening language changed to ${languageName(next)}.`);
+      setToast(`Language changed to ${languageName(next)}. Microphone and camera are off.`);
     } catch (e) {
       setError((e as Error).message);
+      audio.retry();
+    } finally {
+      setChangingLanguage(false);
     }
   };
+  const rejoin = async () => {
+    try {
+      await audio.disconnect();
+    } catch {
+      /* Device capture is stopped before network cleanup. */
+    }
+    app.setMembership(null);
+    navigate(`/join/${room.code}`);
+  };
+  const textBlockedReason =
+    !isDemo &&
+    (audio.readiness.report?.provider_flow.status !== 'approved' ||
+      !audio.readiness.report.provider_flow.remaining.tts_requests ||
+      !audio.readiness.report.provider_flow.remaining.mt_requests)
+      ? 'Typed interpretation needs an active approved cross-language flow with available requests.'
+      : '';
   const transcriptDownload = () =>
     downloadText(
       `artha-mesh-${room.code}.txt`,
@@ -242,11 +293,15 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
     action: () => void,
     active = false,
     disabled = false,
+    control = 'panel',
   ) => (
     <button
       className={`meeting-tool ${active ? 'tool-active' : ''}`}
+      data-control={control}
+      data-state={disabled ? 'unavailable' : active ? 'on' : 'off'}
       title={label}
       aria-label={label}
+      aria-keyshortcuts={control === 'captions' && !disabled ? 'C' : undefined}
       aria-pressed={active}
       disabled={disabled}
       onClick={action}
@@ -278,7 +333,16 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
           </h1>
           <div>
             <span className={`meeting-status-dot ${connection === 'Connected' ? 'online' : ''}`} />
-            <span>{connection}</span>
+            <span>{connection === 'Connected' ? 'Room connected' : connection}</span>
+            {!isDemo && connection !== 'Connected' && connection !== 'Connecting…' && (
+              <button
+                className="text-link"
+                onClick={reconnect}
+                aria-label="Reconnect captions and participant updates"
+              >
+                Retry updates
+              </button>
+            )}
             <span className="meeting-header-divider">·</span>
             <span>
               {Math.floor(elapsed / 60)
@@ -291,8 +355,15 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
         <div className="meeting-header-actions">
           <span className="meeting-language">
             <Languages size={14} />
-            Listening in <strong>{languageName(language)}</strong>
+            {isTransport ? (
+              'Original audio · no translation'
+            ) : (
+              <>
+                Your language: <strong>{languageName(language)}</strong>
+              </>
+            )}
           </span>
+          {!isDemo && !isTransport && <Badge tone="neutral">Standard voices</Badge>}
           <button
             className="meeting-invite"
             aria-label="Invite people"
@@ -309,13 +380,43 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
           <div className="meeting-stage-heading">
             <div>
               <Headphones size={15} />
-              <span>A little closer. In every language.</span>
+              <span>
+                {isTransport
+                  ? 'Local audio test · original voices'
+                  : 'A little closer. In every language.'}
+              </span>
             </div>
+            <button
+              className="shield-launch"
+              aria-label="Open VoiceShield audio screening"
+              aria-expanded={panel === 'shield'}
+              aria-controls={panel === 'shield' ? 'meeting-side-panel' : undefined}
+              onClick={() => togglePanel('shield')}
+            >
+              <ShieldQuestion size={14} />VoiceShield <small>Audio check</small>
+            </button>
             <Badge tone="dark">
               <Users size={11} />
               {participants.length} in this space
             </Badge>
           </div>
+          {isTransport && (
+            <div className="meeting-demo-banner">
+              <div>
+                <AudioLines size={17} />
+                <span>
+                  <strong>Raw audio transport test</strong>
+                  <small>
+                    Hear the other participants’ original speech. Translation, captions and voice
+                    cloning are disabled. No speech API is used.
+                  </small>
+                </span>
+              </div>
+              <a className="text-link" href="#/tests" target="_blank" rel="noreferrer">
+                Test scripts ↗
+              </a>
+            </div>
+          )}
           {isDemo && (
             <div className="meeting-demo-banner">
               <div>
@@ -352,9 +453,23 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
               </button>
             </div>
           )}
-          {(error || audio.error || state.error) && (
+          {!isDemo && (
+            <ConferenceStatus
+              report={audio.readiness.report}
+              error={audio.readiness.error}
+              stale={audio.readiness.stale}
+              mediaReady={audio.mediaReady}
+              muted={audio.muted}
+              playback={audio.playback}
+              unlocking={audio.unlocking}
+              onUnlock={() => void audio.unlock()}
+              onRetry={audio.retry}
+              onRejoin={() => void rejoin()}
+            />
+          )}
+          {(error || audio.error || audio.camera.error || state.error) && (
             <div className="meeting-error" role="alert">
-              <span>{error || audio.error || state.error}</span>
+              <span>{error || audio.error || audio.camera.error || state.error}</span>
               <button
                 className="icon-button"
                 aria-label="Dismiss conversation error"
@@ -368,6 +483,13 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
               </button>
             </div>
           )}
+          {shieldFlags.length > 0 && (
+            <div className="shield-call-alert" role="status" aria-live="polite">
+              <ShieldAlert size={20} />
+              <div><strong>Possible synthetic voice</strong><p>{shieldFlags.map(({ person }) => person.name).join(', ')} · Acoustic model flag. Review required.</p></div>
+              <button className="button secondary" onClick={() => setPanel('shield')}>View signals</button>
+            </div>
+          )}
           <div className={`participant-grid grid-${Math.min(participants.length, 4)}`}>
             {participants.map((p, i) => (
               <ParticipantCard
@@ -379,6 +501,11 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
                 level={audio.levels[p.id] ?? 0}
                 hand={false}
                 stage={state.stages[p.id]}
+                originalAudio={
+                  isTransport || (p.id !== m.participant.id && p.language === language)
+                }
+                videoTrack={audio.videoTracks[p.id]}
+                screening={liveScreening.find(({ person }) => person.id === p.id)?.sample}
               />
             ))}
           </div>
@@ -387,7 +514,11 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
               <Link2 size={17} />
               <div>
                 <strong>There’s room for another perspective.</strong>
-                <p>Invite a participant who speaks a different language to begin.</p>
+                <p>
+                  {isTransport
+                    ? 'Join the invitation in a separate browser profile or device to check original audio.'
+                    : 'Invite a participant who speaks a different language to begin.'}
+                </p>
               </div>
               <button onClick={() => void copyInvite()}>
                 Copy invitation
@@ -395,32 +526,8 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
               </button>
             </div>
           )}
-          <div className={`caption-space ${captions ? 'captions-on' : ''}`}>
-            {captions && latest ? (
-              <div className="live-caption">
-                <span>
-                  {isDemo ? 'EXAMPLE · ' : ''}
-                  {latest.speaker_name}
-                </span>
-                <p>
-                  {latest.source_language === language
-                    ? latest.text
-                    : latest.translations[language] ||
-                      'Translation not available in your language.'}
-                </p>
-              </div>
-            ) : captions ? (
-              <span className="caption-placeholder">
-                {isDemo
-                  ? 'Your example captions will appear here.'
-                  : 'Captions will appear when a speech turn is ready.'}
-              </span>
-            ) : (
-              <span className="caption-placeholder">Captions are off.</span>
-            )}
-          </div>
           <div className="meeting-stage-foot">
-            <span>
+            <span role="status" aria-live="polite">
               <ShieldCheck size={13} />
               {audio.status}
             </span>
@@ -431,10 +538,12 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
           </div>
         </section>
         {panel && (
-          <aside className="meeting-side-panel">
+          <aside className="meeting-side-panel" id="meeting-side-panel">
             <div className="meeting-panel-heading">
               <h2>
-                {panel === 'transcript'
+                {panel === 'shield'
+                  ? 'VoiceShield'
+                  : panel === 'transcript'
                   ? 'Conversation'
                   : panel === 'participants'
                     ? 'People in this space'
@@ -463,7 +572,32 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
                 </button>
               </div>
             </div>
-            {panel === 'transcript' ? (
+            {panel === 'shield' ? (
+              <VoiceShieldPanel
+                samples={state.screening}
+                participants={shieldParticipants}
+                connected={isDemo || connection === 'Connected'}
+                status={state.screeningStatus}
+                demo={isDemo}
+              />
+            ) : panel === 'transcript' && isTransport ? (
+              <div className="side-panel-content">
+                <h3>Listen to original speech</h3>
+                <p className="panel-intro">
+                  This stage checks the microphone, speaker, mute and media connection. It does not
+                  run speech recognition, translation or synthesis.
+                </p>
+                <a
+                  className="button secondary full"
+                  style={{ marginTop: 20 }}
+                  href="#/tests"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Open Test lab ↗
+                </a>
+              </div>
+            ) : panel === 'transcript' ? (
               <TranscriptPanel
                 turns={state.turns}
                 language={language}
@@ -472,6 +606,7 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
                 onSubmit={submit}
                 demo={isDemo}
                 submitting={submitting}
+                blockedReason={textBlockedReason}
               />
             ) : panel === 'participants' ? (
               <div className="side-panel-content">
@@ -527,48 +662,110 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
               <div className="side-panel-content">
                 <LanguageSelect
                   value={language}
+                  scriptedOnly={isDemo}
                   onChange={(next) => void changeLanguage(next)}
                   label="I speak and want to hear"
                   id="meeting-language"
+                  disabled={changingLanguage || leaving}
                 />
                 <p className="source-note">
-                  Changing language reconnects translated audio subscriptions.
+                  {isTransport
+                    ? 'Language selection does not change original audio in this transport test.'
+                    : 'Changing language reconnects media and starts your microphone and camera off. All ten language choices need live quality review.'}
                 </p>
+                <label className="field">
+                  <span>Microphone</span>
+                  <select
+                    value={app.preferences.inputDevice}
+                    disabled={leaving || audio.working}
+                    onChange={(event) => app.setPreferences({ inputDevice: event.target.value })}
+                  >
+                    <option value="default">System default microphone</option>
+                    {devices.inputs
+                      .filter((device) => device.deviceId && device.deviceId !== 'default')
+                      .map((device, index) => (
+                        <option key={device.deviceId} value={device.deviceId}>
+                          {device.label || `Microphone ${index + 1}`}
+                        </option>
+                      ))}
+                  </select>
+                  <small>Changing the microphone reconnects media with capture off.</small>
+                </label>
+                <label className="field">
+                  <span>Speaker</span>
+                  <select
+                    value={app.preferences.outputDevice}
+                    disabled={leaving}
+                    onChange={(event) => app.setPreferences({ outputDevice: event.target.value })}
+                  >
+                    <option value="default">System default speaker</option>
+                    {devices.outputs
+                      .filter((device) => device.deviceId && device.deviceId !== 'default')
+                      .map((device, index) => (
+                        <option key={device.deviceId} value={device.deviceId}>
+                          {device.label || `Speaker ${index + 1}`}
+                        </option>
+                      ))}
+                  </select>
+                  <small>Use system settings if this browser cannot switch output devices.</small>
+                </label>
                 <div className="divider" />
                 <h3>Your voice</h3>
                 <div className="meeting-voice-select">
                   <AudioLines size={19} />
                   <div>
                     <strong>
-                      {m.participant.voice_mode === 'cloned' ? 'Personal voice' : 'Standard voice'}
+                      {isTransport
+                        ? 'Original voice'
+                        : m.participant.voice_mode === 'cloned'
+                          ? 'Personal voice'
+                          : 'Standard voice'}
                     </strong>
                     <small>
-                      {m.participant.voice_mode === 'cloned'
-                        ? 'Consent-based session profile'
-                        : 'Available without enrollment'}
+                      {isTransport
+                        ? 'No synthesis or enrollment in this stage'
+                        : m.participant.voice_mode === 'cloned'
+                          ? 'Consent-based session profile'
+                          : 'Available without enrollment'}
                     </small>
                   </div>
                 </div>
-                <button
-                  className="button secondary full"
-                  onClick={() => {
-                    void (audio.muted ? Promise.resolve() : audio.toggleMic()).then(() =>
-                      setEnroll(true),
-                    );
-                  }}
-                >
-                  {app.voiceProfile ? 'Manage voice profile' : 'Enroll my voice'}
+                <button className="button secondary full" disabled>
+                  Voice cloning · later
                 </button>
+                <p className="source-note">
+                  This stage uses standard voices. Voice enrollment and deepfake screening are
+                  outside this conference test.
+                </p>
+                <details>
+                  <summary>Later phases</summary>
+                  <p className="source-note">
+                    Latency optimization and experimental deepfake detection are later work. Voice
+                    cloning remains deferred. They do not block this standard-voice conference.
+                  </p>
+                </details>
                 <div className="divider" />
                 <h3>Audio playback</h3>
                 <p className="source-note">{audio.status}</p>
+                {m.room.mode === 'live' && <CallWaveforms session={audio.waveformSession} />}
+                {m.room.mode === 'live' && (
+                  <label className="audio-lab-checkbox">
+                    <input
+                      type="checkbox"
+                      checked={audio.lowerWhileSpeaking}
+                      onChange={(event) => audio.changeLowerWhileSpeaking(event.target.checked)}
+                    />
+                    <span>Lower incoming voices while I speak</span>
+                  </label>
+                )}
                 <button
                   className="button secondary full"
                   style={{ marginTop: 12 }}
                   onClick={() => void audio.unlock()}
+                  disabled={audio.unlocking || !audio.mediaReady}
                 >
                   <Volume2 size={15} />
-                  Enable speaker
+                  {audio.unlocking ? 'Enabling speaker…' : 'Enable speaker'}
                 </button>
                 {!isDemo && (
                   <button
@@ -577,19 +774,55 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
                     onClick={audio.retry}
                   >
                     <RotateCcw size={14} />
-                    Reconnect audio
+                    Reconnect media
                   </button>
                 )}
+                <p className="source-note">
+                  Camera starts off. Turning it on shares video with people in this room. Changing
+                  language or choosing Reconnect media turns it off; use the camera button to share
+                  again.
+                </p>
                 <div className="divider" />
+                {!isDemo && (
+                  <>
+                    <details>
+                      <summary>Advanced · receiver diagnostics</summary>
+                      <h3>Receiver latency probe</h3>
+                      <p className="source-note">
+                        Plays a one-second test tone to you only. Measures request-to-decoded-audio
+                        time, not translation latency. No provider credits.
+                      </p>
+                      <button
+                        className="button secondary full"
+                        disabled={audio.probeWorking || audio.outputMuted}
+                        onClick={() => void audio.probe()}
+                      >
+                        <Gauge size={15} />
+                        {audio.probeWorking ? 'Measuring receiver…' : 'Play receiver test tone'}
+                      </button>
+                      {audio.probeResult && (
+                        <p className="source-note" role="status">
+                          {audio.probeResult.status === 'detected'
+                            ? `${audio.probeResult.elapsed_ms} ms · decoded tone detected`
+                            : `${audio.probeResult.status} · no latency recorded`}
+                          {' · Details on Performance.'}
+                        </p>
+                      )}
+                    </details>
+                    <div className="divider" />
+                  </>
+                )}
                 <h3>Keyboard shortcuts</h3>
                 <div className="shortcut-row">
                   <span>Toggle microphone</span>
                   <kbd>M</kbd>
                 </div>
-                <div className="shortcut-row">
-                  <span>Toggle captions</span>
-                  <kbd>C</kbd>
-                </div>
+                {!isTransport && (
+                  <div className="shortcut-row">
+                    <span>Toggle captions</span>
+                    <kbd>C</kbd>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="side-panel-content">
@@ -598,35 +831,42 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
                 </span>
                 <h3 style={{ marginTop: 16 }}>{room.title}</h3>
                 <p className="panel-intro">
-                  {isDemo
-                    ? 'A space to explore the experience using scripted examples.'
-                    : 'A shared audio room with language-specific interpretation.'}
+                  {isTransport
+                    ? 'A local room relaying original microphone audio.'
+                    : isDemo
+                      ? 'A space to explore the experience using scripted examples.'
+                      : 'A video room with language-specific speech interpretation.'}
                 </p>
                 <div className="divider" />
                 <label className="field">
                   <span>Invitation link</span>
                   <input value={invitation} readOnly onFocus={(e) => e.target.select()} />
                 </label>
-                <button className="button primary full" onClick={() => void copyInvite()}>
+                {!isDemo && <InvitationHelp scope={inviteScope} />}
+                <button className="button primary full" onClick={() => void copyInvite(true)}>
                   <Copy size={14} />
-                  Copy invitation
+                  {isDemo ? 'Copy invitation' : inviteScope.copyLabel}
                 </button>
                 <div className="divider" />
                 <h3>How this room works</h3>
                 <ol className="room-howto">
                   <li>Choose the language you speak and want to hear.</li>
                   <li>
-                    {isDemo
-                      ? 'Start the fixed sample script.'
-                      : 'Your microphone is routed to the interpretation agent.'}
+                    {isTransport
+                      ? 'Your microphone reaches other participants through the local media agent.'
+                      : isDemo
+                        ? 'Start the fixed sample script.'
+                        : 'Your microphone is routed to the interpretation agent.'}
                   </li>
                   <li>
-                    {isDemo
-                      ? 'Read the example in the conversation panel.'
-                      : 'Hear translated speech addressed to your language.'}
+                    {isTransport
+                      ? 'Hear the original language; no interpretation is performed.'
+                      : isDemo
+                        ? 'Read the example in the conversation panel.'
+                        : 'Hear translated speech addressed to your language.'}
                   </li>
                   <li>Confirm your understanding of important details.</li>
-                  {!isDemo && (
+                  {!isDemo && !isTransport && (
                     <li>
                       When everyone uses the same language, audio is forwarded directly and
                       generated captions pause to save recognition credits.
@@ -655,6 +895,24 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
           </aside>
         )}
       </div>
+      {captions && !isTransport && (
+        <MeetingCaptions
+          turns={state.turns}
+          language={language}
+          selfId={m.participant.id}
+          demo={isDemo}
+          large={app.preferences.largeCaptions}
+          announce={panel !== 'transcript'}
+          onResize={resizeCaptions}
+          emptyMessage={
+            isDemo
+              ? 'Start the example to see captions for each speaker.'
+              : audio.readiness.report && !audio.readiness.report.provider_flow.required
+                ? 'This call is forwarding original audio. Captions appear during approved interpretation.'
+                : 'Captions appear here when an approved speech turn is recognized.'
+          }
+        />
+      )}
       <footer className="meeting-toolbar">
         <div className="meeting-toolbar-left">
           <span className="meeting-room-code">{room.code}</span>
@@ -668,20 +926,61 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
         </div>
         <div className="meeting-toolbar-center">
           {tool(
-            isDemo ? 'Demo mic off' : audio.muted ? 'Unmute' : 'Mute',
+            isDemo
+              ? 'Demo camera off'
+              : audio.camera.pending
+                ? 'Starting camera…'
+                : audio.camera.enabled
+                  ? 'Turn camera off'
+                  : 'Turn camera on',
+            audio.camera.enabled ? <Video size={20} /> : <VideoOff size={20} />,
+            () => void audio.toggleCamera(),
+            audio.camera.enabled,
+            audio.camera.pending ||
+              isDemo ||
+              ((!audio.mediaReady || audio.readiness.stale) && !audio.camera.enabled) ||
+              leaving,
+            'camera',
+          )}
+          {tool(
+            isDemo
+              ? 'Demo mic off'
+              : audio.working
+                ? audio.muted
+                  ? 'Starting microphone…'
+                  : 'Muting…'
+                : audio.muted
+                  ? 'Unmute'
+                  : 'Mute',
             audio.muted ? <MicOff size={20} /> : <Mic size={20} />,
             () => void audio.toggleMic(),
             !audio.muted,
-            audio.working || isDemo,
+            audio.working || isDemo || (audio.muted && !audio.canUnmute),
+            'microphone',
           )}
           {tool(
-            audio.outputMuted ? 'Speaker off' : 'Speaker',
+            audio.unlocking
+              ? 'Enabling speaker…'
+              : audio.playback.status === 'blocked'
+                ? 'Enable speaker'
+                : audio.outputMuted
+                  ? 'Speaker off'
+                  : 'Speaker',
             audio.outputMuted ? <VolumeX size={20} /> : <Volume2 size={20} />,
-            audio.toggleOutput,
+            () => void audio.toggleOutput(),
             !audio.outputMuted,
+            !audio.mediaReady || audio.unlocking || isDemo,
+            'speaker',
           )}
           <span className="toolbar-divider" />
-          {tool('Captions', <Captions size={20} />, () => setCaptions(!captions), captions)}
+          {tool(
+            isTransport ? 'Captions unavailable' : captions ? 'Captions on' : 'Captions off',
+            <Captions size={20} />,
+            () => setCaptions(!captions),
+            !isTransport && captions,
+            isTransport,
+            'captions',
+          )}
           {tool(
             'Settings',
             <Settings2 size={19} />,
@@ -692,6 +991,7 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
             className="leave-button"
             onClick={() => setLeave(true)}
             aria-label="Leave conversation"
+            disabled={leaving}
           >
             <PhoneOff size={21} />
             <span>Leave</span>
@@ -728,14 +1028,6 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
               <PhoneOff size={16} />
             </button>
           </div>
-        </Modal>
-      )}
-      {enroll && (
-        <Modal title="Your own voice, with your permission." onClose={() => setEnroll(false)} wide>
-          <p className="muted">
-            Record 5–30 seconds of your own speech. Voice enrollment is optional.
-          </p>
-          <VoiceEnrollment />
         </Modal>
       )}
     </div>

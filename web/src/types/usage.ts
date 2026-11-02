@@ -49,7 +49,7 @@ export interface ProviderFlow {
 }
 export interface FlowApproval {
   required: boolean;
-  status: 'locked' | 'approved' | 'unavailable' | 'demo';
+  status: 'locked' | 'approved' | 'unavailable' | 'demo' | 'disabled';
   active_flow_id: string | null;
   expires_at: string | null;
   detail: string;
@@ -81,12 +81,12 @@ export interface ProgrammeUsage {
   flows: ProviderFlow[];
 }
 export interface UsageReport {
-  mode: 'demo' | 'live';
+  mode: 'demo' | 'live' | 'transport';
   period: { date: string; reset_at: string };
   enforcement: {
     enabled: true;
     persistent: boolean;
-    status: 'ready' | 'unavailable' | 'demo';
+    status: 'ready' | 'unavailable' | 'demo' | 'disabled';
     detail: string;
   };
   resources: UsageResource[];

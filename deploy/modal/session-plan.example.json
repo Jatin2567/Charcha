@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "plan_only": true,
+  "provider": "Modal",
+  "app": "artha-evon-test",
+  "sdk_version": "1.6.3",
+  "model_inputs": "deploy/evon/inputs.verified-2026-10-28.json",
+  "gpu": "A100-80GB",
+  "gpu_count": 1,
+  "physical_cpu_cores": 4,
+  "host_memory_gib": 64,
+  "region": "ap",
+  "routing_region": "ap-south",
+  "maximum_containers": 1,
+  "maximum_session_seconds": 7200,
+  "session_expires_at_utc": null,
+  "required_out_of_pocket_spend_limit_usd": "0.00",
+  "out_of_pocket_spend_limit_verified": false,
+  "available_applicable_credit_usd": null,
+  "account_gpu_eligibility_verified": false,
+  "reference_rates_usd": {
+    "source": "Read-only workspace billing rates, 2026-10-28; no inference call",
+    "a100_80gb_per_hour": "2.50000",
+    "physical_cpu_per_core_hour": "0.04730",
+    "memory_per_gib_hour": "0.00800",
+    "asia_region_multiplier": "1.15",
+    "volume_per_gib_month": "0.09000",
+    "gpu_profile_per_hour": "3.68138",
+    "gpu_profile_two_hours": "7.36276"
+  },
+  "reference_excludes": [
+    "CPU model download and image build",
+    "persistent storage and delayed deletion billing",
+    "egress, applicable tax and currency conversion",
+    "other workspace usage"
+  ],
+  "sequence": [
+    "Verify actual workspace credits, payment eligibility and a zero out-of-pocket spend limit.",
+    "Review private inference and proxy credentials; never reuse the Gnani key.",
+    "Set one absolute UTC expiry at most two hours ahead and deploy explicitly.",
+    "Invoke the bounded CPU download once to prepare the pinned model cache.",
+    "Use an authenticated health request to start the GPU and wait for readiness.",
+    "Review and approve the bounded text benchmark before invoking it.",
+    "Stop the app and review retained storage and actual billing."
+  ],
+  "voice_cloning": "deferred",
+  "gnani_speech_calls_authorized": false,
+  "deployment_or_inference_authorized_by_this_file": false,
+  "note": "Importing or printing this proposal is not a runtime, credit or cost acceptance result."
+}

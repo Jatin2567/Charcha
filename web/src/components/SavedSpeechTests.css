@@ -1,0 +1,16 @@
+.saved-speech-tests {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+.saved-speech-tests > div:first-child h2 {
+  font-size: 16px;
+  color: var(--muted);
+}
+.saved-speech-tests > div:first-child p {
+  font-size: 12px;
+  line-height: 1.85;
+  margin-top: 9px;
+  color: var(--muted);
+}

@@ -1,0 +1,44 @@
+.later-work {
+  padding: 0;
+}
+.later-work > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 18px 22px;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 12px;
+}
+.later-work > summary::after {
+  content: '+';
+  font-size: 18px;
+  margin-left: auto;
+}
+.later-work[open] > summary::after {
+  content: '−';
+}
+.later-work > summary::-webkit-details-marker {
+  display: none;
+}
+.later-work-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  border-top: 1px solid var(--border);
+  padding: 20px;
+}
+.later-work-body > p {
+  font-size: 12px;
+  line-height: 1.85;
+  color: var(--muted);
+  margin: 0;
+}
+@media (max-width: 600px) {
+  .later-work > summary,
+  .later-work-body {
+    padding: 16px;
+  }
+}

@@ -69,6 +69,66 @@ class DeploymentPreparationTests(unittest.TestCase):
         self.assertIn('stun_servers: ["turn.artha-fixture.in:3478"]', livekit)
         self.assertIn("use_external_ip: false", livekit)
 
+    def test_modal_credentials_and_language_voice_overrides_survive_preparation(self):
+        values = ("GNANI_API_KEY=private-gnani\nEVON_MODEL=evon\n"
+                  "EVON_BASE_URL=https://owned-artha-serve.modal.run/v1\n"
+                  "EVON_MODAL_KEY=private-$literal-modal-key\nEVON_MODAL_SECRET=private-modal-secret\n"
+                  "TIMBRE_VOICE_HI=Nalini\nTIMBRE_VOICE_TA=Trisha\nTIMBRE_VOICE_BN=Kirra\n"
+                  "TIMBRE_VOICE_TE=Suhana\nTIMBRE_VOICE_MR=Zahira\nUSAGE_MAX_CONCURRENT_STT=5\n"
+                  "USAGE_VOICE_ENROLLMENTS_PER_DAY=0\n")
+        self.env_path.write_text(values, encoding="utf-8")
+        self.prepare()
+        env = read_env(self.output / "api.env", raw=True)
+        self.assertEqual(env["EVON_MODAL_KEY"], "private-$literal-modal-key")
+        self.assertEqual(env["EVON_MODAL_SECRET"], "private-modal-secret")
+        self.assertEqual(env["TIMBRE_VOICE_TA"], "Trisha")
+        self.assertEqual(env["TIMBRE_VOICE_MR"], "Zahira")
+        self.assertEqual(env["USAGE_MAX_CONCURRENT_STT"], "5")
+        self.assertEqual(env["USAGE_VOICE_ENROLLMENTS_PER_DAY"], "0")
+        self.assertEqual(check(self.output)["status"], "configuration_valid")
+
+    def test_modal_pair_is_validated_before_any_deployment_files_are_written(self):
+        for endpoint, key, secret in [
+            ("https://owned.modal.run/v1", "private-key", ""),
+            ("https://owned.modal.run/v1", "", "private-secret"),
+            ("https://evon.artha-fixture.in/v1", "private-key", "private-secret"),
+            ("http://127.0.0.1:8001/v1", "private-key", "private-secret"),
+            ("https://owned.modal.run:8443/v1", "private-key", "private-secret"),
+            ("https://owned.modal.run/v1", "private key", "private-secret"),
+        ]:
+            with self.subTest(endpoint=endpoint, key_present=bool(key), secret_present=bool(secret)):
+                self.env_path.write_text("GNANI_API_KEY=private-gnani\nEVON_MODEL=evon\n"
+                                         f"EVON_BASE_URL={endpoint}\nEVON_MODAL_KEY={key}\nEVON_MODAL_SECRET={secret}\n")
+                with self.assertRaisesRegex(PreparationError, "EVON_MODAL") as caught:
+                    self.prepare()
+                self.assertNotIn("private-", str(caught.exception))
+                self.assertFalse(self.output.exists())
+
+    def test_optional_streaming_stt_model_is_preserved_or_omitted_when_unselected(self):
+        original = self.env_path.read_text(encoding="utf-8")
+        for index, model in enumerate((None, "", "   ", "prisma-v2.5", "prisma-v3.0")):
+            with self.subTest(model=model):
+                self.output = self.base / f"stt-model-{index}"
+                self.env_path.write_text(original + ("" if model is None else f"GNANI_STT_MODEL={model}\n"), encoding="utf-8")
+                self.prepare()
+                env = read_env(self.output / "api.env", raw=True)
+                if model and model.strip():
+                    self.assertEqual(env["GNANI_STT_MODEL"], model)
+                else:
+                    self.assertNotIn("GNANI_STT_MODEL", env)
+                self.assertEqual(check(self.output)["status"], "configuration_valid")
+
+    def test_invalid_streaming_stt_model_is_rejected_before_writing_deployment(self):
+        original = self.env_path.read_text(encoding="utf-8")
+        for model in ("prisma-v3", "private-invalid-model-value", "PRISMA-V3.0"):
+            with self.subTest(model=model):
+                self.env_path.write_text(original + f"GNANI_STT_MODEL={model}\n", encoding="utf-8")
+                with self.assertRaisesRegex(PreparationError, "GNANI_STT_MODEL") as caught:
+                    self.prepare()
+                self.assertEqual(str(caught.exception), "GNANI_STT_MODEL requires prisma-v2.5 or prisma-v3.0, or leave it unset.")
+                self.assertFalse(self.output.exists())
+                self.assertEqual(list(self.base.glob(".artha-prepare-*")), [])
+
     def test_host_network_single_worker_persistence_and_literal_secrets(self):
         self.prepare()
         compose = json.loads((self.output / "compose.json").read_text())

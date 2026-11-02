@@ -19,12 +19,18 @@ import {
   JOURNAL_AREA_LABELS,
   JOURNAL_EVIDENCE_LABELS,
   JOURNAL_STATUS_LABELS,
+  JOURNAL_UPDATED,
   developerJournal,
   filterJournal,
   journalReport,
 } from '../data/developerJournal';
 import type { DeveloperJournalEntry, JournalFilter } from '../data/developerJournal';
 import './DeveloperJournal.css';
+
+const journalDate = (date: string, month: 'short' | 'long' = 'short') =>
+  new Intl.DateTimeFormat('en-IN', { day: 'numeric', month, year: 'numeric', timeZone: 'UTC' }).format(
+    new Date(`${date}T00:00:00Z`),
+  );
 
 function JournalCard({ entry }: { entry: DeveloperJournalEntry }) {
   return (
@@ -43,7 +49,7 @@ function JournalCard({ entry }: { entry: DeveloperJournalEntry }) {
           <span className="journal-entry-meta">
             <span>{JOURNAL_AREA_LABELS[entry.area]}</span>
             <span aria-hidden="true">·</span>
-            <time dateTime={entry.date}>24 Oct 2026</time>
+            <time dateTime={entry.date}>{journalDate(entry.date)}</time>
           </span>
           <strong>{entry.title}</strong>
           <span className="journal-entry-summary">{entry.summary}</span>
@@ -132,7 +138,7 @@ export function DeveloperJournal() {
             <Badge tone="green">Track B</Badge>
           </div>
           <p>
-            Manually maintained engineering notes, last reviewed 24 October 2026. Each entry
+            Manually maintained engineering notes, last reviewed {journalDate(JOURNAL_UPDATED, 'long')}. Each entry
             explains the cause, change and evidence. This is not a live issue tracker or a log of
             your conversations.
           </p>

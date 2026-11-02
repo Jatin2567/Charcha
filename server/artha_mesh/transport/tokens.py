@@ -14,7 +14,7 @@ def room_token(settings: Settings, code: str, identity: str, name: str, agent=Fa
     grants = api.VideoGrants(
         room_join=True, room=code, can_publish=True, can_subscribe=True,
         can_publish_data=False, can_update_own_metadata=False,
-        can_publish_sources=None if agent else ["microphone"],
+        can_publish_sources=None if agent else ["microphone", "camera"],
     )
     duration = settings.session_ttl_seconds
     if settings.mode == "live":

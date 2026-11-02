@@ -17,7 +17,9 @@ class RequestBodyLimitMiddleware:
     async def __call__(self, scope, receive, send):
         if scope["type"] != "http" or scope.get("method") not in {"POST", "PUT", "PATCH"}:
             return await self.app(scope, receive, send)
-        limit = MAX_UPLOAD_BODY if scope.get("path") == "/api/voice-profiles" else 64 * 1024
+        path = scope.get("path")
+        limit = (MAX_UPLOAD_BODY if path == "/api/voice-profiles" else
+                 1_024_000 + 64 * 1024 if path == "/api/audio-lab/analyze" else 64 * 1024)
         headers = dict(scope.get("headers", []))
         try:
             too_large = int(headers.get(b"content-length", b"0")) > limit

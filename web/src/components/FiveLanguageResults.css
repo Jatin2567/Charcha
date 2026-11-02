@@ -1,0 +1,35 @@
+.five-call-results {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 20px;
+}
+.five-call-results p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+.five-call-results a {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+.five-call-table {
+  overflow-x: auto;
+}
+.five-call-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.five-call-year {
+  display: block;
+  color: var(--warning-ink, #875716);
+}
+.five-call-table th,
+.five-call-table td {
+  text-align: left;
+  padding: 8px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}

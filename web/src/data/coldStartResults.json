@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-10-27T18:36:20.180938+00:00",
+  "boundary": "Synthetic source capture to first received non-silent PCM on one process clock. Peers connect first, then a fixed one-second settling wait precedes capture. Includes remaining RTC negotiation, buffering and diagnostic overhead; excludes initial room join, microphone/headphone hardware and translation.",
+  "baseline": {
+    "label": "Fresh baseline \u00b7 unchanged relay",
+    "runs": [
+      {
+        "run_id": "before-01",
+        "passed": true,
+        "directions": [
+          {
+            "route": "peer 1 -> peer 2",
+            "capture_to_first_received_pcm_ms": 1149.82
+          },
+          {
+            "route": "peer 2 -> peer 1",
+            "capture_to_first_received_pcm_ms": 383.46
+          }
+        ],
+        "mute_request_to_receiver_track_detached_ms": 274.07,
+        "notes": "Routing, no self echo, server mute, receiver detach and unmute passed."
+      },
+      {
+        "run_id": "before-02",
+        "passed": true,
+        "directions": [
+          {
+            "route": "peer 1 -> peer 2",
+            "capture_to_first_received_pcm_ms": 641.79
+          },
+          {
+            "route": "peer 2 -> peer 1",
+            "capture_to_first_received_pcm_ms": 322.65
+          }
+        ],
+        "mute_request_to_receiver_track_detached_ms": 256.28,
+        "notes": "Routing, no self echo, server mute, receiver detach and unmute passed."
+      },
+      {
+        "run_id": "before-03",
+        "passed": true,
+        "directions": [
+          {
+            "route": "peer 1 -> peer 2",
+            "capture_to_first_received_pcm_ms": 731.21
+          },
+          {
+            "route": "peer 2 -> peer 1",
+            "capture_to_first_received_pcm_ms": 960.51
+          }
+        ],
+        "mute_request_to_receiver_track_detached_ms": 251.79,
+        "notes": "Routing, no self echo, server mute, receiver detach and unmute passed."
+      }
+    ]
+  },
+  "after": {
+    "label": "Leading-silence fix \u00b7 smaller raw buffer",
+    "runs": [
+      {
+        "run_id": "after-01",
+        "passed": true,
+        "directions": [
+          {
+            "route": "peer 1 -> peer 2",
+            "capture_to_first_received_pcm_ms": 379.97
+          },
+          {
+            "route": "peer 2 -> peer 1",
+            "capture_to_first_received_pcm_ms": 370.96
+          }
+        ],
+        "mute_request_to_receiver_track_detached_ms": 328.71,
+        "notes": "Routing, no self echo, server mute, receiver detach and unmute passed."
+      },
+      {
+        "run_id": "after-02",
+        "passed": true,
+        "directions": [
+          {
+            "route": "peer 1 -> peer 2",
+            "capture_to_first_received_pcm_ms": 204.25
+          },
+          {
+            "route": "peer 2 -> peer 1",
+            "capture_to_first_received_pcm_ms": 175.03
+          }
+        ],
+        "mute_request_to_receiver_track_detached_ms": 241.55,
+        "notes": "Routing, no self echo, server mute, receiver detach and unmute passed."
+      },
+      {
+        "run_id": "after-03",
+        "passed": true,
+        "directions": [
+          {
+            "route": "peer 1 -> peer 2",
+            "capture_to_first_received_pcm_ms": 216.82
+          },
+          {
+            "route": "peer 2 -> peer 1",
+            "capture_to_first_received_pcm_ms": 172.18
+          }
+        ],
+        "mute_request_to_receiver_track_detached_ms": 249.02,
+        "notes": "Routing, no self echo, server mute, receiver detach and unmute passed."
+      }
+    ]
+  },
+  "historical": {
+    "label": "Earlier incident \u00b7 27 October",
+    "runs": [
+      {
+        "run_id": "historical-before",
+        "passed": true,
+        "directions": [
+          {
+            "route": "peer 1 -> peer 2",
+            "capture_to_first_received_pcm_ms": 12132.83
+          },
+          {
+            "route": "peer 2 -> peer 1",
+            "capture_to_first_received_pcm_ms": 4669.78
+          }
+        ],
+        "mute_request_to_receiver_track_detached_ms": 256.57,
+        "notes": "27 October incident under different machine load; excluded from the matched comparison."
+      }
+    ]
+  },
+  "fix_summary": [
+    "Negotiate the output as before, but discard only exact-zero PCM before the first sound instead of replaying accumulated decoder silence. Quiet nonzero speech and subsequent pauses are preserved.",
+    "Reduce the paced raw-audio output queue from 250 ms to 60 ms. Synthesized output retains its existing queue; mute still unpublishes the track.",
+    "The first fresh baseline received the signal at the agent at 113.19 ms and submitted it to the relay at 999.37 ms. After the fix, these stages were 111.59 ms and 146.63 ms. These stage markers are PCM submission, not audible playback."
+  ],
+  "limitations": [
+    "Three fresh processes per version, two directed routes each; every collected run is shown. Same laptop, self-hosted LiveKit, synthetic tones, screening off for the isolated comparison. Small sequential samples and changing machine load do not establish statistical significance or a production p95.",
+    "The earlier 12,132.83 / 4,669.78 ms incident is retained separately. It was not reproduced at that severity in the fresh baseline and is excluded from the percentage improvement.",
+    "A separate real-model monitor-mode RTC check passed at 158.74 ms first received PCM, with 566.684 ms classifier compute after a 4,037.5 ms input window. This single check is not part of the before/after median and establishes no detection accuracy.",
+    "Real Chrome microphone-to-headphone latency, slow networks, sustained concurrency and speech-quality acceptance still need device tests. Voice cloning remains deferred. No speech API calls or paid servers were used."
+  ]
+}

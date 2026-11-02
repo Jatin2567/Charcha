@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "record_type": "local_screening_latency_comparison",
+  "recorded_date": "2026-10-29",
+  "evidence_window_ms": 4037.5,
+  "evidence_window_samples": 64600,
+  "sample_rate": 16000,
+  "model_sha256": "130e536266b7c537f9a13029e1612a9f392fd1cc827783683b6d1c062a3db5e1",
+  "local_launcher_cpu_threads": 2,
+  "deployment_default_cpu_threads": 1,
+  "fixture_count": 4,
+  "warm_repeats_per_fixture": 5,
+  "isolated": [
+    {
+      "threads": 1,
+      "analysis_count": 20,
+      "analysis_median_ms": 403.5,
+      "analysis_min_ms": 334.793,
+      "analysis_max_ms": 498.344,
+      "kernel_median_ms": 392.644
+    },
+    {
+      "threads": 2,
+      "analysis_count": 20,
+      "analysis_median_ms": 268.46,
+      "analysis_min_ms": 246.206,
+      "analysis_max_ms": 296.855,
+      "kernel_median_ms": 247.943
+    },
+    {
+      "threads": 4,
+      "analysis_count": 20,
+      "analysis_median_ms": 317.499,
+      "analysis_min_ms": 255.019,
+      "analysis_max_ms": 581.069,
+      "kernel_median_ms": 282.237
+    }
+  ],
+  "two_inflight": [
+    {
+      "threads": 1,
+      "analysis_count": 12,
+      "analysis_median_ms": 810.884,
+      "pair_count": 6,
+      "pair_completion_median_ms": 821.249
+    },
+    {
+      "threads": 2,
+      "analysis_count": 12,
+      "analysis_median_ms": 524.416,
+      "pair_count": 6,
+      "pair_completion_median_ms": 529.804
+    }
+  ],
+  "parity": {
+    "same_pcm_inputs": true,
+    "diagnostic_verdicts_match": true,
+    "max_absolute_logit_difference": 0.000000476837158203125,
+    "max_absolute_score_difference": 0.000000003926228676,
+    "logit_absolute_tolerance": 0.00001,
+    "score_absolute_tolerance": 0.000001,
+    "real_speech_accuracy_verified": false
+  },
+  "accuracy": null,
+  "short_prefix_experiment": {
+    "source_fixture_count": 5,
+    "analysis_calls": 25,
+    "shorter_prefix_comparisons": 20,
+    "verdict_changes": 0,
+    "maximum_absolute_score_change": 0.134706,
+    "accuracy_preservation_proven": false,
+    "source": "work/screening-latency/duration-diagnostics.json"
+  },
+  "short_input_live_activation": false,
+  "labelled_speech_dataset_ready": false,
+  "provider_calls": 0,
+  "model_downloads": 0,
+  "voice_cloning": false,
+  "sources": [
+    "work/screening-latency/compute-20261029.json",
+    "work/screening-latency/compute-concurrent-20261029.json"
+  ],
+  "limitations": [
+    "Synthetic diagnostic signals, not genuine or spoof-labelled speech.",
+    "Performance fixtures scored strongly suspicious and do not exercise genuine speech or near-threshold decisions.",
+    "Small sequential tests on one laptop; changing load and cache state affect timing.",
+    "Window plus compute is an arithmetic estimate, not measured listener or translation latency.",
+    "The same model, 64,600-sample input and experimental thresholds are retained. Numerical parity does not establish general accuracy."
+  ]
+}

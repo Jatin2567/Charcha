@@ -1,0 +1,9 @@
+# Local-network audio preparation
+
+Use `scripts/prepare_lan_test.py` to create a separate, opt-in Docker stack for two physical devices on one trusted LAN. The default is a read-only plan. It does not launch Docker, obtain certificates, change trust/firewall settings, contact providers or read `.env`. `scripts/create_lan_certificate.py` can generate short-lived, one-use development certificates offline through an existing OpenSSL installation. Certificate trust remains an explicit action on each device. `scripts/configure_lan_firewall.ps1` prints an exact-peer-only plan by default; its separate apply/remove actions require an Administrator PowerShell window.
+
+The stack uses the repository's existing API and frontend images, LiveKit v1.9.1 and an Nginx TLS gateway. The API is forced to `transport`; provider credentials and daily budgets are zeroed. Browser microphone audio stays in this local audio path. Screening and the loopback-only Audio lab are disabled for this baseline. There is no TURN relay: this is a same-LAN test, not an Internet deployment.
+
+Generated files belong under ignored `work/`, so they are excluded from Git and Docker build contexts. `api.env`, `livekit.yaml` and `tls/key.pem` contain private material. Each newly prepared stack gets fresh LiveKit credentials; an existing output directory is never overwritten. The helpers restrict new credential folders with current-user ACLs on Windows and owner-only permissions on POSIX. Only the public issuer certificate is transferred to the second device; the issuer signing key is discarded.
+
+Read [the two-device procedure](../../docs/TWO_DEVICE_TESTING.md) for certificate requirements, preparation, startup and verification. A valid generated configuration is not evidence that Docker, host networking or either physical device has passed testing.

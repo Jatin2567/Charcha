@@ -1,4 +1,5 @@
 import type { AppEvent, Language, Membership, Room, Turn, VoiceMode } from '../types/domain';
+import { isScriptedLanguage } from '../types/domain';
 const stamp = () => new Date().toISOString();
 const id = () => crypto.randomUUID();
 const rooms = new Map<string, Room>();
@@ -28,6 +29,10 @@ export function joinDemo(
   language: Language,
   voice_mode: VoiceMode,
 ): Membership {
+  if (!isScriptedLanguage(language))
+    throw new Error(
+      'Scripted examples cover Hindi, Tamil, Bengali and English. Other languages require live setup.',
+    );
   const room = getDemoRoom(code);
   const participant = {
     id: id(),
@@ -63,66 +68,66 @@ export const SCRIPTED_TURNS: Omit<Turn, 'id' | 'created_at' | 'confirmed_by' | '
     speaker_id: 'sample-0',
     speaker_name: 'Arjun Mehta',
     source_language: 'hi',
-    text: 'नमस्ते! क्या हम इस सप्ताह के ऑर्डर पर बात कर सकते हैं?',
+    text: 'कल सुबह 10 बजे सामुदायिक केंद्र के मुख्य दरवाजे पर मिलते हैं।',
     translations: {
-      en: 'Hello! Can we discuss this week’s order?',
-      ta: 'வணக்கம்! இந்த வார ஆர்டரைப் பற்றிப் பேசலாமா?',
-      bn: 'নমস্কার! আমরা কি এই সপ্তাহের অর্ডার নিয়ে কথা বলতে পারি?',
+      en: "Let us meet tomorrow at 10 in the morning at the community centre's main entrance.",
+      ta: 'நாளை காலை 10 மணிக்கு சமூக மையத்தின் பிரதான நுழைவாயிலில் சந்திப்போம்.',
+      bn: 'আগামীকাল সকাল 10টায় কমিউনিটি সেন্টারের প্রধান দরজায় দেখা করি।',
     },
   },
   {
     speaker_id: 'sample-1',
     speaker_name: 'Kavya Raman',
     source_language: 'ta',
-    text: 'ஆம். எங்களுக்கு 50 பெட்டிகள் தேவை, ஒவ்வொன்றும் ₹1,500.',
+    text: 'ஆம், நாளை காலை 10 மணிக்கு, இன்று இல்லை.',
     translations: {
-      en: 'Yes. We need 50 cartons at ₹1,500 each.',
-      hi: 'हाँ। हमें 50 कार्टन चाहिए, हर कार्टन ₹1,500 का।',
-      bn: 'হ্যাঁ। আমাদের 50টি কার্টন দরকার, প্রতিটি ₹1,500।',
+      en: 'Yes, tomorrow at 10 in the morning, not today.',
+      hi: 'हाँ, कल सुबह 10 बजे, आज नहीं।',
+      bn: 'হ্যাঁ, আগামীকাল সকাল 10টায়, আজ নয়।',
     },
   },
   {
     speaker_id: 'sample-2',
     speaker_name: 'Riya Sen',
     source_language: 'bn',
-    text: 'মোট ₹75,000। শুক্রবার পাঠানো সম্ভব হবে?',
+    text: 'ঘরটি AM-204। দয়া করে Wi-Fi-এর নাম আবার বলুন।',
     translations: {
-      en: 'That is ₹75,000 in total. Is dispatch on Friday possible?',
-      hi: 'कुल ₹75,000 होंगे। क्या शुक्रवार को भेजना संभव है?',
-      ta: 'மொத்தம் ₹75,000. வெள்ளிக்கிழமை அனுப்ப முடியுமா?',
+      en: 'The room is AM-204. Please repeat the Wi-Fi name.',
+      hi: 'कमरा AM-204 है। कृपया Wi-Fi का नाम फिर से बताइए।',
+      ta: 'அறை AM-204. தயவுசெய்து Wi-Fi பெயரை மீண்டும் சொல்லுங்கள்.',
     },
   },
   {
     speaker_id: 'sample-0',
     speaker_name: 'Arjun Mehta',
     source_language: 'hi',
-    text: 'जी, लेकिन आपकी पुष्टि मिलने के बाद ही भेजेंगे।',
+    text: 'मेरे आने तक बैठक शुरू मत कीजिए।',
     translations: {
-      en: 'Yes, but we will dispatch only after your confirmation.',
-      ta: 'ஆம், ஆனால் உங்கள் உறுதிப்படுத்தலுக்குப் பிறகுதான் அனுப்புவோம்.',
-      bn: 'হ্যাঁ, তবে আপনার নিশ্চিতকরণ পাওয়ার পরেই পাঠাব।',
+      en: 'Please do not start the meeting until I arrive.',
+      ta: 'நான் வரும் வரை கூட்டத்தைத் தொடங்க வேண்டாம்.',
+      bn: 'আমি না আসা পর্যন্ত সভা শুরু করবেন না।',
     },
   },
   {
     speaker_id: 'sample-1',
     speaker_name: 'Kavya Raman',
     source_language: 'ta',
-    text: 'சரி. 50 பெட்டிகள், மொத்தம் ₹75,000. முகவரியை நான் அனுப்புகிறேன்.',
+    text: 'நான் இரண்டாவது தளத்தில் இருக்கிறேன், மூன்றாவது தளத்தில் இல்லை.',
     translations: {
-      en: 'Agreed. 50 cartons, ₹75,000 total. I will send the address.',
-      hi: 'ठीक है। 50 कार्टन, कुल ₹75,000। मैं पता भेजती हूँ।',
-      bn: 'ঠিক আছে। 50টি কার্টন, মোট ₹75,000। আমি ঠিকানাটি পাঠাচ্ছি।',
+      en: 'I am on the second floor, not the third.',
+      hi: 'मैं दूसरी मंज़िल पर हूँ, तीसरी पर नहीं।',
+      bn: 'আমি দ্বিতীয় তলায় আছি, তৃতীয় তলায় নয়।',
     },
   },
   {
     speaker_id: 'sample-2',
     speaker_name: 'Riya Sen',
     source_language: 'bn',
-    text: 'ধন্যবাদ। পাঠানোর আগে আমরা সবাই তথ্য যাচাই করব।',
+    text: 'প্রথমে বাঁ দিকে ঘুরুন, তারপর 200 মিটার সোজা যান।',
     translations: {
-      en: 'Thank you. We will all check the details before dispatch.',
-      hi: 'धन्यवाद। भेजने से पहले हम सभी विवरण जाँच लेंगे।',
-      ta: 'நன்றி. அனுப்புவதற்கு முன் நாம் அனைவரும் விவரங்களைச் சரிபார்ப்போம்.',
+      en: 'First turn left, then go straight for 200 metres.',
+      hi: 'पहले बाएँ मुड़िए, फिर 200 मीटर सीधे चलिए।',
+      ta: 'முதலில் இடதுபுறம் திரும்பி, பிறகு 200 மீட்டர் நேராகச் செல்லுங்கள்.',
     },
   },
 ];

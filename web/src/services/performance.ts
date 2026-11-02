@@ -72,7 +72,7 @@ export function summarize(samples: PerformanceSample[]): PerformanceSummary {
     }),
   };
 }
-export function emptyPerformance(roomCode: string, mode: 'demo' | 'live'): PerformanceReport {
+export function emptyPerformance(roomCode: string, mode: PerformanceReport['mode']): PerformanceReport {
   return {
     room_code: roomCode,
     mode,

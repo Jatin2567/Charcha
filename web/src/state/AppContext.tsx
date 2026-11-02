@@ -26,6 +26,7 @@ const defaults: Preferences = {
   inputDevice: 'default',
   outputDevice: 'default',
   autoCaptions: true,
+  largeCaptions: false,
   micEnabled: false,
   highContrast: false,
 };

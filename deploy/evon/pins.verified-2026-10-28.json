@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "reviewed_date": "2026-10-28",
+  "status": "public_metadata_verified_gpu_runtime_pending",
+  "model": {
+    "repository": "gnani/gnani-evon-v3.3-30B-A3B",
+    "revision": "fb9ddb6b58f2d235684388a9260671fca5ebccaf",
+    "gated_at_review": false,
+    "architectures": [
+      "NemotronHForCausalLM"
+    ],
+    "model_type": "nemotron_h",
+    "tokenizer_class": "PreTrainedTokenizerFast",
+    "auto_map_present": false,
+    "python_files_present": false,
+    "tensor_bytes_from_index": 63499950464,
+    "trust_remote_code": false
+  },
+  "runtime": {
+    "release": "v0.32.0",
+    "image": "vllm/vllm-openai@sha256:6ee133356d49ed24cee03dd0cda3d3980279a11c107ce3e752c89e76540f41c9",
+    "platform": "linux/amd64",
+    "manifest_header_and_content_digest_match": true,
+    "cuda_from_image_config": "13.0.2",
+    "build_commit_from_image_config": "5df63a7203cdb9328d824a27b682e77c7b9928be",
+    "model_load_verified": false,
+    "container_started": false
+  },
+  "review_notes": [
+    "The pinned model has no Python files or auto_map; use native implementation without trust_remote_code.",
+    "vLLM0.32 and its supported Transformers source handle NemotronH layers_block_type and legacy pattern mapping; this is static evidence only.",
+    "Original vLLM0.12 unpinned profile removed; no runtime success or failure on either version is claimed.",
+    "No weights, image layers, provider inference or cloud resources downloaded/started."
+  ],
+  "source_files": [
+    {
+      "file": "model-metadata.json",
+      "url": "https://huggingface.co/api/models/gnani/gnani-evon-v3.3-30B-A3B/revision/fb9ddb6b58f2d235684388a9260671fca5ebccaf",
+      "bytes": 14518,
+      "sha256": "d672fba037ec442e284084d391db87663adddfa67e1de06cf862620b1cc04e06"
+    },
+    {
+      "file": "model-config.json",
+      "url": "https://huggingface.co/gnani/gnani-evon-v3.3-30B-A3B/resolve/fb9ddb6b58f2d235684388a9260671fca5ebccaf/config.json",
+      "bytes": 2403,
+      "sha256": "78a0000a9626f20d20f0542ad9b7531714179f85f69c8c4a0c7c818ab0ff8f34"
+    },
+    {
+      "file": "tokenizer-config.json",
+      "url": "https://huggingface.co/gnani/gnani-evon-v3.3-30B-A3B/resolve/fb9ddb6b58f2d235684388a9260671fca5ebccaf/tokenizer_config.json",
+      "bytes": 688,
+      "sha256": "393b71377c2d7f9ec74f109569b28b6ee0b60b2dc249aabcc92515e01cd3b155"
+    },
+    {
+      "file": "model-index.json",
+      "url": "https://huggingface.co/gnani/gnani-evon-v3.3-30B-A3B/resolve/fb9ddb6b58f2d235684388a9260671fca5ebccaf/model.safetensors.index.json",
+      "bytes": 588271,
+      "sha256": "08f1aa9f471a5b719233f1bcb9ae732db54b8e7bbdb75c13741af91349d56493"
+    },
+    {
+      "file": "image-tag-v0.32.0.json",
+      "url": "https://hub.docker.com/v2/repositories/vllm/vllm-openai/tags/v0.32.0",
+      "bytes": 1152,
+      "sha256": "0feafb7318cf030de02e457ed617e7dec8b082ea6c846ab35032cd9689459b91"
+    },
+    {
+      "file": "image-manifest-v0.32.0.json",
+      "url": "https://registry-1.docker.io/v2/vllm/vllm-openai/manifests/sha256:6ee133356d49ed24cee03dd0cda3d3980279a11c107ce3e752c89e76540f41c9",
+      "bytes": 8684,
+      "sha256": "6ee133356d49ed24cee03dd0cda3d3980279a11c107ce3e752c89e76540f41c9"
+    },
+    {
+      "file": "image-config-v0.32.0.json",
+      "url": "https://registry-1.docker.io/v2/vllm/vllm-openai/blobs/sha256:bd8a5d7a8774800c92d714c0c226b32c1863f929150f36efd610aebcd12a335d",
+      "bytes": 45008,
+      "sha256": "bd8a5d7a8774800c92d714c0c226b32c1863f929150f36efd610aebcd12a335d"
+    },
+    {
+      "file": "vllm-v0.32.0-nemotron-h.py",
+      "url": "https://github.com/vllm-project/vllm/blob/v0.32.0/vllm/model_executor/models/nemotron_h.py",
+      "bytes": 33672,
+      "sha256": "ac3b20abe3af217999296c2e3ec35656f82bd5cc2db0ce0bd27115e37bce0d89"
+    },
+    {
+      "file": "vllm-v0.32.0-requirements.txt",
+      "url": "https://github.com/vllm-project/vllm/blob/v0.32.0/requirements/common.txt",
+      "bytes": 3315,
+      "sha256": "366cb94fae6ea961da1e7d1c855f6316c3897b5ce9a839017db2bbebb668055a"
+    },
+    {
+      "file": "vllm-v0.32.0-model-config.py",
+      "url": "https://github.com/vllm-project/vllm/blob/v0.32.0/vllm/config/model.py",
+      "bytes": 111749,
+      "sha256": "04ca37ea1d50128a7ddede30e7baa4e0a56bccec85091577a2c81c5de1a8fab8"
+    },
+    {
+      "file": "transformers-v5.16.1-nemotron-config.py",
+      "url": "https://github.com/huggingface/transformers/blob/v5.16.1/src/transformers/models/nemotron_h/configuration_nemotron_h.py",
+      "bytes": 13031,
+      "sha256": "00a4c60bd302d796b25c6ae25c608a5ee7e27f9a0adea92911b0c45470232052"
+    }
+  ]
+}
