@@ -145,7 +145,13 @@ class RoomService:
             state.voice_profiles.pop(participant.id, None)
         if request.muted is not None:
             participant.muted = request.muted
-        if language_changed or voice_changed or profile_changed or mute_changed:
+        mute_only = mute_changed and not (language_changed or voice_changed or profile_changed)
+        grace = getattr(self.transport, "mute_grace_applies", None)
+        if mute_only and callable(grace) and grace(code, participant.id) is True:
+            # Mute stops new audio; the phrase already spoken still finishes and
+            # is delivered. The reader closes the recognizer after a short grace.
+            await self.transport.mute_changed(code, participant.id)
+        elif language_changed or voice_changed or profile_changed or mute_changed:
             if request.muted is True:
                 await self.pipeline.cancel_speaker(code, participant.id)
             await self.transport.reconfigure(code, participant.id)

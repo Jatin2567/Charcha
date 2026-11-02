@@ -44,8 +44,12 @@ class GnaniSpeech:
         Restart connections before the documented fifteen-minute session cap.
         """
         headers = self.headers | {
-            "lang_code": BCP47[language], "x-sample-rate": "16000", "x-format": "transcribe",
+            # ``language_code`` is the documented header; ``lang_code`` is kept
+            # for older gateway versions.
+            "language_code": BCP47[language], "lang_code": BCP47[language],
+            "x-sample-rate": "16000", "x-format": "transcribe",
             "x-min-silence-ms": "600", "x-max-speech-s": "20",
+            "x-idle-timeout-sec": str(self.settings.gnani_stt_idle_timeout_sec),
         }
         if self.settings.gnani_stt_model is not None:
             # The streaming endpoint selects v3.0 through the upgrade header,

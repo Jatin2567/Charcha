@@ -71,7 +71,7 @@ async def test_muted_empty_room_and_listener_departure_do_not_burn_stt(monkeypat
                 self.closed += 1
 
     speech = Speech()
-    store, state, speaker, listener, _, transport = transport_fixture(monkeypatch, speech)
+    store, state, speaker, listener, _, transport = transport_fixture(monkeypatch, speech, stt_mute_grace_seconds=0)
     task = asyncio.create_task(transport._read_audio(object(), speaker.id))
     try:
         await asyncio.sleep(0.3)

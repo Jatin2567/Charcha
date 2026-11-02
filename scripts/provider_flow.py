@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -27,7 +28,7 @@ def parser() -> argparse.ArgumentParser:
     for name in ("plan", "approve"):
         command = commands.add_parser(name)
         command.add_argument("--purpose", choices=PURPOSES, required=True)
-        command.add_argument("--seconds", type=int, required=True, help="Expiry 1–300 seconds; not a billing estimate")
+        command.add_argument("--seconds", type=int, required=True, help="Expiry in seconds, 1 to USAGE_APPROVAL_MAX_SECONDS (default 300); not a billing estimate")
         for key in RESOURCE_KEYS:
             command.add_argument("--" + key.replace("_", "-"), type=int, default=0)
         if name == "approve":
@@ -58,8 +59,11 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if args.command in ("plan", "approve"):
             budgets = validate_budgets({key: getattr(args, key) for key in RESOURCE_KEYS})
-            if not 1 <= args.seconds <= 300:
-                raise ValueError("Expiry must be from 1 to 300 seconds")
+            # Plan never reads .env; approve is re-checked by the guard using
+            # Settings.usage_approval_max_seconds.
+            limit = int(os.environ.get("USAGE_APPROVAL_MAX_SECONDS", "300")) if args.command == "plan" else 86400
+            if not 1 <= args.seconds <= limit:
+                raise ValueError(f"Expiry must be from 1 to {limit} seconds")
             if args.command == "plan":
                 print(json.dumps({"purpose": args.purpose, "seconds": args.seconds, "budgets": budgets,
                                   "provider_credit_cost": None,

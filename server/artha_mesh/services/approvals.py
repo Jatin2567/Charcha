@@ -132,11 +132,12 @@ def record_balance(connection: sqlite3.Connection, now: datetime, *, balance: fl
 
 def approve(connection: sqlite3.Connection, now: datetime, *, purpose: str, seconds: int,
             budgets: dict[str, int], before_balance: float | None = None,
-            balance_unit: str | None = None, before_observed_at: str | datetime | None = None) -> dict:
+            balance_unit: str | None = None, before_observed_at: str | datetime | None = None,
+            max_seconds: int = 300) -> dict:
     now = utc(now)
     normalized = validate_budgets(budgets)
-    if purpose not in PURPOSES or type(seconds) is not int or not 1 <= seconds <= 300:
-        raise ValueError("Use an allowlisted purpose and an expiry from 1 to 300 seconds")
+    if purpose not in PURPOSES or type(seconds) is not int or not 1 <= seconds <= max_seconds:
+        raise ValueError(f"Use an allowlisted purpose and an expiry from 1 to {max_seconds} seconds")
     if connection.execute("SELECT 1 FROM operator_flows WHERE closed_at IS NULL AND expires_at>? LIMIT 1",
                           (now.isoformat(),)).fetchone():
         raise ValueError("Close the existing flow before approving another flow")

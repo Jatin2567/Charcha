@@ -315,6 +315,7 @@ class UsageGuard:
         return result
 
     def approve_flow(self, **values) -> dict:
+        values.setdefault("max_seconds", self.settings.usage_approval_max_seconds)
         return self._operator_change(approvals.approve, **values)
 
     def inspect_flow(self, flow_id: str) -> dict:

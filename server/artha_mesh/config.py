@@ -90,6 +90,16 @@ class Settings(BaseSettings):
     usage_max_queued_operations: int = Field(default=16, ge=0, le=256)
     usage_provider_admission_timeout_seconds: float = Field(default=5, ge=0.01, le=30)
     usage_stt_max_retries: int = Field(default=3, ge=0, le=10)
+    # Operator grant expiry cap (seconds) for scripts/provider_flow.py approvals.
+    usage_approval_max_seconds: int = Field(default=300, ge=1, le=86400)
+    # After a mute, keep the recognizer open this long and feed silence so the
+    # final phrase is finalised and translated instead of being cut off.
+    stt_mute_grace_seconds: float = Field(default=2.5, ge=0, le=10, allow_inf_nan=False)
+    # A recognizer connection that lived this long before closing is "healthy":
+    # its close resets the retry counter instead of consuming the retry budget.
+    stt_healthy_seconds: float = Field(default=10, ge=0, le=600, allow_inf_nan=False)
+    # Gnani closes after 60 s without speech unless told otherwise (5-900).
+    gnani_stt_idle_timeout_sec: int = Field(default=900, ge=5, le=900)
     usage_max_live_room_seconds: int = Field(default=900, ge=60, le=86400)
 
     @field_validator("cors_origins", mode="before")

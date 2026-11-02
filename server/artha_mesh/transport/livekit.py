@@ -272,7 +272,11 @@ class RoomTransport:
             while True:
                 yield await pcm_queue.get()
 
+        draining = False  # Muted, but finishing the phrase spoken before mute.
+        drain_heard = asyncio.Event()
+
         async def recognize():
+            nonlocal draining
             retry = 0
             while not self.closed:
                 speaker = self._speaker(speaker_id)
@@ -295,7 +299,12 @@ class RoomTransport:
                         async for segment in self.speech.transcribe(audio(), language, processing):
                             retry = 0
                             current = self._speaker(speaker_id)
-                            if current and not current.muted and self._recognition_eligible(speaker_id):
+                            if current and (
+                                (draining and self._recognition_eligible(speaker_id, ignore_mute=True))
+                                or (not current.muted and self._recognition_eligible(speaker_id))
+                            ):
+                                if draining:
+                                    drain_heard.set()
                                 try:
                                     await self.pipeline.submit(self.state, current, segment.text, segment.stt_ms, True)
                                 except HTTPException as exc:
@@ -307,15 +316,49 @@ class RoomTransport:
                             self.recognition_active.pop(speaker_id, None)
 
                 async def eligibility_watch():
-                    while self._recognition_eligible(speaker_id):
-                        await asyncio.sleep(0.25)
+                    nonlocal draining
+                    grace = self.store.settings.stt_mute_grace_seconds
+                    frame = b"\x00" * 640  # 20 ms of 16 kHz mono PCM16 silence
+                    while True:
+                        if self._recognition_eligible(speaker_id):
+                            await asyncio.sleep(0.25)
+                            continue
+                        if grace <= 0 or not self._recognition_eligible(speaker_id, ignore_mute=True):
+                            return
+                        # Muted only: dispatch now drops microphone audio, so feed
+                        # real-time silence until the provider's VAD finalises the
+                        # last phrase, then close. Unmuting resumes normally.
+                        draining = True
+                        drain_heard.clear()
+                        started = time.monotonic()
+                        min_wait = min(grace, 0.9)  # > provider min-silence (600 ms)
+                        sent = 0
+                        try:
+                            while True:
+                                elapsed = time.monotonic() - started
+                                if self._recognition_eligible(speaker_id):
+                                    break  # Unmuted during grace; keep the socket.
+                                if (elapsed >= grace or (drain_heard.is_set() and elapsed >= min_wait)
+                                        or not self._recognition_eligible(speaker_id, ignore_mute=True)):
+                                    return
+                                due = int(elapsed / 0.02) + 1
+                                while sent < due:
+                                    if pcm_queue.full():
+                                        pcm_queue.get_nowait()
+                                    pcm_queue.put_nowait(frame)
+                                    sent += 1
+                                await asyncio.sleep(0.05)
+                        finally:
+                            draining = False
 
                 pending = []
+                opened_at = time.monotonic()
                 try:
                     self.state.broadcast("pipeline.status", {"speaker_id": speaker_id, "stage": "listening"})
                     def processing():
                         self.state.broadcast("pipeline.status", {"speaker_id": speaker_id, "stage": "transcribing"})
 
+                    opened_at = time.monotonic()
                     consuming = asyncio.create_task(consume())
                     watching = asyncio.create_task(eligibility_watch())
                     pending = [consuming, watching]
@@ -326,12 +369,20 @@ class RoomTransport:
                         retry = 0
                         continue
                     consuming.result()
-                    # A normally closed upstream stream still requires reconnect.
+                    if time.monotonic() - opened_at >= self.store.settings.stt_healthy_seconds:
+                        # Normal provider close (idle timeout, session cap) after a
+                        # healthy run: reconnect silently without spending retries.
+                        retry = 0
+                        continue
+                    # A quick normal close still counts, so a broken endpoint
+                    # cannot reconnect in a hot loop.
                     raise ProviderError("Speech recognition stream ended; reconnecting")
                 except asyncio.CancelledError:
                     raise
                 except Exception as exc:
                     recognition_ready.clear()
+                    if time.monotonic() - opened_at >= self.store.settings.stt_healthy_seconds:
+                        retry = 0  # One failure after a healthy run is not "repeated".
                     retry += 1
                     terminal = ((isinstance(exc, ProviderError) and not exc.retryable)
                                 or retry > self.store.settings.usage_stt_max_retries)
@@ -383,11 +434,11 @@ class RoomTransport:
             return None
         return next((p for p in self.state.room.participants if p.id == speaker_id), None)
 
-    def _recognition_eligible(self, speaker_id: str) -> bool:
+    def _recognition_eligible(self, speaker_id: str, ignore_mute: bool = False) -> bool:
         if self.store.settings.mode == "transport" or self.closed or self.disconnected or self.reconnecting:
             return False
         speaker = self._speaker(speaker_id)
-        if not speaker or speaker.muted:
+        if not speaker or (speaker.muted and not ignore_mute):
             return False
         if (self.screening and self.screening.mode == "enforce"
                 and self.state.screening_latest.get(speaker_id, {}).get("action") != "released"):
@@ -621,6 +672,36 @@ class RoomTransport:
         finally:
             output.tts_active = False
 
+    def mute_grace_applies(self, speaker_id: str) -> bool:
+        """Mute-only change that may let the running reader finish its phrase."""
+        task = self.readers.get(speaker_id)
+        return bool(self.store.settings.stt_mute_grace_seconds > 0 and self.store.settings.mode == "live"
+                    and task and not task.done()
+                    and not (self.screening and self.screening.mode == "enforce"))
+
+    async def mute_changed(self, speaker_id: str) -> bool:
+        """Keep the reader (and translated outputs) through a mute toggle.
+
+        Returns False when the full reconfigure path is required instead. The
+        reader itself drains and closes the recognizer after the grace period;
+        the forwarded-original output is still unpublished on mute.
+        """
+        if not self.mute_grace_applies(speaker_id):
+            return False
+        speaker = self._speaker(speaker_id)
+        if speaker and speaker.muted:
+            async with self.output_lock:
+                for key, output in list(self.outputs.items()):
+                    if output.speaker_id == speaker_id and output.language == speaker.language:
+                        output.source.clear_queue()
+                        self.outputs.pop(key)
+                        try:
+                            await self.room.local_participant.unpublish_track(output.publication.sid)
+                        finally:
+                            await output.source.aclose()
+        self._permissions()
+        return True
+
     async def reconfigure(self, speaker_id: str | None = None):
         if speaker_id:
             self.state.screening_latest.pop(speaker_id, None)
@@ -707,6 +788,15 @@ class TransportManager:
     async def reconfigure(self, code: str, speaker_id: str | None = None):
         if transport := self.rooms.get(code):
             await transport.reconfigure(speaker_id)
+
+    def mute_grace_applies(self, code: str, speaker_id: str) -> bool:
+        transport = self.rooms.get(code)
+        check = getattr(transport, "mute_grace_applies", None)
+        return bool(callable(check) and check(speaker_id))
+
+    async def mute_changed(self, code: str, speaker_id: str) -> bool:
+        transport = self.rooms.get(code)
+        return bool(transport and await transport.mute_changed(speaker_id))
 
     async def remove(self, code, speaker_id):
         if transport := self.rooms.get(code):
