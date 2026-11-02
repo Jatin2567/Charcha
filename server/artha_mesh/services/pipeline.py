@@ -161,6 +161,8 @@ class Pipeline:
         stage = "delivery"
         try:
             self._require_delivery_active(state, speaker.id, target)
+            if self._can_stream(sample, speaker.language, target):
+                return await self._stream_target(item, target, sample)
             stage = "mt"
             started = time.perf_counter()
             try:
@@ -226,13 +228,138 @@ class Pipeline:
                     "total": sample.total_ms or 0,
                     "measured": sample.measurement == "server_first_pcm"}
         except asyncio.CancelledError:
+            sample.status, sample.error_stage = "cancelled", sample.error_stage or stage
+            raise
+        except Exception:
+            sample.status, sample.error_stage = "error", sample.error_stage or stage
+            raise
+        finally:
+            self._record_sample(item, target, sample)
+
+    def _can_stream(self, sample: PerformanceSample, source: str, target: str) -> bool:
+        settings = self.store.settings
+        return (settings.mode == "live" and settings.evon_stream_clauses
+                and sample.measurement == "server_first_pcm" and source != target
+                and callable(getattr(self.translator, "translate_stream", None))
+                and self.transport is not None)
+
+    async def _stream_target(self, item: WorkItem, target: str, sample: PerformanceSample) -> dict:
+        """Translate and speak clause by clause on one ordered audio stream.
+
+        One MT request covers the whole utterance. A reader task pulls clauses
+        from the model while a synthesis task turns them into PCM one clause at
+        a time, so clause N+1 is synthesized while clause N plays. Playback
+        order equals model order. Any MT failure (including a token-limit
+        cutoff) stops audio at the last complete clause and raises, which the
+        worker reports to participants.
+        """
+        state, turn, speaker = item.state, item.turn, item.speaker
+        stage = "voice_reference"
+        sample.mt_streamed = True
+        try:
+            profile_id = state.voice_profiles.get(speaker.id)
+            profile = self.store.voices.get(profile_id or "")
+            if speaker.voice_mode == "cloned" and (not profile or not profile.embedding):
+                raise ProviderError("Voice reference expired; choose a standard voice or enroll again", False)
+            embedding = profile.embedding if speaker.voice_mode == "cloned" and profile else None
+            stage = "mt"
+            started = time.perf_counter()
+            tts_started: float | None = None
+            clauses: list[str] = []
+            text_q: asyncio.Queue = asyncio.Queue()
+            pcm_q: asyncio.Queue = asyncio.Queue(maxsize=64)
+            done = object()
+            timeout = self.store.settings.provider_timeout_seconds
+
+            def announce(text: str, latency: float, measurement: str):
+                state.broadcast("translation.ready", {
+                    "utterance_id": turn.id, "speaker_id": speaker.id, "speaker_name": speaker.name,
+                    "source_language": speaker.language, "target_language": target, "text": text,
+                    "latency_ms": round(latency, 2), "voice_mode": speaker.voice_mode,
+                    "measurement": measurement,
+                })
+
+            async def read_clauses():
+                nonlocal tts_started
+                try:
+                    async with asyncio.timeout(timeout):
+                        async for clause in self.translator.translate_stream(
+                                turn.text, speaker.language, target):
+                            if not clauses:
+                                sample.mt_ms = milliseconds((time.perf_counter() - started) * 1000)
+                                tts_started = time.perf_counter()
+                            clauses.append(clause)
+                            # Partial caption so listeners can read along.
+                            turn.translations[target] = " ".join(clauses)
+                            await text_q.put(clause)
+                    sample.mt_complete_ms = milliseconds((time.perf_counter() - started) * 1000)
+                    await text_q.put(done)
+                except BaseException as exc:  # forwarded to the audio consumer
+                    await text_q.put(exc)
+                    if isinstance(exc, asyncio.CancelledError):
+                        raise
+
+            async def synthesize_clauses():
+                try:
+                    while True:
+                        clause = await text_q.get()
+                        if clause is done or isinstance(clause, BaseException):
+                            await pcm_q.put(clause)
+                            return
+                        self._require_delivery_active(state, speaker.id, target)
+                        async for chunk in self.tts.synthesize(clause, target, embedding):
+                            await pcm_q.put(chunk)
+                except BaseException as exc:
+                    await pcm_q.put(exc)
+                    if isinstance(exc, asyncio.CancelledError):
+                        raise
+
+            async def pcm():
+                reader = asyncio.create_task(read_clauses())
+                writer = asyncio.create_task(synthesize_clauses())
+                try:
+                    while True:
+                        chunk = await pcm_q.get()
+                        if chunk is done:
+                            return
+                        if isinstance(chunk, BaseException):
+                            raise chunk
+                        yield chunk
+                finally:
+                    for task in (reader, writer):
+                        if not task.done():
+                            task.cancel()
+                    await asyncio.gather(reader, writer, return_exceptions=True)
+
+            def on_first_audio():
+                nonlocal stage
+                if sample.total_ms is not None:
+                    return
+                first_audio_at = time.perf_counter()
+                sample.tts_first_pcm_ms = milliseconds((first_audio_at - (tts_started or started)) * 1000)
+                sample.total_ms = milliseconds((sample.stt_ms or 0) + (first_audio_at - item.queued_at) * 1000)
+                stage = "playout"
+                announce(" ".join(clauses), sample.total_ms or 0, "server_pipeline")
+                state.broadcast("pipeline.status", {
+                    "speaker_id": speaker.id, "stage": "speaking", "utterance_id": turn.id,
+                })
+
+            async with asyncio.timeout(timeout + 120):
+                await self.transport.speak(state.room.code, speaker.id, target, pcm(), on_first_audio)
+            text = " ".join(clauses)
+            turn.translations[target] = text
+            # Final caption carries the complete text once the model finished.
+            announce(text, (sample.stt_ms or 0) + (time.perf_counter() - item.queued_at) * 1000, "text_ready")
+            if sample.total_ms is None:
+                raise ProviderError("No interpreted audio was dispatched; check the listener connection")
+            return {"mt": sample.mt_ms or 0, "tts": sample.tts_first_pcm_ms or 0,
+                    "total": sample.total_ms or 0, "measured": True}
+        except asyncio.CancelledError:
             sample.status, sample.error_stage = "cancelled", stage
             raise
         except Exception:
             sample.status, sample.error_stage = "error", stage
             raise
-        finally:
-            self._record_sample(item, target, sample)
 
     def _new_sample(self, item: WorkItem, target: str) -> PerformanceSample:
         if self.store.settings.mode == "demo":

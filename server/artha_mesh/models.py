@@ -138,6 +138,10 @@ class PerformanceSample(BaseModel):
     queue_ms: float | None = None
     stt_ms: float | None = None
     mt_ms: float | None = None
+    # When clauses are streamed, mt_ms is time to the first clause and
+    # mt_complete_ms is time to the model's final token.
+    mt_streamed: bool = False
+    mt_complete_ms: float | None = None
     tts_first_pcm_ms: float | None = None
     total_ms: float | None = None
     created_at: datetime = Field(default_factory=now)

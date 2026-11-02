@@ -52,6 +52,10 @@ class Settings(BaseSettings):
     session_ttl_seconds: int = Field(default=14400, ge=60, le=86400)
     max_participants: int = Field(default=8, ge=2, le=32)
     max_rooms: int = Field(default=100, ge=1, le=10000)
+    # Speak each translated clause as soon as the model emits it (live mode).
+    evon_stream_clauses: bool = True
+    evon_clause_min_chars: int = Field(default=24, ge=8, le=120)
+    evon_clause_max_chars: int = Field(default=180, ge=40, le=600)
     max_pending_turns: int = Field(default=8, ge=1, le=32)
     max_turns_per_room: int = Field(default=1000, ge=10, le=10000)
     provider_timeout_seconds: float = Field(default=45, ge=1, le=120)
