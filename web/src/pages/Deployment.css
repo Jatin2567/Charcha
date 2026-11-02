@@ -12,7 +12,7 @@
   font-size: 12px;
 }
 .deployment-page .badge {
-  font-size: 10px;
+  font-size: 11px;
   white-space: nowrap;
   gap: 4px;
 }
@@ -65,7 +65,7 @@
   margin-bottom: 19px;
 }
 .deployment-section-heading .eyebrow {
-  font-size: 9px;
+  font-size: 11px;
   margin-bottom: 7px;
 }
 .deployment-section-heading h2 {
@@ -116,7 +116,7 @@
   margin-top: 7px;
 }
 .deployment-flow-tag {
-  font-size: 9px;
+  font-size: 11px;
   display: block;
   color: var(--muted);
   margin-top: 16px;
@@ -153,7 +153,7 @@
   padding: 4px 7px;
   border: 1px solid var(--call-border);
   border-radius: 5px;
-  font-size: 9px;
+  font-size: 11px;
   color: var(--call-muted);
 }
 .deployment-provider-stack {
@@ -180,7 +180,7 @@
   font-size: 12px;
 }
 .deployment-provider-stack p {
-  font-size: 10px;
+  font-size: 11px;
   margin-top: 5px;
 }
 .deployment-residency {
@@ -197,7 +197,7 @@
   margin-top: 1px;
 }
 .deployment-residency p {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
   line-height: 1.8;
 }
@@ -236,7 +236,7 @@
 }
 .deployment-input small {
   text-transform: uppercase;
-  font-size: 8px;
+  font-size: 11px;
   color: var(--muted);
   letter-spacing: 1px;
   margin-bottom: 7px;
@@ -257,7 +257,7 @@
 .deployment-input-note {
   border-top: 1px solid var(--surface-soft);
   padding: 14px 0 17px;
-  font-size: 9px;
+  font-size: 11px;
   line-height: 1.85;
   color: var(--muted);
 }
@@ -293,7 +293,7 @@
   letter-spacing: -1px;
 }
 .deployment-readiness-summary > div > span {
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
 }
 .deployment-readiness-summary p {
@@ -336,7 +336,7 @@
   font-size: 11px;
 }
 .deployment-issues p {
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.8;
   margin-top: 5px;
 }
@@ -351,12 +351,12 @@
   display: flex;
   flex-wrap: wrap;
   gap: 4px 11px;
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.8;
 }
 .deployment-issues code {
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
-  font-size: 9px;
+  font-size: 11px;
   overflow-wrap: anywhere;
 }
 .deployment-setting {
@@ -379,18 +379,18 @@
   font-weight: 600;
 }
 .deployment-setting-title > span {
-  font-size: 8px;
+  font-size: 11px;
   color: var(--muted);
 }
 .deployment-setting-title code {
   width: 100%;
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
   overflow-wrap: anywhere;
 }
 .deployment-setting p {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
   line-height: 1.8;
 }
@@ -403,7 +403,7 @@
   gap: 8px;
   padding: 17px 25px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 11px;
   line-height: 1.7;
 }
 .deployment-readiness-foot svg {
@@ -427,7 +427,7 @@
   min-width: 0;
 }
 .deployment-launch .eyebrow {
-  font-size: 8px;
+  font-size: 11px;
   margin-bottom: 7px;
 }
 .deployment-launch h2 {
@@ -442,7 +442,7 @@
   margin-top: 7px;
 }
 .deployment-launch > .text-link {
-  font-size: 10px;
+  font-size: 11px;
   flex-shrink: 0;
   margin-top: 3px;
 }
@@ -454,7 +454,7 @@
   margin-top: 13px;
 }
 .deployment-source-files code {
-  font-size: 9px;
+  font-size: 11px;
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
   color: var(--muted);
   overflow-wrap: anywhere;
@@ -489,7 +489,7 @@
   letter-spacing: -0.2px;
 }
 .deployment-host .badge {
-  font-size: 8px;
+  font-size: 11px;
 }
 .deployment-host p {
   font-size: 11px;
@@ -499,7 +499,7 @@
   flex: 1;
 }
 .deployment-host .text-link {
-  font-size: 10px;
+  font-size: 11px;
 }
 .deployment-hosting-note {
   display: flex;
@@ -513,7 +513,7 @@
   margin-top: 2px;
 }
 .deployment-hosting-note p {
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.9;
 }
 .deployment-hosting-note a {
@@ -539,13 +539,13 @@
   color: var(--muted);
 }
 .deployment-final-check p {
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.9;
   color: var(--muted);
   margin-top: 4px;
 }
 .deployment-final-check .text-link {
-  font-size: 10px;
+  font-size: 11px;
   white-space: nowrap;
 }
 @media (max-width: 1200px) {
@@ -656,7 +656,7 @@
   }
   .deployment-section-heading > span {
     text-align: left;
-    font-size: 10px;
+    font-size: 11px;
   }
   .deployment-section-heading h2 {
     font-size: 16px;
@@ -676,7 +676,7 @@
     padding: 21px 19px 0;
   }
   .deployment-readiness .button {
-    font-size: 10px;
+    font-size: 11px;
     padding: 9px 11px;
     min-height: 35px;
   }
@@ -692,15 +692,15 @@
     grid-template-columns: minmax(0, 1fr) 72px;
   }
   .deployment-setting-title strong {
-    font-size: 10px;
+    font-size: 11px;
   }
   .deployment-setting > .badge {
     padding: 4px 7px;
-    font-size: 9px;
+    font-size: 11px;
   }
   .deployment-offline {
     padding: 16px 19px;
-    font-size: 10px;
+    font-size: 11px;
   }
   .deployment-issues {
     padding: 17px 19px;
@@ -730,7 +730,7 @@
     font-size: 14px;
   }
   .deployment-launch p {
-    font-size: 10px;
+    font-size: 11px;
   }
   .deployment-launch > .text-link {
     margin-left: 50px;
@@ -739,7 +739,7 @@
     gap: 5px;
   }
   .deployment-source-files code {
-    font-size: 8px;
+    font-size: 11px;
   }
   .deployment-source-files svg {
     display: none;

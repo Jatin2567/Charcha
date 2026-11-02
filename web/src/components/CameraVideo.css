@@ -33,7 +33,7 @@
   position: absolute;
   bottom: 5px;
   color: var(--call-muted);
-  font-size: 10px;
+  font-size: 11px;
 }
 .camera-state-note {
   color: var(--call-muted);

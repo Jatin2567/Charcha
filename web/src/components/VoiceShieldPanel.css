@@ -227,7 +227,7 @@
 }
 .meeting-app .shield-launch small {
   color: var(--call-muted);
-  font-size: 10px;
+  font-size: 11px;
 }
 .meeting-app .meeting-stage-heading {
   flex-wrap: wrap;

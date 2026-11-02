@@ -190,7 +190,7 @@
   box-shadow: inset 3px 0 var(--accent-outline);
 }
 .lab-outcome {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   width: fit-content;
   border-radius: 5px;
@@ -211,7 +211,7 @@
   color: var(--warning-ink);
 }
 .lab-detail > .eyebrow {
-  font-size: 9px;
+  font-size: 11px;
 }
 .lab-detail > h2 {
   margin: 8px 0 23px;
@@ -257,7 +257,7 @@
   margin: 0;
 }
 .lab-fields .field > span {
-  font-size: 10px;
+  font-size: 11px;
 }
 .lab-fields .field input,
 .lab-fields .field select {
@@ -267,7 +267,7 @@
 }
 .lab-fields small,
 .lab-notes small {
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.7;
   color: var(--muted);
 }
@@ -298,7 +298,7 @@
   flex-wrap: wrap;
 }
 .lab-save-row > span {
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.6;
   color: var(--muted);
 }
@@ -379,7 +379,7 @@
 .lab-matrix-wrap small {
   display: block;
   margin-top: 4px;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 400;
 }
 .lab-matrix-wrap td {
@@ -434,7 +434,7 @@
     grid-row: auto;
   }
   .lab-stages small {
-    font-size: 10px;
+    font-size: 11px;
   }
   .lab-intro {
     padding: 18px;

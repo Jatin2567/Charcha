@@ -9,6 +9,11 @@ export function approvalSeconds(report: ConferenceReadiness | null, elapsedSecon
     ? Math.max(0, Math.floor(seconds - Math.max(0, elapsedSeconds)))
     : null;
 }
+/** Status label that never reads "approved" once the window has elapsed. */
+export function approvalLabel(status: string, seconds: number | null) {
+  if (status === 'approved' && seconds === 0) return 'expired';
+  return status.replaceAll('_', ' ');
+}
 export function timeLeft(seconds: number | null) {
   if (seconds === null) return 'Time remaining unavailable';
   if (seconds === 0) return 'Approval window elapsed';

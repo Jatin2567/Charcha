@@ -279,15 +279,17 @@ export function Performance() {
           </p>
         </div>
       </section>
-      <div className="performance-boundary">
-        <Info size={16} />
+      <details className="performance-boundary">
+        <summary>
+          <Info size={16} />
+          <strong>About these numbers: server timing only</strong>
+        </summary>
         <p>
-          <strong>Server timing, with a defined boundary.</strong> Total is queue-to-first-PCM plus
-          a speech-recognition proxy. It does not measure speech-end-to-listener playback or certify
-          a latency target. Text input skips recognition; same-language forwarding and scripted
-          turns are excluded from percentiles.
+          Total is queue-to-first-PCM plus a speech-recognition proxy. It does not measure
+          speech-end-to-listener playback or certify a latency target. Text input skips
+          recognition; same-language forwarding and scripted turns are excluded from percentiles.
         </p>
-      </div>
+      </details>
       <ErrorNotice message={perf.error} />
 
       <div className="performance-controls" id="live-latency">

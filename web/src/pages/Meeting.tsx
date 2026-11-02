@@ -111,7 +111,9 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
   const { state, dispatch, connection, running, startDemo, reconnect } = useRoomEvents(m);
   const audio = useMeetingAudio(m);
   const devices = useDevices();
-  const [panel, setPanel] = useState<SidePanel>(m.room.mode === 'demo' ? 'transcript' : null);
+  const [panel, setPanel] = useState<SidePanel>(() =>
+    m.room.mode === 'demo' && (typeof window === 'undefined' || !window.matchMedia
+      || window.matchMedia('(min-width: 900px)').matches) ? 'transcript' : null);
   const [captions, setCaptions] = useState(app.preferences.autoCaptions);
   const resizeCaptions = useCallback(
     () => app.setPreferences({ largeCaptions: !app.preferences.largeCaptions }),

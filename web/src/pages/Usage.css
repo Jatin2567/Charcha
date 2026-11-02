@@ -16,7 +16,7 @@
   font-size: 12px;
 }
 .usage-page .badge {
-  font-size: 10px;
+  font-size: 11px;
   white-space: nowrap;
 }
 .usage-provider-grid {
@@ -139,7 +139,7 @@
 .usage-flow-meta dt,
 .usage-approval-meta dt {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 11px;
   margin-bottom: 5px;
 }
 .usage-flow-meta dd,
@@ -154,7 +154,7 @@
   display: block;
   color: var(--muted);
   margin-top: 3px;
-  font-size: 10px;
+  font-size: 11px;
 }
 .usage-flow-empty {
   display: flex;
@@ -226,7 +226,7 @@
 }
 .usage-flow > summary span:not(.badge) {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.7;
 }
 .usage-flow-summary-end {
@@ -270,7 +270,7 @@
 }
 .usage-flow thead th {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 11px;
 }
 .usage-flow thead th:not(:first-child),
 .usage-flow td {
@@ -443,7 +443,7 @@
   justify-content: space-between;
   gap: 10px;
   margin-top: 11px;
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
   line-height: 1.7;
 }

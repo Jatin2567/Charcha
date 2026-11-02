@@ -123,7 +123,7 @@
 }
 .controlled-provider-provenance code {
   overflow-wrap: anywhere;
-  font-size: 10px;
+  font-size: 11px;
 }
 @media (max-width: 750px) {
   .controlled-provider-cases {

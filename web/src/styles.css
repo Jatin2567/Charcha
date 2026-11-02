@@ -170,7 +170,7 @@ label.field {
 }
 .mobile-workspace-mark { display: none; }
 .workspace-label {
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 1.5px;
   color: var(--muted);
   font-weight: 650;
@@ -220,7 +220,7 @@ label.field {
   border-bottom: 1px solid var(--border);
 }
 .sidebar-language small {
-  font-size: 6.5px;
+  font-size: 11px;
   font-weight: 650;
   letter-spacing: 0.7px;
   display: block;
@@ -247,7 +247,7 @@ label.field {
   display: flex;
   align-items: center;
   gap: 7px;
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
   padding: 20px 4px 11px;
 }
@@ -262,7 +262,7 @@ label.field {
 .sidebar-help {
   display: flex;
   justify-content: space-between;
-  font-size: 8px;
+  font-size: 11px;
   color: var(--muted);
   padding: 0 4px;
 }
@@ -285,7 +285,7 @@ label.field {
   display: flex;
   align-items: center;
   gap: 13px;
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
 }
 .breadcrumb strong {
@@ -307,7 +307,7 @@ label.field {
   padding: 5px 9px;
   border-radius: 5px;
   white-space: nowrap;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 550;
   line-height: 1.5;
 }
@@ -381,7 +381,7 @@ label.field {
   padding: 17px 0;
   display: flex;
   justify-content: space-between;
-  font-size: 8px;
+  font-size: 11px;
   color: var(--muted);
 }
 .app-footer > span:first-child {
@@ -391,7 +391,7 @@ label.field {
 }
 .eyebrow {
   color: var(--muted);
-  font-size: 8.5px;
+  font-size: 11px;
   font-weight: 650;
   letter-spacing: 1.6px;
   line-height: 1.6;
@@ -423,7 +423,7 @@ label.field {
   display: flex;
   align-items: center;
   gap: 7px;
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
 }
 .home-hero {
@@ -442,7 +442,7 @@ label.field {
   z-index: 2;
 }
 .hero-copy > .badge {
-  font-size: 7px;
+  font-size: 11px;
   letter-spacing: 1px;
   padding: 5px 8px;
   background: var(--surface-soft);
@@ -455,7 +455,7 @@ label.field {
   font-weight: 650;
 }
 .hero-copy p {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
   line-height: 1.8;
   margin: 11px 0 20px;
@@ -510,14 +510,14 @@ label.field {
 }
 .button.small {
   min-height: 32px;
-  font-size: 10px;
+  font-size: 11px;
   padding: 7px 11px;
 }
 .join-inline {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
   padding: 0;
   margin-top: 16px;
@@ -530,7 +530,7 @@ label.field {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 7.5px;
+  font-size: 11px;
   color: var(--muted);
   margin-top: 19px;
 }
@@ -603,7 +603,7 @@ label.field {
   font-weight: 500;
 }
 .language-orb small {
-  font-size: 6px;
+  font-size: 11px;
   letter-spacing: 1.4px;
   color: var(--muted);
 }
@@ -655,7 +655,7 @@ label.field {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 7px;
+  font-size: 11px;
   color: var(--muted);
 }
 .art-speck {
@@ -687,13 +687,13 @@ label.field {
   gap: 11px;
 }
 .feature-strip strong {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 550;
   display: block;
 }
 .feature-strip small {
   display: block;
-  font-size: 8px;
+  font-size: 11px;
   color: var(--muted);
   margin-top: 3px;
 }
@@ -734,7 +734,7 @@ label.field {
   font-weight: 650;
 }
 .section-title p {
-  font-size: 8px;
+  font-size: 11px;
   color: var(--muted);
   margin-top: 5px;
 }
@@ -744,7 +744,7 @@ label.field {
   justify-content: center;
   gap: 6px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 550;
   padding: 0;
 }
@@ -782,7 +782,7 @@ label.field {
   letter-spacing: -0.2px;
 }
 .first-conversation p {
-  font-size: 9px;
+  font-size: 11px;
   line-height: 1.75;
   color: var(--muted);
   margin-top: 7px;
@@ -802,7 +802,7 @@ label.field {
   gap: 9px;
 }
 .workspace-card-top .eyebrow {
-  font-size: 6px;
+  font-size: 11px;
   letter-spacing: 0.9px;
 }
 .workspace-card-top .feature-icon {
@@ -837,12 +837,12 @@ label.field {
   color: #9a783f;
 }
 .setup-item small {
-  font-size: 7px;
+  font-size: 11px;
   color: var(--muted);
   display: block;
 }
 .setup-item strong {
-  font-size: 8px;
+  font-size: 11px;
   color: var(--muted);
   font-weight: 550;
   display: block;
@@ -853,7 +853,7 @@ label.field {
   color: var(--muted);
 }
 .workspace-card > .button {
-  font-size: 8px;
+  font-size: 11px;
   margin-top: 8px;
   min-height: 33px;
   border-radius: 5px;
@@ -877,19 +877,19 @@ label.field {
   border-radius: 8px;
 }
 .demo-callout strong {
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
   font-weight: 550;
 }
 .demo-callout p {
-  font-size: 7.5px;
+  font-size: 11px;
   color: var(--muted);
   margin-top: 3px;
 }
 .demo-callout .text-link {
   margin-left: auto;
   white-space: nowrap;
-  font-size: 8px;
+  font-size: 11px;
 }
 .avatar-stack {
   display: flex;
@@ -925,13 +925,13 @@ label.field {
 }
 .recent-row strong {
   display: block;
-  font-size: 10px;
+  font-size: 11px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .recent-row small {
-  font-size: 8px;
+  font-size: 11px;
   color: var(--muted);
   display: flex;
   gap: 6px;
@@ -1137,7 +1137,7 @@ label.field {
   display: block;
 }
 .toggle-row small {
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.7;
   display: block;
   color: var(--muted);
@@ -1227,7 +1227,7 @@ label.field {
   padding: 0 4px;
 }
 .keyboard-hints {
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
   display: flex;
   align-items: center;
@@ -1272,7 +1272,7 @@ label.field {
   font-weight: 550;
 }
 .provider-row p {
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
   line-height: 1.7;
   margin-top: 5px;
@@ -1283,7 +1283,7 @@ label.field {
   padding: 13px;
   border: 1px solid var(--border);
   border-radius: 8px;
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.9;
   overflow-x: auto;
   color: var(--accent-hover);
@@ -1307,11 +1307,11 @@ label.field {
   margin-top: 5px;
 }
 .metric-card > small {
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
 }
 .metric-card > span {
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
 }
 .check-line {
@@ -1340,7 +1340,7 @@ label.field {
   font-size: 14px;
 }
 .history-card p {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
   margin-top: 7px;
 }
@@ -1357,7 +1357,7 @@ label.field {
   padding-left: 7px;
 }
 .history-card .badge {
-  font-size: 8px;
+  font-size: 11px;
 }
 .history-card .icon-button {
   color: #aa8b75;
@@ -1376,7 +1376,7 @@ label.field {
 .recap-details > div {
   display: flex;
   justify-content: space-between;
-  font-size: 10px;
+  font-size: 11px;
 }
 .recap-details span {
   color: var(--muted);
@@ -1392,7 +1392,7 @@ label.field {
   flex-wrap: wrap;
 }
 .source-note {
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
   line-height: 1.8;
   margin-top: 16px;
@@ -1405,7 +1405,7 @@ label.field {
 .language-chip {
   border-radius: 5px;
   padding: 5px 8px;
-  font-size: 9px;
+  font-size: 11px;
   background: var(--surface-soft);
   color: var(--muted);
 }
@@ -1436,7 +1436,7 @@ label.field {
     font-size: 12px;
   }
   .feature-strip small {
-    font-size: 10px;
+    font-size: 11px;
   }
   .home-heading p {
     font-size: 13px;
@@ -1457,13 +1457,13 @@ label.field {
     font-size: 14px;
   }
   .first-conversation p {
-    font-size: 10px;
+    font-size: 11px;
   }
   .section-title h2 {
     font-size: 17px;
   }
   .section-title p {
-    font-size: 10px;
+    font-size: 11px;
   }
 }
 @media (max-width: 1150px) {
@@ -1512,16 +1512,16 @@ label.field {
     height: 29px;
   }
   .feature-strip strong {
-    font-size: 9px;
+    font-size: 11px;
   }
   .feature-strip small {
-    font-size: 7px;
+    font-size: 11px;
   }
   .home-heading h1 {
     font-size: 29px;
   }
   .today {
-    font-size: 8px;
+    font-size: 11px;
   }
   .home-hero {
     grid-template-columns: 1.1fr 1fr;
@@ -1530,7 +1530,7 @@ label.field {
     padding: 17px;
   }
   .demo-callout p {
-    font-size: 7px;
+    font-size: 11px;
   }
   .recap-grid {
     grid-template-columns: 1fr 250px;
@@ -1557,11 +1557,11 @@ label.field {
   }
   .brand-link { margin-inline: 0; }
   .nav-item {
-    font-size: 10px;
+    font-size: 11px;
     gap: 10px;
   }
   .workspace-label {
-    font-size: 8px;
+    font-size: 11px;
   }
   .topbar {
     height: 65px;
@@ -1591,10 +1591,10 @@ label.field {
     font-size: 21px;
   }
   .hero-copy p {
-    font-size: 9px;
+    font-size: 11px;
   }
   .join-inline {
-    font-size: 8px;
+    font-size: 11px;
   }
   .home-lower {
     grid-template-columns: 1fr;
@@ -1610,10 +1610,10 @@ label.field {
     grid-column: 1/-1;
   }
   .demo-callout .text-link {
-    font-size: 7px;
+    font-size: 11px;
   }
   .demo-callout strong {
-    font-size: 8px;
+    font-size: 11px;
   }
   .settings-grid {
     grid-template-columns: 1fr;
@@ -1625,29 +1625,29 @@ label.field {
     grid-template-columns: 1fr;
   }
   .sidebar-language small {
-    font-size: 5.5px;
+    font-size: 11px;
   }
   .sidebar-note {
-    font-size: 8px;
+    font-size: 11px;
   }
   .sidebar-help {
-    font-size: 6.5px;
+    font-size: 11px;
   }
   .topbar-right {
     gap: 13px;
   }
   .topbar-right > .badge {
-    font-size: 7px;
+    font-size: 11px;
   }
   .app-footer {
     margin: 0 23px;
-    font-size: 7px;
+    font-size: 11px;
   }
   .page-heading h1 {
     font-size: 24px;
   }
   .page-heading p {
-    font-size: 10px;
+    font-size: 11px;
   }
 }
 @media (max-width: 650px) {
@@ -1677,14 +1677,14 @@ label.field {
     padding: 0 19px;
   }
   .breadcrumb {
-    font-size: 9px;
+    font-size: 11px;
     gap: 8px;
   }
   .topbar-right {
     gap: 12px;
   }
   .topbar-right > .badge {
-    font-size: 7px;
+    font-size: 11px;
     padding: 4px 6px;
   }
   .profile-button .avatar {
@@ -1709,7 +1709,7 @@ label.field {
     margin-top: 12px;
   }
   .home-heading .eyebrow {
-    font-size: 7px;
+    font-size: 11px;
   }
   .home-hero {
     grid-template-columns: 1fr;
@@ -1729,11 +1729,11 @@ label.field {
     min-height: 44px;
   }
   .join-inline {
-    font-size: 9px;
+    font-size: 11px;
     margin-top: 18px;
   }
   .hero-footnote {
-    font-size: 8px;
+    font-size: 11px;
     margin-top: 18px;
   }
   .conversation-art {
@@ -1791,7 +1791,7 @@ label.field {
     font-size: 11px;
   }
   .feature-strip small {
-    font-size: 9px;
+    font-size: 11px;
     margin-top: 4px;
   }
   .feature-icon {
@@ -1805,7 +1805,7 @@ label.field {
     font-size: 16px;
   }
   .section-title p {
-    font-size: 9px;
+    font-size: 11px;
   }
   .first-conversation {
     padding: 28px 15px;
@@ -1814,10 +1814,10 @@ label.field {
     font-size: 12px;
   }
   .first-conversation p {
-    font-size: 10px;
+    font-size: 11px;
   }
   .first-conversation .text-link {
-    font-size: 10px;
+    font-size: 11px;
   }
   .demo-callout {
     align-items: flex-start;
@@ -1826,12 +1826,12 @@ label.field {
     padding-bottom: 34px;
   }
   .demo-callout strong {
-    font-size: 10px;
+    font-size: 11px;
     line-height: 1.7;
     display: block;
   }
   .demo-callout p {
-    font-size: 9px;
+    font-size: 11px;
     line-height: 1.7;
     margin-top: 5px;
   }
@@ -1839,19 +1839,19 @@ label.field {
     position: absolute;
     bottom: 0;
     left: 45px;
-    font-size: 9px;
+    font-size: 11px;
   }
   .app-footer {
     margin: 0 21px;
     display: block;
     padding: 17px 0;
-    font-size: 8px;
+    font-size: 11px;
   }
   .app-footer > span:last-child {
     display: block;
     margin-top: 7px;
     margin-left: 18px;
-    font-size: 7px;
+    font-size: 11px;
   }
   .page-heading {
     align-items: flex-start;
@@ -1864,7 +1864,7 @@ label.field {
     line-height: 1.7;
   }
   .page-heading > .button {
-    font-size: 9px;
+    font-size: 11px;
     padding: 8px;
     min-height: 34px;
   }
@@ -1923,12 +1923,12 @@ label.field {
   gap: 8px;
 }
 .preview-top .badge {
-  font-size: 6.5px;
+  font-size: 11px;
   letter-spacing: 0.7px;
 }
 .preview-room-code {
   font-family: Consolas, monospace;
-  font-size: 8px;
+  font-size: 11px;
   color: var(--muted);
 }
 .preview-avatar {
@@ -1957,7 +1957,7 @@ label.field {
   font-weight: 500;
 }
 .preview-name > span {
-  font-size: 9px;
+  font-size: 11px;
   margin-left: 6px;
   color: var(--muted);
 }
@@ -2008,7 +2008,7 @@ label.field {
   color: #e9bfbc;
 }
 .preview-caption {
-  font-size: 8px;
+  font-size: 11px;
   color: var(--muted);
   margin-top: 13px;
 }
@@ -2018,7 +2018,7 @@ label.field {
   gap: 10px;
   align-items: center;
   justify-content: center;
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
   padding: 20px 0;
 }
@@ -2028,7 +2028,7 @@ label.field {
   align-items: center;
 }
 .prejoin-device > span {
-  font-size: 8px;
+  font-size: 11px;
   color: var(--muted);
 }
 .prejoin-form {
@@ -2048,7 +2048,7 @@ label.field {
   gap: 10px;
   color: var(--accent-hover);
   align-items: flex-start;
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.8;
 }
 .prejoin-language-note > svg {
@@ -2065,7 +2065,7 @@ label.field {
   display: block;
 }
 .standard-voice small {
-  font-size: 8px;
+  font-size: 11px;
   color: var(--muted);
   display: block;
   margin-top: 4px;
@@ -2079,7 +2079,7 @@ label.field {
   gap: 6px;
   align-items: center;
   justify-content: center;
-  font-size: 8px;
+  font-size: 11px;
   color: var(--muted);
   margin-top: 13px;
 }
@@ -2094,7 +2094,7 @@ label.field {
   align-items: center;
   margin-top: 17px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 11px;
 }
 .mic-test-meter > div {
   display: flex;
@@ -2169,7 +2169,7 @@ label.field {
   color: var(--accent-hover);
   background: var(--surface-soft);
   border-radius: 6px;
-  font-size: 8px;
+  font-size: 11px;
   flex-shrink: 0;
 }
 .voice-guide-step strong {
@@ -2178,7 +2178,7 @@ label.field {
   display: block;
 }
 .voice-guide-step p {
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.8;
   color: var(--muted);
   margin-top: 4px;
@@ -2190,7 +2190,7 @@ label.field {
   color: var(--muted);
 }
 .voice-policy p {
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.8;
   color: var(--muted);
 }
@@ -2199,7 +2199,7 @@ label.field {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
   margin-top: 27px;
 }
@@ -2238,7 +2238,7 @@ label.field {
   letter-spacing: -0.7px;
 }
 .recording-time > span {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
   letter-spacing: 0;
   font-weight: 400;
@@ -2259,13 +2259,13 @@ label.field {
   transition: width 0.1s;
 }
 .recording-station > p {
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
   margin: 11px 0 17px;
   text-align: center;
 }
 .recording-station > .text-link {
-  font-size: 8px;
+  font-size: 11px;
   margin-top: 14px;
 }
 .recording-station.is-recording {
@@ -2315,7 +2315,7 @@ label.field {
   display: block;
 }
 .enrolled-profile small {
-  font-size: 8px;
+  font-size: 11px;
   display: block;
   color: var(--muted);
   margin-top: 4px;
@@ -2339,14 +2339,14 @@ label.field {
   display: flex;
   align-items: center;
   gap: 9px;
-  font-size: 10px;
+  font-size: 11px;
 }
 .turn-meta strong {
   font-weight: 550;
 }
 .turn-meta > span {
   color: var(--muted);
-  font-size: 8px;
+  font-size: 11px;
 }
 .recap-translation {
   font-size: 13px;
@@ -2355,20 +2355,20 @@ label.field {
   color: var(--muted);
 }
 .recap-turn details {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
   margin-top: 9px;
 }
 .recap-turn details > summary {
   cursor: pointer;
-  font-size: 8px;
+  font-size: 11px;
 }
 .recap-turn details > p {
   margin-top: 8px;
   line-height: 1.9;
 }
 .turn-confirmation {
-  font-size: 8px;
+  font-size: 11px;
   color: var(--muted);
   display: block;
   margin-top: 11px;
@@ -2383,7 +2383,7 @@ label.field {
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 8px;
+  font-size: 11px;
   color: var(--muted);
 }
 .meeting-app {
@@ -2437,7 +2437,7 @@ label.field {
   color: var(--muted);
 }
 .meeting-title > div {
-  font-size: 8px;
+  font-size: 11px;
   display: flex;
   gap: 7px;
   align-items: center;
@@ -2465,7 +2465,7 @@ label.field {
 .meeting-language {
   display: flex;
   gap: 6px;
-  font-size: 8px;
+  font-size: 11px;
   color: var(--muted);
   align-items: center;
   white-space: nowrap;
@@ -2481,7 +2481,7 @@ label.field {
   border: 1px solid var(--call-divider);
   border-radius: 6px;
   color: var(--call-muted);
-  font-size: 9px;
+  font-size: 11px;
   background: var(--call-surface);
   padding: 8px 11px;
   white-space: nowrap;
@@ -2518,11 +2518,11 @@ label.field {
   display: flex;
   align-items: center;
   gap: 7px;
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
 }
 .meeting-stage-heading > .badge {
-  font-size: 7px;
+  font-size: 11px;
   background: var(--call-surface);
   color: var(--muted);
   border: 1px solid var(--call-divider);
@@ -2549,13 +2549,13 @@ label.field {
   display: flex;
 }
 .meeting-demo-banner strong {
-  font-size: 9px;
+  font-size: 11px;
   display: block;
   font-weight: 500;
   color: #d1bc8f;
 }
 .meeting-demo-banner small {
-  font-size: 7px;
+  font-size: 11px;
   color: #9d967f;
   display: block;
   margin-top: 3px;
@@ -2566,7 +2566,7 @@ label.field {
   gap: 6px;
   align-items: center;
   color: #d4c399;
-  font-size: 8px;
+  font-size: 11px;
   border-radius: 5px;
   padding: 7px 8px;
   border: 1px solid #76613e70;
@@ -2629,7 +2629,7 @@ label.field {
   gap: 10px;
 }
 .participant-language {
-  font-size: 8px;
+  font-size: 11px;
   color: var(--call-muted);
   background: #24272e7a;
   border: 1px solid #24272e55;
@@ -2649,7 +2649,7 @@ label.field {
   background: #65563b50;
 }
 .participant-status {
-  font-size: 5px;
+  font-size: 11px;
   letter-spacing: 0.9px;
   color: var(--muted);
 }
@@ -2711,18 +2711,18 @@ label.field {
   gap: 10px;
 }
 .participant-card-bottom h3 {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   color: var(--call-muted);
   letter-spacing: 0;
 }
 .participant-card-bottom h3 > span {
-  font-size: 7px;
+  font-size: 11px;
   color: var(--muted);
   margin-left: 5px;
 }
 .participant-card-bottom p {
-  font-size: 6px;
+  font-size: 11px;
   color: var(--muted);
   margin-top: 4px;
 }
@@ -2795,7 +2795,7 @@ label.field {
   text-align: center;
 }
 .live-caption > span {
-  font-size: 6px;
+  font-size: 11px;
   letter-spacing: 1px;
   color: var(--muted);
 }
@@ -2806,7 +2806,7 @@ label.field {
   margin-top: 5px;
 }
 .caption-placeholder {
-  font-size: 8px;
+  font-size: 11px;
   color: var(--muted);
 }
 .meeting-stage-foot {
@@ -2816,7 +2816,7 @@ label.field {
   gap: 15px;
   padding: 12px 0 16px;
   color: var(--muted);
-  font-size: 7px;
+  font-size: 11px;
   margin-top: auto;
 }
 .meeting-stage-foot > span {
@@ -2861,7 +2861,7 @@ label.field {
   display: flex;
   justify-content: space-between;
   padding: 16px 19px 10px;
-  font-size: 7px;
+  font-size: 11px;
   color: var(--muted);
 }
 .transcript-panel-info > div {
@@ -2887,7 +2887,7 @@ label.field {
   flex: 1;
   border-radius: 5px;
   color: var(--muted);
-  font-size: 8px;
+  font-size: 11px;
   padding: 6px;
 }
 .segmented button.selected {
@@ -2932,7 +2932,7 @@ label.field {
   letter-spacing: -0.2px;
 }
 .transcript-empty p {
-  font-size: 9px;
+  font-size: 11px;
   line-height: 1.9;
   color: var(--muted);
   margin-top: 9px;
@@ -2944,7 +2944,7 @@ label.field {
   align-items: center;
   margin-top: 23px;
   color: var(--muted);
-  font-size: 7px;
+  font-size: 11px;
 }
 .transcript-turn {
   padding: 15px 0 13px;
@@ -2965,21 +2965,21 @@ label.field {
   border-width: 1px;
 }
 .transcript-turn-top strong {
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 550;
   color: var(--muted);
   display: block;
 }
 .transcript-turn-top small {
   display: block;
-  font-size: 6px;
+  font-size: 11px;
   color: var(--muted);
   margin-top: 1px;
 }
 .transcript-turn-top time {
   margin-left: auto;
   color: var(--muted);
-  font-size: 6px;
+  font-size: 11px;
 }
 .transcript-text {
   font-size: 12px;
@@ -2988,13 +2988,13 @@ label.field {
   color: var(--muted);
 }
 .transcript-text.pending-translation {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
   font-style: italic;
 }
 .transcript-original {
   margin-left: 34px;
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
 }
 .transcript-original > summary {
@@ -3002,7 +3002,7 @@ label.field {
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 7px;
+  font-size: 11px;
   list-style: none;
 }
 .transcript-original > p {
@@ -3017,7 +3017,7 @@ label.field {
   background: var(--canvas);
   border-radius: 4px;
   padding: 4px 6px;
-  font-size: 6px;
+  font-size: 11px;
   color: var(--muted);
   margin: 10px 0 0 34px;
 }
@@ -3042,7 +3042,7 @@ label.field {
   background: var(--canvas);
 }
 .text-composer > label {
-  font-size: 7px;
+  font-size: 11px;
   color: var(--muted);
   display: block;
   margin-bottom: 7px;
@@ -3061,12 +3061,12 @@ label.field {
   background: transparent;
   min-height: 29px;
   padding: 5px;
-  font-size: 8px;
+  font-size: 11px;
   color: var(--muted);
 }
 .text-composer input::placeholder {
   color: var(--muted);
-  font-size: 7px;
+  font-size: 11px;
 }
 .composer-send {
   height: 27px;
@@ -3079,7 +3079,7 @@ label.field {
   flex-shrink: 0;
 }
 .text-composer small {
-  font-size: 6px;
+  font-size: 11px;
   color: var(--muted);
   display: block;
   line-height: 1.7;
@@ -3103,7 +3103,7 @@ label.field {
 }
 .meeting-room-code {
   font-family: Consolas, monospace;
-  font-size: 8px;
+  font-size: 11px;
   color: var(--muted);
 }
 .toolbar-info {
@@ -3142,7 +3142,7 @@ label.field {
   color: var(--call-muted);
 }
 .meeting-tool > span {
-  font-size: 6px;
+  font-size: 11px;
 }
 .meeting-tool.tool-active {
   color: var(--call-muted);
@@ -3173,7 +3173,7 @@ label.field {
   margin-left: 8px;
 }
 .leave-button > span {
-  font-size: 9px;
+  font-size: 11px;
 }
 .meeting-toolbar-right {
   gap: 6px;
@@ -3207,22 +3207,22 @@ label.field {
   margin-top: 0;
 }
 .side-panel-content .field > span {
-  font-size: 9px;
+  font-size: 11px;
   color: var(--accent-hover);
 }
 .side-panel-content select,
 .side-panel-content input {
-  font-size: 10px;
+  font-size: 11px;
   min-height: 39px;
   color: var(--accent-hover);
   border-color: var(--border);
 }
 .side-panel-content .source-note {
-  font-size: 8px;
+  font-size: 11px;
   color: var(--muted);
 }
 .side-panel-content .button {
-  font-size: 9px;
+  font-size: 11px;
   min-height: 35px;
 }
 .side-panel-content .divider {
@@ -3232,13 +3232,13 @@ label.field {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
   margin-bottom: 16px;
   gap: 8px;
 }
 .people-count .badge {
-  font-size: 6px;
+  font-size: 11px;
 }
 .people-row {
   display: flex;
@@ -3251,14 +3251,14 @@ label.field {
   flex: 1;
 }
 .people-row strong {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--accent-hover);
   display: block;
   font-weight: 550;
 }
 .people-row small {
   display: block;
-  font-size: 7px;
+  font-size: 11px;
   color: var(--muted);
   margin-top: 4px;
 }
@@ -3273,13 +3273,13 @@ label.field {
   margin: 15px 0;
 }
 .meeting-voice-select strong {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 550;
   display: block;
   color: var(--accent-hover);
 }
 .meeting-voice-select small {
-  font-size: 8px;
+  font-size: 11px;
   color: var(--muted);
   display: block;
   margin-top: 3px;
@@ -3289,7 +3289,7 @@ label.field {
   justify-content: space-between;
   align-items: center;
   gap: 15px;
-  font-size: 8px;
+  font-size: 11px;
   color: var(--muted);
   margin-top: 13px;
 }
@@ -3307,7 +3307,7 @@ label.field {
 }
 .room-howto {
   padding-left: 17px;
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
   line-height: 1.8;
   margin: 15px 0 24px;
@@ -3328,12 +3328,12 @@ label.field {
   color: var(--muted);
 }
 .waiting-note strong {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--call-muted);
   font-weight: 500;
 }
 .waiting-note p {
-  font-size: 8px;
+  font-size: 11px;
   color: var(--muted);
   margin-top: 3px;
 }
@@ -3341,7 +3341,7 @@ label.field {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 8px;
+  font-size: 11px;
   color: var(--call-muted);
   margin-left: auto;
   white-space: nowrap;
@@ -3356,7 +3356,7 @@ label.field {
   background: #45372e;
   border-radius: 7px;
   padding: 9px 12px;
-  font-size: 9px;
+  font-size: 11px;
   margin-bottom: 12px;
 }
 .meeting-error .icon-button {
@@ -3404,29 +3404,29 @@ label.field {
     font-size: 13px;
   }
   .participant-card-bottom p {
-    font-size: 8px;
+    font-size: 11px;
   }
   .participant-language {
-    font-size: 10px;
+    font-size: 11px;
   }
   .participant-status {
-    font-size: 7px;
+    font-size: 11px;
   }
   .meeting-demo-banner strong {
     font-size: 11px;
   }
   .meeting-demo-banner small {
-    font-size: 9px;
+    font-size: 11px;
   }
   .meeting-demo-banner > button {
-    font-size: 10px;
+    font-size: 11px;
     padding: 8px 11px;
   }
   .live-caption > p {
     font-size: 15px;
   }
   .live-caption > span {
-    font-size: 8px;
+    font-size: 11px;
   }
   .caption-space {
     min-height: 95px;
@@ -3438,10 +3438,10 @@ label.field {
     font-size: 11px;
   }
   .transcript-turn-top small {
-    font-size: 8px;
+    font-size: 11px;
   }
   .transcript-turn-top time {
-    font-size: 8px;
+    font-size: 11px;
   }
   .transcript-turn-top .avatar {
     height: 31px;
@@ -3452,7 +3452,7 @@ label.field {
     padding-top: 20px;
   }
   .confirm-turn {
-    font-size: 8px;
+    font-size: 11px;
     padding: 5px 7px;
   }
   .meeting-header {
@@ -3463,7 +3463,7 @@ label.field {
     font-size: 14px;
   }
   .meeting-title > div {
-    font-size: 10px;
+    font-size: 11px;
   }
   .meeting-language,
   .meeting-invite {
@@ -3477,28 +3477,28 @@ label.field {
     min-width: 57px;
   }
   .meeting-tool > span {
-    font-size: 8px;
+    font-size: 11px;
   }
   .meeting-room-code {
-    font-size: 10px;
+    font-size: 11px;
   }
   .transcript-panel-info {
-    font-size: 9px;
+    font-size: 11px;
   }
   .segmented button {
-    font-size: 10px;
+    font-size: 11px;
   }
   .text-composer > label {
-    font-size: 9px;
+    font-size: 11px;
   }
   .text-composer input {
-    font-size: 10px;
+    font-size: 11px;
   }
   .text-composer input::placeholder {
-    font-size: 9px;
+    font-size: 11px;
   }
   .text-composer small {
-    font-size: 8px;
+    font-size: 11px;
   }
   .transcript-empty h3 {
     font-size: 15px;
@@ -3507,13 +3507,13 @@ label.field {
     font-size: 11px;
   }
   .transcript-empty-note {
-    font-size: 9px;
+    font-size: 11px;
   }
   .meeting-stage-heading > div {
     font-size: 11px;
   }
   .meeting-stage-heading > .badge {
-    font-size: 9px;
+    font-size: 11px;
   }
   .meeting-panel-heading h2 {
     font-size: 17px;
@@ -3531,7 +3531,7 @@ label.field {
     display: none;
   }
   .preview-top .badge {
-    font-size: 6px;
+    font-size: 11px;
   }
   .voice-grid {
     gap: 20px;
@@ -3573,14 +3573,14 @@ label.field {
     padding: 10px 11px 13px;
   }
   .participant-card-bottom h3 {
-    font-size: 9px;
+    font-size: 11px;
   }
   .participant-status {
-    font-size: 4px;
+    font-size: 11px;
     letter-spacing: 0.4px;
   }
   .participant-language {
-    font-size: 6px;
+    font-size: 11px;
     padding: 3px 5px;
   }
   .participant-card {
@@ -3599,20 +3599,20 @@ label.field {
     gap: 10px;
   }
   .meeting-demo-banner small {
-    font-size: 6px;
+    font-size: 11px;
   }
   .meeting-demo-banner strong {
-    font-size: 8px;
+    font-size: 11px;
   }
   .meeting-demo-banner > button {
-    font-size: 7px;
+    font-size: 11px;
     padding: 6px;
   }
   .meeting-stage-heading > div {
-    font-size: 8px;
+    font-size: 11px;
   }
   .meeting-stage-heading > .badge {
-    font-size: 6px;
+    font-size: 11px;
   }
   .meeting-toolbar {
     padding: 0 19px;
@@ -3632,7 +3632,7 @@ label.field {
     gap: 3px;
   }
   .meeting-room-code {
-    font-size: 7px;
+    font-size: 11px;
   }
   .leave-button {
     padding: 0 10px;
@@ -3677,7 +3677,7 @@ label.field {
     font-size: 23px;
   }
   .voice-quote p {
-    font-size: 10px;
+    font-size: 11px;
   }
   .voice-guide .panel {
     padding: 20px;
@@ -3687,13 +3687,13 @@ label.field {
     margin-top: 17px;
   }
   .voice-guide-step p {
-    font-size: 9px;
+    font-size: 11px;
   }
   .voice-guide-step strong {
-    font-size: 10px;
+    font-size: 11px;
   }
   .voice-policy p {
-    font-size: 9px;
+    font-size: 11px;
   }
   .meeting-side-panel {
     position: absolute;
@@ -3735,10 +3735,10 @@ label.field {
     gap: 7px;
   }
   .meeting-room-code {
-    font-size: 6px;
+    font-size: 11px;
   }
   .meeting-tool > span {
-    font-size: 5px;
+    font-size: 11px;
   }
   .meeting-toolbar-left {
     gap: 4px;
@@ -3747,22 +3747,22 @@ label.field {
     max-height: calc(100dvh - 300px);
   }
   .meeting-demo-banner strong {
-    font-size: 10px;
+    font-size: 11px;
   }
   .meeting-demo-banner small {
-    font-size: 8px;
+    font-size: 11px;
   }
   .meeting-demo-banner > button {
-    font-size: 9px;
+    font-size: 11px;
   }
   .participant-card-top {
     padding: 14px 15px 0;
   }
   .participant-status {
-    font-size: 6px;
+    font-size: 11px;
   }
   .participant-language {
-    font-size: 8px;
+    font-size: 11px;
   }
   .participant-card-bottom {
     padding: 13px 15px 15px;
@@ -3771,7 +3771,7 @@ label.field {
     font-size: 11px;
   }
   .participant-card-bottom p {
-    font-size: 8px;
+    font-size: 11px;
   }
   .participant-portrait .avatar {
     width: 78px;
@@ -3785,7 +3785,7 @@ label.field {
     min-height: 90px;
   }
   .meeting-stage-foot {
-    font-size: 8px;
+    font-size: 11px;
   }
   .meeting-logo .brand-wordmark {
     font-size: 20px;
@@ -3795,7 +3795,7 @@ label.field {
     height: 28px;
   }
   .meeting-stage-heading > div {
-    font-size: 9px;
+    font-size: 11px;
   }
 }
 @media (max-width: 650px) {
@@ -3816,13 +3816,13 @@ label.field {
     font-size: 17px;
   }
   .prejoin-form .badge {
-    font-size: 8px;
+    font-size: 11px;
   }
   .prejoin-device {
-    font-size: 8px;
+    font-size: 11px;
   }
   .prejoin-language-note {
-    font-size: 9px;
+    font-size: 11px;
   }
   .voice-guide {
     grid-template-columns: 1fr;
@@ -3853,7 +3853,7 @@ label.field {
     margin-top: 22px;
   }
   .voice-assurance {
-    font-size: 7px;
+    font-size: 11px;
     gap: 5px;
   }
   .voice-assurance > svg:nth-of-type(2) {
@@ -3866,13 +3866,13 @@ label.field {
     padding: 27px 12px 22px;
   }
   .recording-station > p {
-    font-size: 9px;
+    font-size: 11px;
   }
   .recording-station > .text-link {
-    font-size: 8px;
+    font-size: 11px;
   }
   .voice-enrollment .check-line {
-    font-size: 10px;
+    font-size: 11px;
   }
   .recording-station .button {
     font-size: 11px;
@@ -3881,7 +3881,7 @@ label.field {
     gap: 12px;
   }
   .history-details > span {
-    font-size: 8px;
+    font-size: 11px;
   }
   .history-card h3 {
     font-size: 15px;
@@ -3890,7 +3890,7 @@ label.field {
     font-size: 11px;
   }
   .history-card .badge {
-    font-size: 8px;
+    font-size: 11px;
   }
   .recap-turn {
     gap: 10px;
@@ -3899,17 +3899,17 @@ label.field {
     font-size: 12px;
   }
   .recap-turn details {
-    font-size: 10px;
+    font-size: 11px;
   }
   .turn-meta {
-    font-size: 10px;
+    font-size: 11px;
     gap: 7px;
   }
   .turn-meta > span {
-    font-size: 8px;
+    font-size: 11px;
   }
   .turn-confirmation {
-    font-size: 8px;
+    font-size: 11px;
   }
   .recap-turn > .avatar {
     height: 27px;
@@ -3934,12 +3934,12 @@ label.field {
     padding-left: 0;
   }
   .meeting-title h1 {
-    font-size: 10px;
+    font-size: 11px;
     max-width: 210px;
     line-height: 1.4;
   }
   .meeting-title > div {
-    font-size: 7px;
+    font-size: 11px;
     gap: 5px;
     margin-top: 1px;
   }
@@ -3951,7 +3951,7 @@ label.field {
   }
   .meeting-invite {
     padding: 7px;
-    font-size: 8px;
+    font-size: 11px;
     border-radius: 6px;
   }
   .meeting-invite > span {
@@ -3965,11 +3965,11 @@ label.field {
     margin-bottom: 14px;
   }
   .meeting-stage-heading > div {
-    font-size: 7px;
+    font-size: 11px;
     gap: 5px;
   }
   .meeting-stage-heading > .badge {
-    font-size: 6px;
+    font-size: 11px;
     padding: 4px 5px;
   }
   .meeting-stage-heading svg {
@@ -3984,14 +3984,14 @@ label.field {
     gap: 8px;
   }
   .meeting-demo-banner small {
-    font-size: 6px;
+    font-size: 11px;
     max-width: 190px;
   }
   .meeting-demo-banner strong {
-    font-size: 8px;
+    font-size: 11px;
   }
   .meeting-demo-banner > button {
-    font-size: 7px;
+    font-size: 11px;
     gap: 4px;
     padding: 6px 5px;
   }
@@ -4021,11 +4021,11 @@ label.field {
     padding: 10px 10px 0;
   }
   .participant-language {
-    font-size: 6px;
+    font-size: 11px;
     padding: 2px 5px;
   }
   .participant-status {
-    font-size: 4px;
+    font-size: 11px;
     letter-spacing: 0.3px;
     max-width: 70px;
     text-align: right;
@@ -4046,14 +4046,14 @@ label.field {
     padding: 8px 10px 11px;
   }
   .participant-card-bottom h3 {
-    font-size: 8px;
+    font-size: 11px;
   }
   .participant-card-bottom h3 > span {
-    font-size: 6px;
+    font-size: 11px;
     margin-left: 3px;
   }
   .participant-card-bottom p {
-    font-size: 5px;
+    font-size: 11px;
     margin-top: 3px;
   }
   .card-mic {
@@ -4085,10 +4085,10 @@ label.field {
     line-height: 1.8;
   }
   .live-caption > span {
-    font-size: 6px;
+    font-size: 11px;
   }
   .meeting-stage-foot {
-    font-size: 5.5px;
+    font-size: 11px;
     padding: 9px 0 13px;
     gap: 6px;
   }
@@ -4124,7 +4124,7 @@ label.field {
     height: 17px;
   }
   .meeting-tool > span {
-    font-size: 5px;
+    font-size: 11px;
   }
   .toolbar-divider {
     margin: 0 1px;
@@ -4164,11 +4164,11 @@ label.field {
     font-size: 15px;
   }
   .transcript-panel-info {
-    font-size: 8px;
+    font-size: 11px;
     padding: 16px 18px 11px;
   }
   .segmented button {
-    font-size: 9px;
+    font-size: 11px;
     padding: 7px;
   }
   .transcript-feed {
@@ -4176,13 +4176,13 @@ label.field {
     padding-right: 18px;
   }
   .transcript-turn-top strong {
-    font-size: 10px;
+    font-size: 11px;
   }
   .transcript-turn-top small {
-    font-size: 7px;
+    font-size: 11px;
   }
   .transcript-turn-top time {
-    font-size: 7px;
+    font-size: 11px;
   }
   .transcript-text {
     font-size: 13px;
@@ -4190,29 +4190,29 @@ label.field {
     line-height: 1.9;
   }
   .transcript-original > summary {
-    font-size: 8px;
+    font-size: 11px;
   }
   .transcript-original > p {
     font-size: 11px;
   }
   .confirm-turn {
-    font-size: 7px;
+    font-size: 11px;
     padding: 5px 7px;
   }
   .text-composer {
     padding: 14px 18px;
   }
   .text-composer > label {
-    font-size: 8px;
+    font-size: 11px;
   }
   .text-composer input {
-    font-size: 10px;
+    font-size: 11px;
   }
   .text-composer input::placeholder {
-    font-size: 8px;
+    font-size: 11px;
   }
   .text-composer small {
-    font-size: 7px;
+    font-size: 11px;
   }
   .transcript-empty h3 {
     font-size: 14px;
@@ -4221,7 +4221,7 @@ label.field {
     font-size: 11px;
   }
   .transcript-empty-note {
-    font-size: 8px;
+    font-size: 11px;
   }
   .waiting-note {
     padding: 13px;
@@ -4232,13 +4232,13 @@ label.field {
     width: 15px;
   }
   .waiting-note strong {
-    font-size: 9px;
+    font-size: 11px;
   }
   .waiting-note p {
-    font-size: 7px;
+    font-size: 11px;
   }
   .waiting-note > button {
-    font-size: 8px;
+    font-size: 11px;
     margin-left: 26px;
     margin-top: 4px;
   }
@@ -4253,34 +4253,34 @@ label.field {
     font-size: 12px;
   }
   .side-panel-content .source-note {
-    font-size: 9px;
+    font-size: 11px;
   }
   .side-panel-content .button {
-    font-size: 10px;
+    font-size: 11px;
   }
   .people-row strong {
     font-size: 11px;
   }
   .people-row small {
-    font-size: 8px;
+    font-size: 11px;
   }
   .people-count {
-    font-size: 10px;
+    font-size: 11px;
   }
   .meeting-voice-select strong {
     font-size: 11px;
   }
   .meeting-voice-select small {
-    font-size: 9px;
+    font-size: 11px;
   }
   .shortcut-row {
-    font-size: 10px;
+    font-size: 11px;
   }
   .room-howto {
     font-size: 11px;
   }
   .meeting-error {
-    font-size: 8px;
+    font-size: 11px;
     line-height: 1.7;
   }
   .meeting-app > .modal {
@@ -4299,7 +4299,7 @@ label.field {
     font-size: 11px;
   }
   .meeting-app .modal .source-note {
-    font-size: 8px;
+    font-size: 11px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -4314,23 +4314,23 @@ label.field {
 /* Touch layouts preserve readable type and comfortable hit areas. */
 @media (max-width: 650px) {
   .eyebrow {
-    font-size: 10px;
+    font-size: 11px;
   }
   .breadcrumb {
     font-size: 11px;
   }
   .topbar-right > .badge {
-    font-size: 10px;
+    font-size: 11px;
   }
   .home-heading .eyebrow {
-    font-size: 10px;
+    font-size: 11px;
   }
   .home-heading p,
   .hero-copy p {
     font-size: 13px;
   }
   .hero-copy > .badge {
-    font-size: 10px;
+    font-size: 11px;
   }
   .hero-copy .button,
   .button,
@@ -4383,7 +4383,7 @@ label.field {
     font-size: 11px;
   }
   .app-footer > span:last-child {
-    font-size: 10px;
+    font-size: 11px;
   }
   .page-heading p,
   .panel-intro,
@@ -4426,13 +4426,13 @@ label.field {
     font-size: 11px;
   }
   .provider-row .badge {
-    font-size: 10px;
+    font-size: 11px;
   }
   .notice {
     font-size: 12px !important;
   }
   .preview-top .badge {
-    font-size: 9px;
+    font-size: 11px;
   }
   .preview-name {
     font-size: 14px;
@@ -4450,7 +4450,7 @@ label.field {
     min-height: 360px;
   }
   .prejoin-form .badge {
-    font-size: 10px;
+    font-size: 11px;
   }
   .prejoin-language-note {
     font-size: 12px;
@@ -4478,7 +4478,7 @@ label.field {
     font-size: 12px;
   }
   .voice-assurance {
-    font-size: 10px;
+    font-size: 11px;
     flex-wrap: wrap;
   }
   .recording-station > p,
@@ -4505,7 +4505,7 @@ label.field {
     font-size: 11px;
   }
   .history-card .badge {
-    font-size: 10px;
+    font-size: 11px;
   }
   .history-card p {
     font-size: 12px;
@@ -4547,7 +4547,7 @@ label.field {
     max-width: 235px;
   }
   .meeting-title > div {
-    font-size: 10px;
+    font-size: 11px;
   }
   .meeting-invite {
     width: 44px;
@@ -4562,7 +4562,7 @@ label.field {
     line-height: 1.6;
   }
   .meeting-stage-heading > .badge {
-    font-size: 10px;
+    font-size: 11px;
   }
   .meeting-stage-heading > .badge svg {
     display: none;
@@ -4647,13 +4647,13 @@ label.field {
     font-size: 13px;
   }
   .live-caption > span {
-    font-size: 10px;
+    font-size: 11px;
   }
   .caption-placeholder {
     font-size: 11px;
   }
   .meeting-stage-foot {
-    font-size: 10px;
+    font-size: 11px;
     flex-wrap: wrap;
     gap: 10px;
   }
@@ -4699,7 +4699,7 @@ label.field {
     bottom: 76px;
   }
   .transcript-panel-info {
-    font-size: 10px;
+    font-size: 11px;
   }
   .segmented button {
     font-size: 12px;
@@ -4710,7 +4710,7 @@ label.field {
   }
   .transcript-turn-top small,
   .transcript-turn-top time {
-    font-size: 10px;
+    font-size: 11px;
   }
   .transcript-text {
     font-size: 14px;
@@ -4742,7 +4742,7 @@ label.field {
     height: 40px;
   }
   .text-composer small {
-    font-size: 10px;
+    font-size: 11px;
   }
   .transcript-empty p {
     font-size: 12px;
@@ -4770,7 +4770,7 @@ label.field {
     flex-wrap: wrap;
   }
   .people-count .badge {
-    font-size: 10px;
+    font-size: 11px;
   }
   .meeting-voice-select strong {
     font-size: 12px;

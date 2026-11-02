@@ -516,7 +516,7 @@ export function Usage() {
       </section>
 
       <ErrorNotice message={usage.error} />
-      {!!exhausted.length && (
+      {!!exhausted.length && report.mode === 'live' && (
         <div className="notice error" role="status">
           Daily cap reached: {exhausted.map((item) => item.label).join(', ')}. New work using these
           resources is blocked; ongoing completed work is not refunded.

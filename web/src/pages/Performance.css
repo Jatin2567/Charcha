@@ -52,7 +52,7 @@
   font-size: 12px;
 }
 .performance-page .badge {
-  font-size: 10px;
+  font-size: 11px;
   white-space: nowrap;
 }
 .performance-scope {
@@ -95,16 +95,25 @@
   margin-top: 7px;
 }
 .performance-boundary {
-  display: flex;
-  gap: 11px;
-  align-items: flex-start;
   color: var(--muted);
   font-size: 12px;
   line-height: 1.85;
 }
-.performance-boundary > svg {
+.performance-boundary > summary {
+  display: inline-flex;
+  gap: 9px;
+  align-items: center;
+  cursor: pointer;
+  list-style: none;
+}
+.performance-boundary > summary::-webkit-details-marker { display: none; }
+.performance-boundary > summary::after { content: '+'; font-weight: 600; }
+.performance-boundary[open] > summary::after { content: '−'; }
+.performance-boundary > summary svg {
   color: var(--muted);
-  margin-top: 3px;
+}
+.performance-boundary > p {
+  margin: 6px 0 0 25px;
 }
 .performance-boundary strong {
   color: var(--muted);
@@ -196,7 +205,7 @@
   color: var(--muted);
 }
 .performance-stats small {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
 }
 .performance-stats article:first-child small {
@@ -234,7 +243,7 @@
 }
 .performance-transport-stats small {
   display: block;
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.8;
   color: var(--muted);
   margin-top: 4px;
@@ -278,7 +287,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
 }
 .performance-chart-bars {
@@ -313,14 +322,14 @@
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
   margin-top: 9px;
 }
 .performance-chart-note {
   padding-top: 13px;
   border-top: 1px solid var(--surface-soft);
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.8;
   color: var(--muted);
 }
@@ -356,7 +365,7 @@
   border-radius: 4px;
 }
 .performance-stages small {
-  font-size: 10px;
+  font-size: 11px;
   display: block;
   color: var(--muted);
   margin-top: 6px;
@@ -364,7 +373,7 @@
 }
 .performance-small {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 11px;
 }
 .performance-table-wrap {
   overflow-x: auto;
@@ -386,7 +395,7 @@
 .performance-page thead {
   background: var(--canvas);
   color: var(--muted);
-  font-size: 10px;
+  font-size: 11px;
 }
 .performance-page th,
 .performance-page td {
@@ -414,7 +423,7 @@
   display: flex;
   align-items: flex-start;
   gap: 7px;
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.8;
   color: var(--muted);
   margin-top: 18px;
@@ -424,7 +433,7 @@
 }
 .performance-sample-id {
   display: block;
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
   font-weight: 400;
   margin-top: 2px;
@@ -531,7 +540,7 @@
 }
 .performance-requirements code {
   display: inline-block;
-  font-size: 10px;
+  font-size: 11px;
   background: var(--surface-soft);
   border-radius: 4px;
   padding: 3px 5px;
@@ -721,7 +730,7 @@
     min-height: 44px;
   }
   .performance-page .badge {
-    font-size: 10px;
+    font-size: 11px;
   }
   .performance-page .panel {
     padding: 21px 17px;

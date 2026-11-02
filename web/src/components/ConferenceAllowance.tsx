@@ -1,5 +1,5 @@
 import type { ConferenceReadiness } from '../services/conferenceReadiness';
-import { timeLeft } from '../services/conferencePresentation';
+import { approvalLabel, timeLeft } from '../services/conferencePresentation';
 
 const units = [
   ['stt_seconds', 'Recognition audio', 'seconds'],
@@ -61,8 +61,8 @@ export function ConferenceAllowance({
       {report.provider_flow.required ? (
         <>
           <p>
-            <strong>Approval: {report.provider_flow.status.replaceAll('_', ' ')}</strong>
-            {report.provider_flow.expires_at ? ` · ${timeLeft(seconds)}` : ''}
+            <strong>Approval: {approvalLabel(report.provider_flow.status, seconds)}</strong>
+            {report.provider_flow.expires_at && seconds !== 0 ? ` · ${timeLeft(seconds)}` : ''}
           </p>
           <dl className="conference-setup-grid">
             {units.map(([key, label, unit]) => (

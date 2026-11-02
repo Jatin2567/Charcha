@@ -9,7 +9,7 @@ import {
 } from './conferenceReadiness';
 import { ConferenceStatus } from '../components/ConferenceStatus';
 import type { Membership } from '../types/domain';
-import { approvalSeconds, conferenceTitle, timeLeft } from './conferencePresentation';
+import { approvalLabel, approvalSeconds, conferenceTitle, timeLeft } from './conferencePresentation';
 import { ConferenceAllowance } from '../components/ConferenceAllowance';
 
 const membership = {
@@ -158,6 +158,9 @@ describe('authenticated read-only conference readiness', () => {
     expect(conferenceTitle(report, true, false, true, 0)).toContain('has expired');
     expect(approvalSeconds({ ...report, generated_at: undefined })).toBeNull();
     expect(timeLeft(null)).toContain('unavailable');
+    expect(approvalLabel('approved', 0)).toBe('expired');
+    expect(approvalLabel('approved', 30)).toBe('approved');
+    expect(approvalLabel('not_required', null)).toBe('not required');
   });
   it('shows unknown vs zero units without asserting model access or granting a flow', () => {
     const report = conferenceReadiness(fixture(), 'room-1')!;
