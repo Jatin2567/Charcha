@@ -79,9 +79,11 @@ export function ParticipantCard({
               : speaking
                 ? signal
                 : self
-                  ? 'Your microphone'
+                  ? stage === 'finishing'
+                    ? 'Finishing your last sentence…'
+                    : 'Your microphone'
                   : stage && stage !== 'idle'
-                    ? stage
+                    ? stageLabel(stage)
                     : 'Connected participant'}
           </p>
         </div>
@@ -112,4 +114,16 @@ export function ParticipantCard({
       </div>
     </article>
   );
+}
+
+const STAGE_LABELS: Record<string, string> = {
+  listening: 'Listening',
+  transcribing: 'Transcribing',
+  translating: 'Translating',
+  speaking: 'Speaking translation',
+  finishing: 'Finishing last sentence',
+  error: 'Needs attention',
+};
+export function stageLabel(stage: string) {
+  return STAGE_LABELS[stage] ?? stage;
 }

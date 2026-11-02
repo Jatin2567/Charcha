@@ -330,6 +330,7 @@ class RoomTransport:
                         # last phrase, then close. Unmuting resumes normally.
                         draining = True
                         drain_heard.clear()
+                        self.state.broadcast("pipeline.status", {"speaker_id": speaker_id, "stage": "finishing"})
                         started = time.monotonic()
                         min_wait = min(grace, 0.9)  # > provider min-silence (600 ms)
                         sent = 0
@@ -367,6 +368,7 @@ class RoomTransport:
                         # Mute, membership expiry or the last listener leaving closes
                         # even a completely idle provider socket within 250 ms.
                         retry = 0
+                        self.state.broadcast("pipeline.status", {"speaker_id": speaker_id, "stage": "idle"})
                         continue
                     consuming.result()
                     if time.monotonic() - opened_at >= self.store.settings.stt_healthy_seconds:

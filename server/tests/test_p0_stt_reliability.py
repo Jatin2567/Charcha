@@ -40,7 +40,7 @@ async def test_mute_grace_feeds_silence_and_delivers_last_phrase(monkeypatch):
                 self.closed += 1
 
     speech = Speech()
-    _, state, speaker, _, _, transport = transport_fixture(monkeypatch, speech, stt_mute_grace_seconds=2.5)
+    _, state, speaker, _, consumer, transport = transport_fixture(monkeypatch, speech, stt_mute_grace_seconds=2.5)
     transport.pipeline = Pipeline()
     speaker.muted = False
     task = asyncio.create_task(transport._read_audio(object(), speaker.id))
@@ -52,6 +52,11 @@ async def test_mute_grace_feeds_silence_and_delivers_last_phrase(monkeypatch):
         await until(lambda: speech.closed == 1, 3)  # Ends early after the final.
         await asyncio.sleep(0.4)
         assert speech.opened == 1
+        events = []
+        while not consumer.queue.empty():
+            events.append(str(consumer.queue.get_nowait()))
+        stages = [e for e in events if "pipeline.status" in e]
+        assert any("finishing" in e for e in stages) and "idle" in stages[-1]
     finally:
         task.cancel()
         await asyncio.gather(task, return_exceptions=True)
