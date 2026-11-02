@@ -189,7 +189,7 @@ label.field {
   gap: 13px;
   border-radius: 7px;
   color: var(--muted);
-  transition: 0.15s;
+  transition: color 0.1s, background-color 0.1s, border-color 0.1s, box-shadow 0.1s;
 }
 .nav-item svg {
   stroke-width: 1.6;
@@ -470,7 +470,7 @@ label.field {
   border-radius: 7px;
   font-size: 11px;
   font-weight: 550;
-  transition: 0.18s;
+  transition: color 0.1s, background-color 0.1s, border-color 0.1s, box-shadow 0.1s;
   border: 1px solid transparent;
   white-space: nowrap;
 }
@@ -1168,7 +1168,7 @@ label.field {
   height: 14px;
   background: #fff;
   border-radius: 50%;
-  transition: 0.2s;
+  transition: transform 0.15s;
 }
 .toggle-row input:checked + .toggle-track {
   background: var(--accent);
@@ -1654,7 +1654,7 @@ label.field {
   .sidebar {
     transform: translateX(-100%);
     width: 225px;
-    transition: 0.2s;
+    transition: transform 0.18s, box-shadow 0.18s;
     box-shadow: 0 0 0 100vmax #24272e00;
   }
   .sidebar.sidebar-open {
@@ -3135,7 +3135,7 @@ label.field {
   color: var(--muted);
   border-radius: 7px;
   padding: 6px 8px;
-  transition: 0.15s;
+  transition: color 0.1s, background-color 0.1s, border-color 0.1s, box-shadow 0.1s;
 }
 .meeting-tool:hover {
   background: var(--call-surface);
@@ -4877,4 +4877,19 @@ label.field {
   .meeting-toolbar-center .meeting-tool:nth-of-type(2) {
     display: flex;
   }
+}
+/* Responsiveness: no double-tap zoom wait on taps, and no paint work for
+   off-screen route content. Visual appearance is unchanged. */
+a,
+button,
+label,
+select,
+summary,
+[role='button'],
+input[type='checkbox'],
+input[type='radio'] {
+  touch-action: manipulation;
+}
+.route-fallback {
+  min-height: 40vh;
 }

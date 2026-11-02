@@ -60,6 +60,28 @@ import { openPerformancePage } from '../services/transportMetrics';
 import type { Language, Membership, Recap, Turn } from '../types/domain';
 import { LANGUAGES, languageName } from '../types/domain';
 type SidePanel = 'transcript' | 'participants' | 'settings' | 'info' | 'shield' | null;
+/**
+ * The call clock ticks every second in its own component, so the rest of the
+ * meeting page (participants, captions, screening) no longer re-renders on
+ * every tick. That keeps clicks and keyboard input responsive during a call.
+ */
+function ElapsedClock() {
+  const [elapsed, setElapsed] = useState(0);
+  useEffect(() => {
+    const start = Date.now();
+    const timer = setInterval(() => setElapsed(Math.floor((Date.now() - start) / 1000)), 1000);
+    return () => clearInterval(timer);
+  }, []);
+  return (
+    <span>
+      {Math.floor(elapsed / 60)
+        .toString()
+        .padStart(2, '0')}
+      :{(elapsed % 60).toString().padStart(2, '0')}
+    </span>
+  );
+}
+
 export function Meeting() {
   const { code } = useParams();
   const { membership } = useApp();
@@ -100,7 +122,6 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [leaving, setLeaving] = useState(false);
-  const [elapsed, setElapsed] = useState(0);
   const [copied, setCopied] = useState(false);
   const [changingLanguage, setChangingLanguage] = useState(false);
   const isDemo = m.room.mode === 'demo';
@@ -113,11 +134,6 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
   const language = m.participant.language;
   const invitation = `${window.location.origin}${window.location.pathname}#/join/${room.code}`;
   const inviteScope = invitationScope(invitation);
-  useEffect(() => {
-    const start = Date.now();
-    const timer = setInterval(() => setElapsed(Math.floor((Date.now() - start) / 1000)), 1000);
-    return () => clearInterval(timer);
-  }, []);
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement;
@@ -344,12 +360,7 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
               </button>
             )}
             <span className="meeting-header-divider">·</span>
-            <span>
-              {Math.floor(elapsed / 60)
-                .toString()
-                .padStart(2, '0')}
-              :{(elapsed % 60).toString().padStart(2, '0')}
-            </span>
+            <ElapsedClock />
           </div>
         </div>
         <div className="meeting-header-actions">

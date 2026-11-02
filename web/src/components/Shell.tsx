@@ -18,7 +18,8 @@ import {
 import { Logo, Avatar, Badge } from './ui';
 import { useApp } from '../state/AppContext';
 import { languageName } from '../types/domain';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
+import { RouteFallback } from './RouteFallback';
 export function Shell() {
   const { preferences, health, healthLoading } = useApp();
   const [menu, setMenu] = useState(false);
@@ -152,7 +153,9 @@ export function Shell() {
           </div>
         </header>
         <main className="main-content">
-          <Outlet />
+          <Suspense fallback={<RouteFallback />}>
+            <Outlet />
+          </Suspense>
         </main>
         <footer className="app-footer">
           <span>
