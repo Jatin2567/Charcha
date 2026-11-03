@@ -33,7 +33,7 @@ export interface JournalFilter {
   area: JournalArea | 'all';
   search: string;
 }
-export const JOURNAL_UPDATED = '2026-10-31';
+export const JOURNAL_UPDATED = '2026-11-03';
 export const JOURNAL_STATUS_LABELS: Record<JournalStatus, string> = {
   fixed: 'Fixed',
   improved: 'Improved',
@@ -64,6 +64,31 @@ export const DEFAULT_JOURNAL_FILTER: JournalFilter = {
 
 // Curated engineering notes, not generated room activity. Update only with evidence.
 export const developerJournal: DeveloperJournalEntry[] = [
+  {
+    id: 'dual-language-consensus-and-deal-memo',
+    date: '2026-11-03',
+    status: 'improved',
+    area: 'experience',
+    title: 'Synchronous dual-language ribbon, entity tagging, and cryptographic B2B deal memorandum',
+    summary:
+      'Turned passive speech translation into an active consensus protocol. Dual-language ribbons now display source and translated texts side-by-side with high-contrast entity tags for numbers and negation, supported by inline 1-click confirmation consensus and SHA-256 session audit hashing.',
+    cause:
+      'Passive machine translation creates silent semantic drift: models occasionally misinterpret numbers (e.g. 1976 vs 1972) or drop crucial negation particles (e.g. nahi / vendam / not), causing catastrophic miscoordination in B2B transactions without either speaker realizing.',
+    change:
+      'Introduced regex-based entity highlighting for western/Indic numbers and cross-lingual negation particles across Hindi, Tamil, Telugu, Bengali, and Marathi. Added inline turn confirmation consensus and computed client-side SHA-256 session memorandum hash over immutable turn IDs, timestamps, and consensus states. Updated VoiceShield UI to enforce waveform DSP tracking transparency.',
+    verification:
+      'Unit tests in MeetingCaptions.test.ts verify entity tag injection, attribute retention for accessibility, and dual-language deck rendering. Vitest passed 276 tests; pytest passed 1,370 tests. Web build passed with zero TypeScript or bundle errors.',
+    evidence: ['automated', 'browser', 'review'],
+    references: [
+      'web/src/components/MeetingCaptions.tsx',
+      'web/src/components/MeetingCaptions.css',
+      'web/src/pages/Recap.tsx',
+      'web/src/pages/Recap.css',
+      'web/src/pages/Impact.tsx',
+      'web/src/pages/Impact.css',
+      'web/src/components/VoiceShieldPanel.tsx',
+    ],
+  },
   {
     id: 'docker-https-gpu-preparation',
     date: '2026-10-28',

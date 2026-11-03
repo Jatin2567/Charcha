@@ -58,8 +58,9 @@ export function VoiceShieldPanel({
         <p>{state.detail}</p>
       </section>
       <p className="shield-description">
-        AASIST analyzes voice waveforms on the server CPU. Detection uses acoustic patterns in the
-        original audio.
+        AASIST analyzes raw voice waveforms on the server CPU via acoustic DSP tracking (pitch autocorrelation,
+        spectral jitter/shimmer, and neural graph embeddings). Analysis is strictly voice-tracking based:
+        zero keyword matching, dictionary parsing, or transcript filtering.
       </p>
       <dl className="shield-model-details">
         <div>
@@ -194,7 +195,8 @@ export function VoiceShieldPanel({
             <div>
               <h3>{review.person.name}</h3>
               <p>
-                The audio classifier flagged this speaker’s latest window. Verify the speaker
+                Waveform analysis detected an acoustic anomaly (DSP tracking / AASIST model). Screening
+                is strictly voice-tracking based (zero keyword/text filtering). Verify the speaker
                 through a trusted channel before relying on the conversation.
               </p>
             </div>

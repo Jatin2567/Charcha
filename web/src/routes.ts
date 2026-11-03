@@ -22,6 +22,7 @@ const loaders: Record<string, Loader> = {
   '/development': () => import('./pages/DeveloperJournal').then((m) => ({ default: m.DeveloperJournal })),
   '/deployment': () => import('./pages/Deployment').then((m) => ({ default: m.Deployment })),
   '/history': () => import('./pages/Recap').then((m) => ({ default: m.HistoryPage })),
+  '/impact': () => import('./pages/Impact').then((m) => ({ default: m.Impact })),
   '/recap': () => import('./pages/Recap').then((m) => ({ default: m.RecapPage })),
   '/room': () => import('./pages/Meeting').then((m) => ({ default: m.Meeting })),
 };

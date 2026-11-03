@@ -19,6 +19,7 @@ const P = {
   usage: pages['/usage'],
   development: pages['/development'],
   deployment: pages['/deployment'],
+  impact: pages['/impact'],
   history: pages['/history'],
   recap: pages['/recap'],
   room: pages['/room'],
@@ -41,6 +42,7 @@ createRoot(document.getElementById('root')!).render(
               <Route path="usage" element={<P.usage />} />
               <Route path="development" element={<P.development />} />
               <Route path="deployment" element={<P.deployment />} />
+              <Route path="impact" element={<P.impact />} />
               <Route path="history" element={<P.history />} />
               <Route path="recap/:id" element={<P.recap />} />
             </Route>

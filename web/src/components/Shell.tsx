@@ -14,6 +14,7 @@ import {
   Wrench,
   Server,
   ClipboardCheck,
+  FileCheck2,
 } from 'lucide-react';
 import { Logo, Avatar, Badge } from './ui';
 import { useApp } from '../state/AppContext';
@@ -34,6 +35,7 @@ export function Shell() {
         <nav aria-label="Main navigation">
           {[
             { to: '/', name: 'Overview', icon: LayoutDashboard },
+            { to: '/impact', name: 'Impact & evidence', icon: FileCheck2 },
             { to: '/voices', name: 'Voice studio', icon: AudioLines },
             { to: '/history', name: 'Conversations', icon: History },
             { to: '/performance', name: 'Performance', icon: Gauge },

@@ -195,7 +195,7 @@ def test_download_timeout_keeps_cache_uncommitted_and_uses_remaining_session(tmp
 
 @pytest.mark.parametrize("text", ["NVIDIA A100-SXM4-40GB, 40960, 580.95.05\n",
                                  "NVIDIA A100-SXM4-80GB, 81920, 570.95.05\n",
-                                 "NVIDIA H100, 81920, 580.95.05\n", "broken\n",
+                                 "NVIDIA V100, 32768, 580.95.05\n", "broken\n",
                                  "NVIDIA A100, 81920, 580.95.05\n" * 2])
 def test_unsuitable_gpu_or_driver_blocks_before_model_load(text):
     with pytest.raises(ValueError):

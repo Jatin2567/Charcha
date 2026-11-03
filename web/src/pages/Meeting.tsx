@@ -499,8 +499,21 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
           {shieldFlags.length > 0 && (
             <div className="shield-call-alert" role="status" aria-live="polite">
               <ShieldAlert size={20} />
-              <div><strong>Possible synthetic voice</strong><p>{shieldFlags.map(({ person }) => person.name).join(', ')} · Acoustic model flag. Review required.</p></div>
-              <button className="button secondary" onClick={() => setPanel('shield')}>View signals</button>
+              <div>
+                <strong>⚠️ VoiceShield Notice: Acoustic Anomaly Detected</strong>
+                <p>
+                  {shieldFlags
+                    .map(
+                      ({ person, sample }) =>
+                        `${person.name} (Risk Score: ${sample.score !== null ? sample.score.toFixed(2) : 'Acoustic Flag'})`,
+                    )
+                    .join(', ')}{' '}
+                  · Reviewing Voice Liveness (Waveform acoustic tracking · strictly zero keyword filtering)
+                </p>
+              </div>
+              <button className="button secondary" onClick={() => setPanel('shield')}>
+                View signals
+              </button>
             </div>
           )}
           <div className={`participant-grid grid-${Math.min(participants.length, 4)}`}>
@@ -917,6 +930,7 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
           large={app.preferences.largeCaptions}
           announce={panel !== 'transcript'}
           onResize={resizeCaptions}
+          onConfirm={confirm}
           emptyMessage={
             isDemo
               ? 'Start the example to see captions for each speaker.'

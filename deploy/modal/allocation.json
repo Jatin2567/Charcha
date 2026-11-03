@@ -1,6 +1,6 @@
 {
-  "gpu": ["A100-80GB", "H100"],
-  "region": ["ap", "us", "eu"],
+  "gpu": "A100-80GB",
+  "region": "ap",
   "cpu_cores": 4,
   "memory_gib": 64,
   "max_containers": 1

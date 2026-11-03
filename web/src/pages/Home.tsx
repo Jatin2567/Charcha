@@ -14,6 +14,7 @@ import {
   Sparkles,
   Check,
   Globe2,
+  FileCheck2,
 } from 'lucide-react';
 import { Avatar, Badge, ErrorNotice, Modal } from '../components/ui';
 import { ConversationIllustration } from '../components/ConversationIllustration';
@@ -143,7 +144,7 @@ export function Home() {
           </span>
           <span>
             <strong>Listen in your language</strong>
-            <small>10 language choices · live review pending</small>
+            <small>5 Indic languages (Hindi, Tamil, Bengali, Telugu, Marathi)</small>
           </span>
         </div>
         <div>
@@ -152,7 +153,7 @@ export function Home() {
           </span>
           <span>
             <strong>See and hear each other</strong>
-            <small>Camera and standard-voice interpretation</small>
+            <small>LiveKit WebRTC + streaming clause MT+TTS</small>
           </span>
         </div>
         <div>
@@ -161,7 +162,7 @@ export function Home() {
           </span>
           <span>
             <strong>Confirm what matters</strong>
-            <small>Names, numbers and key details</small>
+            <small>Dual captions, number/negation tagging, SHA-256 audit</small>
           </span>
         </div>
       </section>
@@ -277,6 +278,15 @@ export function Home() {
           <Link to="/settings" className="button secondary full">
             Check your setup
             <ArrowUpRight size={16} />
+          </Link>
+          <Link
+            to="/impact"
+            className="button text-link full"
+            style={{ marginTop: 8, justifyContent: 'center', fontSize: '12px' }}
+          >
+            <FileCheck2 size={14} />
+            Challenge Impact &amp; Evidence
+            <ArrowRight size={13} />
           </Link>
         </aside>
       </div>
