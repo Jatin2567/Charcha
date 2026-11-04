@@ -176,33 +176,33 @@ export function RecapPage() {
                 <div className="deal-memo-header">
                   <div className="deal-memo-title">
                     <FileCheck2 size={18} />
-                    <span>Deal & Coordination Memorandum</span>
+                    <span>Mutual Agreement &amp; Handover Memorandum</span>
                   </div>
                   <Badge tone={confirmationRate === 100 ? 'green' : confirmationRate > 0 ? 'orange' : 'neutral'}>
-                    {confirmationRate === 100 ? 'All turns confirmed' : `${confirmationRate}% confirmed`}
+                    {confirmationRate === 100 ? 'All commitments confirmed' : `${confirmationRate}% confirmed`}
                   </Badge>
                 </div>
                 <p className="deal-memo-desc">
-                  Verifiable handover record for inter-state logistics, enterprise procurement, and task delegations.
+                  Every price, quantity, and operational commitment confirmed together. Built for genuine mutual trust and zero miscommunication across India.
                 </p>
                 <div className="deal-memo-stats">
                   <div className="deal-memo-stat">
-                    <small>Total turns</small>
+                    <small>Shared statements</small>
                     <strong>{recap.turns.length}</strong>
                   </div>
                   <div className="deal-memo-stat highlight">
-                    <small>Confirmed turns</small>
+                    <small>Mutually confirmed</small>
                     <strong>{confirmedTurns.length} of {recap.turns.length}</strong>
                   </div>
                   <div className="deal-memo-stat">
-                    <small>Languages</small>
+                    <small>Languages spoken</small>
                     <strong>{[...new Set(participants.map((p) => languageName(p.language)))].join(', ') || 'None'}</strong>
                   </div>
                 </div>
                 {extractedNumbers.length > 0 && (
                   <div className="deal-memo-entities">
                     <div className="deal-memo-entities-head">
-                      <span>Parameters & Quantities Tracked</span>
+                      <span>Agreed Numbers, Prices &amp; Quantities</span>
                       <small>{extractedNumbers.length} values</small>
                     </div>
                     <div className="deal-memo-entity-pills">

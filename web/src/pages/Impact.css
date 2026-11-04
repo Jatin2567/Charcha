@@ -134,6 +134,48 @@
   font-weight: 700;
 }
 
+/* The Human Narrative Section */
+.human-narrative-card {
+  background: var(--surface, #ffffff);
+  border: 1px solid var(--border, #d6dbe4);
+  border-left: 5px solid #e11d48;
+  border-radius: 12px;
+  padding: 1.5rem 1.75rem;
+  margin: 1.25rem 0 2rem;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+.human-narrative-card > p {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink, #0f172a);
+  margin: 0 0 1.25rem;
+  font-weight: 500;
+}
+
+.human-narrative-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border, #e2e8f0);
+}
+
+.narrative-point strong {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--ink, #0f172a);
+  margin-bottom: 0.4rem;
+}
+
+.narrative-point p {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--muted, #475569);
+  margin: 0;
+}
+
 /* The Four Pillars Grid */
 .pillars-grid {
   display: grid;

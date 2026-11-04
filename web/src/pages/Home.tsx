@@ -143,8 +143,8 @@ export function Home() {
             <Languages size={21} />
           </span>
           <span>
-            <strong>Listen in your language</strong>
-            <small>5 Indic languages (Hindi, Tamil, Bengali, Telugu, Marathi)</small>
+            <strong>Speak in your mother tongue</strong>
+            <small>Hindi, Tamil, Bengali, Telugu &amp; Marathi — speak naturally</small>
           </span>
         </div>
         <div>
@@ -152,8 +152,8 @@ export function Home() {
             <AudioLines size={21} />
           </span>
           <span>
-            <strong>See and hear each other</strong>
-            <small>LiveKit WebRTC + streaming clause MT+TTS</small>
+            <strong>Natural speech understanding</strong>
+            <small>Real-time interpretation without awkward delay or hesitation</small>
           </span>
         </div>
         <div>
@@ -161,8 +161,8 @@ export function Home() {
             <ShieldCheck size={21} />
           </span>
           <span>
-            <strong>Confirm what matters</strong>
-            <small>Dual captions, number/negation tagging, SHA-256 audit</small>
+            <strong>Trust every agreed detail</strong>
+            <small>Dual captions highlight prices, dates &amp; commitments</small>
           </span>
         </div>
       </section>
@@ -285,7 +285,7 @@ export function Home() {
             style={{ marginTop: 8, justifyContent: 'center', fontSize: '12px' }}
           >
             <FileCheck2 size={14} />
-            Challenge Impact &amp; Evidence
+            Challenge Story, Evidence &amp; Impact
             <ArrowRight size={13} />
           </Link>
         </aside>

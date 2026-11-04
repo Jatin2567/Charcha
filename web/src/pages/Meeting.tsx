@@ -126,6 +126,7 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
   const [leaving, setLeaving] = useState(false);
   const [copied, setCopied] = useState(false);
   const [changingLanguage, setChangingLanguage] = useState(false);
+  const [auditoryVerificationId, setAuditoryVerificationId] = useState<string | null>(null);
   const isDemo = m.room.mode === 'demo';
   const isTransport = m.room.mode === 'transport';
   const room = state.room || m.room;
@@ -500,19 +501,56 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
             <div className="shield-call-alert" role="status" aria-live="polite">
               <ShieldAlert size={20} />
               <div>
-                <strong>⚠️ VoiceShield Notice: Acoustic Anomaly Detected</strong>
+                <strong>⚠️ Voice Check: Unfamiliar Acoustic Pattern Detected</strong>
                 <p>
                   {shieldFlags
                     .map(
                       ({ person, sample }) =>
-                        `${person.name} (Risk Score: ${sample.score !== null ? sample.score.toFixed(2) : 'Acoustic Flag'})`,
+                        `${person.name} (${sample.score !== null ? `Anomaly score: ${sample.score.toFixed(2)}` : 'Acoustic Flag'})`,
                     )
                     .join(', ')}{' '}
-                  · Reviewing Voice Liveness (Waveform acoustic tracking · strictly zero keyword filtering)
+                  · Waveform analysis flagged an unusual acoustic pattern. Listen directly to their raw voice to verify authentic breath and tone before confirming key details.
                 </p>
               </div>
-              <button className="button secondary" onClick={() => setPanel('shield')}>
-                View signals
+              <div className="shield-alert-actions">
+                <button
+                  type="button"
+                  className="button secondary"
+                  onClick={() =>
+                    setAuditoryVerificationId((prev) =>
+                      prev ? null : shieldFlags[0]?.person.id || 'all',
+                    )
+                  }
+                  title="Listen directly to the speaker's original untranslated audio"
+                >
+                  <Headphones size={15} />
+                  {auditoryVerificationId ? 'Return to translation' : 'Hear original voice'}
+                </button>
+                <button
+                  type="button"
+                  className="button secondary"
+                  onClick={() => setPanel('shield')}
+                >
+                  View signals
+                </button>
+              </div>
+            </div>
+          )}
+          {auditoryVerificationId && (
+            <div className="auditory-verification-banner" role="status">
+              <Headphones size={18} className="auditory-icon-pulsing" />
+              <div className="auditory-verification-text">
+                <strong>Auditory Liveness Check Active · Hearing Original Voice</strong>
+                <p>
+                  Translation has been paused so your own ears can check the speaker's natural tone, breath, and vocal inflection directly.
+                </p>
+              </div>
+              <button
+                type="button"
+                className="button secondary small"
+                onClick={() => setAuditoryVerificationId(null)}
+              >
+                Return to translation
               </button>
             </div>
           )}
@@ -532,6 +570,12 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
                 }
                 videoTrack={audio.videoTracks[p.id]}
                 screening={liveScreening.find(({ person }) => person.id === p.id)?.sample}
+                onToggleOriginalAudio={() =>
+                  setAuditoryVerificationId((prev) => (prev === p.id ? null : p.id))
+                }
+                isListeningOriginal={
+                  auditoryVerificationId === p.id || auditoryVerificationId === 'all'
+                }
               />
             ))}
           </div>

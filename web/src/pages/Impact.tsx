@@ -11,6 +11,8 @@ import {
   FileCheck2,
   Gauge,
   Sparkles,
+  Heart,
+  Headphones,
 } from 'lucide-react';
 import { Badge } from '../components/ui';
 import './Impact.css';
@@ -25,7 +27,7 @@ export function Impact() {
         </div>
         <h1>ARTHA-MESH</h1>
         <p className="impact-subtitle">
-          Sovereign real-time Indic voice conference gateway and verifiable coordination mesh. Powered natively by Gnani Prisma (STT), Evon v3.3 (streaming MT), and Timbre (chunked TTS) with LiveKit WebRTC and VoiceShield raw acoustic screening.
+          Bridging India&apos;s languages with empathy, verifiable precision, and sovereign security. Built to empower inter-state commerce, emergency coordination, and everyday conversations without losing the human voice.
         </p>
       </header>
 
@@ -55,8 +57,8 @@ export function Impact() {
             <span><strong>Dual Captions</strong> + Entity Tagging (1976, 200, नहीं/not)</span>
           </div>
           <div className="hud-tag">
-            <ShieldCheck size={15} />
-            <span><strong>VoiceShield</strong> AASIST Waveform Tracking (0 Keywords)</span>
+            <Headphones size={15} />
+            <span><strong>VoiceShield</strong> Waveform Tracking + Auditory Check</span>
           </div>
           <div className="hud-tag">
             <CheckCircle2 size={15} />
@@ -64,6 +66,39 @@ export function Impact() {
           </div>
         </div>
       </div>
+
+      {/* THE HUMAN PERSPECTIVE */}
+      <section className="impact-section" aria-labelledby="human-heading">
+        <h2 id="human-heading">
+          <Heart size={22} style={{ color: '#e11d48' }} />
+          The Human Reality: Language is Livelihood, Respect &amp; Mutual Trust
+        </h2>
+        <div className="human-narrative-card">
+          <p>
+            India is a subcontinent of 1.4 billion people and 22 official languages, where inter-state commerce, agricultural supply chains, emergency handovers, and personal conversations cross linguistic borders every single minute.
+          </p>
+          <div className="human-narrative-grid">
+            <div className="narrative-point">
+              <strong>The Dignity of Speaking Your Mother Tongue</strong>
+              <p>
+                When a Surat textile weaver speaks to a distributor in Madurai, forced English or broken phrases create hesitation and unequal ground. Speaking your native language is an act of dignity, confidence, and mutual respect.
+              </p>
+            </div>
+            <div className="narrative-point">
+              <strong>Why Precision Matters to Real Livelihoods</strong>
+              <p>
+                A dropped negation (translating <em>&ldquo;nahi bhejna&rdquo;</em> as <em>&ldquo;send&rdquo;</em>) or a misheard batch number (1976 vs 1972) isn&apos;t a minor benchmark glitch — it can cost a small business their working capital and ruin a multi-year supplier partnership.
+              </p>
+            </div>
+            <div className="narrative-point">
+              <strong>Protecting Families from Synthetic Impersonation</strong>
+              <p>
+                As generative deepfake scams exploit degraded cellular phone calls, fear prevents citizens from trusting voice calls. Artha-Mesh protects users with continuous waveform tracking and a 1-click <strong>Auditory Verification</strong> check — letting your own ears verify authentic human tone and breath.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* SECTION 1: THE FOUR PILLARS */}
       <section className="impact-section" aria-labelledby="pillars-heading">
@@ -112,9 +147,9 @@ export function Impact() {
           <div className="pillar-card">
             <div>
               <div className="pillar-num">Pillar 04</div>
-              <div className="pillar-title">VoiceShield Raw Acoustic Waveform Tracking</div>
+              <div className="pillar-title">VoiceShield: Waveform DSP Tracking + Auditory Human Check</div>
               <p className="pillar-desc">
-                100% waveform DSP tracking (autocorrelation pitch period, spectral jitter/shimmer proxies, and AASIST graph neural embeddings) running on local server CPU. Operates with zero keyword, text, or transcript filtering.
+                100% waveform DSP tracking (autocorrelation pitch period, spectral jitter/shimmer proxies, and AASIST graph neural embeddings) running on local server CPU with zero keyword filtering. When an anomaly is flagged, users can tap <code>[🎧 Hear Original Voice]</code> to verify authentic human breath, cadence, and inflection directly.
               </p>
             </div>
             <Badge tone="green">Delivered</Badge>

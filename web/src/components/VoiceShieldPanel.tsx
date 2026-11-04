@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Download, ShieldAlert, ShieldQuestion } from 'lucide-react';
+import { Download, ShieldAlert, ShieldQuestion, Headphones } from 'lucide-react';
 import { Badge, Modal, downloadJson } from './ui';
 import type { Participant } from '../types/domain';
 import type { RoomScreeningSample, RoomScreeningStatus } from '../services/localDiagnostics';
@@ -188,22 +188,33 @@ export function VoiceShieldPanel({
         <Modal title="Possible synthetic voice" onClose={() => setReviewId(null)}>
           <div className="shield-alert-label">
             <ShieldAlert size={16} />
-            Acoustic model flag · experimental
+            Acoustic pattern alert · human verification recommended
           </div>
           <div className="shield-alert-message">
             <ShieldAlert size={26} />
             <div>
               <h3>{review.person.name}</h3>
               <p>
-                Waveform analysis detected an acoustic anomaly (DSP tracking / AASIST model). Screening
-                is strictly voice-tracking based (zero keyword/text filtering). Verify the speaker
-                through a trusted channel before relying on the conversation.
+                Waveform analysis flagged an unusual acoustic anomaly (DSP tracking / AASIST model). Screening
+                is strictly voice-tracking based (zero keyword/text filtering). Verify with your own ears before
+                confirming sensitive agreements.
               </p>
             </div>
           </div>
+          <div className="shield-liveness-action-box">
+            <h4>
+              <Headphones size={15} />
+              Auditory Liveness Cross-Check
+            </h4>
+            <p>
+              Algorithms estimate probabilities, but your own ears recognize authentic human inflection. Listen
+              directly to {review.person.name}&apos;s raw untranslated voice stream to check their natural breath,
+              micro-inflections, and vocal presence.
+            </p>
+          </div>
           <p className="shield-alert-note">
-            Observed spoof score {screeningMetric(review.sample.score, '')}. This score is
-            uncalibrated and false alarms are possible.
+            Observed spoof score {screeningMetric(review.sample.score, '')}. This score reflects raw acoustic
+            variance; natural regional accents can also cause variations.
           </p>
           <button className="button primary full" onClick={() => setReviewId(null)}>
             Return to call

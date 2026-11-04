@@ -252,3 +252,109 @@
   color: var(--warning-ink);
   border: 1px solid var(--warning-border);
 }
+
+.shield-alert-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.auditory-verification-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-left: 4px solid #2563eb;
+  border-radius: 8px;
+  color: #1e3a8a;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.auditory-verification-text {
+  flex: 1;
+}
+
+.auditory-verification-text strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e40af;
+  margin-bottom: 2px;
+}
+
+.auditory-verification-text p {
+  font-size: 12px;
+  color: #3b82f6;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.auditory-icon-pulsing {
+  color: #2563eb;
+  flex-shrink: 0;
+  animation: pulse 1.8s infinite;
+}
+
+.participant-audio-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  margin-top: 6px;
+}
+
+.participant-audio-toggle:hover {
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.participant-audio-toggle.active {
+  background: #2563eb;
+  border-color: #60a5fa;
+  color: #fff;
+  box-shadow: 0 0 8px rgba(37, 99, 235, 0.4);
+}
+
+.shield-liveness-action-box {
+  background: var(--surface-soft, #f8fafc);
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin: 12px 0;
+}
+
+.shield-liveness-action-box h4 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink, #0f172a);
+}
+
+.shield-liveness-action-box p {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted, #475569);
+  margin: 0;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.9; }
+}
