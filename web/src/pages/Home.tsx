@@ -65,6 +65,15 @@ export function Home() {
   });
   return (
     <>
+      <div className="home-challenge-pill" role="banner">
+        <div className="home-challenge-left">
+          <Badge tone="green">Gnani.ai Challenge Submission</Badge>
+          <span>Sovereign Multi-Party Indic Voice &amp; Coordination Gateway</span>
+        </div>
+        <Link to="/impact" className="home-challenge-cta">
+          Explore Challenge Story, Architecture &amp; Empirical Evidence &rarr;
+        </Link>
+      </div>
       <div className="home-heading">
         <div>
           <div className="eyebrow">A LITTLE CLOSER, IN EVERY LANGUAGE</div>

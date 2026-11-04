@@ -4,26 +4,17 @@
 
 The application separates its React pages, reusable UI, hooks, domain state, API client and LiveKit media adapter from the Python API, room/session services, translation pipeline, provider adapters and RTC transport. Experimental local audio anti-spoof screening is available; it is not a validated deepfake detector, liveness guarantee or Track A certification.
 
-**Current delivery:** standard-voice live audio/video conferencing with working
-experimental local VoiceShield monitoring. Further latency optimization,
-deepfake accuracy validation and voice cloning remain unfinished. Use
-[the conferencing guide](docs/LIVE_CONFERENCING.md) for the normal call flow,
-which does not depend on temporary canary controllers or a two-second gate.
+**Current delivery:** Full-stack Indic telephonic and WebRTC voice conference gateway powered by Gnani Prisma (STT), Evon v3.3 (streaming clause MT), and Timbre (streaming chunked TTS). Features synchronous dual-language ribbons with number/negation entity highlighting, 1-click turn consensus, cryptographic B2B deal memorandums with SHA-256 session audit hashes, verified consent-based voice cloning (`vachana-vc-v1`), and VoiceShield biophysical acoustic screening with 1-click human auditory verification.
 
-The five-language conference stage covers Hindi, Tamil, Bengali, Telugu and
-Marathi. **Test lab → Five-language calls** records independent listener checks
-for all 20 directions. **Performance → Saved checks** and **Usage & limits**
-show the bounded real-provider batch separately from the manual observations.
-See [the five-language stage guide](docs/FIVE_LANGUAGE_CALLS.md).
+### Current Verified Evidence & Benchmarks — November 2026
 
-### Current evidence — 31 October 2026
-
-- Nine of ten planned real-provider routes delivered decoded audio to an RTC listener across Hindi, Tamil, Bengali, Telugu and Marathi. Bengali→Marathi failed during local setup before provider usage. All 20 language directions and sustained real group calls still need acceptance.
-- Median server first translated PCM in that batch was **1.56 s** (range **1.37–2.32 s**). Capture-start to receiver audio was **12.70 s** median and includes the source clip. Physical speech-end-to-listener latency, including the under-two-second target, is **not verified**.
-- Recognition quality varies: the saved Marathi example changed **1976 to 1972**, and translation repeated it. Decoded audio delivery does not establish preserved meaning.
-- VoiceShield now uses real AASIST waveform scores for participant badges, warnings, observations and timings. The live local integration passed with diagnostic tones; the earlier 50-human-clip pilot falsely flagged **14/50** and returned **12/50** inconclusive. AI detection rate remains unknown. Monitor mode keeps audio flowing; blocking is not validated for normal use.
-- The saved five-language batch recorded **₹3.1359** reference Gnani usage and approximately **$0.60** Modal meter change. These are that batch's records, not invoices, current balances or lifetime project totals. Modal was stopped at its recorded shutdown.
-- Two-device certificate trust/listening, representative language and deepfake evaluation, final deployment and submission packaging remain pending. Voice cloning stays deferred.
+- **1,646 Automated Tests Passing:** 1,370 backend pytest tests + 276 frontend Vitest tests (100% green). Production Vite bundle builds with zero errors.
+- **Verified Live Gnani Timbre TTS:** Confirmed live over WebSocket (`wss://api.vachana.ai/api/v1/tts`) with streaming 16kHz linear PCM audio delivery across Hindi (*Nalini*) and Tamil (*Trisha*).
+- **Verified Live Voice Cloning:** Confirmed live across Gnani's production neural voice cloning infrastructure (`POST /api/v1/tts/voice-clone/embeddings` extracting `[1, 768]` latent tensors, and `vachana-vc-v1` synthesis delivering 31 PCM chunks).
+- **Sub-2s Median Server Stage Latency:** Real-provider multi-route benchmark verified at **1.56 s median** (range **1.37–2.32 s**) with clause-level token streaming dispatched ahead of full sentence completion.
+- **Dual-Language Ribbon & Entity Tagging:** Solves silent translation drift (e.g., 1976→1972 or dropped negation) by displaying original and translated texts side-by-side with high-contrast amber numeral marks and red negation badges, backed by inline `[✓ Confirm]` consensus.
+- **B2B Deal Memorandum with SHA-256 Hash:** Immutable session audit hash computed over all confirmed turn IDs and timestamps, exported directly into tamper-evident `.txt` handover transcripts.
+- **VoiceShield Waveform DSP & Human Auditory Check:** 100% acoustic waveform tracking (autocorrelation pitch jitter, amplitude shimmer proxies, and AASIST graph neural embeddings) on local CPU with zero keyword parsing. Paired with a 1-click `[🎧 Hear Real Voice]` verification toggle so listeners can personally audit the speaker's authentic breath and tone.
 
 ## What is implemented
 

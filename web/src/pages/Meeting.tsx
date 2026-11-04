@@ -127,13 +127,45 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
   const [copied, setCopied] = useState(false);
   const [changingLanguage, setChangingLanguage] = useState(false);
   const [auditoryVerificationId, setAuditoryVerificationId] = useState<string | null>(null);
+  const [demoShieldFlag, setDemoShieldFlag] = useState(false);
   const isDemo = m.room.mode === 'demo';
   const isTransport = m.room.mode === 'transport';
   const room = state.room || m.room;
   const participants = room.participants.filter((p) => !p.is_agent);
   const shieldParticipants = participants.map((person) => person.id === m.participant.id ? { ...person, muted: audio.muted } : person);
   const liveScreening = activeScreeningSamples(state.screening, shieldParticipants, state.screeningStatus, !isDemo && connection === 'Connected');
-  const shieldFlags = liveScreening.filter(({ sample }) => hasVoiceFlag(sample));
+  const shieldFlags = demoShieldFlag
+    ? [
+        {
+          person:
+            participants.find((p) => p.id !== m.participant.id) ||
+            participants[0] || {
+              id: 'demo-speaker',
+              name: 'Ravi Kumar (Delhi)',
+              language: 'hi' as const,
+              voice_mode: 'standard' as const,
+              muted: false,
+              is_agent: false,
+              is_demo: true,
+              joined_at: new Date().toISOString(),
+            },
+          sample: {
+            speaker_id: 'demo-speaker',
+            verdict: 'suspicious' as const,
+            score: 0.89,
+            compute_ms: 18.4,
+            audio_window_ms: 4037.5,
+            queue_ms: 1,
+            hold_ms: 0,
+            status: 'assessed' as const,
+            action: 'observed' as const,
+            mode: 'monitor' as const,
+            created_at: new Date().toISOString(),
+            reasons: ['model_score_above_experimental_threshold'],
+          },
+        },
+      ]
+    : liveScreening.filter(({ sample }) => hasVoiceFlag(sample));
   const language = m.participant.language;
   const invitation = `${window.location.origin}${window.location.pathname}#/join/${room.code}`;
   const inviteScope = invitationScope(invitation);
@@ -446,25 +478,36 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
                   </small>
                 </span>
               </div>
-              <button
-                onClick={() => void startDemo().catch((e) => setError((e as Error).message))}
-                disabled={running}
-              >
-                {running ? (
-                  <LoaderCircle size={14} className="spin" />
-                ) : state.demoComplete ? (
-                  <RotateCcw size={14} />
-                ) : (
-                  <Play size={13} />
-                )}
-                <span>
-                  {running
-                    ? 'Playing example…'
-                    : state.demoComplete
-                      ? 'Replay example'
-                      : 'Start example'}
-                </span>
-              </button>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                <button
+                  onClick={() => void startDemo().catch((e) => setError((e as Error).message))}
+                  disabled={running}
+                >
+                  {running ? (
+                    <LoaderCircle size={14} className="spin" />
+                  ) : state.demoComplete ? (
+                    <RotateCcw size={14} />
+                  ) : (
+                    <Play size={13} />
+                  )}
+                  <span>
+                    {running
+                      ? 'Playing example…'
+                      : state.demoComplete
+                        ? 'Replay example'
+                        : 'Start example'}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  className={`button secondary ${demoShieldFlag ? 'active' : ''}`}
+                  onClick={() => setDemoShieldFlag((prev) => !prev)}
+                  title="Simulate VoiceShield acoustic anomaly detection"
+                >
+                  <ShieldAlert size={14} />
+                  <span>{demoShieldFlag ? 'Clear voice anomaly' : 'Simulate voice anomaly'}</span>
+                </button>
+              </div>
             </div>
           )}
           {!isDemo && (

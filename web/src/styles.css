@@ -396,6 +396,39 @@ label.field {
   letter-spacing: 1.6px;
   line-height: 1.6;
 }
+.home-challenge-pill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 8px 14px;
+  margin-bottom: 20px;
+  background: var(--surface, #ffffff);
+  border: 1px solid var(--border, #d6dbe4);
+  border-left: 4px solid var(--accent, #365bd6);
+  border-radius: 8px;
+  font-size: 12px;
+}
+.home-challenge-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  color: var(--ink, #0f172a);
+  font-weight: 500;
+}
+.home-challenge-cta {
+  color: var(--accent, #365bd6);
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.home-challenge-cta:hover {
+  text-decoration: underline;
+}
 .home-heading {
   position: relative;
   margin: 0 0 29px;
@@ -1697,7 +1730,7 @@ label.field {
   .main-content {
     padding: 28px 21px 23px;
   }
-  .home-heading {
+.home-heading {
     margin-bottom: 24px;
   }
   .home-heading h1 {
