@@ -111,12 +111,12 @@ async def run_local():
     # These imports occur only on the explicit local execution path.
     sys.path.insert(0, str(ROOT / "server"))
     from livekit import rtc
-    from artha_mesh.config import Settings
-    from artha_mesh.models import JoinRoom, UpdateParticipant
-    from artha_mesh.services.pipeline import Pipeline
-    from artha_mesh.services.rooms import RoomService
-    from artha_mesh.store import Store
-    from artha_mesh.transport.livekit import TransportManager
+    from charcha.config import Settings
+    from charcha.models import JoinRoom, UpdateParticipant
+    from charcha.services.pipeline import Pipeline
+    from charcha.services.rooms import RoomService
+    from charcha.store import Store
+    from charcha.transport.livekit import TransportManager
 
     settings = Settings(_env_file=None, mode="live", livekit_url="ws://127.0.0.1:7880",
         livekit_internal_url="ws://127.0.0.1:7880", livekit_api_key="devkey", livekit_api_secret="secret",

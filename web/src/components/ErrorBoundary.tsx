@@ -26,7 +26,7 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, { failed: 
           <button
             className="button secondary"
             onClick={() => {
-              sessionStorage.removeItem('artha.membership');
+              sessionStorage.removeItem('charcha.membership');
               window.location.hash = '/';
               window.location.reload();
             }}

@@ -3,8 +3,8 @@ from datetime import UTC, datetime
 
 from fastapi.testclient import TestClient
 
-from artha_mesh.config import Settings
-from artha_mesh.main import create_app
+from charcha.config import Settings
+from charcha.main import create_app
 
 
 def test_public_usage_hides_manual_balance_and_never_calls_a_provider():

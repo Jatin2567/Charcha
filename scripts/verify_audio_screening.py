@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "server"))
 sys.path.insert(0, str(ROOT / "evaluation"))
 
-from artha_mesh.services.audio_screening import LocalAudioScreener, WINDOW_SAMPLES  # noqa: E402
+from charcha.services.audio_screening import LocalAudioScreener, WINDOW_SAMPLES  # noqa: E402
 from audio_screening import summarize  # noqa: E402
 
 

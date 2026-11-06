@@ -232,7 +232,7 @@ export function LatencyLanguageGate({
         <span>Plan only · screening off · voice cloning deferred</span>
         <button
           className="button secondary"
-          onClick={() => downloadJson('artha-ten-language-latency-plan.json', plan)}
+          onClick={() => downloadJson('charcha-ten-language-latency-plan.json', plan)}
         >
           <Download size={15} />
           Export offline plan

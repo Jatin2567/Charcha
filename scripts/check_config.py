@@ -8,8 +8,8 @@ from pathlib import Path
 from pydantic import ValidationError
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "server"))
-from artha_mesh.config import Settings  # noqa: E402
-from artha_mesh.services.readiness import production_configuration_issues  # noqa: E402
+from charcha.config import Settings  # noqa: E402
+from charcha.services.readiness import production_configuration_issues  # noqa: E402
 
 
 def main(argv: list[str] | None = None) -> int:

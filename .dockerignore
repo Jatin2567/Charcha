@@ -15,6 +15,7 @@ web/dist
 !**/.env.example
 server/data
 deploy/production/generated
+deploy/gcp/generated
 work
 *.zip
 *.tar.gz

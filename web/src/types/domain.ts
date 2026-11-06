@@ -16,9 +16,18 @@ export interface Room {
   title: string;
   created_at: string;
   mode: 'demo' | 'live' | 'transport';
+  screening_mode?: 'off' | 'monitor' | 'enforce';
+  screening_switchable?: boolean;
+  voice_required?: boolean;
+  engine_on_demand?: boolean;
   participants: Participant[];
 }
 export interface Turn {
+  listeners_recorded?: boolean;
+  recovery_reason?: 'queue_expired' | 'interrupted' | 'delivery_failed' | null;
+  listeners?: Record<string,string>;
+  replaces_id?: string | null;
+  superseded_by?: string | null;
   id: string;
   speaker_id: string;
   speaker_name: string;
@@ -47,6 +56,7 @@ export interface Health {
   version: string;
 }
 export interface Membership {
+  is_host?: boolean;
   room: Room;
   participant: Participant;
   session_token: string;

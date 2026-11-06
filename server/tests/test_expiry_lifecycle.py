@@ -1,13 +1,13 @@
 import asyncio
 import time
 
-from artha_mesh.config import Settings
-from artha_mesh.models import Participant, VoiceProfile
-from artha_mesh.providers.demo import SAMPLES
-from artha_mesh.services.pipeline import Pipeline
-from artha_mesh.services.rooms import RoomService
-from artha_mesh.store import Consumer, Store, StoredVoice, token_digest
-from artha_mesh.transport.livekit import RoomTransport
+from charcha.config import Settings
+from charcha.models import Participant, VoiceProfile
+from charcha.providers.demo import SAMPLES
+from charcha.services.pipeline import Pipeline
+from charcha.services.rooms import RoomService
+from charcha.store import Consumer, Store, StoredVoice, token_digest
+from charcha.transport.livekit import RoomTransport
 
 
 class RecordingTransport:

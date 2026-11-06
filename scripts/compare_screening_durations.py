@@ -85,7 +85,7 @@ def diagnostic_recordings() -> list[dict]:
 def _runtime():
     # Kept behind explicit execution: default plan imports no model, NumPy or app settings.
     sys.path.insert(0, str(ROOT / "server"))
-    from artha_mesh.services.audio_screening import LocalAudioScreener, read_pcm_wav
+    from charcha.services.audio_screening import LocalAudioScreener, read_pcm_wav
     return LocalAudioScreener, read_pcm_wav
 
 

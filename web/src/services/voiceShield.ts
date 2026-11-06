@@ -24,7 +24,7 @@ export function shieldingState(
   if (status.mode === 'off')
     return {
       label: 'Screening off',
-      detail: 'Start the local VoiceShield workspace to monitor microphone audio.',
+      detail: 'The meeting server has microphone screening turned off.',
     };
   if (!status.model.ready)
     return {
@@ -35,7 +35,7 @@ export function shieldingState(
     ? {
         label: 'Monitoring audio',
         detail:
-          'The local model assesses original microphone audio as you speak. Flags appear below.',
+          'The meeting server assesses original microphone audio as you speak. Flags appear below.',
       }
     : {
         label: 'Enforcement enabled',

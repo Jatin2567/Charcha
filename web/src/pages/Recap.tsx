@@ -28,23 +28,13 @@ import {
   Toast,
 } from '../components/ui';
 import { languageName } from '../types/domain';
-import type { Language, Recap } from '../types/domain';
 import { recapServerTiming } from '../services/recapTiming';
 import './Recap.css';
+import { recapText, whatsappRecap, printRecap } from '../services/recapExport';
+import { TurnUnderstanding, TurnRecovery } from '../components/TurnUnderstanding';
+import { understanding } from '../services/turnUnderstanding';
 
-function simpleHex(str: string): string {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = ((hash << 5) - hash) + str.charCodeAt(i);
-    hash |= 0;
-  }
-  return Math.abs(hash).toString(16).padStart(16, '0').repeat(4).slice(0, 64);
-}
-export function recapText(recap: Recap, language: Language, hash?: string): string {
-  const confirmed = recap.turns.filter((t) => t.confirmed_by.length > 0).length;
-  const rate = recap.turns.length ? Math.round((confirmed / recap.turns.length) * 100) : 0;
-  return `${recap.room.title} — Deal & Coordination Record\n${recap.localDemo || recap.room.mode === 'demo' ? 'SCRIPTED DEMONSTRATION — example content\n' : ''}Session Code: ${recap.room.code}\nEnded: ${new Date(recap.ended_at).toLocaleString()}\nListening Language: ${languageName(language)}\nHandover Status: ${confirmed}/${recap.turns.length} turns confirmed (${rate}%)\n${hash ? `SHA-256 Audit Hash: ${hash}\n` : ''}\n--------------------------------------------------------------------------------\nCONVERSATION TRANSCRIPT & CONFIRMATIONS\n--------------------------------------------------------------------------------\n\n${recap.turns.map((t) => `${t.speaker_name} (${languageName(t.source_language)})\nSource: ${t.text}\n${languageName(language)}: ${t.source_language === language ? t.text : t.translations[language] || '[Translation unavailable]'}\nConfirmed by: ${t.confirmed_by.length} participant(s)`).join('\n\n')}`;
-}
+export { recapText } from '../services/recapExport';
 export function RecapPage() {
   const { id } = useParams();
   const app = useApp();
@@ -53,10 +43,14 @@ export function RecapPage() {
   const [toast, setToast] = useState('');
   const [sessionHash, setSessionHash] = useState<string>('');
   const [copiedHash, setCopiedHash] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [exportError, setExportError] = useState('');
 
   useEffect(() => {
     if (!recap) return;
-    const payload = `${recap.room.code}:${recap.room.title}:${recap.ended_at}:${recap.turns.map((t) => `${t.id}:${t.speaker_id}:${t.text}:${t.confirmed_by.sort().join(',')}`).join('|')}`;
+    let active = true;
+    setSessionHash('');
+    const payload = JSON.stringify([recap.room.code, recap.room.title, recap.ended_at, recap.turns]);
     const enc = new TextEncoder();
     const buf = enc.encode(payload);
     if (typeof window !== 'undefined' && window.crypto && window.crypto.subtle) {
@@ -64,14 +58,15 @@ export function RecapPage() {
         .digest('SHA-256', buf)
         .then((hashBuf) => {
           const hashArr = Array.from(new Uint8Array(hashBuf));
-          setSessionHash(hashArr.map((b) => b.toString(16).padStart(2, '0')).join(''));
+          if (active) setSessionHash(hashArr.map((b) => b.toString(16).padStart(2, '0')).join(''));
         })
         .catch(() => {
-          setSessionHash(simpleHex(payload));
+          if (active) setSessionHash('');
         });
     } else {
-      setSessionHash(simpleHex(payload));
+      if (active) setSessionHash('');
     }
+    return () => { active = false; };
   }, [recap]);
 
   const extractedNumbers = useMemo(() => {
@@ -79,6 +74,7 @@ export function RecapPage() {
     const numRegex = /\b\d+(?:[.,]\d+)*\b|[\u0966-\u096F\u09E6-\u09EF\u0BE6-\u0BEF\u0C66-\u0C6F]+/g;
     const set = new Set<string>();
     for (const t of recap.turns) {
+      if (t.superseded_by) continue;
       const matches = t.text.match(numRegex);
       if (matches) {
         for (const m of matches) set.add(m);
@@ -87,10 +83,11 @@ export function RecapPage() {
     return Array.from(set).slice(0, 10);
   }, [recap]);
 
-  const confirmedTurns = recap ? recap.turns.filter((t) => t.confirmed_by.length > 0) : [];
+  const current = recap?.turns.filter(t => !t.superseded_by) || [];
+  const confirmedTurns = current.filter(t => understanding(t).all);
   const confirmationRate =
-    recap && recap.turns.length > 0
-      ? Math.round((confirmedTurns.length / recap.turns.length) * 100)
+    current.length > 0
+      ? Math.round((confirmedTurns.length / current.length) * 100)
       : 0;
 
   const handleCopyHash = () => {
@@ -98,7 +95,7 @@ export function RecapPage() {
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
       navigator.clipboard.writeText(sessionHash).then(() => {
         setCopiedHash(true);
-        setToast('SHA-256 session audit hash copied to clipboard.');
+        setToast('Source-record fingerprint copied to clipboard.');
         setTimeout(() => setCopiedHash(false), 2000);
       });
     }
@@ -176,23 +173,23 @@ export function RecapPage() {
                 <div className="deal-memo-header">
                   <div className="deal-memo-title">
                     <FileCheck2 size={18} />
-                    <span>Mutual Agreement &amp; Handover Memorandum</span>
+                    <span>Shared understanding</span>
                   </div>
                   <Badge tone={confirmationRate === 100 ? 'green' : confirmationRate > 0 ? 'orange' : 'neutral'}>
-                    {confirmationRate === 100 ? 'All commitments confirmed' : `${confirmationRate}% confirmed`}
+                    {confirmationRate === 100 ? 'All current messages understood by listed listeners' : `${confirmationRate}% understood by all listed listeners`}
                   </Badge>
                 </div>
                 <p className="deal-memo-desc">
-                  Every price, quantity, and operational commitment confirmed together. Built for genuine mutual trust and zero miscommunication across India.
+                  See who confirmed each message. Confirmation records understanding, not agreement. Earlier wording and corrections remain in the transcript.
                 </p>
                 <div className="deal-memo-stats">
                   <div className="deal-memo-stat">
                     <small>Shared statements</small>
-                    <strong>{recap.turns.length}</strong>
+                    <strong>{current.length}</strong>
                   </div>
                   <div className="deal-memo-stat highlight">
-                    <small>Mutually confirmed</small>
-                    <strong>{confirmedTurns.length} of {recap.turns.length}</strong>
+                    <small>All listed listeners confirmed</small>
+                    <strong>{confirmedTurns.length} of {current.length}</strong>
                   </div>
                   <div className="deal-memo-stat">
                     <small>Languages spoken</small>
@@ -202,7 +199,7 @@ export function RecapPage() {
                 {extractedNumbers.length > 0 && (
                   <div className="deal-memo-entities">
                     <div className="deal-memo-entities-head">
-                      <span>Agreed Numbers, Prices &amp; Quantities</span>
+                      <span>Numbers mentioned</span>
                       <small>{extractedNumbers.length} values</small>
                     </div>
                     <div className="deal-memo-entity-pills">
@@ -248,11 +245,9 @@ export function RecapPage() {
                       <summary>Original · {languageName(t.source_language)}</summary>
                       <p>{t.text}</p>
                     </details>
-                    <small className="turn-confirmation">
-                      {t.confirmed_by.length
-                        ? `${t.confirmed_by.length} participant(s) confirmed understanding`
-                        : 'No participant confirmation recorded'}
-                    </small>
+                    {t.superseded_by ? <small>Earlier version · replaced</small> : t.replaces_id ? <small>Corrected message</small> : null}
+                    <TurnRecovery turn={t} />
+                    <TurnUnderstanding turn={t} participants={participants} />
                   </div>
                 </article>
               ))}
@@ -314,10 +309,18 @@ export function RecapPage() {
             <h3>Keep a copy</h3>
             <p className="panel-intro">Export the transcript to review or share yourself.</p>
             <div className="transcript-export" style={{ marginTop: 15 }}>
+              <button className="button primary full" onClick={() => {
+                setExportError('');
+                try { printRecap(recap, language, sessionHash); }
+                catch (error) { setExportError((error as Error).message); }
+              }}>Save PDF / Print</button>
+              <button className="button secondary full" onClick={() => { setExportError(''); setShareOpen(true); }}>
+                <Copy size={15} /> WhatsApp recap
+              </button>
               <button
                 className="button secondary full"
                 onClick={() =>
-                  downloadText(`artha-mesh-${recap.room.code}.txt`, recapText(recap, language, sessionHash))
+                  downloadText(`charcha-${recap.room.code}.txt`, recapText(recap, language, sessionHash))
                 }
               >
                 <Download size={15} />
@@ -325,14 +328,16 @@ export function RecapPage() {
               </button>
               <button
                 className="button ghost full"
-                onClick={() => downloadJson(`artha-mesh-${recap.room.code}.json`, recap)}
+                onClick={() => downloadJson(`charcha-${recap.room.code}.json`, recap)}
               >
                 Export JSON
               </button>
             </div>
             <p className="source-note">
-              Exports include participant names and conversation content. Share them intentionally.
+              PDF opens your browser’s print dialog; choose Save as PDF. Exports include original wording and the selected translation, participant names and confirmation states. No new translation is generated. Share intentionally.
             </p>
+            {exportError && <p role="alert" className="source-note">{exportError}</p>}
+            <p className="source-note">The SHA-256 fingerprint identifies the source record. It does not certify accuracy or agreement.</p>
           </section>
           {recap.room.mode === 'live' && (
             <section className="panel" style={{ marginTop: 18 }}>
@@ -366,6 +371,19 @@ export function RecapPage() {
           )}
         </aside>
       </div>
+      {shareOpen && <Modal title="Review your WhatsApp recap" onClose={() => setShareOpen(false)}>
+        <p>Original wording plus {languageName(language)}. Review names and messages before copying. Paste into WhatsApp and choose the recipient yourself.</p>
+        <textarea className="recap-share-preview" aria-label="Bilingual WhatsApp recap" readOnly value={whatsappRecap(recap, language, sessionHash)} onFocus={event => event.currentTarget.select()} />
+        <div className="modal-actions">
+          <button className="button secondary" onClick={() => downloadText(`charcha-${recap.room.code}-whatsapp.txt`, whatsappRecap(recap, language, sessionHash))}>Download text</button>
+          <button className="button primary" onClick={() => {
+            setExportError('');
+            if (!navigator.clipboard) { setExportError('Select the text above and copy it manually, or download the text file.'); return; }
+            void navigator.clipboard.writeText(whatsappRecap(recap, language, sessionHash)).then(() => setToast('Recap copied. Paste it into WhatsApp when you are ready.')).catch(() => setExportError('Clipboard access was blocked. Select the text above and copy it manually.'));
+          }}>Copy for WhatsApp</button>
+        </div>
+        {exportError && <p role="alert">{exportError}</p>}
+      </Modal>}
       {toast && <Toast message={toast} onDone={() => setToast('')} />}
     </>
   );

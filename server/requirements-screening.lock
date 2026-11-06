@@ -1,0 +1,5 @@
+# Extra Linux wheels for the Python 3.12 screening image, from uv.lock.
+# The base image already pins numpy and protobuf.
+flatbuffers==25.12.19 --hash=sha256:7634f50c427838bb021c2d66a3d1168e9d199b0607e6329399f04846d42e20b4
+packaging==26.3 --hash=sha256:d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c
+onnxruntime==1.31.1 --hash=sha256:0b9a492176886992e0e875f06bc0367e333f5fff11711a2d642e18b02f3009cc --hash=sha256:1f3dea47f2f0e5117c2404cea7d21fd253ae7836a3bf167a501cdfbb2600d536

@@ -7,16 +7,16 @@ from pathlib import Path
 import httpx
 import pytest
 
-from artha_mesh.config import Settings
-from artha_mesh.errors import ProviderError
-from artha_mesh.providers.evon import EvonTranslator, modal_proxy_headers
+from charcha.config import Settings
+from charcha.errors import ProviderError
+from charcha.providers.evon import EvonTranslator, modal_proxy_headers
 
 
 ROOT = Path(__file__).resolve().parents[2]
 spec = importlib.util.spec_from_file_location("modal_auth_benchmark", ROOT / "scripts" / "evon_benchmark.py")
 benchmark = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(benchmark)
-ENDPOINT = "https://private-test--artha-evon-serve.modal.run/v1"
+ENDPOINT = "https://private-test--charcha-evon-serve.modal.run/v1"
 API_KEY = "test-vllm-private-bearer-value-123456789"
 MODAL_KEY = "test-modal-proxy-key-123456789"
 MODAL_SECRET = "test-modal-proxy-secret-123456789"

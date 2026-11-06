@@ -12,8 +12,8 @@ import wave
 
 import pytest
 
-from artha_mesh.config import Settings
-from artha_mesh.services.usage import UsageGuard
+from charcha.config import Settings
+from charcha.services.usage import UsageGuard
 
 ROOT = Path(__file__).resolve().parents[2]
 spec = importlib.util.spec_from_file_location("ta_hi_followup_test", ROOT / "scripts/check_tamil_hindi_followup.py")

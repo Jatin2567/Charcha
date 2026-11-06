@@ -207,3 +207,6 @@
     max-height: 19dvh;
   }
 }
+.correction-editor { display: grid; gap: .5rem; padding: .75rem; }
+.correction-editor label, .correction-editor small { display: block; }
+.correction-editor textarea { box-sizing: border-box; width: 100%; min-height: 4.5rem; font: inherit; }

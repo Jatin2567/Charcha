@@ -4,9 +4,11 @@ import type { AudioSession, PlaybackState, MicrophoneState } from '../services/l
 import { useApp } from '../state/AppContext';
 import { useConferenceReadiness } from './useConferenceReadiness';
 import { setConferenceMuted } from '../services/conferenceReadiness';
+import { ensureEngine } from '../services/interpretationEngine';
 import { changeMeetingMicrophone, MeetingMuteBarrier } from '../services/meetingMicrophone';
 import type { ProbeSample } from '../services/audioProbe';
 import { CAMERA_OFF } from '../services/cameraState';
+import { refreshMeetingConnection } from '../services/meetingConnection';
 import type { CameraState } from '../services/cameraState';
 import type { CameraTrack } from '../services/meetingVideo';
 
@@ -36,6 +38,7 @@ export function useMeetingAudio(m: Membership) {
   cameraRef.current = camera;
   const [working, setWorking] = useState(false);
   const [probeWorking, setProbeWorking] = useState(false);
+  const probeVersion = useRef<number | null>(null);
   const [probeResult, setProbeResult] = useState<ProbeSample | null>(null);
   const [retry, setRetry] = useState(0);
   const mutedRef = useRef(true);
@@ -67,6 +70,9 @@ export function useMeetingAudio(m: Membership) {
 
   useEffect(() => {
     const version = ++generation.current;
+    probeVersion.current = null;
+    setProbeWorking(false);
+    setProbeResult(null);
     let disposed = false;
     const controller = new AbortController();
     setCamera({ ...CAMERA_OFF });
@@ -77,6 +83,7 @@ export function useMeetingAudio(m: Membership) {
     setMuted(true);
     mutedRef.current = true;
     setPlayback({ status: 'disconnected', error: '' });
+    setError('');
     setStatus(demo ? 'Scripted demo · microphone is not transmitted' : 'Connecting audio…');
     if (demo) return;
     if (!m.livekit) {
@@ -102,13 +109,17 @@ export function useMeetingAudio(m: Membership) {
         setError('The microphone was disconnected. Select a microphone, then unmute when ready.');
     };
     // Reloaded tabs, input changes and reconnects never inherit permission to capture.
-    void requestServerMute(m)
-      .then(() => import('../services/livekit'))
-      .then(({ connectAudio }) => {
+    void refreshMeetingConnection(m, controller.signal)
+      .then(async (refreshed) => {
         if (!current()) throw new Error('Audio connection cancelled.');
+        await requestServerMute(refreshed);
+        if (!current()) throw new Error('Audio connection cancelled.');
+        latest.current = refreshed;
         rememberMuted(true);
+        const { connectAudio } = await import('../services/livekit');
+        if (!current()) throw new Error('Audio connection cancelled.');
         return connectAudio(
-          m,
+          refreshed,
           app.preferences.inputDevice,
           app.preferences.outputDevice,
           true,
@@ -219,6 +230,9 @@ export function useMeetingAudio(m: Membership) {
         media: current,
         readiness: async () => {
           await muteBarrier.current!.wait(membership);
+          const report = await readiness.refresh();
+          if (report?.microphone.can_unmute && report.audience.connected_translation_target_languages.length)
+            await ensureEngine(membership, () => version === generation.current && session.current === current);
           return readiness.refresh();
         },
         update: (value) =>
@@ -236,6 +250,14 @@ export function useMeetingAudio(m: Membership) {
       setWorking(false);
     }
   };
+
+  useEffect(() => {
+    if (m.room.voice_required && m.participant.voice_mode !== 'cloned' && !mutedRef.current) {
+      void session.current?.setMuted(true).catch(() => {});
+      rememberMuted(true);
+      void requestServerMute(m).catch(() => {});
+    }
+  }, [m.room.voice_required, m.participant.voice_mode]);
   const unlock = async () => {
     if (unlockPending.current) return;
     const current = session.current,
@@ -319,11 +341,13 @@ export function useMeetingAudio(m: Membership) {
     probeWorking,
     probeResult,
     probe: async () => {
-      if (!session.current || probeWorking) return;
+      if (!session.current || !mediaReady || outputRef.current || playback.status !== 'ready' ||
+          readiness.stale || probeVersion.current !== null) return;
+      const version = generation.current;
+      probeVersion.current = version;
       setProbeWorking(true);
       setError('');
       setProbeResult(null);
-      const version = generation.current;
       try {
         const sample = await session.current.probe();
         if (version === generation.current) setProbeResult(sample);
@@ -331,7 +355,10 @@ export function useMeetingAudio(m: Membership) {
         if (version === generation.current)
           setError(issue instanceof Error ? issue.message : 'Receiver check failed.');
       } finally {
-        setProbeWorking(false);
+        if (probeVersion.current === version) {
+          probeVersion.current = null;
+          setProbeWorking(false);
+        }
       }
     },
     clearError: () => {

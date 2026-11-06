@@ -73,10 +73,11 @@ def billing():
     return {key: snapshot[key] for key in ("metered_cost", "billed_cost")}
 
 
-def reserve_breakdown(rates, seconds, *, overhead_usd=None, allocation=None):
+def reserve_breakdown(rates, seconds, *, overhead_usd=None, allocation=None, owner_hour=False):
     """Offline estimate, not a provider-enforced cap or an authorization to spend."""
-    if type(seconds) is not int or not 0 < seconds <= 1800:
-        raise ValueError("Maximum stage lifetime is 30 minutes")
+    maximum = 3600 if owner_hour else 1800
+    if type(seconds) is not int or not 0 < seconds <= maximum:
+        raise ValueError(f"Maximum stage lifetime is {maximum // 60} minutes")
     overhead = amount(overhead_usd, "reviewed build/CPU/storage/network allowance", allow_zero=True)
     allocation = load_allocation() if allocation is None else allocation
     validate_allocation(allocation)
@@ -107,7 +108,7 @@ def reserve_usd(rates, seconds, *, overhead_usd=None, allocation=None):
 
 
 @contextmanager
-def bounded_session(folder, host, deadline, *, overhead_usd=None, workspace_ceiling_usd=None):
+def bounded_session(folder, host, deadline, *, overhead_usd=None, workspace_ceiling_usd=None, owner_hour=False):
     if host != "https://jatin2567--artha-evon-test-serve.ap-south.modal.run":
         raise ValueError("Unexpected private model endpoint")
     start = time.time()
@@ -115,11 +116,15 @@ def bounded_session(folder, host, deadline, *, overhead_usd=None, workspace_ceil
     # Reject unreviewed allowances before any account query or cloud mutation.
     amount(overhead_usd, "reviewed build/CPU/storage/network allowance", allow_zero=True)
     ceiling = amount(workspace_ceiling_usd, "reviewed workspace gross usage ceiling")
-    if ceiling > 5:
-        raise ValueError("This runner cannot exceed the historical $5 stage limit")
+    if ceiling > (10 if owner_hour else 5):
+        raise ValueError("This runner cannot exceed the reviewed workspace ceiling")
     cost = reserve_breakdown(json.loads(cli(["billing", "rates", "--json"])), seconds,
-                             overhead_usd=overhead_usd)
+                             overhead_usd=overhead_usd, owner_hour=owner_hour)
     reserve = Decimal(cost["reserved_usd"])
+    if owner_hour and (reserve > Decimal("6.54") or cost["allocation"] != {
+        "gpu":"A100-80GB", "region":"ap", "cpu_cores":4, "memory_gib":64,"max_containers":1
+    }):
+        raise ValueError("Resource selection or reserve exceeds the approved one-hour test")
     before = billing()
     if (amount(before["billed_cost"], "billed cost", allow_zero=True) != 0
             or amount(before["metered_cost"], "metered cost", allow_zero=True) + reserve > ceiling):
@@ -152,11 +157,11 @@ def bounded_session(folder, host, deadline, *, overhead_usd=None, workspace_ceil
         record()
         print("Private model deployed. Waiting for readiness.", flush=True)
         credentials = load_credentials(ROOT / "work/modal-private/client.json")
-        health = asyncio.run(check_readiness(host, credentials, wall_seconds=min(700, deadline-time.time()-180)))
+        health = asyncio.run(check_readiness(host, credentials, wall_seconds=min(960 if owner_hour else 700, deadline-time.time()-180)))
         (folder / "readiness.json").write_text(json.dumps(health, indent=2))
         if not health["ready"]:
             raise RuntimeError("Private model did not become ready")
-        print("Private model ready. Starting the bounded speech routes.", flush=True)
+        print("Private Evon model ready.", flush=True)
         yield deadline - 30
     finally:
         cli(["app", "stop", identity, "--yes"])

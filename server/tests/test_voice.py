@@ -2,7 +2,7 @@ import pytest
 from conftest import auth, create_member, make_wav
 from fastapi import HTTPException
 
-from artha_mesh.services.voice import MAX_REFERENCE_BYTES, validate_reference
+from charcha.services.voice import MAX_REFERENCE_BYTES, validate_reference
 
 
 def test_reference_accepts_valid_duration_without_claiming_speech_detection():

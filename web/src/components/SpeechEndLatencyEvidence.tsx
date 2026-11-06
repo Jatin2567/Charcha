@@ -1,8 +1,10 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Download, Info } from 'lucide-react';
 import captureGuide from '../../../docs/SPEECH_END_LATENCY.md?raw';
 import { speechEndLatencyReport, summarizeSpeechEnd } from '../services/speechEndLatencyEvidence';
 import type { SpeechEndCondition, SpeechEndEvidence } from '../services/speechEndLatencyEvidence';
+import { playbackObservation } from '../services/playbackObservation';
+import { languageName } from '../types/domain';
 import { Badge, downloadJson, downloadText } from './ui';
 import './SpeechEndLatencyEvidence.css';
 
@@ -16,6 +18,26 @@ export function SpeechEndLatencyEvidence({
   idPrefix?: string;
 }) {
   const [condition, setCondition] = useState<'all' | SpeechEndCondition>('all');
+  const [physical, setPhysical] = useState<ReturnType<typeof playbackObservation>>(null);
+  const [fileError, setFileError] = useState('');
+  const reading = useRef(0);
+  async function readObservation(file?: File) {
+    const generation = ++reading.current;
+    setPhysical(null);
+    setFileError('');
+    if (!file) return;
+    try {
+      if (!file.size || file.size > 65536) throw new Error();
+      const observation = playbackObservation(JSON.parse(await file.text()));
+      if (!observation) throw new Error();
+      if (generation === reading.current) setPhysical(observation);
+    } catch {
+      if (generation === reading.current)
+        setFileError(
+          'Choose a completed, reviewed live playback observation JSON from the capture guide (up to 64 KiB).',
+        );
+    }
+  }
   const samples = useMemo(
     () =>
       (evidence?.samples ?? []).filter((row) => condition === 'all' || row.condition === condition),
@@ -46,8 +68,8 @@ export function SpeechEndLatencyEvidence({
         </div>
         <Badge tone="orange">Not verified</Badge>
         <p>
-          Local decoded-audio fixtures cannot establish this goal. Physical listener output is still
-          unmeasured.
+          This goal needs repeated measurements across calls. You can inspect one reviewed recording
+          below.
         </p>
       </div>
       <ol
@@ -71,10 +93,31 @@ export function SpeechEndLatencyEvidence({
         </li>
         <li>
           <span>Physical listener playback</span>
-          <strong>N/A</strong>
-          <small>Needs one shared recorded clock</small>
+          <strong>{ms(physical?.latency)}</strong>
+          <small>
+            {physical ? 'One operator-reviewed recording' : 'Open a reviewed observation below'}
+          </small>
         </li>
       </ol>
+      <label className="field">
+        <span>Open a playback observation</span>
+        <input
+          type="file"
+          accept=".json,application/json"
+          onChange={(event) => void readObservation(event.target.files?.[0])}
+        />
+        <small>Select the JSON from the offline capture guide. It stays in this tab.</small>
+      </label>
+      {fileError && <p role="alert">{fileError}</p>}
+      {physical && (
+        <p role="status">
+          {languageName(physical.source)} → {languageName(physical.target)} · {physical.condition} ·{' '}
+          {physical.capture}
+          {' · '}VoiceShield {physical.screening} ·{' '}
+          {physical.meaningReviewed ? 'Meaning reviewed' : 'Meaning review pending'}.
+          {physical.latency < 0 && ' Output overlapped the source speech.'}
+        </p>
+      )}
       <p className="speech-end-boundary-note">
         <Info size={16} />
         <span>
@@ -184,7 +227,7 @@ export function SpeechEndLatencyEvidence({
         </ol>
         <button
           className="button secondary"
-          onClick={() => downloadText('artha-speech-end-latency-guide.md', captureGuide)}
+          onClick={() => downloadText('charcha-speech-end-latency-guide.md', captureGuide)}
         >
           <Download size={15} />
           Download capture guide
@@ -199,7 +242,9 @@ export function SpeechEndLatencyEvidence({
         <button
           className="button secondary"
           disabled={!evidence}
-          onClick={() => evidence && downloadJson('artha-speech-end-local-evidence.json', evidence)}
+          onClick={() =>
+            evidence && downloadJson('charcha-speech-end-local-evidence.json', evidence)
+          }
         >
           <Download size={15} />
           Export local evidence

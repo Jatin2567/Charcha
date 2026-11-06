@@ -22,9 +22,9 @@ sys.path.insert(0, str(ROOT / "server"))
 
 from livekit import rtc  # noqa: E402
 
-from artha_mesh.config import Settings  # noqa: E402
-from artha_mesh.main import create_app  # noqa: E402
-from artha_mesh.models import JoinRoom, UpdateParticipant  # noqa: E402
+from charcha.config import Settings  # noqa: E402
+from charcha.main import create_app  # noqa: E402
+from charcha.models import JoinRoom, UpdateParticipant  # noqa: E402
 
 
 async def run(actual_model_monitor=False, output=None, cpu_threads=1):

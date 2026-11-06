@@ -10,13 +10,13 @@ import type { ReceiverProbeReport } from '../services/receiverMetrics';
 const ms = (value: number | null | undefined) =>
   value == null ? 'N/A' : `${Math.round(value).toLocaleString()} ms`;
 
-export function ReceiverAudioMetrics({ membership }: { membership: Membership | null }) {
+export function ReceiverAudioMetrics({ membership, snapshot, archived = false }: { membership: Membership | null; snapshot?: ReceiverProbeReport | null; archived?: boolean }) {
   const [report, setReport] = useState<ReceiverProbeReport | null>(null);
   const [error, setError] = useState('');
   const [hidden, setHidden] = useState(document.hidden);
-  const canRead = !!membership && !membership.localDemo && membership.room.mode !== 'demo';
+  const canRead = !!snapshot || (!!membership && !membership.localDemo && membership.room.mode !== 'demo');
   useEffect(() => {
-    setReport(null);
+    setReport(snapshot ?? null);
     setError('');
     if (!membership || membership.localDemo || membership.room.mode === 'demo') return;
     let disposed = false;
@@ -71,6 +71,7 @@ export function ReceiverAudioMetrics({ membership }: { membership: Membership | 
     membership?.participant.id,
     membership?.localDemo,
     membership?.room.mode,
+    snapshot,
   ]);
 
   return (
@@ -82,7 +83,7 @@ export function ReceiverAudioMetrics({ membership }: { membership: Membership | 
             A test-tone request to decoded audio on one browser clock. This listener’s records only.
           </p>
         </div>
-        <Badge tone="neutral">{hidden ? 'Refresh paused' : 'Client-reported'}</Badge>
+        <Badge tone="neutral">{archived && snapshot ? 'Saved · client-reported' : hidden ? 'Refresh paused' : 'Client-reported'}</Badge>
       </div>
       <ErrorNotice message={error} />
       <div className="performance-transport-stats">
@@ -118,14 +119,14 @@ export function ReceiverAudioMetrics({ membership }: { membership: Membership | 
       </p>
       <div className="preparation-footer">
         <p className="performance-small">
-          {canRead
+          {archived ? 'Saved receiver measurements from this meeting. No live test is running.' : canRead
             ? 'Keep the call open; results refresh while this page is visible.'
             : 'Join a live or local audio room to collect receiver measurements.'}
         </p>
         {report && (
           <button
             className="button secondary"
-            onClick={() => downloadJson('artha-receiver-audio-metrics.json', report)}
+            onClick={() => downloadJson('charcha-receiver-audio-metrics.json', report)}
           >
             <Download size={14} />
             Export receiver checks

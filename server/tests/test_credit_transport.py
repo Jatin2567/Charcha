@@ -5,13 +5,13 @@ from types import SimpleNamespace
 
 import pytest
 
-from artha_mesh.config import Settings
-from artha_mesh.errors import ProviderError
-from artha_mesh.models import Participant
-from artha_mesh.services.pipeline import Pipeline
-from artha_mesh.services.rooms import RoomService
-from artha_mesh.store import Consumer, Store
-from artha_mesh.transport.livekit import RoomTransport
+from charcha.config import Settings
+from charcha.errors import ProviderError
+from charcha.models import Participant
+from charcha.services.pipeline import Pipeline
+from charcha.services.rooms import RoomService
+from charcha.store import Consumer, Store
+from charcha.transport.livekit import RoomTransport
 
 
 class FakeAudioStream:
@@ -114,7 +114,7 @@ async def test_same_language_only_roster_skips_stt_until_translation_is_needed(m
     listener.language = speaker.language
     # Keep this test focused on recognizer admission; the existing real RTC
     # same-language routing check separately verifies forwarded audio playout.
-    monkeypatch.setattr("artha_mesh.transport.livekit.recipients_for", lambda *_args: [])
+    monkeypatch.setattr("charcha.transport.livekit.recipients_for", lambda *_args: [])
     task = asyncio.create_task(transport._read_audio(object(), speaker.id))
     try:
         await asyncio.sleep(0.3)
@@ -150,7 +150,7 @@ async def test_stt_auth_quota_errors_and_repeated_transient_failures_stop(monkey
     async def fast_sleep(seconds):
         await real_sleep(min(seconds, 0.01))
 
-    monkeypatch.setattr("artha_mesh.transport.livekit.asyncio.sleep", fast_sleep)
+    monkeypatch.setattr("charcha.transport.livekit.asyncio.sleep", fast_sleep)
     task = asyncio.create_task(transport._read_audio(object(), speaker.id))
     try:
         await until(lambda: speech.calls == expected)

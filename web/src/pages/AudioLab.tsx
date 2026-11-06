@@ -280,7 +280,7 @@ export function AudioLab() {
             className="button secondary"
             disabled={!screening.length && !latency.length}
             onClick={() =>
-              downloadJson('artha-local-audio-report.json', audioLabReport(screening, latency))
+              downloadJson('charcha-local-audio-report.json', audioLabReport(screening, latency))
             }
           >
             <Download size={16} />

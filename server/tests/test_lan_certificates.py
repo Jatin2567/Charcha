@@ -60,9 +60,9 @@ def test_real_short_lived_certificates_validate_offline_and_discard_signer(tmp_p
     assert report["tls_verified_offline"] is True
     assert not report["issuer_signing_key_retained"]
     assert not report["trusted_on_this_device"] and not report["firewall_changed"]
-    assert set(path.name for path in output.iterdir()) == {"ca.pem", "cert.pem", "key.pem", "artha-lan-ca.cer", "manifest.json"}
+    assert set(path.name for path in output.iterdir()) == {"ca.pem", "cert.pem", "key.pem", "charcha-lan-ca.cer", "manifest.json"}
     assert not list((tmp_path / "work").glob(".lan-tls-*"))
-    assert (output / "artha-lan-ca.cer").read_bytes() == ssl.PEM_cert_to_DER_cert((output / "ca.pem").read_text())
+    assert (output / "charcha-lan-ca.cer").read_bytes() == ssl.PEM_cert_to_DER_cert((output / "ca.pem").read_text())
     assert len(report["issuer_sha256"]) == 64 and len(report["issuer_windows_thumbprint"]) == 40
     assert "PRIVATE KEY" not in json.dumps(report)
     lan.validate_tls("192.168.1.23", output / "cert.pem", output / "key.pem", output / "ca.pem")

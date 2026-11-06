@@ -19,6 +19,15 @@ def profile(gpu="A100-80GB", region="ap", **overrides):
                 max_containers=1) | overrides
 
 
+def test_explicit_owner_hour_quote_preserves_short_stage_limits():
+    with pytest.raises(ValueError, match="30 minutes"):
+        costs.reserve_breakdown(RATES, 3600, overhead_usd=".75", allocation=profile())
+    result = costs.reserve_breakdown(RATES, 3600, overhead_usd=".75", allocation=profile(), owner_hour=True)
+    assert result["reserved_usd"] == "6.54"
+    with pytest.raises(ValueError, match="60 minutes"):
+        costs.reserve_breakdown(RATES, 3601, overhead_usd=".75", allocation=profile(), owner_hour=True)
+
+
 def test_h100_fallback_uses_highest_rate_with_all_resources_and_rounds_up():
     result = costs.reserve_breakdown(RATES, 1500, overhead_usd=".73",
         allocation=profile(["A100-80GB", "H100"], ["ap", "us", "eu"]))

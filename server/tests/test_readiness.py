@@ -4,8 +4,8 @@ import json
 from pathlib import Path
 
 import pytest
-from artha_mesh.config import Settings
-from artha_mesh.services.readiness import production_configuration_issues, readiness_snapshot
+from charcha.config import Settings
+from charcha.services.readiness import production_configuration_issues, readiness_snapshot
 
 
 def production_settings(**overrides):
@@ -13,14 +13,14 @@ def production_settings(**overrides):
         "mode": "live",
         "usage_require_flow_approval": True,
         "usage_show_private_balance": False,
-        "livekit_url": "wss://rtc.artha.in",
+        "livekit_url": "wss://rtc.charcha.in",
         "livekit_internal_url": "ws://127.0.0.1:7880",
         "livekit_api_key": "server-generated-key",
         "livekit_api_secret": "x" * 48,
         "gnani_api_key": "private-gnani-credential",
         "evon_base_url": "http://evon:8001/v1",
         "evon_model": "operator-served-evon-model",
-        "cors_origins": ["https://meet.artha.in"],
+        "cors_origins": ["https://meet.charcha.in"],
     }
     values.update(overrides)
     return Settings(**values, _env_file=None)
@@ -41,33 +41,33 @@ def test_production_allows_colocated_private_services_but_does_not_claim_access(
 
 
 @pytest.mark.parametrize(("name", "value", "key"), [
-    ("mode", "demo", "ARTHA_MODE"),
+    ("mode", "demo", "CHARCHA_MODE"),
     ("usage_require_flow_approval", False, "USAGE_REQUIRE_FLOW_APPROVAL"),
     ("usage_show_private_balance", True, "USAGE_SHOW_PRIVATE_BALANCE"),
-    ("livekit_url", "ws://rtc.artha.in", "LIVEKIT_URL"),
+    ("livekit_url", "ws://rtc.charcha.in", "LIVEKIT_URL"),
     ("livekit_url", "wss://127.0.0.1:7880", "LIVEKIT_URL"),
     ("livekit_url", "wss://localhost.", "LIVEKIT_URL"),
     ("livekit_url", "wss://rtc.example", "LIVEKIT_URL"),
     ("livekit_url", "wss://rtc.example.com", "LIVEKIT_URL"),
-    ("livekit_url", "wss://bad host.artha.in", "LIVEKIT_URL"),
-    ("livekit_url", "wss://rtc.artha.in:invalid", "LIVEKIT_URL"),
-    ("livekit_internal_url", "ws://public.artha.in:7880", "LIVEKIT_INTERNAL_URL"),
+    ("livekit_url", "wss://bad host.charcha.in", "LIVEKIT_URL"),
+    ("livekit_url", "wss://rtc.charcha.in:invalid", "LIVEKIT_URL"),
+    ("livekit_internal_url", "ws://public.charcha.in:7880", "LIVEKIT_INTERNAL_URL"),
     ("livekit_api_key", "devkey", "LIVEKIT_API_KEY"),
     ("livekit_api_secret", "secret", "LIVEKIT_API_SECRET"),
     ("gnani_api_key", "   ", "GNANI_API_KEY"),
-    ("evon_base_url", "http://gpu.artha.in/v1", "EVON_BASE_URL"),
-    ("evon_base_url", "https://credential@mt.artha.in/v1", "EVON_BASE_URL"),
-    ("evon_base_url", "https://mt.artha.in/v1?key=private", "EVON_BASE_URL"),
-    ("evon_base_url", "https://mt.artha.in/v1#private", "EVON_BASE_URL"),
+    ("evon_base_url", "http://gpu.charcha.in/v1", "EVON_BASE_URL"),
+    ("evon_base_url", "https://credential@mt.charcha.in/v1", "EVON_BASE_URL"),
+    ("evon_base_url", "https://mt.charcha.in/v1?key=private", "EVON_BASE_URL"),
+    ("evon_base_url", "https://mt.charcha.in/v1#private", "EVON_BASE_URL"),
     ("evon_model", "", "EVON_MODEL"),
-    ("gnani_stt_url", "ws://provider.artha.in/stt", "GNANI_STT_URL"),
-    ("gnani_tts_url", "https://provider.artha.in/tts", "GNANI_TTS_URL"),
-    ("gnani_embedding_url", "http://provider.artha.in/embedding", "GNANI_EMBEDDING_URL"),
+    ("gnani_stt_url", "ws://provider.charcha.in/stt", "GNANI_STT_URL"),
+    ("gnani_tts_url", "https://provider.charcha.in/tts", "GNANI_TTS_URL"),
+    ("gnani_embedding_url", "http://provider.charcha.in/embedding", "GNANI_EMBEDDING_URL"),
     ("cors_origins", [], "CORS_ORIGINS"),
     ("cors_origins", ["*"], "CORS_ORIGINS"),
     ("cors_origins", ["http://localhost:5173"], "CORS_ORIGINS"),
-    ("cors_origins", ["https://meet.artha.in/path"], "CORS_ORIGINS"),
-    ("cors_origins", ["https://meet.artha.in", "https://*.artha.in"], "CORS_ORIGINS"),
+    ("cors_origins", ["https://meet.charcha.in/path"], "CORS_ORIGINS"),
+    ("cors_origins", ["https://meet.charcha.in", "https://*.charcha.in"], "CORS_ORIGINS"),
 ])
 def test_production_flags_invalid_or_development_configuration(name, value, key):
     assert key in issue_keys(production_settings(**{name: value}))
@@ -76,19 +76,19 @@ def test_production_flags_invalid_or_development_configuration(name, value, key)
 def test_issues_never_echo_sensitive_configuration_values():
     marker = "do-not-display-this-credential"
     settings = production_settings(
-        evon_base_url=f"https://{marker}@gpu.artha.in/v1?key={marker}",
+        evon_base_url=f"https://{marker}@gpu.charcha.in/v1?key={marker}",
         livekit_api_secret=marker,
         gnani_api_key=marker,
-        cors_origins=[f"https://{marker}@meet.artha.in"],
+        cors_origins=[f"https://{marker}@meet.charcha.in"],
     )
     encoded = json.dumps(readiness_snapshot(settings))
     assert marker not in encoded
-    assert "gpu.artha.in" not in encoded
+    assert "gpu.charcha.in" not in encoded
 
 
 def load_checker():
     path = Path(__file__).resolve().parents[2] / "scripts" / "check_config.py"
-    spec = importlib.util.spec_from_file_location("artha_config_checker", path)
+    spec = importlib.util.spec_from_file_location("charcha_config_checker", path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module

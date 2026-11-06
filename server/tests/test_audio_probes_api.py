@@ -4,14 +4,14 @@ from types import SimpleNamespace
 import pytest
 from fastapi.testclient import TestClient
 
-from artha_mesh.config import Settings
-from artha_mesh.errors import ProviderError
-from artha_mesh.models import Participant
+from charcha.config import Settings
+from charcha.errors import ProviderError
+from charcha.models import Participant
 
 
 @pytest.fixture
 def probe_client(monkeypatch):
-    from artha_mesh import main
+    from charcha import main
 
     def forbidden(*_args, **_kwargs):
         raise AssertionError("Receiver probes must not construct a paid speech provider")

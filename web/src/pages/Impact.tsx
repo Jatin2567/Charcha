@@ -25,32 +25,32 @@ export function Impact() {
           <Badge tone="green">Elite Systems &amp; Voice AI Submission</Badge>
           <Badge tone="neutral">The Great Indian AI Internship Challenge · Gnani.ai</Badge>
         </div>
-        <h1>ARTHA-MESH</h1>
+        <h1>CHARCHA</h1>
         <p className="impact-subtitle">
-          Bridging India&apos;s languages with empathy, verifiable precision, and sovereign security. Built to empower inter-state commerce, emergency coordination, and everyday conversations without losing the human voice.
+          A prototype for multilingual conversations with original and translated captions, listener confirmations, and inspectable measurements. Designed to help people review important details across languages; high-stakes use still requires validation.
         </p>
       </header>
 
-      {/* EXECUTIVE LIVE HUD BOX */}
-      <div className="executive-preview-hud" aria-label="Live System Coordination HUD">
+      {/* ILLUSTRATIVE PRODUCT PREVIEW */}
+      <div className="executive-preview-hud" aria-label="Illustrative multilingual conversation preview">
         <div className="hud-header">
-          <span>Live Indic Telephony &amp; WebRTC Gateway HUD</span>
-          <Badge tone="green">Streaming Active · 1.56s Median</Badge>
+          <span>Illustrative WebRTC Conversation · LiveKit SFU</span>
+          <Badge tone="neutral">Prototype · No SIP/PSTN gateway</Badge>
         </div>
         <div className="hud-dialogue">
           <div className="hud-turn">
-            <span className="hud-meta">Spoken Hindi Input (Gnani Prisma STT)</span>
+            <span className="hud-meta">Example Hindi source text · not a live transcript</span>
             <div className="hud-text">&ldquo;हमें 1976 यूनिट नहीं चाहिए, सिर्फ 200 यूनिट भेजो।&rdquo;</div>
           </div>
           <div className="hud-turn">
-            <span className="hud-meta">Synthesized Tamil Output (Evon v3.3 Clause Stream &rarr; Timbre TTS &middot; 1.56s Stage)</span>
+            <span className="hud-meta">Illustrative Tamil translation · not measured audio output</span>
             <div className="hud-text">&ldquo;எங்களுக்கு 1976 அலகுகள் தேவையில்லை, 200 அலகுகளை மட்டும் அனுப்பவும்.&rdquo;</div>
           </div>
         </div>
         <div className="hud-tags">
           <div className="hud-tag">
             <Clock size={15} />
-            <span><strong>1.56s</strong> Median Server Stage Latency</span>
+            <span><strong>1.56s</strong> Historical Server Stage Median · 31 Oct 2026</span>
           </div>
           <div className="hud-tag">
             <FileCheck2 size={15} />
@@ -58,11 +58,11 @@ export function Impact() {
           </div>
           <div className="hud-tag">
             <Headphones size={15} />
-            <span><strong>VoiceShield</strong> Waveform Tracking + Auditory Check</span>
+            <span><strong>VoiceShield</strong> Experimental Audio Monitoring</span>
           </div>
           <div className="hud-tag">
             <CheckCircle2 size={15} />
-            <span><strong>SHA-256</strong> Verifiable Session Audit Hash</span>
+            <span><strong>SHA-256</strong> Source Record Fingerprint</span>
           </div>
         </div>
       </div>
@@ -75,7 +75,7 @@ export function Impact() {
         </h2>
         <div className="human-narrative-card">
           <p>
-            India is a subcontinent of 1.4 billion people and 22 official languages, where inter-state commerce, agricultural supply chains, emergency handovers, and personal conversations cross linguistic borders every single minute.
+            Across India, inter-state commerce, agricultural supply chains, emergency handovers, and personal conversations often cross language boundaries.
           </p>
           <div className="human-narrative-grid">
             <div className="narrative-point">
@@ -91,9 +91,9 @@ export function Impact() {
               </p>
             </div>
             <div className="narrative-point">
-              <strong>Protecting Families from Synthetic Impersonation</strong>
+              <strong>Making Audio Warnings Inspectable</strong>
               <p>
-                As generative deepfake scams exploit degraded cellular phone calls, fear prevents citizens from trusting voice calls. Artha-Mesh protects users with continuous waveform tracking and a 1-click <strong>Auditory Verification</strong> check — letting your own ears verify authentic human tone and breath.
+                Charcha exposes experimental audio screening results and a <strong>Hear Original Voice</strong> control for reviewing the source audio. Neither a model score nor listening for breath and tone establishes that a caller is human or authentic.
               </p>
             </div>
           </div>
@@ -104,10 +104,10 @@ export function Impact() {
       <section className="impact-section" aria-labelledby="pillars-heading">
         <h2 id="pillars-heading">
           <Sparkles size={22} className="text-primary" />
-          The Four Pillars of Technical Differentiation
+          Four Prototype Features
         </h2>
         <p className="impact-section-desc">
-          Instead of relying on black-box, uninspectable speech translation, Artha-Mesh delivers an airtight operational system designed for high-stakes Indian enterprise coordination:
+          Charcha combines speech translation with visible review steps and experimental audio monitoring. These features support inspection; they do not guarantee correct translations or safe high-stakes decisions.
         </p>
 
         <div className="pillars-grid">
@@ -125,9 +125,9 @@ export function Impact() {
           <div className="pillar-card">
             <div>
               <div className="pillar-num">Pillar 02</div>
-              <div className="pillar-title">Visual Entity Tagging &amp; Turn Consensus</div>
+              <div className="pillar-title">Visual Entity Tagging &amp; Listener Understanding</div>
               <p className="pillar-desc">
-                High-risk quantities (e.g. <code>1976</code>, <code>200</code>) and critical negation directives (e.g. <code>नहीं</code>, <code>இல்லை</code>, <code>not</code>) are automatically tagged in visual highlight tokens with a 1-click inline <code>[✓ Confirm]</code> consensus button.
+                Numbers (e.g. <code>1976</code>, <code>200</code>) and selected negation terms (e.g. <code>नहीं</code>, <code>இல்லை</code>, <code>not</code>) are highlighted for review. Listener confirmations record understanding, not agreement or proof that a translation is accurate.
               </p>
             </div>
             <Badge tone="green">Delivered</Badge>
@@ -136,9 +136,9 @@ export function Impact() {
           <div className="pillar-card">
             <div>
               <div className="pillar-num">Pillar 03</div>
-              <div className="pillar-title">Cryptographic B2B Deal Memorandum</div>
+              <div className="pillar-title">Bilingual Recap &amp; Content Fingerprint</div>
               <p className="pillar-desc">
-                Completed conversations generate an institutional Deal Memorandum with confirmation ratios, extracted parameters, and an immutable 64-character SHA-256 audit hash embedded directly into exported transcripts for non-repudiation.
+                Conversation recaps preserve original text, available translations, corrections, and listener confirmations. A SHA-256 fingerprint identifies the source record; it is not a digital signature, immutable record, or proof of agreement.
               </p>
             </div>
             <Badge tone="green">Delivered</Badge>
@@ -147,12 +147,12 @@ export function Impact() {
           <div className="pillar-card">
             <div>
               <div className="pillar-num">Pillar 04</div>
-              <div className="pillar-title">VoiceShield: Waveform DSP Tracking + Auditory Human Check</div>
+              <div className="pillar-title">VoiceShield: Experimental Audio Monitoring</div>
               <p className="pillar-desc">
-                100% waveform DSP tracking (autocorrelation pitch period, spectral jitter/shimmer proxies, and AASIST graph neural embeddings) running on local server CPU with zero keyword filtering. When an anomaly is flagged, users can tap <code>[🎧 Hear Original Voice]</code> to verify authentic human breath, cadence, and inflection directly.
+                An AASIST ONNX audio classifier runs on the server CPU. Pitch and jitter/shimmer proxies are separate diagnostics, not authenticity evidence or classifier inputs. <code>[🎧 Hear Original Voice]</code> supports audio review; detection accuracy remains unvalidated.
               </p>
             </div>
-            <Badge tone="green">Delivered</Badge>
+            <Badge tone="orange">Experimental</Badge>
           </div>
         </div>
       </section>
@@ -164,7 +164,7 @@ export function Impact() {
           The Core Problem: Translation Drift When Details Matter
         </h2>
         <p className="impact-section-desc">
-          Multilingual speech translation already exists in consumer tools. However, receiving translated audio does not establish that the intended meaning survived. Google explicitly documents that speech translation models produce semantic and factual errors (
+          Multilingual speech translation already exists in consumer tools. However, receiving translated audio does not establish that the intended meaning survived. Google documents possible grammatical and translation errors in real-time speech translation (
           <a
             href="https://support.google.com/meet/answer/16221730?hl=en"
             target="_blank"
@@ -203,7 +203,7 @@ export function Impact() {
             </div>
           </div>
           <p className="impact-section-desc" style={{ marginBottom: 0 }}>
-            <strong>Our Own Measured Evidence:</strong> During live batch testing on Gnani STT, the spoken year <strong>1976</strong> was recognized as <strong>1972</strong>. In casual chat, this is harmless; in banking, legal, or emergency instructions, an unnoticed digit inversion causes real-world failure. Artha-Mesh pairs translated speech with a <strong>Dual-Language Caption Ribbon</strong>, <strong>Visual Entity Tagging for numbers (e.g. <code>1976</code>, <code>200</code>) and negation (e.g. <code>नहीं</code>, <code>இல்லை</code>, <code>not</code>)</strong>, and an <strong>Inline 1-Click Confirmation Step</strong> for critical handovers.
+            <strong>Saved Test Evidence (31 October 2026):</strong> In the Marathi source clip, the reference year <strong>1976</strong> was recognized as <strong>1972</strong> in two Gnani STT routes. This single example illustrates why quantities need review; it does not establish an overall error rate. Charcha pairs translated speech with a <strong>Dual-Language Caption Ribbon</strong>, <strong>Visual Entity Tagging for numbers (e.g. <code>1976</code>, <code>200</code>) and negation (e.g. <code>नहीं</code>, <code>இல்லை</code>, <code>not</code>)</strong>, and an <strong>Inline Understanding Confirmation</strong>. The dialogue above is illustrative.
           </p>
         </div>
       </section>
@@ -226,7 +226,7 @@ export function Impact() {
             </div>
             <div className="evidence-details">
               <div className="evidence-supports">
-                <strong>Supports:</strong> Indian-language voice experiences address a substantial, majority national audience.
+                <strong>Supports:</strong> Indic-language internet content reaches a large audience; this is a motivation for exploring multilingual tools.
               </div>
               <div className="evidence-limits">
                 <strong>Does not establish:</strong> That all 87 crore users cannot speak English or all require conference translation.
@@ -252,7 +252,7 @@ export function Impact() {
             </div>
             <div className="evidence-details">
               <div className="evidence-supports">
-                <strong>Supports:</strong> Language preference is decisive even across connected Tier-1 and Tier-2 urban hubs.
+                <strong>Supports:</strong> A majority of surveyed urban internet users preferred Indic-language content.
               </div>
               <div className="evidence-limits">
                 <strong>Does not establish:</strong> A measured failure rate for English-medium professional meetings.
@@ -278,10 +278,10 @@ export function Impact() {
             </div>
             <div className="evidence-details">
               <div className="evidence-supports">
-                <strong>Supports:</strong> Telephony impersonation, fraud, and digital trust are urgent national concerns.
+                <strong>Supports:</strong> Reported financial cyber fraud is a substantial national concern; this total covers multiple kinds of cyber fraud.
               </div>
               <div className="evidence-limits">
-                <strong>Does not establish:</strong> The portion caused by AI voice clones, or losses Artha-Mesh directly prevents.
+                <strong>Does not establish:</strong> The portion caused by AI voice clones, or losses Charcha directly prevents.
               </div>
             </div>
             <div className="evidence-footer">
@@ -306,7 +306,7 @@ export function Impact() {
           Objective Competitor Comparison (Fair Evaluation)
         </h2>
         <p className="impact-section-desc">
-          We do not claim that competitors cannot translate speech or detect deepfakes. Here is what vendor documentation establishes and the exact engineering differentiation of Artha-Mesh:
+          Vendor documentation checked on 9 November 2026 describes the capabilities below. Charcha&apos;s column describes its prototype focus, not independently measured superiority:
         </p>
 
         <div className="comparison-container">
@@ -315,7 +315,7 @@ export function Impact() {
               <tr>
                 <th>Solution</th>
                 <th>What Its Documentation Establishes</th>
-                <th>Engineering Differentiation in Artha-Mesh</th>
+                <th>Engineering Differentiation in Charcha</th>
                 <th>Status</th>
               </tr>
             </thead>
@@ -336,7 +336,7 @@ export function Impact() {
                   Spoken translation across 63 languages (including Hindi, Tamil, Bengali, Telugu, and Marathi); translated captions and participant consent.
                 </td>
                 <td>
-                  Five-language translation alone is not our differentiator. Our contribution is the synchronous dual-language ribbon, entity verification, and sovereign custody.
+                  Our prototype combines original and translated captions, entity highlighting, and explicit listener confirmations. India-only processing is not established.
                 </td>
                 <td>
                   <Badge tone="neutral">Documented</Badge>
@@ -358,7 +358,7 @@ export function Impact() {
                   Multilingual interpretation infrastructure; maintains differing speaker and attendee language lists.
                 </td>
                 <td>
-                  We focus on true bidirectional multi-party conversation and verifiable meeting handovers rather than headline language counts.
+                  Our prototype focuses on bidirectional multi-party conversation with reviewable captions and listener confirmations.
                 </td>
                 <td>
                   <Badge tone="neutral">Documented</Badge>
@@ -380,7 +380,7 @@ export function Impact() {
                   Indian-language speech recognition, translation, and speech synthesis APIs available for developer usage.
                 </td>
                 <td>
-                  Combining STT + MT + TTS is an established industry pattern. Our technical contribution is the real-time conferencing mesh and telemetry engineering.
+                  Combining STT + MT + TTS is an established industry pattern. Our implementation adds LiveKit SFU conferencing and timing telemetry.
                 </td>
                 <td>
                   <Badge tone="neutral">Documented</Badge>
@@ -424,7 +424,7 @@ export function Impact() {
                   Real-time deepfake detection for enterprise video meetings with audio/video liveness verification signals.
                 </td>
                 <td>
-                  Neither real-time detection nor meeting integration is novel by itself. Our contribution is open, inspectable local CPU waveform telemetry with zero keyword inspection.
+                  Our experimental audio classifier and diagnostic telemetry run on the server CPU without transcript keyword inspection. Detection performance has not been validated.
                 </td>
                 <td>
                   <Badge tone="neutral">Documented</Badge>
@@ -442,7 +442,7 @@ export function Impact() {
           What We Have Actually Measured (Empirical Benchmarks)
         </h2>
         <p className="impact-section-desc">
-          We report verified technical measurements from our live provider test batches without inflating them into broader marketing claims.
+          These saved measurements come from the 31 October 2026 provider test batch. They describe that configuration, not current end-to-end performance or translation accuracy.
         </p>
 
         <div className="telemetry-grid">
@@ -456,7 +456,7 @@ export function Impact() {
           <div className="telemetry-card">
             <div className="telemetry-num">1.56s</div>
             <div className="telemetry-label">
-              <strong>Median server translation &amp; synthesis stage</strong> (1.37s – 2.32s range in the saved batch). Does not measure physical listener ear delay.
+              <strong>Historical server translation &amp; synthesis median</strong> (1.37s – 2.32s range). Excludes microphone capture, speech recognition, and physical listener playback; it is not current end-to-end latency.
             </div>
           </div>
 
@@ -475,9 +475,9 @@ export function Impact() {
           </div>
         </div>
         <p className="impact-section-desc" style={{ marginTop: '0.75rem' }}>
-          Explore complete raw timing traces, p50/p95 distributions, and failure logs on the{' '}
+          Explore saved timing summaries, measurement boundaries, and failure details on the{' '}
           <Link to="/performance" className="evidence-link">
-            Live Performance Page <ArrowRight size={13} />
+            Performance Page <ArrowRight size={13} />
           </Link>
           .
         </p>
@@ -487,15 +487,15 @@ export function Impact() {
       <section className="impact-section" aria-labelledby="voiceshield-heading">
         <h2 id="voiceshield-heading">
           <ShieldCheck size={22} className="text-primary" />
-          VoiceShield Research: Waveform Tracking Telemetry
+          VoiceShield Research: Experimental Audio Screening
         </h2>
         <p className="impact-section-desc">
-          VoiceShield is an experimental acoustic waveform screening module. It operates strictly on a <strong>voice tracking basis</strong> (waveform DSP and neural vocoder analysis)—<strong>not on text keywords or transcript regex</strong>.
+          VoiceShield is an experimental <strong>audio classifier</strong> with separate waveform diagnostics. It processes source audio without using text keywords or transcript regex; it does not identify callers or establish authenticity.
         </p>
 
         <div className="voiceshield-research-box">
           <div className="voiceshield-pills">
-            <span className="voiceshield-pill">Pure Voice Tracking</span>
+            <span className="voiceshield-pill">Experimental Audio Classifier</span>
             <span className="voiceshield-pill">Zero Text/Keyword Matching</span>
             <span className="voiceshield-pill">Local CPU Execution</span>
             <span className="voiceshield-pill">AASIST ONNX Model</span>
@@ -503,12 +503,12 @@ export function Impact() {
           </div>
 
           <p className="impact-section-desc" style={{ marginBottom: '1rem' }}>
-            VoiceShield extracts consecutive 16kHz audio frames to calculate real-time autocorrelation pitch period variance, consecutive-frame jitter/shimmer proxies, and deepfake acoustic anomaly scores via an MIT-licensed AASIST ONNX model running entirely on the server CPU (zero external API calls).
+            The AASIST ONNX classifier consumes 16 kHz audio windows on the server CPU without external API calls for screening. Separate diagnostics report autocorrelation pitch and consecutive-frame jitter/shimmer proxies. These proxies are not clinical cycle measurements, classifier inputs, or evidence of human or synthetic origin. The model score is uncalibrated.
           </p>
 
           <div className="voiceshield-stats">
             <div className="voiceshield-stat">
-              <strong>4.04 Seconds</strong>
+              <strong>4.0375 Seconds</strong>
               <span>Required audio window (64,600 samples)</span>
             </div>
             <div className="voiceshield-stat warn">
@@ -521,12 +521,12 @@ export function Impact() {
             </div>
             <div className="voiceshield-stat">
               <strong>0 Synthetic Clips</strong>
-              <span>Tested in human pilot (recall uncalibrated)</span>
+              <span>Tested in human pilot (synthetic-speech recall unmeasured)</span>
             </div>
           </div>
 
           <p className="impact-section-desc" style={{ margin: '1rem 0 0', fontSize: '0.85rem', color: '#94a3b8' }}>
-            <strong>Scientific Boundary:</strong> Because the pilot falsely flagged 28% of clean human speech clips and had zero synthetic samples, VoiceShield runs strictly in <strong>monitor mode</strong> (non-blocking risk telemetry). It explicitly separates original speaker audio from legitimate translated synthetic speech produced by Artha-Mesh.
+            <strong>Scientific Boundary:</strong> The human-only pilot falsely flagged 14 of 50 clips and returned 12 unknowns. It establishes neither synthetic-speech recall nor validated detection accuracy. VoiceShield defaults to <strong>non-blocking monitor mode</strong>; automatic blocking is not validated. Screening applies to original speaker audio, separate from Charcha&apos;s translated synthetic output.
           </p>
         </div>
       </section>
@@ -538,39 +538,39 @@ export function Impact() {
           Engineering Rigor &amp; Deliverables
         </h2>
         <p className="impact-section-desc">
-          To maintain engineering integrity, we clearly distinguish between our local verified prototype and prospective sovereign production deployment:
+          Local checks, historical provider tests, and deployment readiness are separate evidence categories. Automated tests do not establish live provider quality or production readiness.
         </p>
 
         <div className="rigor-box">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
-            <strong style={{ color: '#fff', fontSize: '1.05rem' }}>Automated Verification Suite Status</strong>
-            <Badge tone="green">100% Green Across Repo</Badge>
+            <strong style={{ color: '#fff', fontSize: '1.05rem' }}>Historical Test Snapshot · 3 November 2026</strong>
+            <Badge tone="neutral">Reported in Developer Journal</Badge>
           </div>
           <div className="rigor-stats">
             <div className="rigor-stat">
               <strong>1,370 Passed</strong>
-              <span>Backend Pytest tests (Prisma STT, Evon MT, Timbre TTS, LiveKit DAG)</span>
+              <span>Backend tests reported in the dated journal entry</span>
             </div>
             <div className="rigor-stat">
               <strong>276 Passed</strong>
-              <span>Frontend Vitest tests across 37 test suites</span>
+              <span>Frontend tests reported in the same entry</span>
             </div>
             <div className="rigor-stat">
               <strong>1,646 Total</strong>
-              <span>Automated tests passing with 0 failures</span>
+              <span>Historical total; not a current checkout test result</span>
             </div>
           </div>
         </div>
 
         <ul style={{ color: '#cbd5e1', lineHeight: '1.7', fontSize: '0.92rem', paddingLeft: '1.25rem', marginTop: '1.25rem' }}>
           <li>
-            <strong>Verified Today:</strong> Docker container builds, HTTPS/TURN (Caddy) configuration, LiveKit SFU multi-party routing, and streaming clause MT+TTS running in a 100% reproducible test suite.
+            <strong>Recorded Evidence:</strong> The journal records local container and HTTPS checks, LiveKit SFU routing fixtures, and offline streaming MT/TTS regressions. A configured deployment is not proof of live network readiness or provider performance.
           </li>
           <li>
-            <strong>Sovereignty Reality:</strong> Full data sovereignty and air-gapped guarantees require physical deployment on Indian bare-metal infrastructure (such as Yotta or local on-premise clusters) under operator custody.
+            <strong>Deployment Boundary:</strong> India-only processing and data custody require verified hosting, provider regions, logs, and operational controls. The external-provider pipeline is not air-gapped; no sovereignty guarantee is established here.
           </li>
           <li>
-            <strong>Submission Deliverable:</strong> Open-source repository, 1,646 passing automated tests, inspectable live telemetry, and a 60-second demonstration video.
+            <strong>Submission Material:</strong> Repository source, dated test evidence, and inspectable telemetry are available for review. A demonstration video and final live acceptance remain submission preparation tasks.
           </li>
         </ul>
       </section>

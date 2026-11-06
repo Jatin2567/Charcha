@@ -1,5 +1,5 @@
 {
-  "name": "artha-mesh",
+  "name": "charcha",
   "version": "1.0.0",
   "private": true,
   "description": "Indic multilingual meeting interpretation — Track B",
@@ -10,7 +10,7 @@
     "dev": "node scripts/dev.mjs",
     "dev:checks": "node scripts/dev.mjs --provider-checks",
     "dev:web": "npm run dev --workspace web",
-    "dev:server": "uv run --project server uvicorn artha_mesh.main:app --app-dir server --host 127.0.0.1 --port 8000 --reload --no-access-log --log-level warning",
+    "dev:server": "uv run --project server uvicorn charcha.main:app --app-dir server --host 127.0.0.1 --port 8000 --reload --no-access-log --log-level warning",
     "build": "npm run build --workspace web && node scripts/copy-dist.mjs",
     "build:demo": "node scripts/build-demo.mjs",
     "test:web": "npm run test --workspace web",
@@ -19,6 +19,7 @@
     "format": "prettier --write web/src scripts/*.mjs docs/*.md README.md package.json compose.yaml",
     "dev:local": "node scripts/local.mjs",
     "dev:shield": "node scripts/local.mjs --screening-monitor",
+    "dev:meeting": "node scripts/local.mjs --live --screening-monitor",
     "dev:live": "node scripts/local.mjs --live",
     "check:conference": "node scripts/local.mjs --check",
     "test:rtc": "node scripts/local.mjs --verify",

@@ -202,11 +202,11 @@ function ProviderEvidence({ report }: { report: UsageReport }) {
         <section className="panel usage-approval" aria-labelledby="usage-approval-title">
           <div className="usage-section-title">
             <LockKeyhole size={20} />
-            <h2 id="usage-approval-title">Permission before each flow</h2>
+            <h2 id="usage-approval-title">{approval.host_allowance_enabled ? 'Meeting interpretation' : 'Permission before each flow'}</h2>
           </div>
           <div className="usage-approval-state">
             <Badge tone={approved ? 'green' : 'neutral'}>
-              {approved
+              {approval.host_allowance_enabled ? 'Host allowance enabled' : approved
                 ? 'One bounded flow approved'
                 : approval.status === 'disabled'
                   ? 'Transport · speech APIs disabled'
@@ -217,7 +217,7 @@ function ProviderEvidence({ report }: { report: UsageReport }) {
                     : 'Locked · no flow approved'}
             </Badge>
           </div>
-          <p className="usage-intro">{approval.detail}</p>
+          <p className="usage-intro">{approval.host_allowance_enabled ? 'Eligible host meetings share a single Gnani allowance across rooms and languages. Charcha Admin shows the limit and estimated remaining amount.' : approval.detail}</p>
           {approved && (
             <dl className="usage-approval-meta">
               <div>
@@ -230,7 +230,7 @@ function ProviderEvidence({ report }: { report: UsageReport }) {
               </div>
             </dl>
           )}
-          <ol className="usage-approval-steps">
+          {!approval.host_allowance_enabled && <><ol className="usage-approval-steps">
             <li>Review the proposed test, endpoints, maximum work and any known billing rate.</li>
             <li>Give written permission for that single flow before it starts.</li>
             <li>The operator records its resource caps and expiry on the server.</li>
@@ -239,7 +239,7 @@ function ProviderEvidence({ report }: { report: UsageReport }) {
           <p className="usage-evidence-note">
             This read-only page cannot grant permission. Another flow needs another approval;
             refreshing the page never starts a test. API keys stay on the server.
-          </p>
+          </p></>}
         </section>
       </div>
 
@@ -252,7 +252,7 @@ function ProviderEvidence({ report }: { report: UsageReport }) {
           <Badge>{programme.flows.length} recorded</Badge>
         </div>
         <p className="usage-intro">
-          Each flow has its own allowance in addition to the seven daily caps. Reservations show
+          This history lists individually approved flows. Reservations show
           attempted work; provider credit charges require a separate dashboard check.
         </p>
         {programme.flows.length === 0 ? (
@@ -459,6 +459,30 @@ export function Usage() {
   const ready = available && report.enforcement.status === 'ready';
   const reset = new Date(report.period.reset_at);
 
+  if (!available) return <div className="usage-page">
+    <PageHeading eyebrow="SERVICE ACTIVITY" title="Usage" description="Live readings appear after the workspace service responds." />
+    <ErrorNotice message={usage.error} />
+    <section className="panel"><p>{usage.loading || healthLoading ? 'Loading measured activity…' : 'Live usage is unavailable. No estimated balance or example activity is shown.'}</p>
+      <button className="button secondary" onClick={usage.refresh} disabled={usage.loading}>Refresh activity</button>
+    </section>
+  </div>;
+
+  if (report.approval.owner_tracks_billing) return <div className="usage-page">
+    <PageHeading eyebrow="MEASURED SERVICE ACTIVITY" title="Usage" description="You monitor credits in Gnani. Charcha does not estimate or deduct a rupee balance." />
+    <ErrorNotice message={usage.error} />
+    <section className="panel">
+      <h2>Automatic interpretation</h2>
+      <p>Meetings created by the workspace host can use every supported language and meeting voice. No operator approval is required.</p>
+      <p>These are actual attempted service units for {report.period.date} UTC, including failed requests and recognition connection time. They are not billed charges or an accuracy score.</p>
+      <button className="button secondary" onClick={usage.refresh}>Refresh activity</button>
+      <table><thead><tr><th>Service activity</th><th>Recorded units</th></tr></thead>
+        <tbody>{report.resources.map((item) => <tr key={item.key}><td>{item.label}</td><td>{available ? amount(item.used) : 'Unavailable'} {item.unit}</td></tr>)}</tbody>
+      </table>
+      <p>Gnani balance: not tracked. Modal credit balance: not connected to this page. Check each provider’s dashboard for billing.</p>
+      <Link className="button secondary" to="/performance">Open live performance</Link>
+    </section>
+  </div>;
+
   return (
     <div className="usage-page">
       <PageHeading
@@ -580,7 +604,7 @@ export function Usage() {
             className="button secondary"
             disabled={!available}
             onClick={() =>
-              downloadJson(`artha-mesh-usage-${report.period.date}.json`, {
+              downloadJson(`charcha-usage-${report.period.date}.json`, {
                 ...report,
                 exported_at: new Date().toISOString(),
               })

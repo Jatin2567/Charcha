@@ -5,13 +5,13 @@ from types import SimpleNamespace
 import pytest
 from fastapi.testclient import TestClient
 
-from artha_mesh.config import Settings
-from artha_mesh.main import create_app
-from artha_mesh.models import Participant
-from artha_mesh.services.pipeline import Pipeline
-from artha_mesh.services.usage import RESOURCES, UsageGuard
-from artha_mesh.store import Store
-from artha_mesh.transport.livekit import RoomTransport
+from charcha.config import Settings
+from charcha.main import create_app
+from charcha.models import Participant
+from charcha.services.pipeline import Pipeline
+from charcha.services.usage import RESOURCES, UsageGuard
+from charcha.store import Store
+from charcha.transport.livekit import RoomTransport
 
 
 KEYS = [row[0] for row in RESOURCES]
@@ -41,6 +41,7 @@ def snapshot(*, active=True, status="approved", **remaining):
 def capacity_fixture(data=None, **config):
     guard = object.__new__(UsageGuard)
     guard.settings = settings(**config)
+    guard.host_room_expiry = None
     guard.snapshot = lambda: deepcopy(data if data is not None else snapshot())
     return guard
 
@@ -152,6 +153,37 @@ def auth(member):
     return {"Authorization": "Bearer " + member["session_token"]}
 
 
+def test_host_can_toggle_only_their_room_after_prejoin_notice(conference, monkeypatch):
+    app = conference.app.state
+    app.settings.audio_screening_on_demand = True
+    monkeypatch.setattr(app.screening.screener, "status", lambda: {"ready": True})
+    create = lambda: conference.post("/api/rooms", json={"title": "Private meeting"}).json()
+    room, other = create(), create()
+    assert room["screening_switchable"] and room["screening_mode"] == "off"
+    base = "/api/rooms/" + room["code"]
+    body = {"name": "Speaker", "language": "hi", "consent": True}
+    assert conference.post(base + "/join", json=body).status_code == 422
+    member = conference.post(base + "/join", json={**body, "screening_consent": True}).json()
+    headers = auth(member)
+    rtc_room = app.transport.rooms[room["code"]]
+    resets = []
+    rtc_room.reset_screening_windows = lambda: resets.append(True)
+    def change(mode):
+        return conference.patch(base + "/screening", headers=headers, json={"mode": mode})
+    assert change("enforce").status_code == 422
+    assert change("monitor").json()["mode"] == "monitor"
+    assert change("monitor").json()["mode"] == "monitor"
+    assert app.store.room(other["code"]).room.screening_mode == "off"
+    assert app.store.room(room["code"]).room.screening_mode == "monitor"
+    app.store.room(room["code"]).screening_latest["old"] = {"score": 0.5}
+    assert change("off").json()["mode"] == "off" and len(resets) == 2
+    assert conference.get(base + "/screening", headers=headers).json()["latest"] == {}
+    assert conference.patch("/api/rooms/" + other["code"] + "/screening", headers=headers,
+                            json={"mode": "monitor"}).status_code in (401, 403)
+    app.store.room(room["code"]).owner = "another-host"
+    assert change("monitor").status_code == 403
+
+
 def ready(client, code, member):
     response = client.get(f"/api/rooms/{code}/conference-readiness", headers=auth(member))
     assert response.status_code == 200, response.text
@@ -208,6 +240,16 @@ def test_original_audio_mode_copy_does_not_claim_shared_language_or_translation(
     paired = ready(conference, code, source)
     assert paired["microphone"]["reason_code"] == "original_audio_only"
     assert paired["microphone"]["detail"] == "Original audio is shared with connected participants. Speech providers are disabled in this mode."
+
+
+def test_original_meeting_in_live_workspace_needs_no_provider_approval(conference):
+    room = conference.post("/api/rooms", json={"title": "Original voices", "audio_mode": "original"}).json()
+    assert room["mode"] == "transport"
+    code, source = join(conference, room["code"])
+    join(conference, code, "ta")
+    report = ready(conference, code, source)
+    assert report["mode"] == "transport" and report["microphone"]["can_unmute"]
+    assert not report["provider_flow"]["required"]
 
 
 def test_translated_microphone_requires_approval_before_state_changes(conference):

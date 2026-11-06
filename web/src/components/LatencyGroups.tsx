@@ -123,7 +123,7 @@ export function LatencyGroups({ samples }: { samples: PerformanceSample[] }) {
         </p>
         <button
           className="button secondary"
-          onClick={() => downloadJson('artha-mesh-grouped-latency.json', report)}
+          onClick={() => downloadJson('charcha-grouped-latency.json', report)}
         >
           <Download size={15} />
           Export grouped timings

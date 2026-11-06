@@ -15,7 +15,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "server"))
 
-from artha_mesh.services.audio_screening import LocalAudioScreener, read_pcm_wav  # noqa: E402
+from charcha.services.audio_screening import LocalAudioScreener, read_pcm_wav  # noqa: E402
 
 
 def load_manifest(manifest: Path) -> list[dict]:

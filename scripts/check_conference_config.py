@@ -1,4 +1,4 @@
-"""Local config presence only. No provider client, network, ledger or model load."""
+"""Check local settings and the requested CPU model without opening a provider connection."""
 import argparse
 import json
 from pathlib import Path
@@ -12,11 +12,16 @@ def main():
     parser.add_argument("--mode", choices=("transport", "live"), default="transport")
     args = parser.parse_args()
     try:
-        from artha_mesh.config import Settings
+        from charcha.config import Settings
         settings = Settings()
         missing = settings.missing_live_config() if args.mode == "live" else settings.missing_transport_config()
+        if settings.audio_screening_mode != "off" or settings.audio_screening_on_demand:
+            from charcha.services.screening_runtime import ScreeningRuntime
+            model = ScreeningRuntime(settings).screener.status()
+            if not model["ready"]:
+                missing.append("VoiceShield classifier: " + model["reason"])
         if args.mode == "live":
-            from artha_mesh.providers.evon import modal_proxy_headers
+            from charcha.providers.evon import modal_proxy_headers
             modal_proxy_headers(settings.evon_base_url, settings.evon_modal_key.get_secret_value(),
                                 settings.evon_modal_secret.get_secret_value())
         print(json.dumps({"configuration_valid": not missing, "mode": args.mode, "missing": missing,

@@ -8,12 +8,12 @@ from types import SimpleNamespace
 
 from livekit import rtc
 
-from artha_mesh.config import Settings
-from artha_mesh.models import Participant
-from artha_mesh.services.routing import recipients_for, target_languages
-from artha_mesh.store import Store
-from artha_mesh.transport.livekit import RoomTransport
-from artha_mesh.transport.tokens import room_token
+from charcha.config import Settings
+from charcha.models import Participant
+from charcha.services.routing import recipients_for, target_languages
+from charcha.store import Store
+from charcha.transport.livekit import RoomTransport
+from charcha.transport.tokens import room_token
 
 
 def claims(token):

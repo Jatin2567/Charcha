@@ -18,24 +18,29 @@ import {
 } from 'lucide-react';
 import { Avatar, Badge, ErrorNotice, Modal } from '../components/ui';
 import { ConversationIllustration } from '../components/ConversationIllustration';
+import { UserFeedback } from '../components/UserFeedback';
+import { useAccount } from '../components/AccountGate';
 import { useApp } from '../state/AppContext';
 import { createRoom } from '../services/api';
 import { languageName } from '../types/domain';
 export function Home() {
   const app = useApp();
+  const host = useAccount()?.can_host ?? true;
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [join, setJoin] = useState(false);
   const [code, setCode] = useState('');
   const [title, setTitle] = useState('Cross-language conversation');
+  const [audioMode, setAudioMode] = useState<'original' | 'interpreted'>('interpreted');
   const start = async () => {
+    if (!host) {setJoin(true);return;}
     setBusy(true);
     setError('');
     try {
       if (!app.health)
         throw new Error(app.serviceError || 'The workspace is still connecting. Please try again.');
-      const room = await createRoom(title);
+      const room = await createRoom(title, app.health.mode === 'live' ? audioMode : undefined);
       navigate(`/join/${room.code}`);
     } catch (e) {
       setError((e as Error).message);
@@ -68,7 +73,7 @@ export function Home() {
       <div className="home-challenge-pill" role="banner">
         <div className="home-challenge-left">
           <Badge tone="green">Gnani.ai Challenge Submission</Badge>
-          <span>Sovereign Multi-Party Indic Voice &amp; Coordination Gateway</span>
+          <span>Multilingual meetings with shared corrections</span>
         </div>
         <Link to="/impact" className="home-challenge-cta">
           Explore Challenge Story, Architecture &amp; Empirical Evidence &rarr;
@@ -108,13 +113,22 @@ export function Home() {
             Bring everyone to the table. Speak naturally,
             <br className="desktop-br" /> and hear the conversation in your language.
           </p>
+          {host && app.health?.mode === 'live' && (
+            <label className="field">
+              <span>Meeting audio</span>
+              <select value={audioMode} onChange={(e) => setAudioMode(e.target.value === 'original' ? 'original' : 'interpreted')}>
+                <option value="interpreted">Live interpretation · 10 languages</option>
+                <option value="original">Original audio</option>
+              </select>
+            </label>
+          )}
           <button
             className="button primary large"
             onClick={() => void start()}
             disabled={busy || app.healthLoading}
           >
             <Plus size={19} />
-            {busy ? 'Creating your room…' : 'New conversation'}
+            {host ? (busy ? 'Creating your room…' : 'New conversation') : 'Enter a meeting code'}
             <ArrowRight size={18} />
           </button>
           <button
@@ -130,7 +144,7 @@ export function Home() {
           </button>
           <div className="hero-footnote">
             <ShieldCheck size={14} />
-            You choose when to enable your microphone.
+            {host ? 'You decide who joins your meeting.' : 'Your host approves each person before they enter.'}
           </div>
         </div>
         <div
@@ -299,6 +313,7 @@ export function Home() {
           </Link>
         </aside>
       </div>
+      <UserFeedback />
       <div className="demo-callout">
         <span className="demo-spark">
           <Sparkles size={19} />

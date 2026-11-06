@@ -158,7 +158,10 @@ describe('safe performance exports', () => {
     };
     const csv = performanceCsv(report, DEFAULT_FILTER);
     expect(csv).toContain('"\'=1+1"');
-    expect(csv).toContain('"10","","200"');
+    const [header, row] = csv.split('\r\n').map((line) => line.split(','));
+    expect(row[header.indexOf('"stt_ms"')]).toBe('""');
+    expect(row[header.indexOf('"queue_ms"')]).toBe('"10"');
+    expect(row[header.indexOf('"mt_ms"')]).toBe('"200"');
     expect(csv.split('\r\n')).toHaveLength(2);
   });
 });

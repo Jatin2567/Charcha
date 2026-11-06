@@ -149,7 +149,7 @@ export function PublicSpeechScreeningResults() {
         {report && (
           <button
             className="button secondary"
-            onClick={() => downloadJson('artha-public-human-screening.json', report)}
+            onClick={() => downloadJson('charcha-public-human-screening.json', report)}
           >
             <Download size={15} /> Export human-speech results
           </button>

@@ -1,3 +1,6 @@
+import { TurnCorrection } from './TurnCorrection';
+import { TurnUnderstanding, TurnRecovery } from './TurnUnderstanding';
+import { canConfirm } from '../services/turnUnderstanding';
 import { useEffect, useRef, useState } from 'react';
 import { Check, CheckCheck, MessageSquareText, Send, ChevronDown, FileText } from 'lucide-react';
 import { Avatar } from './ui';
@@ -8,6 +11,7 @@ export function TranscriptPanel({
   language,
   selfId,
   onConfirm,
+  onCorrect,
   onSubmit,
   demo,
   submitting,
@@ -17,6 +21,7 @@ export function TranscriptPanel({
   language: Language;
   selfId: string;
   onConfirm: (id: string) => Promise<void>;
+  onCorrect?: (turn:Turn,text:string)=>Promise<void>;
   onSubmit: (text: string) => Promise<void>;
   demo: boolean;
   submitting: boolean;
@@ -108,6 +113,8 @@ export function TranscriptPanel({
                         ? 'Translation in progress…'
                         : 'Translation unavailable in this language.')}
                 </p>
+                {turn.superseded_by ? <small>Earlier version · see the speaker’s correction</small> :
+                  turn.replaces_id ? <small>Corrected message</small> : null}
                 {tab === 'translated' && turn.source_language !== language && (
                   <details className="transcript-original">
                     <summary>
@@ -120,14 +127,16 @@ export function TranscriptPanel({
                 <button
                   className={`confirm-turn ${confirmed ? 'is-confirmed' : ''}`}
                   disabled={
+                    !canConfirm(turn, selfId) ||
                     confirmed ||
+                    !!turn.superseded_by ||
                     pending === turn.id ||
                     turn.status !== 'complete' ||
                     (tab === 'translated' && !translated)
                   }
                   onClick={() => {
                     setPending(turn.id);
-                    void onConfirm(turn.id).finally(() => setPending(''));
+                    void onConfirm(turn.id).catch(() => {}).finally(() => setPending(''));
                   }}
                 >
                   {confirmed ? <CheckCheck size={12} /> : <Check size={12} />}{' '}
@@ -138,6 +147,10 @@ export function TranscriptPanel({
                       : 'Confirm understanding'}
                   {turn.confirmed_by.length > 0 && <span>{turn.confirmed_by.length}</span>}
                 </button>
+                <TurnRecovery turn={turn} />
+                <TurnUnderstanding turn={turn} />
+                {onCorrect && turn.speaker_id === selfId && !turn.superseded_by && turn.status !== 'processing' &&
+                  <TurnCorrection turn={turn} onCorrect={onCorrect} />}
               </article>
             );
           })

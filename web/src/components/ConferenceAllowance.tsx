@@ -19,7 +19,7 @@ export function ConferenceAllowance({
 }) {
   return (
     <details className="conference-allowance">
-      <summary>Call setup &amp; approved allowance</summary>
+      <summary>Call setup</summary>
       <dl className="conference-setup-grid">
         <div>
           <dt>Room media</dt>
@@ -58,7 +58,11 @@ export function ConferenceAllowance({
           only; it never wakes a model or sends a speech request.
         </p>
       )}
-      {report.provider_flow.required ? (
+      {report.provider_flow.authorization === 'host_budget' ? (
+        <p>{report.provider_flow.status === 'approved'
+          ? 'The host has enabled interpretation. Choose your language and speak when your microphone is ready.'
+          : 'Interpretation is paused. Your workspace administrator can check the speech controls.'}</p>
+      ) : report.provider_flow.required ? (
         <>
           <p>
             <strong>Approval: {approvalLabel(report.provider_flow.status, seconds)}</strong>

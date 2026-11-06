@@ -5,11 +5,11 @@ from types import SimpleNamespace
 
 import pytest
 
-from artha_mesh.config import Settings
-from artha_mesh.errors import ProviderError
-from artha_mesh.models import Participant
-from artha_mesh.store import Store
-from artha_mesh.transport.livekit import OutputTrack, RoomTransport
+from charcha.config import Settings
+from charcha.errors import ProviderError
+from charcha.models import Participant
+from charcha.store import Store
+from charcha.transport.livekit import OutputTrack, RoomTransport
 
 
 def transport_fixture(monkeypatch, *, same_language=False):
@@ -120,7 +120,7 @@ async def test_resampler_tail_cannot_bypass_revoked_screening(monkeypatch):
 @pytest.mark.parametrize("flip_stage", ["listener_wait", "capture"])
 async def test_same_language_forwarding_rechecks_screening_and_flushes_inflight_audio(monkeypatch, flip_stage):
     from livekit import rtc
-    from artha_mesh.transport import livekit
+    from charcha.transport import livekit
 
     transport, state, _ = transport_fixture(monkeypatch, same_language=True)
     captured, cleared = [], []

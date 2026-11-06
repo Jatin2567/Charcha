@@ -37,7 +37,8 @@ describe('curated developer journal', () => {
   });
   it('keeps pending acceptance visible and requires evidence and safe source references', () => {
     expect(new Set(developerJournal.map((entry) => entry.id)).size).toBe(developerJournal.length);
-    expect(developerJournal.length).toBeLessThanOrEqual(25);
+    // Keep curated release notes bounded while retaining earlier verified entries.
+    expect(developerJournal.length).toBeLessThanOrEqual(30);
     for (const entry of developerJournal) {
       expect(entry.evidence.length).toBeGreaterThan(0);
       expect(entry.references.length).toBeGreaterThan(0);

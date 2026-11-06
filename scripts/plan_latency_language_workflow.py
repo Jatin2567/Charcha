@@ -17,7 +17,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = ROOT / "evaluation/language_latency_cases.json"
-_spec = importlib.util.spec_from_file_location("latency_plan_stock_catalog", ROOT / "server/artha_mesh/voice_catalog.py")
+_spec = importlib.util.spec_from_file_location("latency_plan_stock_catalog", ROOT / "server/charcha/voice_catalog.py")
 _catalog = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_catalog)
 VOICES = dict(_catalog.TIMBRE_V25_STOCK_VOICES)
@@ -187,7 +187,7 @@ def build_plan(observations: list[dict] | None = None) -> dict:
     plan = {"schema_version": 1, "record_type": "latency_language_workflow_plan", "plan_id": "physical-gated-common-ten-v1",
         "plan_only": True, "provider_calls_made": 0, "approval_granted": False, "automatic_matrix_runner": False,
         "full_matrix_authorized": False, "full_matrix_eligible_for_test_review": both_passed,
-        "catalog_checked_on": "2026-10-30", "catalog_source": "server/artha_mesh/voice_catalog.py:TIMBRE_V25_STOCK_VOICES",
+        "catalog_checked_on": "2026-10-30", "catalog_source": "server/charcha/voice_catalog.py:TIMBRE_V25_STOCK_VOICES",
         "language_count": len(languages), "languages": languages, "planned_directed_pairs": len(routes),
         "optional_same_language_routes": len(VOICES), "draft_case_count": len(drafts), "draft_cases": drafts,
         "gate_policy": deepcopy(POLICY), "gates": {"hi_to_ta": forward, "ta_to_hi": reverse},

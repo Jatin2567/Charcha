@@ -123,7 +123,8 @@ def render(address: str, output: Path, project_root: Path = ROOT) -> dict[str, s
     summary = plan(address)
     key, secret = "API" + secrets.token_hex(12), secrets.token_urlsafe(48)
     environment = {
-        "ARTHA_MODE": "transport", "CORS_ORIGINS": f"https://{address}:8443",
+        "CHARCHA_PUBLIC_ORIGIN": f"https://{address}:8443",
+        "CHARCHA_MODE": "transport", "CORS_ORIGINS": f"https://{address}:8443",
         "LIVEKIT_URL": f"wss://{address}:8444", "LIVEKIT_INTERNAL_URL": "ws://livekit:7880",
         "LIVEKIT_API_KEY": key, "LIVEKIT_API_SECRET": secret,
         "GNANI_API_KEY": "", "EVON_API_KEY": "", "EVON_BASE_URL": "", "EVON_MODEL": "",
@@ -139,7 +140,7 @@ def render(address: str, output: Path, project_root: Path = ROOT) -> dict[str, s
     logging = {"driver": "json-file", "options": {"max-size": "5m", "max-file": "2"}}
     common = {"restart": "no", "logging": logging, "stop_grace_period": "20s"}
     compose = {
-        "name": "artha-mesh-lan-test",
+        "name": "charcha-lan-test",
         "services": {
             "livekit": {
                 **common, "image": "livekit/livekit-server:v1.9.1",
@@ -161,20 +162,20 @@ def render(address: str, output: Path, project_root: Path = ROOT) -> dict[str, s
             },
             "edge": {
                 **common, "image": "nginx:1.27-alpine",
-                "volumes": ["./nginx.conf:/etc/nginx/conf.d/default.conf:ro", "./tls:/etc/artha-tls:ro"],
+                "volumes": ["./nginx.conf:/etc/nginx/conf.d/default.conf:ro", "./tls:/etc/charcha-tls:ro"],
                 "ports": [f"{address}:8443:8443/tcp", f"{address}:8444:8444/tcp"],
                 "depends_on": ["web", "livekit"],
             },
         },
         "volumes": {"usage-ledger": {}},
     }
-    tls = """    ssl_certificate /etc/artha-tls/cert.pem;
-    ssl_certificate_key /etc/artha-tls/key.pem;
+    tls = """    ssl_certificate /etc/charcha-tls/cert.pem;
+    ssl_certificate_key /etc/charcha-tls/key.pem;
     ssl_protocols TLSv1.2 TLSv1.3;
     access_log off;
     server_tokens off;
 """
-    nginx = "map $http_upgrade $artha_connection { default upgrade; '' close; }\n"
+    nginx = "map $http_upgrade $charcha_connection { default upgrade; '' close; }\n"
     for port, upstream in ((8443, "web:80"), (8444, "livekit:7880")):
         nginx += f"""server {{
     listen {port} ssl;
@@ -186,7 +187,7 @@ def render(address: str, output: Path, project_root: Path = ROOT) -> dict[str, s
         proxy_set_header Host $http_host;
         proxy_set_header X-Forwarded-Proto https;
         proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection $artha_connection;
+        proxy_set_header Connection $charcha_connection;
         proxy_read_timeout 3600s;
         proxy_buffering off;
     }}

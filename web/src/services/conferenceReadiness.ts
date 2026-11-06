@@ -30,6 +30,7 @@ export interface ConferenceReadiness {
   };
   providers: { configured: boolean; missing: string[]; verification: 'not_checked' };
   provider_flow: {
+    authorization?: 'operator' | 'host_budget';
     required: boolean;
     status: 'locked' | 'approved' | 'expired' | 'exhausted' | 'unavailable' | 'not_required';
     expires_at: string | null;

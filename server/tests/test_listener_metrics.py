@@ -4,10 +4,10 @@ import pytest
 from fastapi import HTTPException
 from pydantic import ValidationError
 
-from artha_mesh.config import Settings
-from artha_mesh.models import Participant
-from artha_mesh.services.listener_metrics import ListenerMetrics, MAX_PROBE_SAMPLES, ProbeReport
-from artha_mesh.store import Store
+from charcha.config import Settings
+from charcha.models import Participant
+from charcha.services.listener_metrics import ListenerMetrics, MAX_PROBE_SAMPLES, ProbeReport
+from charcha.store import Store
 
 
 class Clock:
@@ -20,7 +20,7 @@ class Clock:
 @pytest.fixture
 def probes(monkeypatch):
     clock = Clock()
-    monkeypatch.setattr("artha_mesh.services.listener_metrics.time.monotonic", clock)
+    monkeypatch.setattr("charcha.services.listener_metrics.time.monotonic", clock)
     store = Store(Settings(mode="transport", _env_file=None))
     state = store.create_room("Local audio timing")
     listener = Participant(name="Private listener name", language="hi")

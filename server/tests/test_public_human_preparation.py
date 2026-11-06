@@ -108,7 +108,7 @@ def fake_corpus(per_language=10, *, unsafe=False):
 def test_default_plan_loads_no_network_model_or_provider(monkeypatch, capsys):
     original_import = builtins.__import__
     def guarded_import(name, *args, **kwargs):
-        if name.split(".")[0] in {"httpx", "numpy", "onnxruntime", "artha_mesh"}:
+        if name.split(".")[0] in {"httpx", "numpy", "onnxruntime", "charcha"}:
             pytest.fail("Plan must not load a network or inference dependency")
         return original_import(name, *args, **kwargs)
     monkeypatch.setattr(builtins, "__import__", guarded_import)

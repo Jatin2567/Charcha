@@ -6,8 +6,8 @@ import wave
 import pytest
 from fastapi.testclient import TestClient
 
-from artha_mesh.config import Settings
-from artha_mesh.models import Participant
+from charcha.config import Settings
+from charcha.models import Participant
 
 
 def wav(pcm=b"\x01\x00" * 640, rate=16000, channels=1):
@@ -22,7 +22,7 @@ def wav(pcm=b"\x01\x00" * 640, rate=16000, channels=1):
 
 @pytest.fixture
 def app(monkeypatch, tmp_path):
-    from artha_mesh import main
+    from charcha import main
 
     def forbidden(*_args, **_kwargs):
         raise AssertionError("Local audio lab must not construct provider clients")
@@ -113,7 +113,7 @@ def test_room_snapshot_exposes_real_detector_status_without_provider_calls(app):
     with TestClient(app, client=("127.0.0.1", 50000)) as client:
         with client.websocket_connect(
             f"/api/rooms/{state.room.code}/events",
-            subprotocols=["artha-events", f"artha-token.{token}"],
+            subprotocols=["charcha-events", f"charcha-token.{token}"],
             headers={"origin": "http://127.0.0.1:5180"},
         ) as socket:
             payload = socket.receive_json()["payload"]

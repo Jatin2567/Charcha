@@ -5,7 +5,7 @@ from conftest import auth, create_member
 from fastapi import HTTPException
 from starlette.websockets import WebSocketDisconnect
 
-from artha_mesh.store import token_digest
+from charcha.store import token_digest
 
 
 def test_health_identifies_demo_and_never_exposes_credentials(client):
@@ -65,6 +65,13 @@ def test_session_store_retains_only_digest_and_expiry_is_enforced(client):
     assert client.get(f"/api/rooms/{code}/transcript", headers=auth(member)).status_code == 401
 
 
+def test_demo_connection_refresh_preserves_membership_without_media_credentials(client):
+    code, member = create_member(client)
+    response = client.post(f"/api/rooms/{code}/connection", headers=auth(member))
+    assert response.status_code == 200, response.text
+    assert response.json() == member
+
+
 def test_websocket_rejects_foreign_member_and_untrusted_origin(client):
     code, member = create_member(client)
     _, outsider = create_member(client)
@@ -114,8 +121,8 @@ def test_clone_cannot_be_selected_at_public_join_without_owned_session_reference
 def test_live_setup_fails_honestly_and_processing_consent_precedes_media_connection():
     from fastapi.testclient import TestClient
 
-    from artha_mesh.config import Settings
-    from artha_mesh.main import create_app
+    from charcha.config import Settings
+    from charcha.main import create_app
 
     settings = Settings(mode="live", livekit_url="", livekit_api_key="", livekit_api_secret="",
                         gnani_api_key="", evon_base_url="", evon_model="", _env_file=None)

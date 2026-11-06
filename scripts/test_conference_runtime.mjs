@@ -15,7 +15,7 @@ test('provider-free mode defeats inherited credentials and unsafe flow preferenc
     assert.equal(env[key], '');
   assert.equal(env.USAGE_REQUIRE_FLOW_APPROVAL, 'true');
   assert.equal(env.AUDIO_SCREENING_MODE, 'off');
-  assert.equal(env.ARTHA_MODE, 'transport');
+  assert.equal(env.CHARCHA_MODE, 'transport');
   assert.match(env.USAGE_DB_PATH, /transport-usage\.sqlite3$/);
 });
 
@@ -23,7 +23,7 @@ test('live calls require operator approval and do not inherit automatic retries 
   const env = apiEnvironment({ GNANI_API_KEY: 'fixture', USAGE_STT_MAX_RETRIES: '8',
     USAGE_VOICE_ENROLLMENTS_PER_DAY: '8', LIVEKIT_CONFIG: 'unrelated-daemon' }, process.cwd(), 5180,
     launchOptions(['--live', '--evon-base-url', 'http://127.0.0.1:8001/v1', '--evon-model', 'owned-model']));
-  assert.equal(env.ARTHA_MODE, 'live');
+  assert.equal(env.CHARCHA_MODE, 'live');
   assert.equal(env.GNANI_API_KEY, 'fixture');
   assert.equal(env.USAGE_STT_MAX_RETRIES, '0');
   assert.equal(env.USAGE_VOICE_ENROLLMENTS_PER_DAY, '0');
@@ -37,12 +37,12 @@ test('frontend dev process receives no provider authentication or inherited remo
     VITE_EVON_API_KEY: 'private', VITE_API_BASE_URL: 'https://unrelated.invalid', PATH: 'retained' }, 8100);
   assert.equal(env.PATH, 'retained');
   assert.equal(env.VITE_API_BASE_URL, '/api');
-  assert.equal(env.ARTHA_API_TARGET, 'http://127.0.0.1:8100');
+  assert.equal(env.CHARCHA_API_TARGET, 'http://127.0.0.1:8100');
   assert.equal(Object.values(env).includes('private'), false);
 });
 
 test('private Modal credentials are scoped to an explicit approved-shaped origin', () => {
-  const directory = mkdtempSync(join(tmpdir(), 'artha-config-test-'));
+  const directory = mkdtempSync(join(tmpdir(), 'charcha-config-test-'));
   const file = join(directory, 'private.json');
   try {
     writeFileSync(file, JSON.stringify({ api_key: 'inference-fixture', modal_key: 'proxy-fixture', modal_secret: 'secret-fixture' }));
@@ -81,7 +81,7 @@ test('ambiguous modes or missing private configuration arguments fail safely', (
 test('VoiceShield explicitly enables local monitoring while provider access stays disabled', () => {
   const options = launchOptions(['--screening-monitor']);
   const env = apiEnvironment({ GNANI_API_KEY: 'fixture', EVON_API_KEY: 'fixture', AUDIO_SCREENING_MODE: 'enforce' }, process.cwd(), 5180, options);
-  assert.equal(env.ARTHA_MODE, 'transport');
+  assert.equal(env.CHARCHA_MODE, 'transport');
   assert.equal(env.AUDIO_SCREENING_MODE, 'monitor');
   assert.equal(env.GNANI_API_KEY, '');
   assert.equal(env.EVON_API_KEY, '');

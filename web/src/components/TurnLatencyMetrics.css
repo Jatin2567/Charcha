@@ -1,0 +1,9 @@
+.listener-latency .latency-values { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin: 16px 0; }
+.listener-latency .latency-values span { display: block; color: var(--muted); font-size: 12px; }
+.listener-latency .latency-values strong { display: block; margin-top: 5px; font-size: 24px; font-variant-numeric: tabular-nums; }
+.listener-latency .source-note { margin: 12px 0; font-size: 12px; line-height: 1.6; }
+.listener-latency .button { margin-top: 14px; }
+.listener-latency-compact { margin: 20px 0; padding-top: 16px; border-top: 1px solid var(--border); }
+.listener-latency-compact .latency-values { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.listener-latency-compact .latency-values strong { font-size: 20px; }
+@media (max-width: 650px) { .listener-latency .latency-values { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

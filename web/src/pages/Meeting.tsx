@@ -32,10 +32,12 @@ import {
   Video,
   VideoOff,
 } from 'lucide-react';
+import { HostLobby } from '../components/Admission';
+import { useAccount } from '../components/AccountGate';
 import { useApp } from '../state/AppContext';
 import { useRoomEvents } from '../hooks/useRoomEvents';
 import { useMeetingAudio } from '../hooks/useMeetingAudio';
-import { confirmTurn, leaveRoom, submitText, updateParticipant } from '../services/api';
+import { confirmTurn, correctTurn, leaveRoom, request, submitText, updateParticipant } from '../services/api';
 import { demoEvent, demoLookup } from '../services/demo';
 import {
   Avatar,
@@ -51,7 +53,10 @@ import { ParticipantCard } from '../components/ParticipantCard';
 import { TranscriptPanel } from '../components/TranscriptPanel';
 import { MeetingCaptions } from '../components/MeetingCaptions';
 import { ConferenceStatus } from '../components/ConferenceStatus';
+import { VoiceEnrollment } from '../components/VoiceEnrollment';
+import { InterpretationEngineStatus } from '../components/InterpretationEngineStatus';
 import { InvitationHelp } from '../components/InvitationHelp';
+import { MeetingPerformance } from '../components/MeetingPerformance';
 import { VoiceShieldPanel } from '../components/VoiceShieldPanel';
 import { activeScreeningSamples, hasVoiceFlag } from '../services/voiceShield';
 import { invitationScope } from '../services/invitation';
@@ -59,7 +64,15 @@ import { useDevices } from '../hooks/useDevices';
 import { openPerformancePage } from '../services/transportMetrics';
 import type { Language, Membership, Recap, Turn } from '../types/domain';
 import { LANGUAGES, languageName } from '../types/domain';
-type SidePanel = 'transcript' | 'participants' | 'settings' | 'info' | 'shield' | null;
+const panelTitles = {
+  transcript: 'Conversation',
+  participants: 'People in this space',
+  settings: 'Conversation settings',
+  info: 'Room details',
+  shield: 'VoiceShield',
+  performance: 'Call performance',
+};
+type SidePanel = keyof typeof panelTitles | null;
 /**
  * The call clock ticks every second in its own component, so the rest of the
  * meeting page (participants, captions, screening) no longer re-renders on
@@ -121,51 +134,23 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
   );
   const [leave, setLeave] = useState(false);
   const [toast, setToast] = useState('');
+  const account = useAccount();
+  function openReport() {
+    if (!openPerformancePage(account?.session_scope))
+      setToast('Allow a new tab to open the report while keeping this call active.');
+  }
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [leaving, setLeaving] = useState(false);
   const [copied, setCopied] = useState(false);
   const [changingLanguage, setChangingLanguage] = useState(false);
-  const [auditoryVerificationId, setAuditoryVerificationId] = useState<string | null>(null);
-  const [demoShieldFlag, setDemoShieldFlag] = useState(false);
   const isDemo = m.room.mode === 'demo';
   const isTransport = m.room.mode === 'transport';
   const room = state.room || m.room;
   const participants = room.participants.filter((p) => !p.is_agent);
   const shieldParticipants = participants.map((person) => person.id === m.participant.id ? { ...person, muted: audio.muted } : person);
   const liveScreening = activeScreeningSamples(state.screening, shieldParticipants, state.screeningStatus, !isDemo && connection === 'Connected');
-  const shieldFlags = demoShieldFlag
-    ? [
-        {
-          person:
-            participants.find((p) => p.id !== m.participant.id) ||
-            participants[0] || {
-              id: 'demo-speaker',
-              name: 'Ravi Kumar (Delhi)',
-              language: 'hi' as const,
-              voice_mode: 'standard' as const,
-              muted: false,
-              is_agent: false,
-              is_demo: true,
-              joined_at: new Date().toISOString(),
-            },
-          sample: {
-            speaker_id: 'demo-speaker',
-            verdict: 'suspicious' as const,
-            score: 0.89,
-            compute_ms: 18.4,
-            audio_window_ms: 4037.5,
-            queue_ms: 1,
-            hold_ms: 0,
-            status: 'assessed' as const,
-            action: 'observed' as const,
-            mode: 'monitor' as const,
-            created_at: new Date().toISOString(),
-            reasons: ['model_score_above_experimental_threshold'],
-          },
-        },
-      ]
-    : liveScreening.filter(({ sample }) => hasVoiceFlag(sample));
+  const shieldFlags = liveScreening.filter(({ sample }) => hasVoiceFlag(sample));
   const language = m.participant.language;
   const invitation = `${window.location.origin}${window.location.pathname}#/join/${room.code}`;
   const inviteScope = invitationScope(invitation);
@@ -193,6 +178,7 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
     return () => window.removeEventListener('keydown', handler);
   }, [audio.toggleMic, isDemo, isTransport]);
   const copyInvite = async (reviewed = false) => {
+    if (!m.is_host) return;
     if (!reviewed && inviteScope.kind !== 'device-link' && !isDemo) {
       setPanel('info');
       setToast('Review where this invitation works before copying it.');
@@ -251,6 +237,8 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
           created_at: new Date().toISOString(),
           translations,
           confirmed_by: [],
+          listeners_recorded: true,
+          listeners: Object.fromEntries(m.room.participants.filter(p => p.id !== m.participant.id && !p.is_agent && !p.is_demo).map(p => [p.id, p.name])),
           status: 'complete',
         };
         dispatch(demoEvent('transcript.final', { turn }));
@@ -322,20 +310,22 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
     } catch {
       /* Device capture is stopped before network cleanup. */
     }
+    try { await leaveRoom(m); } catch { /* An expired membership can re-enter via the lobby. */ }
     app.setMembership(null);
     navigate(`/join/${room.code}`);
   };
   const textBlockedReason =
     !isDemo &&
     (audio.readiness.report?.provider_flow.status !== 'approved' ||
-      !audio.readiness.report.provider_flow.remaining.tts_requests ||
-      !audio.readiness.report.provider_flow.remaining.mt_requests)
+      (audio.readiness.report.provider_flow.authorization !== 'host_budget' &&
+        (!audio.readiness.report.provider_flow.remaining.tts_requests ||
+          !audio.readiness.report.provider_flow.remaining.mt_requests)))
       ? 'Typed interpretation needs an active approved cross-language flow with available requests.'
       : '';
   const transcriptDownload = () =>
     downloadText(
-      `artha-mesh-${room.code}.txt`,
-      `${isDemo ? 'SCRIPTED DEMONSTRATION\n\n' : ''}${state.turns.map((t) => `${t.speaker_name}: ${t.text}\n${t.translations[language] || t.text}`).join('\n\n')}`,
+      `charcha-${room.code}.txt`,
+      `${isDemo ? 'SCRIPTED DEMONSTRATION\n\n' : ''}${state.turns.map((t) => `${t.superseded_by ? '[Earlier version] ' : t.replaces_id ? '[Correction] ' : ''}${t.speaker_name}: ${t.text}\n${t.source_language === language ? t.text : t.translations[language] || '[Translation unavailable]'}`).join('\n\n')}`,
     );
   const togglePanel = (next: SidePanel) => setPanel((current) => (current === next ? null : next));
   const tool = (
@@ -362,7 +352,8 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
     </button>
   );
   return (
-    <div className="meeting-app">
+    <div className="meeting-app" data-host={!!m.is_host}>
+      {m.is_host && <HostLobby code={room.code} />}
       <header className="meeting-header">
         <button
           className="meeting-logo"
@@ -409,11 +400,11 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
               </>
             )}
           </span>
-          {!isDemo && !isTransport && <Badge tone="neutral">Standard voices</Badge>}
+          {!isDemo && !isTransport && <Badge tone="neutral">{m.room.voice_required ? 'Your meeting voice' : 'Standard voices'}</Badge>}
           <button
             className="meeting-invite"
             aria-label="Invite people"
-            onClick={() => void copyInvite()}
+            hidden={!m.is_host} onClick={() => void copyInvite()}
           >
             {copied ? <Check size={14} /> : <Link2 size={14} />}
             <span>{copied ? 'Copied' : 'Invite people'}</span>
@@ -428,8 +419,8 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
               <Headphones size={15} />
               <span>
                 {isTransport
-                  ? 'Local audio test · original voices'
-                  : 'A little closer. In every language.'}
+                  ? 'Original audio'
+                  : 'Interpreted audio'}
               </span>
             </div>
             <button
@@ -439,8 +430,16 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
               aria-controls={panel === 'shield' ? 'meeting-side-panel' : undefined}
               onClick={() => togglePanel('shield')}
             >
-              <ShieldQuestion size={14} />VoiceShield <small>Audio check</small>
+              <ShieldQuestion size={14} />VoiceShield <small aria-live="polite">{connection !== 'Connected' || !state.screeningStatus ? 'Status unavailable' : state.screeningStatus.mode === 'off' ? 'Off' : 'On'}</small>
             </button>
+            {!isDemo && (
+              <button className="shield-launch" aria-label="Open call performance"
+                aria-expanded={panel === 'performance'}
+                aria-controls={panel === 'performance' ? 'meeting-side-panel' : undefined}
+                onClick={() => togglePanel('performance')}>
+                <Gauge size={14} />Performance
+              </button>
+            )}
             <Badge tone="dark">
               <Users size={11} />
               {participants.length} in this space
@@ -451,10 +450,9 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
               <div>
                 <AudioLines size={17} />
                 <span>
-                  <strong>Raw audio transport test</strong>
+                  <strong>Original audio meeting</strong>
                   <small>
-                    Hear the other participants’ original speech. Translation, captions and voice
-                    cloning are disabled. No speech API is used.
+                    Everyone hears each speaker in their own voice and language.
                   </small>
                 </span>
               </div>
@@ -498,18 +496,17 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
                         : 'Start example'}
                   </span>
                 </button>
-                <button
-                  type="button"
-                  className={`button secondary ${demoShieldFlag ? 'active' : ''}`}
-                  onClick={() => setDemoShieldFlag((prev) => !prev)}
-                  title="Simulate VoiceShield acoustic anomaly detection"
-                >
-                  <ShieldAlert size={14} />
-                  <span>{demoShieldFlag ? 'Clear voice anomaly' : 'Simulate voice anomaly'}</span>
-                </button>
               </div>
             </div>
           )}
+          {m.room.voice_required && m.participant.voice_mode !== 'cloned' && (
+            <section className="panel" aria-label="Set up your meeting voice">
+              <h2>Set up your meeting voice</h2>
+              <p>Record 5–30 seconds of your own speech. Interpretation uses your voice throughout this meeting. You can listen while setting up.</p>
+              <VoiceEnrollment onSuccess={() => void audio.readiness.refresh()} />
+            </section>
+          )}
+          {m.room.engine_on_demand && <InterpretationEngineStatus membership={m} />}
           {!isDemo && (
             <ConferenceStatus
               report={audio.readiness.report}
@@ -526,7 +523,11 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
           )}
           {(error || audio.error || audio.camera.error || state.error) && (
             <div className="meeting-error" role="alert">
-              <span>{error || audio.error || audio.camera.error || state.error}</span>
+              <div><span>{error || audio.error || audio.camera.error || state.error}</span>
+                {state.error && <p>Check the marked turn in captions. Pause until interpretation is ready, then repeat or type only the missed phrase. Some listeners may already have heard part of it.</p>}
+                {(audio.error || audio.readiness.stale) && <p>Use Reconnect media or Rejoin conversation in Call readiness. Wait for the connection before repeating missed words.</p>}
+              </div>
+              {state.error && <button className="button secondary" onClick={() => setPanel('transcript')}>Review transcript</button>}
               <button
                 className="icon-button"
                 aria-label="Dismiss conversation error"
@@ -544,7 +545,7 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
             <div className="shield-call-alert" role="status" aria-live="polite">
               <ShieldAlert size={20} />
               <div>
-                <strong>⚠️ Voice Check: Unfamiliar Acoustic Pattern Detected</strong>
+                <strong>VoiceShield flagged audio for review</strong>
                 <p>
                   {shieldFlags
                     .map(
@@ -552,23 +553,10 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
                         `${person.name} (${sample.score !== null ? `Anomaly score: ${sample.score.toFixed(2)}` : 'Acoustic Flag'})`,
                     )
                     .join(', ')}{' '}
-                  · Waveform analysis flagged an unusual acoustic pattern. Listen directly to their raw voice to verify authentic breath and tone before confirming key details.
+                  · Ask the speaker to repeat any important detail.
                 </p>
               </div>
               <div className="shield-alert-actions">
-                <button
-                  type="button"
-                  className="button secondary"
-                  onClick={() =>
-                    setAuditoryVerificationId((prev) =>
-                      prev ? null : shieldFlags[0]?.person.id || 'all',
-                    )
-                  }
-                  title="Listen directly to the speaker's original untranslated audio"
-                >
-                  <Headphones size={15} />
-                  {auditoryVerificationId ? 'Return to translation' : 'Hear original voice'}
-                </button>
                 <button
                   type="button"
                   className="button secondary"
@@ -577,24 +565,6 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
                   View signals
                 </button>
               </div>
-            </div>
-          )}
-          {auditoryVerificationId && (
-            <div className="auditory-verification-banner" role="status">
-              <Headphones size={18} className="auditory-icon-pulsing" />
-              <div className="auditory-verification-text">
-                <strong>Auditory Liveness Check Active · Hearing Original Voice</strong>
-                <p>
-                  Translation has been paused so your own ears can check the speaker's natural tone, breath, and vocal inflection directly.
-                </p>
-              </div>
-              <button
-                type="button"
-                className="button secondary small"
-                onClick={() => setAuditoryVerificationId(null)}
-              >
-                Return to translation
-              </button>
             </div>
           )}
           <div className={`participant-grid grid-${Math.min(participants.length, 4)}`}>
@@ -613,12 +583,6 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
                 }
                 videoTrack={audio.videoTracks[p.id]}
                 screening={liveScreening.find(({ person }) => person.id === p.id)?.sample}
-                onToggleOriginalAudio={() =>
-                  setAuditoryVerificationId((prev) => (prev === p.id ? null : p.id))
-                }
-                isListeningOriginal={
-                  auditoryVerificationId === p.id || auditoryVerificationId === 'all'
-                }
               />
             ))}
           </div>
@@ -633,7 +597,7 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
                     : 'Invite a participant who speaks a different language to begin.'}
                 </p>
               </div>
-              <button onClick={() => void copyInvite()}>
+              <button hidden={!m.is_host} onClick={() => void copyInvite()}>
                 Copy invitation
                 <Copy size={13} />
               </button>
@@ -649,21 +613,15 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
               Audio first. Human always.
             </span>
           </div>
+          {!isDemo && Object.entries(state.queues).some(([id, queue]) => state.room?.participants.some((p) => p.id === id) && queue.pending > 0) &&
+            <div className="notice info" role="status"><span>Interpretation is catching up. Pause briefly between phrases.
+              {' '}Waiting turns: {Object.entries(state.queues).filter(([id]) => state.room?.participants.some((p) => p.id === id)).reduce((sum, [, queue]) => sum + queue.pending, 0)}.
+              Any skipped turn stays in captions and is flagged for repetition.</span></div>}
         </section>
         {panel && (
           <aside className="meeting-side-panel" id="meeting-side-panel">
             <div className="meeting-panel-heading">
-              <h2>
-                {panel === 'shield'
-                  ? 'VoiceShield'
-                  : panel === 'transcript'
-                  ? 'Conversation'
-                  : panel === 'participants'
-                    ? 'People in this space'
-                    : panel === 'settings'
-                      ? 'Conversation settings'
-                      : 'Room details'}
-              </h2>
+              <h2>{panelTitles[panel]}</h2>
               <div>
                 {panel === 'transcript' && (
                   <button
@@ -685,13 +643,24 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
                 </button>
               </div>
             </div>
-            {panel === 'shield' ? (
+            {panel === 'performance' ? (
+                <MeetingPerformance membership={m} onOpenReport={openReport} speakerCheck={{
+                  connected: audio.mediaReady && !audio.readiness.stale,
+                  playback: audio.outputMuted ? 'muted' : audio.playback.status,
+                  working: audio.probeWorking, result: audio.probeResult, run: audio.probe,
+                }} />
+            ) : panel === 'shield' ? (
               <VoiceShieldPanel
                 samples={state.screening}
                 participants={shieldParticipants}
                 connected={isDemo || connection === 'Connected'}
                 status={state.screeningStatus}
+                onChangeMode={m.is_host ? async (mode) => {
+                  await request(`/rooms/${encodeURIComponent(room.code)}/screening`,
+                    { method: 'PATCH', body: JSON.stringify({ mode }) }, m.session_token);
+                } : undefined}
                 demo={isDemo}
+                onViewPerformance={() => setPanel('performance')}
               />
             ) : panel === 'transcript' && isTransport ? (
               <div className="side-panel-content">
@@ -716,6 +685,7 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
                 language={language}
                 selfId={m.participant.id}
                 onConfirm={confirm}
+                onCorrect={!m.localDemo ? async (turn, text) => { await correctTurn(m, turn.id, text); } : undefined}
                 onSubmit={submit}
                 demo={isDemo}
                 submitting={submitting}
@@ -741,7 +711,7 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
                           ? 'Sample participant'
                           : p.voice_mode === 'cloned'
                             ? 'Personal voice'
-                            : 'Standard voice'}
+                            : m.room.voice_required ? 'Voice setup pending' : 'Standard voice'}
                       </small>
                     </div>
                     {p.id === m.participant.id ? (
@@ -760,7 +730,7 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
                 <button
                   className="button primary full"
                   style={{ marginTop: 24 }}
-                  onClick={() => void copyInvite()}
+                  hidden={!m.is_host} onClick={() => void copyInvite()}
                 >
                   <Link2 size={15} />
                   Invite a participant
@@ -832,31 +802,18 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
                         ? 'Original voice'
                         : m.participant.voice_mode === 'cloned'
                           ? 'Personal voice'
-                          : 'Standard voice'}
+                          : m.room.voice_required ? 'Voice setup pending' : 'Standard voice'}
                     </strong>
                     <small>
                       {isTransport
                         ? 'No synthesis or enrollment in this stage'
                         : m.participant.voice_mode === 'cloned'
                           ? 'Consent-based session profile'
-                          : 'Available without enrollment'}
+                          : m.room.voice_required ? 'Set up your voice in the meeting to speak' : 'Available without enrollment'}
                     </small>
                   </div>
                 </div>
-                <button className="button secondary full" disabled>
-                  Voice cloning · later
-                </button>
-                <p className="source-note">
-                  This stage uses standard voices. Voice enrollment and deepfake screening are
-                  outside this conference test.
-                </p>
-                <details>
-                  <summary>Later phases</summary>
-                  <p className="source-note">
-                    Latency optimization and experimental deepfake detection are later work. Voice
-                    cloning remains deferred. They do not block this standard-voice conference.
-                  </p>
-                </details>
+                {m.room.voice_required && m.participant.voice_mode === 'cloned' && <VoiceEnrollment />}
                 <div className="divider" />
                 <h3>Audio playback</h3>
                 <p className="source-note">{audio.status}</p>
@@ -898,30 +855,9 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
                 <div className="divider" />
                 {!isDemo && (
                   <>
-                    <details>
-                      <summary>Advanced · receiver diagnostics</summary>
-                      <h3>Receiver latency probe</h3>
-                      <p className="source-note">
-                        Plays a one-second test tone to you only. Measures request-to-decoded-audio
-                        time, not translation latency. No provider credits.
-                      </p>
-                      <button
-                        className="button secondary full"
-                        disabled={audio.probeWorking || audio.outputMuted}
-                        onClick={() => void audio.probe()}
-                      >
-                        <Gauge size={15} />
-                        {audio.probeWorking ? 'Measuring receiver…' : 'Play receiver test tone'}
-                      </button>
-                      {audio.probeResult && (
-                        <p className="source-note" role="status">
-                          {audio.probeResult.status === 'detected'
-                            ? `${audio.probeResult.elapsed_ms} ms · decoded tone detected`
-                            : `${audio.probeResult.status} · no latency recorded`}
-                          {' · Details on Performance.'}
-                        </p>
-                      )}
-                    </details>
+                    <button className="button secondary full" onClick={() => setPanel('performance')}>
+                      <Gauge size={15} /> Speaker check and performance
+                    </button>
                     <div className="divider" />
                   </>
                 )}
@@ -951,7 +887,7 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
                       : 'A video room with language-specific speech interpretation.'}
                 </p>
                 <div className="divider" />
-                <label className="field">
+                {m.is_host && <><label className="field">
                   <span>Invitation link</span>
                   <input value={invitation} readOnly onFocus={(e) => e.target.select()} />
                 </label>
@@ -959,7 +895,7 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
                 <button className="button primary full" onClick={() => void copyInvite(true)}>
                   <Copy size={14} />
                   {isDemo ? 'Copy invitation' : inviteScope.copyLabel}
-                </button>
+                </button></>}
                 <div className="divider" />
                 <h3>How this room works</h3>
                 <ol className="room-howto">
@@ -993,12 +929,7 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
                 <button
                   className="button secondary full"
                   style={{ marginTop: 12 }}
-                  onClick={() => {
-                    if (!openPerformancePage())
-                      setToast(
-                        'Allow a new tab to open the performance page while keeping this call active.',
-                      );
-                  }}
+                  onClick={openReport}
                 >
                   <Gauge size={14} />
                   Performance & readiness ↗
@@ -1010,6 +941,7 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
       </div>
       {captions && !isTransport && (
         <MeetingCaptions
+          onCorrect={!m.localDemo ? async (turn, text) => { await correctTurn(m, turn.id, text); } : undefined}
           turns={state.turns}
           language={language}
           selfId={m.participant.id}
@@ -1023,7 +955,7 @@ function MeetingRoom({ membership: m }: { membership: Membership }) {
               ? 'Start the example to see captions for each speaker.'
               : audio.readiness.report && !audio.readiness.report.provider_flow.required
                 ? 'This call is forwarding original audio. Captions appear during approved interpretation.'
-                : 'Captions appear here when an approved speech turn is recognized.'
+                : 'Captions appear here when speech is recognized.'
           }
         />
       )}

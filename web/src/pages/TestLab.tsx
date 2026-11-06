@@ -129,7 +129,7 @@ export function TestLab() {
           <button
             className="button secondary"
             onClick={() =>
-              downloadJson('artha-mesh-test-observations.json', testLabReport(observations))
+              downloadJson('charcha-test-observations.json', testLabReport(observations))
             }
           >
             <Download size={16} />
@@ -437,7 +437,7 @@ export function TestLab() {
         <button
           className="button secondary"
           onClick={() =>
-            downloadJson('artha-mesh-language-routing-plan.json', languageRoutingPlan())
+            downloadJson('charcha-language-routing-plan.json', languageRoutingPlan())
           }
         >
           <Download size={15} />

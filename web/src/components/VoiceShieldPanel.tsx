@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Download, ShieldAlert, ShieldQuestion, Headphones } from 'lucide-react';
+import { Download, ShieldAlert, ShieldQuestion } from 'lucide-react';
 import { Badge, Modal, downloadJson } from './ui';
 import type { Participant } from '../types/domain';
 import type { RoomScreeningSample, RoomScreeningStatus } from '../services/localDiagnostics';
@@ -19,14 +19,32 @@ export function VoiceShieldPanel({
   connected,
   status,
   demo,
+  onViewPerformance,
+  onChangeMode,
 }: {
   samples: Record<string, RoomScreeningSample>;
   participants: Participant[];
   connected: boolean;
   status: RoomScreeningStatus | null;
   demo: boolean;
+  onViewPerformance: () => void;
+  onChangeMode?: (mode: 'off' | 'monitor') => Promise<void>;
 }) {
   const [reviewId, setReviewId] = useState<string | null>(null);
+  const [changing, setChanging] = useState(false);
+  const [changeError, setChangeError] = useState('');
+  async function changeMode() {
+    if (!onChangeMode || !status || changing) return;
+    setChanging(true);
+    setChangeError('');
+    try {
+      await onChangeMode(status.mode === 'off' ? 'monitor' : 'off');
+    } catch (error) {
+      setChangeError(error instanceof Error ? error.message : 'VoiceShield could not be changed.');
+    } finally {
+      setChanging(false);
+    }
+  }
   const state = shieldingState(status, connected, demo);
   const observations = demo ? [] : activeScreeningSamples(samples, participants, status, connected);
   const review = observations.find(
@@ -56,11 +74,16 @@ export function VoiceShieldPanel({
           <strong>{state.label}</strong>
         </div>
         <p>{state.detail}</p>
+        {status?.switchable && !demo && (onChangeMode ? (
+          <button type="button" className="button secondary full" onClick={() => void changeMode()}
+            disabled={changing || !connected || (status.mode === 'off' && !status.model.ready)}>
+            {changing ? 'Updating VoiceShield…' : status.mode === 'off' ? 'Turn on VoiceShield' : 'Turn off VoiceShield'}
+          </button>
+        ) : <small>Your meeting host controls VoiceShield.</small>)}
+        {changeError && <p role="alert">{changeError}</p>}
       </section>
       <p className="shield-description">
-        AASIST analyzes raw voice waveforms on the server CPU via acoustic DSP tracking (pitch autocorrelation,
-        spectral jitter/shimmer, and neural graph embeddings). Analysis is strictly voice-tracking based:
-        zero keyword matching, dictionary parsing, or transcript filtering.
+        VoiceShield analyzes each speaker’s microphone audio on the meeting server. A flag is a request for review.
       </p>
       <dl className="shield-model-details">
         <div>
@@ -147,7 +170,7 @@ export function VoiceShieldPanel({
           className="button secondary full"
           disabled={!observations.length}
           onClick={() =>
-            downloadJson('artha-voice-screening.json', {
+            downloadJson('charcha-voice-screening.json', {
               record_type: 'observed_voice_screening',
               experimental: true,
               accuracy_validated: false,
@@ -177,9 +200,7 @@ export function VoiceShieldPanel({
             <dd>Not measured</dd>
           </div>
         </dl>
-        <a href="#/performance" target="_blank" rel="noreferrer" className="text-link">
-          View screening measurements ↗
-        </a>
+        {!demo && <button type="button" className="text-link" onClick={onViewPerformance}>View call performance</button>}
         <a href="#/audio-lab" target="_blank" rel="noreferrer" className="text-link">
           Analyze a saved recording ↗
         </a>
@@ -195,26 +216,12 @@ export function VoiceShieldPanel({
             <div>
               <h3>{review.person.name}</h3>
               <p>
-                Waveform analysis flagged an unusual acoustic anomaly (DSP tracking / AASIST model). Screening
-                is strictly voice-tracking based (zero keyword/text filtering). Verify with your own ears before
-                confirming sensitive agreements.
+                The audio model flagged a window of this speaker’s microphone signal. Ask for a repeat or confirm the detail in the transcript.
               </p>
             </div>
           </div>
-          <div className="shield-liveness-action-box">
-            <h4>
-              <Headphones size={15} />
-              Auditory Liveness Cross-Check
-            </h4>
-            <p>
-              Algorithms estimate probabilities, but your own ears recognize authentic human inflection. Listen
-              directly to {review.person.name}&apos;s raw untranslated voice stream to check their natural breath,
-              micro-inflections, and vocal presence.
-            </p>
-          </div>
           <p className="shield-alert-note">
-            Observed spoof score {screeningMetric(review.sample.score, '')}. This score reflects raw acoustic
-            variance; natural regional accents can also cause variations.
+            Model score {screeningMetric(review.sample.score, '')}. Accuracy on live meeting speech is still being evaluated.
           </p>
           <button className="button primary full" onClick={() => setReviewId(null)}>
             Return to call

@@ -231,16 +231,17 @@ def deadline_watchdog(process, expiry: float, cancelled, *, now=None, monotonic=
 
 def start_server(config: dict, pins: dict, expires_at: str, *, cache_root: Path = CACHE_ROOT,
                  environment=None, popen=None, urlopen=None, now=None, monotonic=None,
-                 sleep=None, thread_factory=None, stopper=None, gpu_check=None):
+                 sleep=None, thread_factory=None, stopper=None, gpu_check=None, serverless=False):
     """Start only a prepared model, wait for real health, and retain a deadline watchdog."""
     now = time.time if now is None else now
     monotonic = time.monotonic if monotonic is None else monotonic
-    expiry = parse_expiry(expires_at, now=now())
+    expiry = float("inf") if serverless else parse_expiry(expires_at, now=now())
     environment = os.environ if environment is None else environment
     key = validate_api_key(environment.get("VLLM_API_KEY"))
     local_model = require_cache(config, pins, cache_root)
     (check_gpu if gpu_check is None else gpu_check)()
-    parse_expiry(expires_at, now=now())
+    if not serverless:
+        parse_expiry(expires_at, now=now())
     popen = subprocess.Popen if popen is None else popen
     urlopen = urllib.request.urlopen if urlopen is None else urlopen
     sleep = time.sleep if sleep is None else sleep
@@ -254,9 +255,10 @@ def start_server(config: dict, pins: dict, expires_at: str, *, cache_root: Path 
     process = popen(server_command(config, local_model), env=child_environment,
                     start_new_session=True, shell=False)
     cancelled = threading.Event()
-    watchdog = thread_factory(target=deadline_watchdog, args=(process, expiry, cancelled),
-                              kwargs={"stop": stopper}, daemon=True, name="evon-fixed-expiry")
-    watchdog.start()
+    if not serverless:
+        watchdog = thread_factory(target=deadline_watchdog, args=(process, expiry, cancelled),
+                                  kwargs={"stop": stopper}, daemon=True, name="evon-fixed-expiry")
+        watchdog.start()
     ready_deadline = monotonic() + min(STARTUP_SECONDS, expiry - now())
     request = urllib.request.Request("http://127.0.0.1:8000/health", headers={"Authorization": f"Bearer {key}"})
     try:

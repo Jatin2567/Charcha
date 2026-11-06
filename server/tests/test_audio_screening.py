@@ -8,7 +8,7 @@ import wave
 import numpy as np
 import pytest
 
-from artha_mesh.services.audio_screening import (
+from charcha.services.audio_screening import (
     MAX_SECONDS, SAMPLE_RATE, WINDOW_SAMPLES, LocalAudioScreener, read_pcm_wav,
 )
 

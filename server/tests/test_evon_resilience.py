@@ -5,9 +5,9 @@ from contextlib import asynccontextmanager
 import httpx
 import pytest
 
-from artha_mesh.config import Settings
-from artha_mesh.errors import ProviderError
-from artha_mesh.providers.evon import EvonTranslator, completed_translation
+from charcha.config import Settings
+from charcha.errors import ProviderError
+from charcha.providers.evon import EvonTranslator, completed_translation
 
 
 def completion(text="நாளை வர வேண்டாம்.", *, finish="stop", **message_fields):

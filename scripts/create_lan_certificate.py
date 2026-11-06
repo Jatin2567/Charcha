@@ -54,7 +54,7 @@ prompt = no
 distinguished_name = dn
 x509_extensions = issuer
 [dn]
-CN = Artha Mesh LAN test {identifier}
+CN = Charcha LAN test {identifier}
 O = Local development only
 [issuer]
 basicConstraints = critical,CA:TRUE,pathlen:0
@@ -70,7 +70,7 @@ prompt = no
 distinguished_name = dn
 req_extensions = leaf
 [dn]
-CN = Artha Mesh LAN test
+CN = Charcha LAN test
 [leaf]
 basicConstraints = critical,CA:FALSE
 keyUsage = critical,digitalSignature,keyEncipherment
@@ -94,7 +94,7 @@ subjectAltName = IP:{address}
         validate_tls(address, staged / "cert.pem", staged / "key.pem", staged / "ca.pem")
         issuer_der = ssl.PEM_cert_to_DER_cert((staged / "ca.pem").read_text(encoding="ascii"))
         leaf_der = ssl.PEM_cert_to_DER_cert((staged / "cert.pem").read_text(encoding="ascii"))
-        (staged / "artha-lan-ca.cer").write_bytes(issuer_der)
+        (staged / "charcha-lan-ca.cer").write_bytes(issuer_der)
         summary = {
             "schema_version": 1, "record_type": "lan_certificate_preparation",
             "ip": address, "certificate_days": days, "issuer_days": days + 1,
@@ -105,7 +105,7 @@ subjectAltName = IP:{address}
             "tls_verified_offline": True, "issuer_signing_key_retained": False,
             "trusted_on_this_device": False, "firewall_changed": False,
             "provider_calls": 0, "output": str(output),
-            "public_certificate_for_other_device": str(output / "artha-lan-ca.cer"),
+            "public_certificate_for_other_device": str(output / "charcha-lan-ca.cer"),
             "warning": "Development only. Trust is a separate device action. Remove this issuer after testing. Regenerate if the IP changes or the certificate expires.",
         }
         (staged / "manifest.json").write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")

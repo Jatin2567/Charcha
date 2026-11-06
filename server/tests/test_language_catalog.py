@@ -9,14 +9,14 @@ import httpx
 import pytest
 from pydantic import ValidationError
 
-from artha_mesh.config import Settings
-from artha_mesh.errors import ProviderError
-from artha_mesh.models import BCP47, LANGUAGE_NAMES, LANGUAGES, JoinRoom, LanguageCode, Participant
-from artha_mesh.providers.demo import SAMPLES, DemoTranslator
-from artha_mesh.providers.evon import EvonTranslator
-from artha_mesh.providers.gnani import GnaniSpeech
-from artha_mesh.services.routing import recipients_for, target_languages
-from artha_mesh.voice_catalog import TIMBRE_V25_STOCK_VOICES, select_stock_voice
+from charcha.config import Settings
+from charcha.errors import ProviderError
+from charcha.models import BCP47, LANGUAGE_NAMES, LANGUAGES, JoinRoom, LanguageCode, Participant
+from charcha.providers.demo import SAMPLES, DemoTranslator
+from charcha.providers.evon import EvonTranslator
+from charcha.providers.gnani import GnaniSpeech
+from charcha.services.routing import recipients_for, target_languages
+from charcha.voice_catalog import TIMBRE_V25_STOCK_VOICES, select_stock_voice
 
 CODES = ("hi", "ta", "bn", "en", "te", "kn", "ml", "mr", "gu", "pa")
 
@@ -138,7 +138,7 @@ async def test_all_ten_stt_headers_and_stock_tts_requests_use_matching_language_
         connections.append((socket, options["additional_headers"]))
         return socket
 
-    monkeypatch.setattr("artha_mesh.providers.gnani.websockets.connect", connect)
+    monkeypatch.setattr("charcha.providers.gnani.websockets.connect", connect)
     speech = GnaniSpeech(Settings(mode="live", gnani_api_key="fixture-only", _env_file=None))
 
     async def pcm():

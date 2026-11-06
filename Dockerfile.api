@@ -1,10 +1,21 @@
-FROM python:3.12-slim
+FROM python:3.12-slim AS api
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 WORKDIR /app
 COPY server/requirements.lock ./requirements.lock
 RUN pip install --no-cache-dir --require-hashes --only-binary=:all: -r requirements.lock
-COPY server/artha_mesh ./artha_mesh
-RUN useradd --create-home --uid 10001 artha && mkdir /app/data && chown artha:artha /app/data
-USER artha
+COPY server/charcha ./charcha
+COPY scripts/provider_flow.py ./scripts/provider_flow.py
+RUN useradd --create-home --uid 10001 charcha && mkdir /app/data && chown charcha:charcha /app/data
+USER charcha
 EXPOSE 8000
-CMD ["uvicorn", "artha_mesh.main:app", "--host", "0.0.0.0", "--port", "8000", "--no-access-log", "--log-level", "warning"]
+CMD ["uvicorn", "charcha.main:app", "--host", "0.0.0.0", "--port", "8000", "--no-access-log", "--log-level", "warning"]
+
+FROM api AS screened
+USER root
+COPY server/requirements-screening.lock ./
+RUN pip install --no-cache-dir --require-hashes --only-binary=:all: --no-deps -r requirements-screening.lock && pip check
+COPY server/models/aasist/model.onnx server/models/aasist/LICENSE /app/models/aasist/
+USER charcha
+RUN python -c "from charcha.services.audio_screening import LocalAudioScreener; assert LocalAudioScreener('/app/models/aasist/model.onnx').status()['ready'], 'Screening model failed its startup check'"
+
+FROM api AS standard

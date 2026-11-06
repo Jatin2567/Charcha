@@ -16,6 +16,7 @@ import {
   ClipboardCheck,
   FileCheck2,
 } from 'lucide-react';
+import { AccountMenu } from './AccountGate';
 import { Logo, Avatar, Badge } from './ui';
 import { useApp } from '../state/AppContext';
 import { languageName } from '../types/domain';
@@ -28,7 +29,7 @@ export function Shell() {
   return (
     <div className={`app-shell ${preferences.highContrast ? 'high-contrast' : ''}`}>
       <aside className={`sidebar ${menu ? 'sidebar-open' : ''}`}>
-        <Link to="/" className="brand-link" aria-label="Artha-Mesh home" onClick={() => setMenu(false)}>
+        <Link to="/" className="brand-link" aria-label="Charcha home" onClick={() => setMenu(false)}>
           <Logo />
         </Link>
         <div className="workspace-label">YOUR WORKSPACE</div>
@@ -137,7 +138,7 @@ export function Shell() {
                                   : 'Overview'}
             </strong>
           </div>
-          <div className="topbar-right">
+          <div className="topbar-right"><AccountMenu />
             <Badge tone={health?.mode === 'live' ? 'green' : 'orange'}>
               <span className="status-dot" />
               {health?.mode === 'live'
@@ -164,7 +165,7 @@ export function Shell() {
             <Headphones size={13} />
             Made for conversations that matter.
           </span>
-          <span>10 language choices · standard voices first</span>
+          <span>10 languages · conversations that connect</span>
         </footer>
       </div>
     </div>

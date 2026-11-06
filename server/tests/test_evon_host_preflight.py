@@ -15,7 +15,7 @@ NOW = datetime(2026, 10, 28, 12, 0, tzinfo=timezone.utc)
 
 
 def snapshot():
-    resource = "projects/artha-test-123/zones/asia-southeast1-c/instances/evon-trial"
+    resource = "projects/charcha-test-123/zones/asia-southeast1-c/instances/evon-trial"
     return {
         "captured_at": "2026-10-28T11:55:00Z",
         "host": {"os": "Linux", "architecture": "x86_64", "ram_gib": 170, "free_disk_gib": 180,
@@ -34,7 +34,7 @@ def test_ready_means_reported_prerequisites_not_actual_runtime_verified():
     assert result["network_calls"] == 0
     assert result["source"] == "operator_supplied_snapshot_not_independently_verified"
     assert result["commands_for_owner_review_only"]["stop_after_test"] == [
-        "gcloud", "compute", "instances", "stop", "evon-trial", "--project", "artha-test-123",
+        "gcloud", "compute", "instances", "stop", "evon-trial", "--project", "charcha-test-123",
         "--zone", "asia-southeast1-c"]
 
 

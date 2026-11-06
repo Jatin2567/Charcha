@@ -25,9 +25,9 @@ const vite = [
   join(root, 'web/node_modules/vite/bin/vite.js'),
 ].find(existsSync);
 const rtcOnly = process.argv.includes('--verify');
-const webPort = Number(process.env.ARTHA_WEB_PORT || 5180);
+const webPort = Number((process.env.CHARCHA_WEB_PORT ?? process.env.ARTHA_WEB_PORT) || 5180);
 if (!Number.isInteger(webPort) || webPort < 1 || webPort > 65535 || [7880, 7881].includes(webPort)) {
-  console.error('ARTHA_WEB_PORT must be a valid port distinct from the local media ports.');
+  console.error('CHARCHA_WEB_PORT must be a valid port distinct from the local media ports.');
   process.exit(1);
 }
 if (options.plan) {
@@ -131,7 +131,7 @@ if (options.check) {
 for (const port of [7880, 7881, ...(rtcOnly ? [] : [webPort])]) {
   if (!(await freePort(port))) {
     console.error(
-      `Local port ${port} is occupied. Stop only your earlier Artha-Mesh test, or choose a different ARTHA_WEB_PORT.`,
+      `Local port ${port} is occupied. Stop only your earlier Charcha test, or choose a different CHARCHA_WEB_PORT.`,
     );
     process.exit(1);
   }
@@ -173,8 +173,8 @@ if (rtcOnly) {
   await stop();
 } else {
   let apiPort;
-  for (const port of process.env.ARTHA_API_PORT
-    ? [Number(process.env.ARTHA_API_PORT)]
+  for (const port of (process.env.CHARCHA_API_PORT ?? process.env.ARTHA_API_PORT)
+    ? [Number((process.env.CHARCHA_API_PORT ?? process.env.ARTHA_API_PORT))]
     : [8000, 8100, 8200]) {
     if (port === webPort) continue;
     if (await freePort(port)) {
@@ -183,7 +183,7 @@ if (rtcOnly) {
     }
   }
   if (!apiPort) {
-    console.error('No free API port. Set ARTHA_API_PORT to a free local port.');
+    console.error('No free API port. Set CHARCHA_API_PORT to a free local port.');
     await stop(1);
   }
   const api = launch(
@@ -191,7 +191,7 @@ if (rtcOnly) {
     [
       '-m',
       'uvicorn',
-      'artha_mesh.main:app',
+      'charcha.main:app',
       '--app-dir',
       'server',
       '--host',

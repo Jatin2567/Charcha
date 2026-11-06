@@ -12,11 +12,11 @@ import time
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "server"))
 from livekit import rtc
-from artha_mesh.models import JoinRoom, UpdateParticipant
-from artha_mesh.services.pipeline import Pipeline
-from artha_mesh.services.rooms import RoomService
-from artha_mesh.store import Store
-from artha_mesh.transport.livekit import TransportManager
+from charcha.models import JoinRoom, UpdateParticipant
+from charcha.services.pipeline import Pipeline
+from charcha.services.rooms import RoomService
+from charcha.store import Store
+from charcha.transport.livekit import TransportManager
 
 
 class OneUtterance:
@@ -47,14 +47,17 @@ async def wait_until(predicate, seconds):
             await asyncio.sleep(.04)
 
 
-async def conference_turn(settings, guard, speech, translator, source, target, pcm, row):
-    store = Store(settings)
+async def conference_turn(settings, guard, speech, translator, source, target, pcm, row, *, prepared_room=None):
+    if prepared_room is None:
+        store = Store(settings)
+        state = store.create_room("Recorded five-language conference test")
+    else:
+        store, state = prepared_room
     reader = OneUtterance(speech, guard)
     pipeline = Pipeline(store, translator, speech)
     transport = TransportManager(store, reader, pipeline)
     pipeline.transport = transport
     service = RoomService(store, pipeline, transport, None, guard)
-    state = store.create_room("Recorded five-language conference test")
     receiver_pcm = bytearray()
     receive_tasks = []
     wrong_track = False
@@ -81,7 +84,8 @@ async def conference_turn(settings, guard, speech, translator, source, target, p
         stack.push_async_callback(pipeline.aclose)
         row["stage"] = "rtc_join"
         speaker, listener = [await service.join(state.room.code, JoinRoom(
-            name=f"Test {language}", language=language, consent=True)) for language in (source, target)]
+            name=f"Test {language}", language=language, consent=True,
+            screening_consent=state.room.screening_switchable)) for language in (source, target)]
         agent = speaker["livekit"]["agent_identity"]
         expected = f"translated:{speaker['participant'].id}:{target}"
         peers = []

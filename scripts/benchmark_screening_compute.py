@@ -19,7 +19,7 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "server"))
-from artha_mesh.services.audio_screening import (  # noqa: E402
+from charcha.services.audio_screening import (  # noqa: E402
     DEFAULT_MODEL, MODEL_ID, MODEL_REVISION, MODEL_SHA256, SAMPLE_RATE,
     WINDOW_SAMPLES, LocalAudioScreener,
 )

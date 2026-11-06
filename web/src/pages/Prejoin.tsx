@@ -16,6 +16,7 @@ import {
   VideoOff,
 } from 'lucide-react';
 import { useApp } from '../state/AppContext';
+import { AdmissionGate } from '../components/Admission';
 import { getRoom, joinRoom, leaveRoom } from '../services/api';
 import { useDevices, playTestTone } from '../hooks/useDevices';
 import { Avatar, Badge, ErrorNotice, LanguageSelect, Loading, PageHeading } from '../components/ui';
@@ -25,6 +26,10 @@ import { useCameraPreview } from '../hooks/useCameraPreview';
 import { LocalCameraPreview } from '../components/CameraVideo';
 import { ConversationIllustration } from '../components/ConversationIllustration';
 export function Prejoin() {
+  const {code = ''} = useParams();
+  return <AdmissionGate key={code} code={code}><DeviceSetup /></AdmissionGate>;
+}
+function DeviceSetup() {
   const { code = '' } = useParams();
   const app = useApp();
   const navigate = useNavigate();
@@ -83,7 +88,8 @@ export function Prejoin() {
     joining.current = true;
     setBusy(true);
     try {
-      const m = await joinRoom(code, name.trim(), language, 'standard', consent);
+      const m = await joinRoom(code, name.trim(), language, 'standard', consent, undefined,
+        Boolean(room?.screening_switchable && consent));
       if (!alive.current) {
         void leaveRoom(m).catch(() => {});
         return;
@@ -318,21 +324,33 @@ export function Prejoin() {
                 <strong>
                   {room?.mode === 'transport'
                     ? 'Original microphone audio'
-                    : 'Standard voice to start'}
+                    : room?.voice_required ? 'Your voice, in their language' : 'Standard translation voice'}
                 </strong>
                 <small>
                   {room?.mode === 'transport'
-                    ? 'Speech APIs and voice enrollment are disabled.'
-                    : 'Uses a standard voice. No enrollment in this test stage.'}
+                    ? 'Everyone hears the original language.'
+                    : room?.voice_required ? 'After joining, consent and record your own 5–30 second voice reference before speaking.' : 'Participants listening in another language hear a synthesized voice.'}
                 </small>
               </div>
               <Check size={16} />
             </div>
             <p className="source-note">
               {room?.mode === 'transport'
-                ? 'Use headphones and a second browser profile so the two participants have separate sessions.'
-                : 'Voice cloning is planned for a later stage. Camera sharing is optional and starts off.'}
+                ? 'Use headphones if another participant is in the same room.'
+                : 'Choose the language you will speak and want to hear.'}
             </p>
+            {room?.screening_switchable ? (
+              <p className="source-note">
+                VoiceShield is currently {room.screening_mode === 'monitor' ? 'on' : 'off'}. The host can switch it during the call.
+                By joining, you agree that while it is on the meeting server can screen your unmuted microphone for synthetic speech
+                and show the assessment to everyone in this room. You can mute or leave at any time.
+              </p>
+            ) : room?.screening_mode && room.screening_mode !== 'off' && (
+              <p className="source-note">
+                VoiceShield analyzes your microphone audio on the meeting server. Participants can see your experimental screening results.
+                {room.screening_mode === 'enforce' && ' Audio is held until a window passes screening.'}
+              </p>
+            )}
             <label className="check-line">
               <input
                 type="checkbox"

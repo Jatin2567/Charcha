@@ -3,7 +3,7 @@ requires = ["hatchling>=1.26"]
 build-backend = "hatchling.build"
 
 [project]
-name = "artha-mesh-server"
+name = "charcha-server"
 version = "0.1.0"
 description = "Indic conversation interpretation with consented voice cloning"
 requires-python = ">=3.11"
@@ -12,6 +12,7 @@ dependencies = [
   "uvicorn[standard]>=0.34,<1.0",
   "pydantic-settings>=2.7,<3.0",
   "httpx>=0.28,<1.0",
+  "pyjwt[crypto]>=2.10,<3",
   "websockets>=14.1,<16.0",
   "python-multipart>=0.0.20,<1.0",
   "livekit-api>=1.0,<2.0",
@@ -25,7 +26,7 @@ screening = ["onnxruntime>=1.22,<2.0"] # Optional local CPU classifier; never an
 dev = ["pytest>=8.3,<10", "pytest-asyncio>=0.25,<2", "ruff>=0.9,<1"]
 
 [tool.hatch.build.targets.wheel]
-packages = ["artha_mesh"]
+packages = ["charcha"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

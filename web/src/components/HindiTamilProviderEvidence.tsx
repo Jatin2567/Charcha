@@ -51,7 +51,7 @@ export function HindiTamilProviderEvidence({
           </div>
           <button
             className="button secondary"
-            onClick={() => downloadJson('artha-hindi-tamil-provider-evidence.json', evidence)}
+            onClick={() => downloadJson('charcha-hindi-tamil-provider-evidence.json', evidence)}
           >
             <Download size={15} />
             Export redacted result

@@ -1,0 +1,112 @@
+.user-feedback {
+  display: grid;
+  grid-template-columns: minmax(190px, 0.8fr) minmax(0, 1.6fr);
+  align-items: center;
+  gap: clamp(20px, 3vw, 40px);
+  margin: 32px 0;
+}
+
+.user-feedback-intro h2 {
+  margin: 9px 0 10px;
+  font-size: clamp(22px, 2.2vw, 28px);
+  line-height: 1.25;
+  letter-spacing: -0.6px;
+}
+
+.user-feedback-intro p {
+  margin: 0;
+  max-width: 32ch;
+}
+
+.user-feedback-list {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.user-feedback-card {
+  margin: 0;
+  padding: clamp(20px, 2.5vw, 28px);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--accent);
+  border-radius: 16px;
+  background: var(--surface);
+}
+
+.user-feedback-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--accent);
+}
+
+.user-feedback-feature {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 10px;
+  border-radius: 99px;
+  background: var(--accent-soft);
+  color: var(--accent-hover);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.user-feedback-card blockquote {
+  margin: 18px 0 24px;
+  color: var(--ink);
+  font-size: clamp(17px, 1.6vw, 20px);
+  line-height: 1.6;
+  letter-spacing: -0.15px;
+  overflow-wrap: anywhere;
+}
+
+.user-feedback-card figcaption {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-feedback-avatar {
+  display: grid;
+  place-items: center;
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--accent-light);
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent-hover);
+  object-fit: cover;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.user-feedback-person {
+  display: grid;
+  gap: 4px;
+}
+
+.user-feedback-person strong {
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.user-feedback-person > span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+@media (max-width: 720px) {
+  .user-feedback {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+    margin: 24px 0;
+  }
+
+  .user-feedback-intro p {
+    max-width: none;
+  }
+}

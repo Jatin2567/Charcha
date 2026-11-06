@@ -6,12 +6,12 @@ from types import SimpleNamespace
 import pytest
 from fastapi.testclient import TestClient
 
-from artha_mesh.config import Settings
-from artha_mesh.errors import ProviderError
-from artha_mesh.models import Participant
-from artha_mesh.services.usage import UsageGuard
-from artha_mesh.store import Store, token_digest
-from artha_mesh.transport.livekit import OutputTrack, RoomTransport
+from charcha.config import Settings
+from charcha.errors import ProviderError
+from charcha.models import Participant
+from charcha.services.usage import UsageGuard
+from charcha.store import Store, token_digest
+from charcha.transport.livekit import OutputTrack, RoomTransport
 
 
 def transport_settings(**values):
@@ -35,7 +35,7 @@ class ConnectedTransport:
 
 
 def test_transport_constructs_no_paid_provider_clients_and_disables_interpretation(monkeypatch):
-    from artha_mesh import main
+    from charcha import main
 
     def forbidden(*_args, **_kwargs):
         raise AssertionError("Transport mode must never construct a paid provider client or open a usage ledger")
@@ -80,7 +80,7 @@ def test_transport_constructs_no_paid_provider_clients_and_disables_interpretati
 
 
 def test_transport_missing_configuration_mentions_only_livekit():
-    from artha_mesh.main import create_app
+    from charcha.main import create_app
 
     settings = Settings(mode="transport", livekit_url="", livekit_api_key="", livekit_api_secret="",
                         gnani_api_key="", evon_base_url="", evon_model="", _env_file=None)

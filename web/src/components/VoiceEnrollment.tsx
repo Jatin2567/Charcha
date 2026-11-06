@@ -15,6 +15,7 @@ export function VoiceEnrollment({ onSuccess }: { onSuccess?: () => void }) {
   const [success, setSuccess] = useState('');
   const file = useRef<HTMLInputElement>(null);
   const profile = app.voiceProfile;
+  const required = app.membership?.room.voice_required;
   if (app.health?.mode === 'transport' || app.membership?.room.mode === 'transport')
     return <div className="notice warning"><span>Voice cloning is disabled during local audio tests. Complete the interpretation and device checks in <Link to="/tests">Test lab</Link> first.</span></div>;
   const enroll = async () => {
@@ -52,7 +53,7 @@ export function VoiceEnrollment({ onSuccess }: { onSuccess?: () => void }) {
     setBusy(true);
     try {
       await deleteVoice(profile.id, app.membership);
-      if (profile.mode === 'live') {
+      if (profile.mode === 'live' && !required) {
         const participant = await updateParticipant(app.membership, { voice_mode: 'standard' });
         app.setMembership({
           ...app.membership,
@@ -60,7 +61,8 @@ export function VoiceEnrollment({ onSuccess }: { onSuccess?: () => void }) {
         });
       }
       app.setVoiceProfile(null);
-      setSuccess('Voice profile deleted. Standard voice is selected.');
+      if (required) app.setMembership({ ...app.membership, participant: { ...app.membership.participant, muted: true, voice_mode: 'standard' } });
+      setSuccess(required ? 'Voice profile deleted. Set up your voice again before speaking.' : 'Voice profile deleted. Standard voice is selected.');
     } catch (e) {
       setError((e as Error).message);
     } finally {

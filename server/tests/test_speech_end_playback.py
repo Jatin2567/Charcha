@@ -16,6 +16,13 @@ measure = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(measure)
 
 
+def test_recording_retains_the_room_screening_mode(tmp_path):
+    path, annotations = recording(tmp_path)
+    assert measure.analyze(path, {**annotations, "screening_mode": "monitor"})["screening_mode"] == "monitor"
+    with pytest.raises(measure.Rejected):
+        measure.analyze(path, {**annotations, "screening_mode": "invalid"})
+
+
 def recording(tmp_path, *, rate=16000, frames=None, source_end=None, output_start=None,
               source_signal=True, output_signal=True, channels=2, width=2):
     frames = frames or rate * 3

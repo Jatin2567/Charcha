@@ -120,7 +120,7 @@ export function ScreeningLatencyComparison() {
         </p>
         <button
           className="button secondary"
-          onClick={() => downloadJson('artha-screening-delay-experiment.json', results)}
+          onClick={() => downloadJson('charcha-screening-delay-experiment.json', results)}
         >
           <Download size={15} /> Export delay experiment
         </button>

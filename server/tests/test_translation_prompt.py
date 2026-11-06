@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from artha_mesh.providers.translation_prompt import PROMPT_VERSION, check_target_script, translation_messages
+from charcha.providers.translation_prompt import PROMPT_VERSION, check_target_script, translation_messages
 
 ROOT = Path(__file__).resolve().parents[2]
 

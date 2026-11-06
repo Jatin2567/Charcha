@@ -1,0 +1,8 @@
+.turn-understanding { margin: 10px 0; font-size: 12px; line-height: 1.6; }
+.turn-understanding summary { cursor: pointer; font-weight: 600; }
+.turn-understanding ul { margin: 8px 0; padding-left: 20px; }
+.turn-understanding p { margin: 6px 0; font-size: 12px; }
+.turn-recovery { padding: 10px 12px; margin: 10px 0; border: 1px solid var(--warning-border); border-radius: 8px; background: var(--warning-bg); color: var(--warning-ink); font-size: 12px; }
+.turn-recovery p { margin: 4px 0 0; color: inherit !important; }
+.meeting-app .turn-understanding { color: var(--call-muted); }
+.recap-share-preview { width: 100%; min-height: 260px; max-height: 50vh; padding: 12px; resize: vertical; font: inherit; line-height: 1.6; color: var(--ink); background: var(--surface); border: 1px solid var(--border); border-radius: 8px; }

@@ -99,7 +99,7 @@ export function validateDeployment(value: unknown): DeploymentSnapshot {
 
   const issueKeys = new Set<string>([
     ...known,
-    'ARTHA_MODE',
+    'CHARCHA_MODE',
     'LIVEKIT_INTERNAL_URL',
     'GNANI_STT_URL',
     'GNANI_TTS_URL',

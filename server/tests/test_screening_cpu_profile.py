@@ -2,9 +2,9 @@ from types import SimpleNamespace
 
 import pytest
 
-from artha_mesh.config import Settings
-from artha_mesh.services.audio_screening import LocalAudioScreener, WINDOW_SAMPLES
-from artha_mesh.services.screening_runtime import ScreeningRuntime
+from charcha.config import Settings
+from charcha.services.audio_screening import LocalAudioScreener, WINDOW_SAMPLES
+from charcha.services.screening_runtime import ScreeningRuntime
 
 
 @pytest.mark.parametrize("threads", [0, 5, True, 1.5])
@@ -27,7 +27,7 @@ def test_cpu_tuning_never_shortens_evidence_or_changes_thresholds(tmp_path):
 
 
 def test_runtime_passes_the_explicit_cpu_profile_without_running_inference(monkeypatch):
-    import artha_mesh.services.screening_runtime as module
+    import charcha.services.screening_runtime as module
     recorded = {}
 
     def capture(path, **options):

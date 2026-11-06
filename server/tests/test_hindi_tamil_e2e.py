@@ -10,14 +10,14 @@ import wave
 
 import pytest
 
-from artha_mesh.config import Settings
-from artha_mesh.services.usage import UsageGuard
+from charcha.config import Settings
+from charcha.services.usage import UsageGuard
 
 ROOT = Path(__file__).resolve().parents[2]
 spec = importlib.util.spec_from_file_location("hindi_tamil_e2e_runner", ROOT / "scripts/check_hindi_tamil_e2e.py")
 check = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(check)
-ENDPOINT = "https://owned-artha-test.modal.run/v1"
+ENDPOINT = "https://owned-charcha-test.modal.run/v1"
 SECRET = "NEVER-EXPORT-TEST-ONLY-GNANI-CREDENTIAL"
 
 

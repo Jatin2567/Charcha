@@ -22,10 +22,10 @@ from uuid import uuid4
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "server"))
 
-from artha_mesh.config import Settings  # noqa: E402
-from artha_mesh.services.approvals import RESOURCE_KEYS  # noqa: E402
-from artha_mesh.services.usage import UsageGuard  # noqa: E402
-from artha_mesh.services.voice import MAX_REFERENCE_BYTES, validate_reference  # noqa: E402
+from charcha.config import Settings  # noqa: E402
+from charcha.services.approvals import RESOURCE_KEYS  # noqa: E402
+from charcha.services.usage import UsageGuard  # noqa: E402
+from charcha.services.voice import MAX_REFERENCE_BYTES, validate_reference  # noqa: E402
 
 PHRASE = "नमस्ते भारत।"
 PURPOSES = ("gnani_speech_check", "voice_clone_check")
@@ -113,7 +113,7 @@ def validate_grant(flow: dict, plan: dict) -> None:
 
 def create_speech(settings: Settings, guard: UsageGuard):
     # Lazy import keeps both plan and preflight rejection paths free of clients.
-    from artha_mesh.providers.gnani import GnaniSpeech
+    from charcha.providers.gnani import GnaniSpeech
     return GnaniSpeech(settings, guard)
 
 

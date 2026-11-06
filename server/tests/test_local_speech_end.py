@@ -40,7 +40,7 @@ def test_import_and_plan_never_read_environment_files_or_construct_settings_sdk_
     original_import = builtins.__import__
     def forbidden(*_a, **_k): pytest.fail("Offline planning attempted runtime work")
     def restricted_import(name, *args, **kwargs):
-        if name.split(".", 1)[0] in {"artha_mesh", "livekit", "httpx", "websockets", "dotenv", "pydantic_settings"}:
+        if name.split(".", 1)[0] in {"charcha", "livekit", "httpx", "websockets", "dotenv", "pydantic_settings"}:
             forbidden()
         return original_import(name, *args, **kwargs)
     class NoEnvironment(dict):

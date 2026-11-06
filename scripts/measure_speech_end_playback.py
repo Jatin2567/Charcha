@@ -44,8 +44,11 @@ def plan() -> dict:
 
 
 def analyze(wav_path: Path, annotations: dict) -> dict:
-    if not isinstance(annotations, dict) or set(annotations) != FIELDS:
+    if not isinstance(annotations, dict) or set(annotations) - {"screening_mode"} != FIELDS:
         raise Rejected("Use exactly the documented annotation fields.")
+    screening_mode = annotations.get("screening_mode", "off")
+    if screening_mode not in ("off", "monitor", "enforce"):
+        raise Rejected("Use the VoiceShield mode shown in the measured room.")
     for name in ("capture_attested", "annotations_reviewed", "meaning_reviewed"):
         if type(annotations[name]) is not bool:
             raise Rejected("Review and capture flags must be explicit booleans.")
@@ -110,7 +113,7 @@ def analyze(wav_path: Path, annotations: dict) -> dict:
             "latency_ms": round((output_start - source_end) * 1000 / rate, 4) if complete else None,
             "annotation_resolution_ms": round(1000 / rate, 6),
             "physical_playback_measured": bool(physical), "capture_provenance": "operator_attested",
-            "provider_provenance": "operator_attested", "screening_mode": "off", "voice_cloning": False,
+            "provider_provenance": "operator_attested", "screening_mode": screening_mode, "voice_cloning": False,
             "target_ms": 2000, "acceptance": "requires_aggregate_gate_and_human_review",
             "limitations": ["Provenance and meaning review are operator attestations, not verified from PCM.",
                 "Prefer isolated reference/output channels; crosstalk or other system sounds can invalidate onset annotations.",

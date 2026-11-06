@@ -48,6 +48,8 @@ export interface ProviderFlow {
   metrics: FlowMetrics;
 }
 export interface FlowApproval {
+  owner_tracks_billing?: boolean;
+  host_allowance_enabled?: boolean;
   required: boolean;
   status: 'locked' | 'approved' | 'unavailable' | 'demo' | 'disabled';
   active_flow_id: string | null;

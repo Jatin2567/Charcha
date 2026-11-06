@@ -1,6 +1,8 @@
 import { StrictMode, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AccountGate } from './components/AccountGate';
+import { AdminPage } from './pages/Admin';
 import { AppProvider } from './state/AppContext';
 import { Shell } from './components/Shell';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -28,11 +30,12 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ErrorBoundary>
       <HashRouter>
-        <AppProvider>
+        <AccountGate><AppProvider>
           <Suspense fallback={<RouteFallback />}>
           <Routes>
             <Route element={<Shell />}>
               <Route index element={<P.home />} />
+              <Route path="admin" element={<AdminPage />} />
               <Route path="join/:code" element={<P.join />} />
               <Route path="voices" element={<P.voices />} />
               <Route path="settings" element={<P.settings />} />
@@ -50,7 +53,7 @@ createRoot(document.getElementById('root')!).render(
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
           </Suspense>
-        </AppProvider>
+        </AppProvider></AccountGate>
       </HashRouter>
     </ErrorBoundary>
   </StrictMode>,

@@ -4,10 +4,10 @@ from types import SimpleNamespace
 
 import pytest
 
-from artha_mesh.config import Settings
-from artha_mesh.models import Participant
-from artha_mesh.store import Store
-from artha_mesh.transport.livekit import OutputTrack, RoomTransport
+from charcha.config import Settings
+from charcha.models import Participant
+from charcha.store import Store
+from charcha.transport.livekit import OutputTrack, RoomTransport
 
 
 def fixture(monkeypatch, rate=24000):

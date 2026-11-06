@@ -16,10 +16,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "server"))
 
 from pydantic import ValidationError
 
-from artha_mesh.config import Settings
-from artha_mesh.errors import ProviderError
-from artha_mesh.services.approvals import BALANCE_UNITS, PURPOSES, RESOURCE_KEYS, validate_budgets
-from artha_mesh.services.usage import UsageGuard
+from charcha.config import Settings
+from charcha.errors import ProviderError
+from charcha.services.approvals import BALANCE_UNITS, PURPOSES, RESOURCE_KEYS, room_digest, validate_budgets
+from charcha.services.usage import UsageGuard
 
 
 def parser() -> argparse.ArgumentParser:
@@ -28,6 +28,7 @@ def parser() -> argparse.ArgumentParser:
     for name in ("plan", "approve"):
         command = commands.add_parser(name)
         command.add_argument("--purpose", choices=PURPOSES, required=True)
+        command.add_argument("--room-code", help="Scope live interpretation to the code from one meeting invitation")
         command.add_argument("--seconds", type=int, required=True, help="Expiry in seconds, 1 to USAGE_APPROVAL_MAX_SECONDS (default 300); not a billing estimate")
         for key in RESOURCE_KEYS:
             command.add_argument("--" + key.replace("_", "-"), type=int, default=0)
@@ -38,6 +39,11 @@ def parser() -> argparse.ArgumentParser:
             command.add_argument("--unit", choices=BALANCE_UNITS)
             command.add_argument("--before-observed-at")
     commands.add_parser("status")
+    host = commands.add_parser("enable-host-budget", help="Enable one cumulative standard-speech allowance for the verified meeting host")
+    host.add_argument("--host-email", required=True)
+    host.add_argument("--limit-inr", required=True, type=int)
+    host.add_argument("--carry-room", help="Count all existing scoped grants from this meeting toward the shared allowance")
+    host.add_argument("--human-approved", action="store_true", required=True)
     close = commands.add_parser("close")
     close.add_argument("--flow-id", required=True)
     reconcile = commands.add_parser("reconcile")
@@ -59,6 +65,10 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if args.command in ("plan", "approve"):
             budgets = validate_budgets({key: getattr(args, key) for key in RESOURCE_KEYS})
+            if args.room_code is not None:
+                room_digest(args.room_code)
+                if args.purpose != "live_interpretation":
+                    raise ValueError("Meeting codes apply only to live interpretation.")
             # Plan never reads .env; approve is re-checked by the guard using
             # Settings.usage_approval_max_seconds.
             limit = int(os.environ.get("USAGE_APPROVAL_MAX_SECONDS", "300")) if args.command == "plan" else 86400
@@ -66,7 +76,7 @@ def main(argv: list[str] | None = None) -> int:
                 raise ValueError(f"Expiry must be from 1 to {limit} seconds")
             if args.command == "plan":
                 print(json.dumps({"purpose": args.purpose, "seconds": args.seconds, "budgets": budgets,
-                                  "provider_credit_cost": None,
+                                  "provider_credit_cost": None, "meeting_code": args.room_code,
                                   "detail": "Plan only; no grant, ledger write or API call. Obtain human permission before approval. Vendor charges require dashboard evidence."}, indent=2))
                 return 0
         # Mode is overridden for ledger commands only; .env and the running API mode
@@ -75,10 +85,19 @@ def main(argv: list[str] | None = None) -> int:
         guard = UsageGuard(settings)
         if args.command == "approve":
             output = guard.approve_flow(
-                purpose=args.purpose, seconds=args.seconds, budgets=budgets,
+                purpose=args.purpose, seconds=args.seconds, budgets=budgets, room_code=args.room_code,
                 before_balance=args.before_balance, balance_unit=args.unit,
                 before_observed_at=args.before_observed_at,
             )
+        elif args.command == "enable-host-budget":
+            from charcha.accounts import Accounts, EMAIL
+            from charcha.services import host_budget
+            from charcha.store import Store
+            email = args.host_email.strip().casefold()
+            if not EMAIL.fullmatch(email) or email != Accounts(settings, Store(settings)).host_email():
+                raise ValueError("The beneficiary must match the configured meeting host.")
+            output = guard._operator_change(host_budget.activate, host_email=email,
+                                            limit_inr=args.limit_inr, carry_room=args.carry_room)
         elif args.command == "close":
             output = guard.close_flow(args.flow_id)
         elif args.command == "reconcile":

@@ -5,13 +5,13 @@ import pytest
 from conftest import auth, create_member
 from fastapi import HTTPException
 
-from artha_mesh.config import Settings
-from artha_mesh.errors import ProviderError
-from artha_mesh.models import Participant
-from artha_mesh.providers.demo import SAMPLES, DemoTranslator
-from artha_mesh.services.pipeline import Pipeline
-from artha_mesh.services.rooms import RoomService
-from artha_mesh.store import Store
+from charcha.config import Settings
+from charcha.errors import ProviderError
+from charcha.models import Participant
+from charcha.providers.demo import SAMPLES, DemoTranslator
+from charcha.services.pipeline import Pipeline
+from charcha.services.rooms import RoomService
+from charcha.store import Store
 
 
 def wait_for_turn(client, code, member, utterance_id):
@@ -49,7 +49,12 @@ def test_confirmations_are_member_scoped_idempotent_and_human_initiated(client):
     utterance_id = posted.json()["utterance_id"]
     turn, _ = wait_for_turn(client, code, speaker, utterance_id)
     assert turn["confirmed_by"] == []
+    assert turn["listeners_recorded"] is True
+    assert turn["listeners"] == {listener["participant"]["id"]: "Listener"}
     body = {"utterance_id": utterance_id}
+    assert client.post(f"/api/rooms/{code}/confirmations", headers=auth(speaker), json=body).status_code == 403
+    _, late_listener = create_member(client, code, name="Late listener", language="ta")
+    assert client.post(f"/api/rooms/{code}/confirmations", headers=auth(late_listener), json=body).status_code == 403
     assert client.post(f"/api/rooms/{code}/confirmations", headers=auth(outsider), json=body).status_code == 403
     for _ in range(2):
         confirmed = client.post(f"/api/rooms/{code}/confirmations", headers=auth(listener), json=body)
@@ -86,6 +91,7 @@ async def test_source_fifo_bounded_queue_and_cancel_do_not_strand_turns():
         assert [turn.id for turn in state.turns] == [first, second]
         await pipeline.cancel_speaker(state.room.code, speaker.id)
         assert all(turn.status == "error" for turn in state.turns)
+        assert all(turn.recovery_reason == "interrupted" for turn in state.turns)
         assert not pipeline.queues
         assert not pipeline.workers
     finally:
@@ -191,7 +197,7 @@ async def test_scripted_demo_lifecycle_marks_presenters_and_runs_actual_sample_p
     async def skip_animation_delay(_seconds):
         await original_sleep(0)
 
-    monkeypatch.setattr("artha_mesh.services.rooms.asyncio.sleep", skip_animation_delay)
+    monkeypatch.setattr("charcha.services.rooms.asyncio.sleep", skip_animation_delay)
     try:
         await service.start_demo(state.room.code)
         with pytest.raises(HTTPException) as error:

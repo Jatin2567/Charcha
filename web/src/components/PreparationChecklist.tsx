@@ -121,7 +121,7 @@ export function PreparationChecklist() {
         </p>
         <button
           className="button secondary"
-          onClick={() => downloadJson('artha-mesh-pre-gpu-plan.json', preparationPlan)}
+          onClick={() => downloadJson('charcha-pre-gpu-plan.json', preparationPlan)}
         >
           <Download size={15} />
           Export preparation plan

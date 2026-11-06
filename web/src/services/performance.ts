@@ -6,6 +6,8 @@ import type {
   PerformanceSample,
   PerformanceSummary,
   ReadinessReport,
+  MeetingReportEntry,
+  PersistenceStatus,
 } from '../types/performance';
 
 export const DEFAULT_FILTER: PerformanceFilter = {
@@ -239,6 +241,15 @@ export const fetchPerformance = (roomCode: string, token: string, signal: AbortS
 export const fetchReadiness = (signal: AbortSignal) =>
   fetchReport<ReadinessReport>('/readiness', undefined, signal);
 
+export const fetchCurrentCallPerformance = (signal: AbortSignal) =>
+  fetchReport<PerformanceReport | null>('/account/call-performance', undefined, signal);
+
+export const fetchPerformanceHistory = (signal: AbortSignal) =>
+  fetchReport<{ reports: MeetingReportEntry[]; retention_days: number; persistence?: PersistenceStatus }>(
+    '/account/performance-history', undefined, signal);
+export const fetchSavedPerformance = (reportId: string, signal: AbortSignal) =>
+  fetchReport<PerformanceReport>(`/account/performance-history/${encodeURIComponent(reportId)}`, undefined, signal);
+
 /** Explicit allowlist: never spread raw API data into an exported report. */
 export function sanitizedReport(report: PerformanceReport, filter: PerformanceFilter) {
   const samples = filterSamples(report.samples, filter).map((s) => ({
@@ -251,7 +262,13 @@ export function sanitizedReport(report: PerformanceReport, filter: PerformanceFi
     status: s.status,
     measurement: s.measurement,
     queue_ms: s.queue_ms,
+    queue_depth: s.queue_depth ?? null,
+    preparation_ms: s.preparation_ms ?? null,
+    output_wait_ms: s.output_wait_ms ?? null,
     stt_ms: s.stt_ms,
+    source_end_status: s.source_end_status ?? 'not_recorded',
+    source_end_to_transcript_ms: s.source_end_to_transcript_ms ?? null,
+    source_end_to_first_pcm_ms: s.source_end_to_first_pcm_ms ?? null,
     mt_ms: s.mt_ms,
     tts_first_pcm_ms: s.tts_first_pcm_ms,
     total_ms: s.total_ms,
@@ -273,6 +290,7 @@ export function sanitizedReport(report: PerformanceReport, filter: PerformanceFi
       stt: 'processing_to_transcript',
       total: 'queue_to_first_pcm_plus_stt',
       receiver_playback_measured: false,
+      total_coverage: 'partial_when_stt_missing',
       retention_limit: report.measurement.retention_limit,
     },
     summary: summarize(samples),
@@ -298,7 +316,13 @@ export function performanceCsv(report: PerformanceReport, filter: PerformanceFil
     'status',
     'measurement',
     'queue_ms',
+    'queue_depth',
+    'preparation_ms',
+    'output_wait_ms',
     'stt_ms',
+    'source_end_status',
+    'source_end_to_transcript_ms',
+    'source_end_to_first_pcm_ms',
     'mt_ms',
     'tts_first_pcm_ms',
     'total_ms',

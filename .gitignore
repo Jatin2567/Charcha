@@ -22,6 +22,7 @@ work/
 .openai/.local/
 server/data/
 deploy/production/generated/
+deploy/gcp/generated/
 *.sqlite3
 *.sqlite3-*
 server/models/

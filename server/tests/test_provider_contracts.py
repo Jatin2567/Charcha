@@ -6,10 +6,10 @@ import json
 import httpx
 import pytest
 
-from artha_mesh.config import Settings
-from artha_mesh.errors import ProviderError
-from artha_mesh.providers.evon import EvonTranslator
-from artha_mesh.providers.gnani import GnaniSpeech
+from charcha.config import Settings
+from charcha.errors import ProviderError
+from charcha.providers.evon import EvonTranslator
+from charcha.providers.gnani import GnaniSpeech
 
 
 async def test_translation_wraps_utterance_as_data_and_preserves_language_contract():
@@ -142,7 +142,7 @@ async def test_tts_requests_raw_pcm_and_keeps_audio_chunk_order(monkeypatch):
         headers.update(kwargs["additional_headers"])
         return socket
 
-    monkeypatch.setattr("artha_mesh.providers.gnani.websockets.connect", connect)
+    monkeypatch.setattr("charcha.providers.gnani.websockets.connect", connect)
     speech = GnaniSpeech(Settings(mode="live", gnani_api_key="local-fixture-key", _env_file=None))
     try:
         assert [chunk async for chunk in speech.synthesize("வணக்கம்", "ta")] == chunks
@@ -158,7 +158,7 @@ async def test_tts_requests_raw_pcm_and_keeps_audio_chunk_order(monkeypatch):
 
 async def test_tts_fails_closed_on_upstream_error_without_secret_text(monkeypatch):
     socket = FixtureSocket([{"type": "error", "message": "private-provider-key-and-body"}])
-    monkeypatch.setattr("artha_mesh.providers.gnani.websockets.connect", lambda *_a, **_kw: socket)
+    monkeypatch.setattr("charcha.providers.gnani.websockets.connect", lambda *_a, **_kw: socket)
     speech = GnaniSpeech(Settings(mode="live", _env_file=None))
     try:
         with pytest.raises(ProviderError) as error:
@@ -174,7 +174,7 @@ async def test_standard_tts_selects_target_language_voice_with_global_fallback(m
         {"type": "audio", "data": {"audio": base64.b64encode(b"\x01\x00").decode()}},
         {"type": "complete", "data": {"is_final": True}},
     ])
-    monkeypatch.setattr("artha_mesh.providers.gnani.websockets.connect", lambda *_a, **_kw: socket)
+    monkeypatch.setattr("charcha.providers.gnani.websockets.connect", lambda *_a, **_kw: socket)
     settings = Settings(mode="live", timbre_voice="Pranav", timbre_voice_hi="Nalini",
                         timbre_voice_ta="Trisha", _env_file=None)
     speech = GnaniSpeech(settings)
@@ -192,7 +192,7 @@ async def test_cloned_tts_uses_embedding_not_stock_voice(monkeypatch):
         {"type": "audio", "data": {"audio": base64.b64encode(b"\x00\x01").decode()}},
         {"type": "complete", "data": {"is_final": True}},
     ])
-    monkeypatch.setattr("artha_mesh.providers.gnani.websockets.connect", lambda *_a, **_kw: socket)
+    monkeypatch.setattr("charcha.providers.gnani.websockets.connect", lambda *_a, **_kw: socket)
     speech = GnaniSpeech(Settings(mode="live", _env_file=None))
     embedding = {"embedding": "fixture", "shape": [1, 768], "dtype": "torch.bfloat16"}
     try:
@@ -219,7 +219,7 @@ async def test_stt_frames_arbitrary_pcm_input_and_deduplicates_final_segments(mo
         configuration.update(kwargs["additional_headers"])
         return socket
 
-    monkeypatch.setattr("artha_mesh.providers.gnani.websockets.connect", connect)
+    monkeypatch.setattr("charcha.providers.gnani.websockets.connect", connect)
 
     async def audio():
         yield b"\x01" * 333

@@ -1,3 +1,6 @@
+import { TurnCorrection } from './TurnCorrection';
+import { TurnUnderstanding, TurnRecovery } from './TurnUnderstanding';
+import { canConfirm } from '../services/turnUnderstanding';
 import { memo, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { ArrowDown, Captions, Check } from 'lucide-react';
 import { languageName } from '../types/domain';
@@ -41,6 +44,7 @@ export const MeetingCaptions = memo(function MeetingCaptions({
   onResize,
   announce,
   onConfirm,
+  onCorrect,
 }: {
   turns: Turn[];
   language: Language;
@@ -51,6 +55,7 @@ export const MeetingCaptions = memo(function MeetingCaptions({
   onResize: () => void;
   announce: boolean;
   onConfirm?: (turnId: string) => void;
+  onCorrect?: (turn: Turn, text: string) => Promise<void>;
 }) {
   const feed = useRef<HTMLDivElement>(null);
   const [following, setFollowing] = useState(true);
@@ -107,6 +112,8 @@ export const MeetingCaptions = memo(function MeetingCaptions({
                     {turn.speaker_name}
                     {turn.speaker_id === selfId && ' (you)'}
                   </strong>
+                  {turn.superseded_by ? <span>Earlier version · corrected</span> :
+                    turn.replaces_id ? <span>Correction for everyone</span> : null}
                   <span>
                     {languageName(turn.source_language)}
                     {fallback && ' original'}
@@ -155,20 +162,26 @@ export const MeetingCaptions = memo(function MeetingCaptions({
                       </p>
                     )}
                   </div>
-                  {onConfirm && (
+                  {onConfirm && canConfirm(turn, selfId) && (
                     <button
                       type="button"
                       className={`caption-confirm-btn ${isConfirmed ? 'confirmed' : ''}`}
                       onClick={() => onConfirm(turn.id)}
-                      disabled={isConfirmed || turn.status === 'processing'}
+                      disabled={isConfirmed || !!turn.superseded_by || turn.status !== 'complete' || fallback}
                       aria-label={isConfirmed ? 'You confirmed understanding' : 'Confirm understanding'}
-                      title={isConfirmed ? 'Confirmed' : 'Confirm you understood this handover instruction'}
+                      title={isConfirmed ? 'Confirmed' : 'Confirm you understood this message'}
                     >
                       <Check size={13} aria-hidden="true" />
                       {isConfirmed ? 'Confirmed' : 'Confirm'}
                     </button>
                   )}
                 </div>
+                <TurnRecovery turn={turn} />
+                <TurnUnderstanding turn={turn} />
+                {turn.replaces_id && !turn.superseded_by && fallback &&
+                  <small>{turn.status === 'processing' ? 'Updating your translation…' : 'Translation unavailable. Ask the speaker to clarify.'}</small>}
+                {onCorrect && selfId === turn.speaker_id && !turn.superseded_by && turn.status !== 'processing' &&
+                  <TurnCorrection turn={turn} onCorrect={onCorrect} />}
               </div>
             );
           })}

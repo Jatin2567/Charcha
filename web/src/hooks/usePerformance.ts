@@ -1,19 +1,27 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { Membership } from '../types/domain';
-import type { PerformanceReport, ReadinessReport } from '../types/performance';
+import type { PerformanceReport, ReadinessReport, MeetingReportEntry, PersistenceStatus } from '../types/performance';
 import {
   emptyPerformance,
   fetchPerformance,
+  fetchCurrentCallPerformance,
   fetchReadiness,
   referenceReadiness,
+  fetchPerformanceHistory,
+  fetchSavedPerformance,
 } from '../services/performance';
 
 export function usePerformance(
   membership: Membership | null,
   localDemo: boolean,
   waiting: boolean,
+  discoverCurrent = false,
+  selectedReport = '',
 ) {
   const [report, setReport] = useState<PerformanceReport | null>(null);
+  const [history, setHistory] = useState<MeetingReportEntry[]>([]);
+  const [historyError, setHistoryError] = useState('');
+  const [persistence, setPersistence] = useState<PersistenceStatus | undefined>();
   const [readiness, setReadiness] = useState<ReadinessReport>(referenceReadiness);
   const [readinessAvailable, setReadinessAvailable] = useState(false);
   const [error, setError] = useState('');
@@ -35,7 +43,7 @@ export function usePerformance(
   useEffect(() => {
     setReport(null);
     setError('');
-  }, [code, token]);
+  }, [code, token, selectedReport]);
   useEffect(() => {
     if (waiting || !visible) return;
     if (scripted) {
@@ -53,24 +61,21 @@ export function usePerformance(
       controller = new AbortController();
       const timeout = setTimeout(() => controller?.abort(), 12000);
       setLoading(true);
-      const results = await Promise.allSettled([
-        fetchReadiness(controller.signal),
-        code && token ? fetchPerformance(code, token, controller.signal) : Promise.resolve(null),
+      const signal = controller.signal;
+      const setup = fetchReadiness(signal).then((value) => {
+        if (alive && Array.isArray(value.requirements) && Array.isArray(value.deployment_checks)) {
+          setReadiness(value);
+          setReadinessAvailable(true);
+        }
+      }).catch(() => { if (alive) setReadinessAvailable(false); });
+      const saved = discoverCurrent ? fetchPerformanceHistory(signal).then((value) => {
+        if (alive) { setHistory(value.reports); setPersistence(value.persistence); setHistoryError(''); }
+      }).catch(() => { if (alive) setHistoryError('Saved meeting list could not refresh. Try again.'); }) : Promise.resolve();
+      const [measurements] = await Promise.allSettled([
+        discoverCurrent ? (selectedReport ? fetchSavedPerformance(selectedReport, signal) : fetchCurrentCallPerformance(signal)) :
+          code && token ? fetchPerformance(code, token, signal) : Promise.resolve(null),
       ]);
-      clearTimeout(timeout);
-      if (!alive) return;
-      const [setup, measurements] = results;
-      if (
-        setup.status === 'fulfilled' &&
-        Array.isArray(setup.value.requirements) &&
-        Array.isArray(setup.value.deployment_checks)
-      ) {
-        setReadiness(setup.value);
-        setReadinessAvailable(true);
-      } else {
-        setReadiness(referenceReadiness());
-        setReadinessAvailable(false);
-      }
+      if (!alive) { clearTimeout(timeout); return; }
       if (measurements.status === 'fulfilled') {
         if (
           measurements.value &&
@@ -91,7 +96,9 @@ export function usePerformance(
         );
       }
       setLoading(false);
-      if (autoRefresh) timer = setTimeout(() => void load(), 5000);
+      await Promise.all([setup, saved]);
+      clearTimeout(timeout);
+      if (alive && autoRefresh) timer = setTimeout(() => void load(), 5000);
     };
     void load();
     return () => {
@@ -99,10 +106,13 @@ export function usePerformance(
       clearTimeout(timer);
       controller?.abort();
     };
-  }, [code, token, roomMode, scripted, waiting, visible, autoRefresh, revision]);
+  }, [code, token, roomMode, scripted, waiting, visible, autoRefresh, revision, discoverCurrent, selectedReport]);
 
   return {
     report,
+    history,
+    historyError,
+    persistence,
     readiness,
     readinessAvailable,
     error,

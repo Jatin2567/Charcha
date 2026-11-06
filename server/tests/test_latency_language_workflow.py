@@ -42,7 +42,7 @@ def observations(**changes):
 
 def test_exact_current_catalog_ninety_pairs_ten_optional_routes_and_forty_drafts():
     plan = check.build_plan()
-    from artha_mesh.voice_catalog import TIMBRE_V25_STOCK_VOICES
+    from charcha.voice_catalog import TIMBRE_V25_STOCK_VOICES
     assert {row["code"]: row["standard_voice"] for row in plan["languages"]} == TIMBRE_V25_STOCK_VOICES
     assert plan["language_count"] == 10 and plan["planned_directed_pairs"] == 90
     pairs = {(row["source_language"], row["target_language"]) for row in plan["routes"]}

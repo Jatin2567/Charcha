@@ -9,7 +9,7 @@
   "full_matrix_authorized": false,
   "full_matrix_eligible_for_test_review": false,
   "catalog_checked_on": "2026-10-30",
-  "catalog_source": "server/artha_mesh/voice_catalog.py:TIMBRE_V25_STOCK_VOICES",
+  "catalog_source": "server/charcha/voice_catalog.py:TIMBRE_V25_STOCK_VOICES",
   "language_count": 10,
   "languages": [
     {

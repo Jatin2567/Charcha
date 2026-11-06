@@ -23,7 +23,7 @@ from uuid import UUID
 import wave
 
 ROOT = Path(__file__).resolve().parents[1]
-_prompt_spec = importlib.util.spec_from_file_location("hi_ta_pure_prompt", ROOT / "server/artha_mesh/providers/translation_prompt.py")
+_prompt_spec = importlib.util.spec_from_file_location("hi_ta_pure_prompt", ROOT / "server/charcha/providers/translation_prompt.py")
 _prompt = importlib.util.module_from_spec(_prompt_spec)
 _prompt_spec.loader.exec_module(_prompt)
 MODEL = "gnani/gnani-evon-v3.3-30B-A3B"
@@ -173,10 +173,10 @@ def save_wav(path: Path, pcm: bytes):
 
 def _runtime():
     sys.path.insert(0, str(ROOT / "server"))
-    from artha_mesh.config import Settings
-    from artha_mesh.services.usage import UsageGuard
-    from artha_mesh.providers.gnani import GnaniSpeech
-    from artha_mesh.providers.evon import EvonTranslator
+    from charcha.config import Settings
+    from charcha.services.usage import UsageGuard
+    from charcha.providers.gnani import GnaniSpeech
+    from charcha.providers.evon import EvonTranslator
     return Settings, UsageGuard, GnaniSpeech, EvonTranslator
 
 

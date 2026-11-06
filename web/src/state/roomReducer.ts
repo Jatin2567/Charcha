@@ -5,6 +5,7 @@ export interface RoomState {
   turns: Turn[];
   metrics: Metrics | null;
   stages: Record<string, string>;
+  queues: Record<string, { pending: number; in_flight: number; oldest_wait_ms: number }>;
   error: string;
   demoComplete: boolean;
   screening: Record<string, RoomScreeningSample>;
@@ -15,6 +16,7 @@ export const initialRoomState: RoomState = {
   turns: [],
   metrics: null,
   stages: {},
+  queues: {},
   error: '',
   demoComplete: false,
   screening: {},
@@ -30,6 +32,7 @@ export function roomReducer(state: RoomState, event: AppEvent): RoomState {
         turns: p.turns as Turn[],
         metrics: (p.metrics as Metrics) || null,
         stages: {},
+        queues: {},
         screening: (p.screening as Record<string, RoomScreeningSample>) || {},
         screeningStatus: (p.screening_status as RoomScreeningStatus) || null,
         error: '',
@@ -93,6 +96,19 @@ export function roomReducer(state: RoomState, event: AppEvent): RoomState {
       };
     case 'pipeline.status':
       return { ...state, stages: { ...state.stages, [p.speaker_id as string]: p.stage as string } };
+    case 'queue.updated':
+      if (typeof p.speaker_id !== 'string' || ![p.pending, p.in_flight, p.oldest_wait_ms].every((v) => typeof v === 'number' && Number.isFinite(v) && v >= 0)) return state;
+      return { ...state, queues: { ...state.queues, [p.speaker_id]: { pending: p.pending as number, in_flight: p.in_flight as number, oldest_wait_ms: p.oldest_wait_ms as number } } };
+    case 'screening.cleared': {
+      const screening = { ...state.screening };
+      delete screening[p.speaker_id as string];
+      return { ...state, screening };
+    }
+    case 'screening.changed': {
+      const status = p.status as RoomScreeningStatus;
+      return { ...state, screeningStatus: status, screening: {},
+        room: state.room ? { ...state.room, screening_mode: status.mode } : null };
+    }
     case 'screening.updated':
       if (!state.room?.participants.some((member) => member.id === p.speaker_id)) return state;
       return { ...state, screening: { ...state.screening, [p.speaker_id as string]: p as unknown as RoomScreeningSample } };

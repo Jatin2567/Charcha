@@ -24,7 +24,7 @@ function Get-PrivateIPv4([string]$Value) {
 $localAddress = Get-PrivateIPv4 $LocalIp
 $peerAddress = Get-PrivateIPv4 $PeerIp
 if ($LocalIp -eq $PeerIp) { throw 'PeerIp must be the other device, not this laptop.' }
-$ruleBase = 'ArthaMesh-LAN-' + $LocalIp.Replace('.', '-') + '-peer-' + $PeerIp.Replace('.', '-')
+$ruleBase = 'Charcha-LAN-' + $LocalIp.Replace('.', '-') + '-peer-' + $PeerIp.Replace('.', '-')
 $ruleNames = @(($ruleBase + '-TCP'), ($ruleBase + '-UDP'))
 $plan = [ordered]@{
     action = $(if ($Apply) { 'apply' } elseif ($Remove) { 'remove' } else { 'plan_only' })
@@ -70,10 +70,10 @@ foreach ($name in $ruleNames) {
 }
 $created = @()
 try {
-    $created += New-NetFirewallRule -Name $ruleNames[0] -DisplayName $ruleNames[0] -Group 'Artha Mesh local test' `
+    $created += New-NetFirewallRule -Name $ruleNames[0] -DisplayName $ruleNames[0] -Group 'Charcha local test' `
         -Direction Inbound -Action Allow -Enabled True -Profile Private -InterfaceAlias $InterfaceAlias `
         -LocalAddress $LocalIp -RemoteAddress $PeerIp -Protocol TCP -LocalPort 8443,8444,7881 -EdgeTraversalPolicy Block
-    $created += New-NetFirewallRule -Name $ruleNames[1] -DisplayName $ruleNames[1] -Group 'Artha Mesh local test' `
+    $created += New-NetFirewallRule -Name $ruleNames[1] -DisplayName $ruleNames[1] -Group 'Charcha local test' `
         -Direction Inbound -Action Allow -Enabled True -Profile Private -InterfaceAlias $InterfaceAlias `
         -LocalAddress $LocalIp -RemoteAddress $PeerIp -Protocol UDP -LocalPort 7882 -EdgeTraversalPolicy Block
 } catch {

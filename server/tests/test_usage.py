@@ -9,15 +9,15 @@ import httpx
 import pytest
 from fastapi.testclient import TestClient
 
-from artha_mesh.config import Settings
-from artha_mesh.errors import ProviderError
-from artha_mesh.main import create_app
-from artha_mesh.models import Participant
-from artha_mesh.providers.evon import EvonTranslator
-from artha_mesh.providers.gnani import GnaniSpeech
-from artha_mesh.services.pipeline import Pipeline
-from artha_mesh.services.usage import UsageGuard
-from artha_mesh.store import Store, token_digest
+from charcha.config import Settings
+from charcha.errors import ProviderError
+from charcha.main import create_app
+from charcha.models import Participant
+from charcha.providers.evon import EvonTranslator
+from charcha.providers.gnani import GnaniSpeech
+from charcha.services.pipeline import Pipeline
+from charcha.services.usage import UsageGuard
+from charcha.store import Store, token_digest
 
 
 def live_settings(**values):
@@ -118,7 +118,7 @@ async def test_demo_adapters_cannot_call_external_providers_or_create_ledger(mon
     def forbidden(*_args, **_kwargs):
         raise AssertionError("Demo attempted a paid network call")
 
-    monkeypatch.setattr("artha_mesh.providers.gnani.websockets.connect", forbidden)
+    monkeypatch.setattr("charcha.providers.gnani.websockets.connect", forbidden)
 
     async def no_audio():
         yield b"\x00" * 1024
@@ -190,7 +190,7 @@ async def test_tts_and_enrollment_caps_guard_the_adapters_before_network(monkeyp
     def forbidden(*_args, **_kwargs):
         raise AssertionError("Network must not be contacted after cap")
 
-    monkeypatch.setattr("artha_mesh.providers.gnani.websockets.connect", forbidden)
+    monkeypatch.setattr("charcha.providers.gnani.websockets.connect", forbidden)
     try:
         with pytest.raises(ProviderError, match="Daily credit safeguard"):
             _ = [chunk async for chunk in speech.synthesize("four", "hi")]
@@ -229,7 +229,7 @@ async def test_idle_stt_connection_stops_at_budget_and_is_not_retryable(monkeypa
     settings = live_settings(usage_stt_seconds_per_day=1)
     speech = GnaniSpeech(settings)
     socket = IdleSocket()
-    monkeypatch.setattr("artha_mesh.providers.gnani.websockets.connect", lambda *_args, **_kwargs: socket)
+    monkeypatch.setattr("charcha.providers.gnani.websockets.connect", lambda *_args, **_kwargs: socket)
 
     async def audio():
         yield b"\x00" * 1024
@@ -266,7 +266,7 @@ async def test_stt_websocket_auth_and_credit_denials_do_not_request_retry(monkey
         calls.append(True)
         return socket
 
-    monkeypatch.setattr("artha_mesh.providers.gnani.websockets.connect", connect)
+    monkeypatch.setattr("charcha.providers.gnani.websockets.connect", connect)
 
     async def audio():
         yield b"\x00" * 1024
@@ -308,7 +308,7 @@ async def test_pipeline_rechecks_delivery_after_provider_admission_before_reserv
         raise AssertionError("Stale queued synthesis must not reach upstream")
 
     translator.client = httpx.AsyncClient(transport=httpx.MockTransport(translate_request))
-    monkeypatch.setattr("artha_mesh.providers.gnani.websockets.connect", synthesize_request)
+    monkeypatch.setattr("charcha.providers.gnani.websockets.connect", synthesize_request)
 
     class Transport:
         async def speak(self, _code, _source, _target, chunks, callback):

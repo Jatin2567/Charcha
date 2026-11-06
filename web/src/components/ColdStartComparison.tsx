@@ -78,7 +78,7 @@ export function ColdStartComparison() {
         <button
           className="button secondary"
           disabled={!rows.length}
-          onClick={() => downloadJson('artha-cold-start-comparison.json', report)}
+          onClick={() => downloadJson('charcha-cold-start-comparison.json', report)}
         >
           <Download size={15} />
           Export evidence

@@ -1,6 +1,7 @@
 ﻿"""Explicit Modal deployment; import constructs lazy handles but downloads no model.
 
-Requires a reviewed UTC MODAL_EVON_SESSION_EXPIRES_AT at most two hours ahead.
+Default test mode requires MODAL_EVON_SESSION_EXPIRES_AT at most two hours ahead.
+Explicit MODAL_EVON_SERVERLESS=true selects demand-driven Charcha production mode.
 Use the isolated Modal CLI only after checking the workspace's credit/spend limits.
 """
 from __future__ import annotations
@@ -16,17 +17,19 @@ ROOT = Path(__file__).resolve().parents[1]
 RUNTIME_FILE = ROOT / "scripts" / "modal_evon_runtime.py"
 INPUTS_FILE = ROOT / "deploy" / "evon" / "inputs.verified-2026-10-28.json"
 PINS_FILE = ROOT / "deploy" / "evon" / "pins.verified-2026-10-28.json"
-runtime_spec = importlib.util.spec_from_file_location("artha_modal_runtime_config", RUNTIME_FILE)
+runtime_spec = importlib.util.spec_from_file_location("charcha_modal_runtime_config", RUNTIME_FILE)
 runtime = importlib.util.module_from_spec(runtime_spec)
 runtime_spec.loader.exec_module(runtime)
 runtime.validate_controller_python()
 CONFIG = json.loads(INPUTS_FILE.read_text(encoding="utf-8"))
 PINS = json.loads(PINS_FILE.read_text(encoding="utf-8"))
 runtime.validate_inputs(CONFIG, PINS)
-SESSION_EXPIRES_AT = os.environ.get("MODAL_EVON_SESSION_EXPIRES_AT")
-runtime.parse_expiry(SESSION_EXPIRES_AT, require_minimum=True)
+SERVERLESS = os.environ.get("MODAL_EVON_SERVERLESS", "false") == "true"
+SESSION_EXPIRES_AT = os.environ.get("MODAL_EVON_SESSION_EXPIRES_AT", "")
+if not SERVERLESS:
+    runtime.parse_expiry(SESSION_EXPIRES_AT, require_minimum=True)
 
-APP_NAME = "artha-evon-test"
+APP_NAME = "charcha-evon" if SERVERLESS else "artha-evon-test"
 ALLOCATION = json.loads((ROOT / "deploy" / "modal" / "allocation.json").read_text())
 REGION = ALLOCATION["region"]  # Temporary Asia hosting; not India-only residency.
 ROUTING_REGION = "ap-south"
@@ -39,9 +42,9 @@ image = (modal.Image.from_registry(CONFIG["image"], setup_dockerfile_commands=[
              "RUN python --version && python -m pip --version",
          ])
          .entrypoint([])
-         .add_local_file(RUNTIME_FILE, "/opt/artha/modal_evon_runtime.py", copy=False)
-         .add_local_file(INPUTS_FILE, "/opt/artha/evon-inputs.json", copy=False)
-         .add_local_file(PINS_FILE, "/opt/artha/evon-pins.json", copy=False))
+         .add_local_file(RUNTIME_FILE, "/opt/charcha/modal_evon_runtime.py", copy=False)
+         .add_local_file(INPUTS_FILE, "/opt/charcha/evon-inputs.json", copy=False)
+         .add_local_file(PINS_FILE, "/opt/charcha/evon-pins.json", copy=False))
 
 
 @app.function(image=image, serialized=True, include_source=False, region=REGION,
@@ -57,11 +60,11 @@ def download_weights():
     import sys
     import modal
 
-    sys.path.insert(0, "/opt/artha")
+    sys.path.insert(0, "/opt/charcha")
     from modal_evon_runtime import prepare_cache
 
-    config = json.loads(Path("/opt/artha/evon-inputs.json").read_text())
-    pins = json.loads(Path("/opt/artha/evon-pins.json").read_text())
+    config = json.loads(Path("/opt/charcha/evon-inputs.json").read_text())
+    pins = json.loads(Path("/opt/charcha/evon-pins.json").read_text())
     volume = modal.Volume.from_name("artha-evon-weights-v2", version=2)
     volume.reload()
     return prepare_cache(config, pins, os.environ["MODAL_EVON_SESSION_EXPIRES_AT"], commit=volume.commit)
@@ -73,9 +76,10 @@ def download_weights():
               memory=(ALLOCATION["memory_gib"] * 1024, ALLOCATION["memory_gib"] * 1024), timeout=7200,
               startup_timeout=900, min_containers=0, max_containers=ALLOCATION["max_containers"],
               # Bounded stage handoff lease; min=0 and the absolute expiry still apply.
-              buffer_containers=0, scaledown_window=300, secrets=[inference_secret],
+              buffer_containers=0, scaledown_window=120 if SERVERLESS else 300, secrets=[inference_secret],
               volumes={"/models": weights.with_mount_options(read_only=True)},
               env={"MODAL_EVON_SESSION_EXPIRES_AT": SESSION_EXPIRES_AT,
+                   "MODAL_EVON_SERVERLESS": str(SERVERLESS).lower(),
                    "HF_HUB_OFFLINE": "1", "TRANSFORMERS_OFFLINE": "1", "OMP_NUM_THREADS": "4"})
 @modal.web_server(port=8000, startup_timeout=900, requires_proxy_auth=True)
 def serve():
@@ -84,9 +88,10 @@ def serve():
     from pathlib import Path
     import sys
 
-    sys.path.insert(0, "/opt/artha")
+    sys.path.insert(0, "/opt/charcha")
     from modal_evon_runtime import start_server
 
-    config = json.loads(Path("/opt/artha/evon-inputs.json").read_text())
-    pins = json.loads(Path("/opt/artha/evon-pins.json").read_text())
-    start_server(config, pins, os.environ["MODAL_EVON_SESSION_EXPIRES_AT"])
+    config = json.loads(Path("/opt/charcha/evon-inputs.json").read_text())
+    pins = json.loads(Path("/opt/charcha/evon-pins.json").read_text())
+    start_server(config, pins, os.environ["MODAL_EVON_SESSION_EXPIRES_AT"],
+                 serverless=os.environ.get("MODAL_EVON_SERVERLESS") == "true")

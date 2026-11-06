@@ -55,7 +55,7 @@ export function LocalDiagnostics({ membership }: { membership: Membership | null
   const { screening, probes, error, hidden } = useLocalDiagnostics(membership, true);
   const summary = screeningSummary(screening?.samples ?? []);
   return <section className="panel local-diagnostics">
-    <div className="panel-head"><div><h2>Local audio & screening measurements</h2><p>Independent measurements with their own boundaries. Refresh pauses while this tab is hidden.</p></div><button className="button secondary" disabled={!screening && !probes} onClick={() => downloadJson('artha-local-diagnostics.json', localDiagnosticsReport(probes, screening))}><Download size={15} />Export</button></div>
+    <div className="panel-head"><div><h2>Local audio & screening measurements</h2><p>Independent measurements with their own boundaries. Refresh pauses while this tab is hidden.</p></div><button className="button secondary" disabled={!screening && !probes} onClick={() => downloadJson('charcha-local-diagnostics.json', localDiagnosticsReport(probes, screening))}><Download size={15} />Export</button></div>
     <ErrorNotice message={error} />
     {!membership || membership.localDemo || membership.room.mode === 'demo' ? <p className="local-diagnostics-empty">Join a local audio room to collect these measurements. This report page never opens your microphone or starts a test.</p> : <>
       <div className="local-diagnostics-heading"><Timer size={16} /><h3>Requested tone → decoded browser audio</h3><Badge tone="neutral">{hidden ? 'Refresh paused' : 'Client-reported'}</Badge></div>

@@ -17,6 +17,7 @@ export interface RoomScreeningSample {
   reasons: string[];
 }
 export interface RoomScreeningStatus {
+  switchable?: boolean;
   mode: 'off' | 'monitor' | 'enforce';
   model: ScreeningModel & { window_ms?: number; reason?: string; threshold?: number; allow_threshold?: number };
 }

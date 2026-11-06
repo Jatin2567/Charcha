@@ -5,18 +5,18 @@ import type { Language } from '../types/domain';
 import { useEffect, useId, useRef } from 'react';
 export function Logo({ compact = false }: { compact?: boolean }) {
   return (
-    <span className="brand" role="img" aria-label="Artha-Mesh">
+    <span className="brand" role="img" aria-label="Charcha">
       <span
         className="brand-mark"
         aria-hidden="true"
         style={{
-          maskImage: `url("${import.meta.env.BASE_URL}artha-waveform.svg")`,
-          WebkitMaskImage: `url("${import.meta.env.BASE_URL}artha-waveform.svg")`,
+          maskImage: `url("${import.meta.env.BASE_URL}charcha-waveform.svg")`,
+          WebkitMaskImage: `url("${import.meta.env.BASE_URL}charcha-waveform.svg")`,
         }}
       />
       {!compact && (
         <span className="brand-wordmark" aria-hidden="true">
-          Artha<span className="brand-light">-Mesh</span>
+          Charcha
         </span>
       )}
     </span>

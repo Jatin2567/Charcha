@@ -31,6 +31,8 @@ export function conferenceTitle(
   if (!muted) return 'Your microphone is on';
   if (report?.microphone.reason_code === 'provider_configuration_missing')
     return 'Interpretation needs configuration';
+  if (report?.microphone.reason_code === 'voice_setup_required')
+    return 'Set up your meeting voice';
   if (report?.provider_flow.required) {
     const titles = {
       locked: 'Interpretation is waiting for operator approval',

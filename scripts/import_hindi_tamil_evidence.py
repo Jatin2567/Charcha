@@ -18,7 +18,7 @@ import re
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-SPEC = importlib.util.spec_from_file_location("artha_hindi_tamil_evidence_contract", ROOT / "scripts/check_hindi_tamil_e2e.py")
+SPEC = importlib.util.spec_from_file_location("charcha_hindi_tamil_evidence_contract", ROOT / "scripts/check_hindi_tamil_e2e.py")
 CONTRACT = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(CONTRACT)
 TYPE = "controlled_hindi_tamil_provider_evidence"

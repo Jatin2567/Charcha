@@ -277,6 +277,20 @@ def test_gpu_serve_is_offline_waits_for_health_and_never_places_secret_in_argv(t
     assert threads[0].kwargs["args"][1] == NOW + 3600
 
 
+def test_serverless_runtime_has_no_fixed_session_expiry_but_checks_cache_and_health(tmp_path):
+    config, pins, _ = fake_cache(tmp_path)
+    process = Process()
+    class Response:
+        status = 200
+        def __enter__(self): return self
+        def __exit__(self, *_args): pass
+    result = runtime.start_server(config, pins, "", serverless=True, cache_root=tmp_path,
+        environment={"VLLM_API_KEY": KEY}, popen=lambda *_a, **_k: process,
+        urlopen=lambda *_a, **_k: Response(), now=lambda: NOW, monotonic=lambda: 0,
+        thread_factory=lambda **_k: pytest.fail("fixed deadline in serverless mode"), gpu_check=lambda: None)
+    assert result is process
+
+
 def test_cache_or_expiry_failures_never_launch_gpu_process(tmp_path):
     config, pins, _ = fake_cache(tmp_path)
     for clock in (NOW, NOW + 3600):
@@ -401,7 +415,7 @@ def test_lazy_modal_declaration_requires_proxy_auth_and_never_downloads_or_reads
     monkeypatch.setattr(socket, "socket", forbidden)
     monkeypatch.setattr(subprocess, "Popen", forbidden)
     monkeypatch.setattr(subprocess, "run", forbidden)
-    definition = importlib.util.spec_from_file_location("artha_modal_declaration_test", ROOT / "scripts" / "modal_evon.py")
+    definition = importlib.util.spec_from_file_location("charcha_modal_declaration_test", ROOT / "scripts" / "modal_evon.py")
     module = importlib.util.module_from_spec(definition)
     definition.loader.exec_module(module)
     assert [name for name, _ in definitions] == ["download_weights", "serve"]

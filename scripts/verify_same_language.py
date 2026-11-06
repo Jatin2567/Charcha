@@ -15,11 +15,11 @@ sys.path.insert(0, str(ROOT / "server"))
 
 from livekit import rtc
 
-from artha_mesh.config import Settings
-from artha_mesh.main import create_app
-from artha_mesh.models import JoinRoom, UpdateParticipant
-from artha_mesh.providers.gnani import Transcript
-from artha_mesh.store import token_digest
+from charcha.config import Settings
+from charcha.main import create_app
+from charcha.models import JoinRoom, UpdateParticipant
+from charcha.providers.gnani import Transcript
+from charcha.store import token_digest
 
 
 class Fixtures:

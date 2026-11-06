@@ -122,7 +122,7 @@ export function FiveLanguagePlan() {
         </p>
         <button
           className="button secondary"
-          onClick={() => downloadJson('artha-mesh-conference-test-plan.json', conferenceTestPlan())}
+          onClick={() => downloadJson('charcha-conference-test-plan.json', conferenceTestPlan())}
         >
           <Download size={15} /> Export conference plan
         </button>

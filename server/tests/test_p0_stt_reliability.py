@@ -6,8 +6,8 @@ from types import SimpleNamespace
 
 import pytest
 
-from artha_mesh.config import Settings
-from artha_mesh.services import approvals
+from charcha.config import Settings
+from charcha.services import approvals
 from tests.test_credit_transport import transport_fixture, until
 
 
@@ -15,7 +15,7 @@ class Pipeline:
     def __init__(self):
         self.submitted = []
 
-    async def submit(self, _state, speaker, text, *_args):
+    async def submit(self, _state, speaker, text, *_args, **_kwargs):
         self.submitted.append((speaker.id, text))
 
     async def cancel_speaker(self, *_args):
@@ -142,7 +142,7 @@ async def test_quick_normal_close_still_counts_toward_retry_limit(monkeypatch):
 
 
 async def test_gnani_sends_documented_language_and_idle_headers(monkeypatch):
-    from artha_mesh.providers import gnani
+    from charcha.providers import gnani
 
     seen = {}
 

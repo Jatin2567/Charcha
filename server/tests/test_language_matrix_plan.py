@@ -79,7 +79,7 @@ def test_fresh_plan_cli_cannot_read_environment_files_or_construct_provider_netw
         raise AssertionError("The matrix plan is offline only")
 
     def restricted_import(name, *args, **kwargs):
-        if name.split(".", 1)[0] in {"artha_mesh", "dotenv", "httpx", "websockets", "socket", "sqlite3", "pydantic_settings"}:
+        if name.split(".", 1)[0] in {"charcha", "dotenv", "httpx", "websockets", "socket", "sqlite3", "pydantic_settings"}:
             raise AssertionError("The matrix plan cannot import application/provider clients")
         return original_import(name, *args, **kwargs)
 

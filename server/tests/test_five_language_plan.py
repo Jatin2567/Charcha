@@ -153,7 +153,7 @@ def test_cli_is_offline_with_environment_files_network_and_ledger_forbidden(monk
         raise AssertionError("Five-language planner must stay offline")
 
     def restricted_import(name, *args, **kwargs):
-        if name.split(".", 1)[0] in {"artha_mesh", "dotenv", "httpx", "requests", "websockets", "socket", "sqlite3", "pydantic_settings", "subprocess"}:
+        if name.split(".", 1)[0] in {"charcha", "dotenv", "httpx", "requests", "websockets", "socket", "sqlite3", "pydantic_settings", "subprocess"}:
             raise AssertionError("No provider, cloud, settings or ledger imports")
         return original_import(name, *args, **kwargs)
 

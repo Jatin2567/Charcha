@@ -6,9 +6,9 @@ import { createServer } from 'node:net';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const providerChecks = process.argv.includes('--provider-checks');
-const checksWebPort = Number(process.env.ARTHA_WEB_PORT || 5180);
+const checksWebPort = Number((process.env.CHARCHA_WEB_PORT ?? process.env.ARTHA_WEB_PORT) || 5180);
 if (providerChecks && (!Number.isInteger(checksWebPort) || checksWebPort < 1 || checksWebPort > 65535)) {
-  console.error('ARTHA_WEB_PORT must be a valid local port.');
+  console.error('CHARCHA_WEB_PORT must be a valid local port.');
   process.exit(1);
 }
 const processes = [];
@@ -40,8 +40,8 @@ async function available(port) {
   });
 }
 let apiPort;
-for (const candidate of process.env.ARTHA_API_PORT
-  ? [Number(process.env.ARTHA_API_PORT)]
+for (const candidate of (process.env.CHARCHA_API_PORT ?? process.env.ARTHA_API_PORT)
+  ? [Number((process.env.CHARCHA_API_PORT ?? process.env.ARTHA_API_PORT))]
   : [8000, 8100, 8200]) {
   if (
     Number.isInteger(candidate) &&
@@ -54,17 +54,17 @@ for (const candidate of process.env.ARTHA_API_PORT
   }
 }
 if (!apiPort) {
-  console.error('No API port is available. Set ARTHA_API_PORT to a free local port.');
+  console.error('No API port is available. Set CHARCHA_API_PORT to a free local port.');
   process.exit(1);
 }
-console.log(`Artha-Mesh API: http://127.0.0.1:${apiPort}`);
+console.log(`Charcha API: http://127.0.0.1:${apiPort}`);
 const serverEnvironment = providerChecks
-  ? { ...process.env, ARTHA_MODE: 'live', USAGE_REQUIRE_FLOW_APPROVAL: 'true', USAGE_SHOW_PRIVATE_BALANCE: 'true',
+  ? { ...process.env, CHARCHA_MODE: 'live', USAGE_REQUIRE_FLOW_APPROVAL: 'true', USAGE_SHOW_PRIVATE_BALANCE: 'true',
       CORS_ORIGINS: `http://127.0.0.1:${checksWebPort},http://localhost:${checksWebPort}` }
   : process.env;
 if (providerChecks) console.log('Local checks: open /#/usage. Paid provider flows remain locked until separately approved.');
 const serverArguments = [
-  'artha_mesh.main:app',
+  'charcha.main:app',
   '--app-dir',
   'server',
   '--host',
@@ -97,5 +97,5 @@ if (!vite) {
   start(process.execPath, [vite, '--host', '127.0.0.1',
     ...(providerChecks ? ['--port', String(checksWebPort), '--strictPort'] : []), 'web'], {
     ...process.env,
-    ARTHA_API_TARGET: `http://127.0.0.1:${apiPort}`,
+    CHARCHA_API_TARGET: `http://127.0.0.1:${apiPort}`,
   });

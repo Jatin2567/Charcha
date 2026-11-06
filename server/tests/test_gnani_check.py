@@ -11,11 +11,11 @@ import pytest
 from conftest import make_wav
 from pydantic import SecretStr
 
-from artha_mesh.config import Settings
-from artha_mesh.services.usage import UsageGuard
+from charcha.config import Settings
+from charcha.services.usage import UsageGuard
 
 spec = importlib.util.spec_from_file_location(
-    "artha_check_gnani", Path(__file__).resolve().parents[2] / "scripts" / "check_gnani.py",
+    "charcha_check_gnani", Path(__file__).resolve().parents[2] / "scripts" / "check_gnani.py",
 )
 check = importlib.util.module_from_spec(spec)
 sys.modules[spec.name] = check

@@ -7,11 +7,20 @@ import wave
 import pytest
 from fastapi.testclient import TestClient
 
-from artha_mesh.config import Settings
+from charcha.config import Settings
 
 
 @pytest.fixture(autouse=True)
-def isolated_usage_storage(monkeypatch, tmp_path):
+def isolated_usage_storage(monkeypatch, tmp_path, request):
+    # Protocol fixtures act as a signed-in host. Identity tests use real cookies.
+    from charcha.store import account_session
+    marker = account_session.set(None if request.node.path.name.startswith("test_accounts") else "fixture")
+    if not request.node.path.name.startswith("test_accounts"):
+        from charcha.accounts import Account, Accounts
+        monkeypatch.setenv("CHARCHA_PUBLIC_ORIGIN", "http://127.0.0.1:5180")
+        monkeypatch.setenv("CHARCHA_MEETING_HOST_EMAIL", "host@example.test")
+        monkeypatch.setattr(Accounts, "current", lambda self, req:
+            Account("fixture", "host", "host@example.test", False, 4102444800))
     # Protocol fixtures must never spend or overwrite the operator's real ledger.
     monkeypatch.setenv("USAGE_DB_PATH", str(tmp_path / "usage.sqlite3"))
     # Legacy adapter fixtures use deterministic doubles, not operator-approved paid flows.
@@ -19,11 +28,13 @@ def isolated_usage_storage(monkeypatch, tmp_path):
     monkeypatch.setenv("USAGE_REQUIRE_FLOW_APPROVAL", "false")
     monkeypatch.setenv("GNANI_API_KEY", "")
     monkeypatch.setenv("EVON_API_KEY", "")
+    yield
+    account_session.reset(marker)
 
 
 @pytest.fixture
 def client():
-    from artha_mesh.main import create_app
+    from charcha.main import create_app
 
     app = create_app(Settings(mode="demo", _env_file=None))
     with TestClient(app) as test_client:

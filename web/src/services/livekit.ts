@@ -16,6 +16,8 @@ import { MeetingCamera, shouldSubscribeCamera } from './meetingVideo';
 import type { CameraEvents } from './meetingVideo';
 import { MeetingMicrophone } from './meetingMicrophoneCapture';
 import type { MicrophoneState } from './meetingMicrophoneCapture';
+import { LATENCY_TOPIC, TurnLatencyTracker, turnMarker } from './turnLatency';
+import type { ClockReply, TurnObservation } from './turnLatency';
 export type { MicrophoneState } from './meetingMicrophoneCapture';
 
 export interface PlaybackState {
@@ -86,11 +88,16 @@ export async function connectAudio(
     }
   };
   const remoteAudio = new Map<string, RemoteAudioTrack>();
+  const metricsTopic = transportChannel(m.room.code, m.participant.id);
   const metricsChannel =
     typeof BroadcastChannel === 'undefined'
       ? null
-      : new BroadcastChannel(transportChannel(m.room.code, m.participant.id));
+      : new BroadcastChannel(metricsTopic);
   let lastMetrics: TransportMetrics | null = null;
+  const shareLocalSnapshot = () => {
+    if (lastMetrics) window.dispatchEvent(new CustomEvent(metricsTopic, { detail: lastMetrics }));
+  };
+  window.addEventListener(metricsTopic + '.request', shareLocalSnapshot);
   if (metricsChannel)
     metricsChannel.onmessage = ({ data }) => {
       if (data?.type === 'request' && lastMetrics) metricsChannel.postMessage(lastMetrics);
@@ -103,6 +110,7 @@ export async function connectAudio(
       analyser: AnalyserNode;
       calculateVolume: () => number;
       cleanup: () => Promise<void>;
+      waveform: Float32Array<ArrayBuffer>;
     }
   >();
   let closed = false;
@@ -116,6 +124,30 @@ export async function connectAudio(
   let timer: number | undefined;
   let statsTimer: number | undefined;
   let readingStats = false;
+  const latency = new TurnLatencyTracker();
+  let clockTimer: number | undefined;
+  let clockRequest: AbortController | null = null;
+  const sendObservations = (reports: TurnObservation[]) => {
+    for (const report of reports) void request(`/rooms/${m.room.code}/latency-observations`,
+      { method: 'POST', body: JSON.stringify(report) }, m.session_token).catch(() => {
+        // Failed telemetry is not successful playback and never interrupts media.
+      });
+  };
+  const calibrateClock = async (count = 1) => {
+    if (closed || !connected || m.room.mode !== 'live' || clockRequest) return;
+    const controller = new AbortController();
+    clockRequest = controller;
+    const timeout = window.setTimeout(() => controller.abort(), 6000);
+    try {
+      for (let i = 0; i < count && !closed; i++) {
+        const sent = performance.now();
+        const reply = await request<ClockReply>(`/rooms/${m.room.code}/latency-clock`,
+          { signal: controller.signal }, m.session_token);
+        if (!closed) latency.calibrate(reply, sent, performance.now());
+      }
+    } catch { /* Missing clock sync leaves measurements explicitly unavailable. */ }
+    finally { clearTimeout(timeout); clockRequest = null; }
+  };
   let sinkQueue: Promise<void> = Promise.resolve();
   let outputGeneration = 0;
   let playSequence = 0;
@@ -251,7 +283,11 @@ export async function connectAudio(
     signal?.removeEventListener('abort', abort);
     clearInterval(timer);
     clearInterval(statsTimer);
+    clearInterval(clockTimer);
+    clockRequest?.abort();
+    sendObservations(latency.interrupt(performance.now()));
     metricsChannel?.close();
+    window.removeEventListener(metricsTopic + '.request', shareLocalSnapshot);
     const cameraCleanup = camera.disconnect();
     const outputCleanup = [...audios.keys()].map(removeAudio);
     cleanupPromise = (async () => {
@@ -276,6 +312,20 @@ export async function connectAudio(
   };
   signal?.addEventListener('abort', abort, { once: true });
   room.on(RoomEvent.TrackPublished, subscriptions);
+  room.on(RoomEvent.DataReceived, (payload, participant, _kind, topic) => {
+    if (closed || !connected || m.room.mode !== 'live' || topic !== LATENCY_TOPIC ||
+        participant?.identity !== lk.agent_identity || payload.byteLength > 4096) return;
+    try {
+      const marker = turnMarker(JSON.parse(new TextDecoder().decode(payload)), m.participant.language, m.participant.id);
+      if (!marker) return;
+      const entry = [...analysers.entries()].find(([, value]) => value.trackName === marker.track_name);
+      const element = entry && audios.get(entry[0]);
+      const unavailable = outputMuted || element?.muted ? 'muted' : !element || element.paused ||
+        element.volume === 0 || !entry || entry[1].analyser.context.state !== 'running' ||
+        blockedOutputs.has(entry[0]) ? 'blocked' : undefined;
+      sendObservations(latency.accept(marker, performance.now(), unavailable));
+    } catch { /* Ignore unrelated or malformed data packets. */ }
+  });
   room.on(RoomEvent.TrackSubscriptionPermissionChanged, (publication, permission, participant) => {
     // Camera grants arrive after publication, including for late joiners. Only
     // retry the same reviewed source/kind filter when the publisher allows it.
@@ -327,7 +377,7 @@ export async function connectAudio(
         conversationOutputs.add(publication.trackSid);
         audio.volume = conversationGain;
       }
-      audio.setAttribute('data-artha-audio', 'true');
+      audio.setAttribute('data-charcha-audio', 'true');
       document.body.appendChild(audio);
       audios.set(publication.trackSid, audio);
       remoteAudio.set(publication.trackSid, track as RemoteAudioTrack);
@@ -340,6 +390,7 @@ export async function connectAudio(
           ...analyser,
           speaker: publication.trackName.split(':')[1],
           trackName: publication.trackName,
+          waveform: new Float32Array(analyser.analyser.fftSize),
         });
       } catch {
         /* Speaker playback remains usable if Web Audio analysis is unavailable. */
@@ -416,6 +467,8 @@ export async function connectAudio(
     );
     audios.forEach((audio, sid) => void configureAndPlay(sid, audio).catch(() => {}));
     onState('Audio connected');
+    void calibrateClock(3);
+    clockTimer = window.setInterval(() => void calibrateClock(), 30000);
   });
   room.on(RoomEvent.Disconnected, () => {
     const intentional = closed;
@@ -442,13 +495,18 @@ export async function connectAudio(
     if (closed || signal?.aborted) throw new Error('Audio connection cancelled.');
     playback(room.canPlaybackAudio ? 'ready' : 'blocked');
     onState('Audio connected');
+    let lastMetricsUpload = 0;
     const reportStats = async () => {
       if (closed || readingStats) return;
       readingStats = true;
       try {
         const local = microphone.track;
         const tracks = [...remoteAudio.values(), ...(local ? [local] : [])];
-        const reports = await Promise.allSettled(tracks.map((track) => track.getRTCStatsReport()));
+        // Connection-level reports include the ICE path even before a mic track exists.
+        const peers = room.engine?.pcManager;
+        const connections = await Promise.allSettled([peers?.publisher?.getStats(), peers?.subscriber?.getStats()]);
+        const reports = connections.some((result) => result.status === 'fulfilled' && result.value?.size)
+          ? connections : await Promise.allSettled(tracks.map((track) => track.getRTCStatsReport()));
         const rows: MetricStat[] = [];
         for (const report of reports) {
           if (report.status === 'fulfilled')
@@ -456,7 +514,15 @@ export async function connectAudio(
         }
         if (!closed) {
           lastMetrics = transportMetrics(rows, remoteAudio.size);
+          shareLocalSnapshot();
           metricsChannel?.postMessage(lastMetrics);
+          if (Date.now() - lastMetricsUpload >= 10000 && rows.length) {
+            lastMetricsUpload = Date.now();
+            void request(`/rooms/${m.room.code}/connection-metrics`,
+              { method: 'POST', body: JSON.stringify(lastMetrics) }, m.session_token).catch(() => {
+                // Optional diagnostics must not interrupt the call.
+              });
+          }
         }
       } catch {
         // Optional diagnostics never affect media or permission decisions.
@@ -482,7 +548,7 @@ export async function connectAudio(
         if (probeTrackForListener(analyser.trackName, m.participant.id)) {
           const element = audios.get(sid);
           const playing =
-            !!element &&
+            connected && !!element &&
             !outputMuted &&
             !element.muted &&
             !element.paused &&
@@ -492,12 +558,19 @@ export async function connectAudio(
         } else {
           const element = audios.get(sid);
           const playing =
-            element &&
+            connected && element &&
             !element.paused &&
             !element.muted &&
             !outputMuted &&
             analyser.analyser.context.state === 'running';
           onLevel(analyser.speaker, playing ? volume * element.volume : 0);
+          if (m.room.mode === 'live' && analyser.trackName.startsWith('translated:')) {
+            analyser.analyser.getFloatTimeDomainData(analyser.waveform);
+            const rms = Math.sqrt(analyser.waveform.reduce((sum, value) => sum + value * value, 0) / analyser.waveform.length);
+            sendObservations(latency.observe(analyser.trackName, rms, performance.now(),
+              !!playing && !!element?.volume && !blockedOutputs.has(sid),
+              analyser.waveform.length * 1000 / analyser.analyser.context.sampleRate));
+          }
         }
       });
     }, 100);
@@ -540,6 +613,7 @@ export async function connectAudio(
       if (closed) return;
       outputMuted = value;
       if (value) {
+        sendObservations(latency.interrupt(performance.now(), 'muted'));
         const cancelled = activeProbe?.tracker.cancel();
         if (cancelled) finishProbe(cancelled);
       }

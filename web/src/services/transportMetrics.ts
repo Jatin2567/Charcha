@@ -76,7 +76,7 @@ export function transportMetrics(
 }
 
 export function transportChannel(roomCode: string, participantId: string): string {
-  return `artha.transport.${roomCode}.${participantId}`;
+  return `charcha.transport.${roomCode}.${participantId}`;
 }
 
 export function isTransportMetrics(value: unknown): value is TransportMetrics {
@@ -100,7 +100,7 @@ export function isTransportMetrics(value: unknown): value is TransportMetrics {
 }
 
 /** Open metrics without unmounting the meeting, then sever the new tab's opener. */
-export function openPerformancePage(): boolean {
+export function openPerformancePage(sessionScope?: string | null): boolean {
   // Explicitly copy safe membership into the new same-origin tab. Modern target=_blank
   // links use noopener by default, which would lose sessionStorage membership.
   const destination = new URL(window.location.href);
@@ -108,8 +108,9 @@ export function openPerformancePage(): boolean {
   const child = window.open(destination.toString(), '_blank');
   if (!child) return false;
   try {
-    const member = sessionStorage.getItem('artha.membership');
-    if (member) child.sessionStorage.setItem('artha.membership', member);
+    const key = sessionScope ? `charcha.membership.${sessionScope}` : 'charcha.membership';
+    const member = sessionStorage.getItem(key);
+    if (member) child.sessionStorage.setItem(key, member);
     child.opener = null;
     return true;
   } catch {

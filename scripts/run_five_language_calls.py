@@ -22,10 +22,10 @@ import wave
 from five_language_call import ROOT, conference_turn
 import check_hindi_tamil_e2e as shared
 from check_modal_readiness import load_credentials
-from artha_mesh.config import Settings
-from artha_mesh.providers.evon import EvonTranslator
-from artha_mesh.providers.gnani import GnaniSpeech
-from artha_mesh.services.usage import UsageGuard
+from charcha.config import Settings
+from charcha.providers.evon import EvonTranslator
+from charcha.providers.gnani import GnaniSpeech
+from charcha.services.usage import UsageGuard
 
 STAGE = json.loads((ROOT / "web/src/data/fiveLanguageStage.json").read_text())
 OUT = ROOT / "work" / STAGE["id"]

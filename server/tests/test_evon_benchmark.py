@@ -232,7 +232,7 @@ def test_metadata_verified_inputs_match_evidence_without_claiming_runtime():
     {"choices": [{"finish_reason": "stop", "message": {"content": "hello", "reasoning_content": ""}}]},
 ])
 def test_standalone_response_contract_matches_application(payload):
-    from artha_mesh.providers.evon import completed_translation as app_contract
+    from charcha.providers.evon import completed_translation as app_contract
 
     outcomes = []
     for contract in (app_contract, benchmark.completed_translation):

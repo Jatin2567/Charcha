@@ -39,13 +39,14 @@ export interface ReceiverProbeReport {
 /** Select only this listener, recompute counts and whitelist export fields. No provider operations. */
 export function receiverProbeReport(
   value: unknown,
-  listenerId: string,
+  listenerId: string | string[],
 ): ReceiverProbeReport | null {
+  const listenerIds = new Set((Array.isArray(listenerId) ? listenerId : [listenerId]).filter(Boolean));
   const raw = object(value);
   const measurement = object(raw?.measurement);
   if (
     !raw ||
-    !listenerId ||
+    !listenerIds.size ||
     measurement?.boundary !== PROBE_MEASUREMENT ||
     measurement.clock !== 'single_browser_monotonic' ||
     measurement.client_reported !== true ||
@@ -62,7 +63,7 @@ export function receiverProbeReport(
   for (const entry of raw.samples) {
     const row = object(entry);
     if (!row || typeof row.listener_id !== 'string') return null;
-    if (row.listener_id !== listenerId) continue;
+    if (!listenerIds.has(row.listener_id)) continue;
     if (
       typeof row.probe_id !== 'string' ||
       !row.probe_id ||

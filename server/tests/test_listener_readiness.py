@@ -3,11 +3,11 @@ from types import SimpleNamespace
 
 import pytest
 
-from artha_mesh.config import Settings
-from artha_mesh.errors import ProviderError
-from artha_mesh.models import Participant
-from artha_mesh.store import Store
-from artha_mesh.transport.livekit import OutputTrack, RoomTransport
+from charcha.config import Settings
+from charcha.errors import ProviderError
+from charcha.models import Participant
+from charcha.store import Store
+from charcha.transport.livekit import OutputTrack, RoomTransport
 
 
 def fixture(monkeypatch):
@@ -55,7 +55,7 @@ async def test_synthesis_is_not_consumed_until_real_listener_subscription(monkey
 
 
 async def test_subscription_timeout_consumes_no_synthesis(monkeypatch):
-    from artha_mesh.transport import livekit
+    from charcha.transport import livekit
     monkeypatch.setattr(livekit, "LISTENER_READY_TIMEOUT_SECONDS", 0.02)
     transport, _, _, captured, used, chunks = fixture(monkeypatch)
     with pytest.raises(ProviderError, match="not ready"):

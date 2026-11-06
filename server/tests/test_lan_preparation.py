@@ -38,12 +38,12 @@ def test_requires_certificate_inputs_before_write(tmp_path, capsys):
 
 def test_runtime_has_no_external_provider_or_public_private_api(tmp_path, monkeypatch):
     monkeypatch.setenv("GNANI_API_KEY", "must-not-inherit-this-key")
-    monkeypatch.setenv("ARTHA_MODE", "live")
+    monkeypatch.setenv("CHARCHA_MODE", "live")
     output = tmp_path / "work" / "lan"
     rendered = lan.render("192.168.1.23", output, tmp_path)
     compose = json.loads(rendered["compose.json"])
     env = dict(line.split("=", 1) for line in rendered["api.env"].splitlines() if "=" in line)
-    assert env["ARTHA_MODE"] == "transport"
+    assert env["CHARCHA_MODE"] == "transport"
     assert env["GNANI_API_KEY"] == env["EVON_API_KEY"] == env["EVON_BASE_URL"] == env["EVON_MODEL"] == ""
     assert env["LOCAL_AUDIO_LAB_ENABLED"] == "false"
     assert env["AUDIO_SCREENING_MODE"] == "off"

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Activity,
@@ -40,17 +40,12 @@ import { languageName } from '../types/domain';
 import type { Language } from '../types/domain';
 import type { PerformanceFilter, PerformanceSample } from '../types/performance';
 import './Performance.css';
-import { ColdStartComparison } from '../components/ColdStartComparison';
 import { LatencyGroups } from '../components/LatencyGroups';
-import { FiveLanguagePlan } from '../components/FiveLanguagePlan';
-import { FiveLanguageResults } from '../components/FiveLanguageResults';
 import { ReceiverAudioMetrics } from '../components/ReceiverAudioMetrics';
-import { LocalRoutingEvidence } from '../components/LocalRoutingEvidence';
-import { HindiTamilProviderEvidence } from '../components/HindiTamilProviderEvidence';
-import { TamilHindiFollowupEvidence } from '../components/TamilHindiFollowupEvidence';
-import { SpeechEndLatencyEvidence } from '../components/SpeechEndLatencyEvidence';
-import { LatencyLanguageGate } from '../components/LatencyLanguageGate';
-import { LaterWork } from '../components/LaterWork';
+import { InterpretationEngineStatus } from '../components/InterpretationEngineStatus';
+import { receiverProbeReport } from '../services/receiverMetrics';
+import { ReportPersistence } from '../components/ReportPersistence';
+import { TurnLatencyMetrics } from '../components/TurnLatencyMetrics';
 
 const ms = (value: number | null) =>
   value === null || !Number.isFinite(value) ? 'N/A' : `${Math.round(value).toLocaleString()} ms`;
@@ -148,14 +143,24 @@ function Timeline({ samples }: { samples: PerformanceSample[] }) {
 
 export function Performance() {
   const { membership, health, healthLoading } = useApp();
-  const perf = usePerformance(membership, isLocalDemo(), healthLoading);
-  const transport = useTransportMetrics(membership?.room.code, membership?.participant.id);
+  const [selectedReport, setSelectedReport] = useState('');
+  const perf = usePerformance(membership, isLocalDemo(), false, true, selectedReport);
+  const roomCode = perf.report?.room_code;
+  const archived = perf.report?.view === 'saved';
+  const reportPending = !!perf.report?.persistence && perf.report.persistence.state !== 'saved';
+  const liveTransport = useTransportMetrics(archived ? undefined : roomCode, perf.report?.participant_id);
+  const transport = liveTransport ?? perf.report?.connection ?? null;
+  const receiverSnapshot = useMemo(() => receiverProbeReport(perf.report?.receiver_audio,
+    perf.report?.participant_ids ?? (perf.report?.participant_id ? [perf.report.participant_id] : [])), [perf.report]);
   const [filter, setFilter] = useState<PerformanceFilter>(DEFAULT_FILTER);
+  useEffect(() => setFilter(DEFAULT_FILTER), [perf.report?.report_id, roomCode]);
   const [manualChecks, setManualChecks] = useState<string[]>([]);
   const samples = perf.report?.samples ?? [];
   const filtered = useMemo(() => filterSamples(samples, filter), [samples, filter]);
   const summary = useMemo(() => summarize(filtered), [filtered]);
   const real = useMemo(() => measuredSamples(filtered), [filtered]);
+  const spoken = real.filter((sample) => sample.input_kind === 'audio');
+  const missingRecognition = spoken.filter((sample) => sample.stt_ms == null).length;
   const directions = [...new Map(samples.map((sample) => [directionKey(sample), sample])).values()];
   const required = perf.readiness.requirements.filter((item) => item.required);
   const configured = required.filter((item) => item.configured).length;
@@ -169,6 +174,9 @@ export function Performance() {
       detail: 'Utterance job waiting for its speaker’s pipeline',
       color: 'var(--chart-queue)',
     },
+    { key: 'output_wait_ms', label: 'Audio delivery wait', detail: 'Prepared audio waiting for the previous turn to finish', color: 'var(--chart-queue)' },
+    { key: 'preparation_ms', label: 'Preparation', detail: 'Next-turn work overlapping the previous audio delivery', color: 'var(--chart-translation)' },
+    { key: 'source_end_to_transcript_ms', label: 'Speech end → transcript', detail: 'Energy-estimated end at server ingress → final transcript; includes endpointing', color: 'var(--chart-speech)' },
     {
       key: 'stt_ms',
       label: 'Speech recognition · STT',
@@ -192,10 +200,10 @@ export function Performance() {
   const stageValues = stages.map((stage) => ({
     ...stage,
     value: percentile(
-      real.map((sample) => sample[stage.key]),
+      real.map((sample) => sample[stage.key] ?? null),
       0.5,
     ),
-    count: real.filter((sample) => sample[stage.key] !== null).length,
+    count: real.filter((sample) => sample[stage.key] != null).length,
   }));
   const maxStage = Math.max(...stageValues.map((stage) => stage.value ?? 0), 1);
   return (
@@ -218,9 +226,32 @@ export function Performance() {
         }
       />
 
+      <section className="panel performance-history" aria-label="Meeting reports">
+        <label className="field">
+          <span>Meeting report</span>
+          <select value={selectedReport} onChange={(event) => setSelectedReport(event.target.value)}>
+            <option value="">Current call or latest saved meeting</option>
+            {perf.history.map((entry) => <option key={entry.report_id} value={entry.report_id}>
+              {entry.title} · {new Date(entry.started_at).toLocaleString()} · {entry.status === 'active' ? 'In progress' : entry.status === 'completed' ? 'Completed' : 'Interrupted'}
+            </option>)}
+          </select>
+        </label>
+        <div>
+          <Badge tone={archived ? 'neutral' : perf.report ? 'green' : 'neutral'}>
+            {archived ? reportPending ? 'Meeting report · saving pending' : 'Saved meeting report' : perf.report ? 'Live meeting' : 'No meeting report yet'}
+          </Badge>
+          <p>Reports are saved to your account for up to 90 days. Only meetings you joined appear here.</p>
+          {perf.report?.status === 'interrupted' && <p>The server restarted before this meeting finished. This report contains its last saved measurements.</p>}
+          {archived && perf.report?.saved_at && <small>Saved {new Date(perf.report.saved_at).toLocaleString()}. This is not a live reading.</small>}
+        </div>
+      </section>
+      <ErrorNotice message={perf.historyError} />
+      <ReportPersistence status={perf.report?.persistence ?? perf.persistence} />
+
       <nav className="performance-section-nav" aria-label="Performance sections">
         {[
           ['Translation', 'live-latency'],
+          ['Listener latency', 'listener-latency'],
           ['Connection health', 'connection-health'],
           ['Test plan', 'test-plan'],
           ['Saved checks', 'saved-checks'],
@@ -246,7 +277,7 @@ export function Performance() {
         <div>
           <div className="performance-scope-top">
             <h2>
-              {mode === 'live'
+              {archived ? reportPending ? 'Meeting measurements · not fully saved' : 'Saved meeting · recorded measurements' : mode === 'live'
                 ? 'Live workspace · server measurements'
                 : mode === 'transport'
                   ? 'Original audio · network checks only'
@@ -265,15 +296,16 @@ export function Performance() {
             </Badge>
           </div>
           <p>
-            {membership ? (
+            {roomCode ? (
               <>
-                Room <strong>{membership.room.code}</strong> · Keep the call tab open while
-                reviewing this page. This page never opens your microphone or joins audio.
+                Room <strong>{roomCode}</strong> · {archived
+                  ? 'Review the report-saving status above. No microphone or GPU is started by this page.'
+                  : 'Keep the call tab open for live diagnostics. Reports are saved automatically when you leave.'}
               </>
             ) : (
               <>
-                Join a room to collect conversation measurements. You can review all setup
-                requirements below without any API keys.
+                No current or saved meeting report is available. Calls that ended before report
+                saving was introduced cannot be reconstructed. Future calls are saved automatically.
               </>
             )}
           </p>
@@ -282,23 +314,25 @@ export function Performance() {
       <details className="performance-boundary">
         <summary>
           <Info size={16} />
-          <strong>About these numbers: server timing only</strong>
+          <strong>About these numbers: separate measurement boundaries</strong>
         </summary>
         <p>
-          Total is queue-to-first-PCM plus a speech-recognition proxy. It does not measure
-          speech-end-to-listener playback or certify a latency target. Text input skips
-          recognition; same-language forwarding and scripted turns are excluded from percentiles.
+          The server interval runs from queued transcript to first PCM, plus provider processing time only when available.
+          Missing recognition time is not zero: those totals are partial. Automatic listener observations below use an
+          energy-based source end and synchronized browser detection, with uncertainty. Neither boundary proves acoustic
+          speech-to-ear latency. Text input, original-audio forwarding and scripted turns are identified separately.
         </p>
       </details>
       <ErrorNotice message={perf.error} />
+      <TurnLatencyMetrics report={perf.report?.turn_latency} direction={filter.direction} />
 
       <div className="performance-controls" id="live-latency">
         <div className="performance-live-status">
           <span
-            className={`status-dot ${perf.autoRefresh && perf.visible && membership && !membership.localDemo ? '' : 'performance-dot-paused'}`}
+            className={`status-dot ${!archived && perf.autoRefresh && perf.visible && roomCode && !membership?.localDemo ? '' : 'performance-dot-paused'}`}
           />
           <span>
-            {!perf.visible
+            {archived ? 'Saved report · select another meeting above' : !perf.visible
               ? 'Refresh pauses while hidden'
               : perf.autoRefresh
                 ? 'Auto refresh · every 5 seconds'
@@ -398,11 +432,23 @@ export function Performance() {
           Reset filters
         </button>
       </div>
+      {perf.report && !summary.live_sample_count && <div className="notice info">
+        <span>{perf.report.mode === 'transport'
+          ? 'Original-audio meeting: STT, translation and synthesis were not used. Connection readings are shown separately below.'
+          : perf.report.mode === 'demo' ? 'Scripted samples are excluded from real latency measurements.'
+          : summary.error_count ? 'No completed translation timing is available in these filters. Review the recorded errors and their stages below.'
+          : archived ? 'No completed translation timing was recorded for this meeting in these filters. Unmeasured values remain N/A.'
+          : 'Waiting for a completed translated turn. Joining a call alone does not produce STT, translation or synthesis timings.'}</span>
+      </div>}
+      {missingRecognition > 0 && <div className="notice warning" role="status"><span>
+        <strong>Partial server timings.</strong> Recognition processing time was unavailable for {missingRecognition} of {spoken.length} completed spoken deliveries in these filters.
+        Their totals exclude that stage. Use the separate source-end and listener observations when available.
+      </span></div>}
       <div className="performance-stats">
         <article>
           <span>
             <Timer size={16} />
-            Server first audio · p50
+            Server interval · p50
           </span>
           <strong>{ms(summary.p50_ms)}</strong>
           <small>
@@ -414,7 +460,7 @@ export function Performance() {
         <article>
           <span>
             <Activity size={16} />
-            Server first audio · p95
+            Server interval · p95
           </span>
           <strong>{ms(summary.p95_ms)}</strong>
           <small>Nearest-rank percentile</small>
@@ -499,16 +545,17 @@ export function Performance() {
           <div>
             <h2>Connection health</h2>
             <p className="panel-intro">
-              WebRTC diagnostics shared by the open call tab. These measure the network and audio
-              transport; they are separate from translation latency.
+              {liveTransport ? 'Live WebRTC diagnostics from your call tab.' : 'Last saved WebRTC snapshot from your browser.'}
+              {' '}These measure connection health, separately from translation latency.
             </p>
           </div>
           <Badge tone={transport ? 'green' : 'neutral'}>
             {transport
-              ? `${transport.receiving_tracks} receiving tracks`
-              : 'No current call diagnostics'}
+              ? `${liveTransport ? 'Live' : 'Saved'} · ${transport.receiving_tracks} receiving tracks`
+              : 'No connection measurements recorded'}
           </Badge>
         </div>
+        {transport && <p className="panel-intro">Observed {new Date(transport.measured_at).toLocaleString()} · browser-reported.</p>}
         <div className="performance-transport-stats">
           <div>
             <span>Network round trip</span>
@@ -543,13 +590,13 @@ export function Performance() {
           <Info size={13} />
           {transport
             ? `Updated ${time(transport.measured_at)}. `
-            : 'Keep the original call tab open. Diagnostics expire after 15 seconds without an update. '}
+            : 'No browser connection snapshot was saved for this meeting. '}
           These numbers do not measure when a listener hears translated speech. No audio is
           transferred to this page.
         </p>
       </section>
 
-      <ReceiverAudioMetrics membership={membership} />
+      <ReceiverAudioMetrics membership={null} snapshot={receiverSnapshot} archived={archived} />
 
       <section className="panel performance-directions">
         <div className="panel-head">
@@ -613,7 +660,7 @@ export function Performance() {
               disabled={!perf.report}
               onClick={() =>
                 perf.report &&
-                downloadJson('artha-mesh-performance.json', sanitizedReport(perf.report, filter))
+                downloadJson('charcha-performance.json', sanitizedReport(perf.report, filter))
               }
             >
               <FileJson size={14} />
@@ -624,7 +671,7 @@ export function Performance() {
               disabled={!perf.report}
               onClick={() =>
                 perf.report &&
-                downloadText('artha-mesh-performance.csv', performanceCsv(perf.report, filter))
+                downloadText('charcha-performance.csv', performanceCsv(perf.report, filter))
               }
             >
               <Download size={14} />
@@ -698,21 +745,21 @@ export function Performance() {
                   ? 'No translation timings in raw audio mode.'
                   : perf.report?.mode === 'demo'
                     ? 'The demo is a walkthrough.'
-                    : membership
-                      ? 'Your measurements will appear here.'
-                      : 'No active room in this tab.'}
+                    : roomCode
+                      ? archived ? 'No measurements in this saved report.' : 'Your measurements will appear here.'
+                      : 'No current or saved meeting report.'}
               </h3>
               <p>
                 {perf.report?.mode === 'transport'
                   ? 'Keep the call open to view network statistics above. Record audible listener delay separately in Test lab; a network round trip is not speech-to-listener latency.'
                   : perf.report?.mode === 'demo'
                     ? 'Scripted conversations show the experience; they do not establish model speed, quality or voice-clone performance.'
-                    : membership
-                      ? 'Use the call tab for live microphone speech or typed turns. This page reads measurements only.'
-                      : 'Open Performance from a live call to keep the call running and share its room access with the report tab.'}
+                    : roomCode
+                      ? archived ? 'Only measurements collected during the call can be shown. Try another meeting or clear your filters.' : 'Use the call tab for live microphone speech or typed turns. This page reads measurements only.'
+                      : 'New meetings save their measurements automatically. Previously unsaved calls cannot be reconstructed.'}
               </p>
             </div>
-            {!membership && (
+            {!roomCode && (
               <Link className="text-link" to="/">
                 Start a conversation
                 <ArrowRight size={14} />
@@ -743,11 +790,11 @@ export function Performance() {
             </p>
           </div>
           <div>
-            <h3>What total cannot tell you</h3>
+            <h3>Timing at the listener</h3>
             <p>
-              Microphone capture delay, client/server network travel, decoder buffering and when the
-              listener actually hears speech are not measured. Receiver playback is unmeasured; no
-              end-to-end claim is made.
+              Microphone capture, network travel, speaker buffering and acoustic playback occur
+              outside the server timing. Open a reviewed recording result under Speech end → listener
+              to see the interval for that trial.
             </p>
           </div>
           <div>
@@ -769,42 +816,7 @@ export function Performance() {
         </div>
       </section>
 
-      <FiveLanguagePlan />
-
-      <div id="saved-checks" className="performance-checks-anchor" aria-hidden="true" />
-      <FiveLanguageResults />
-      <LaterWork>
-        <SpeechEndLatencyEvidence />
-        <LatencyLanguageGate />
-      </LaterWork>
-      <HindiTamilProviderEvidence />
-
-      <TamilHindiFollowupEvidence />
-
-      <LocalRoutingEvidence />
-
-      <section className="panel performance-saved-results">
-        <div className="panel-head">
-          <div>
-            <h2>Saved local test results</h2>
-            <p className="panel-intro">
-              Historical transport tests stay separate from this room’s current measurements.
-            </p>
-          </div>
-          <Badge tone="neutral">Reference evidence</Badge>
-        </div>
-        <details>
-          <summary>Review the local cold-start audio comparison</summary>
-          <ColdStartComparison />
-        </details>
-        <p className="performance-export-note">
-          Deepfake screening and voice cloning are outside the current translation stage. The saved
-          screening studies remain in Audio lab.
-        </p>
-        <Link className="text-link" to="/audio-lab">
-          Open Audio lab →
-        </Link>
-      </section>
+      <InterpretationEngineStatus />
 
       <section className="performance-readiness" id="readiness">
         <div className="performance-section-heading">
@@ -935,8 +947,8 @@ export function Performance() {
         </div>
         <p className="performance-export-note">
           <Info size={13} />
-          Complete these checks with standard voices and screening off. Deepfake screening and voice
-          cloning remain separate later stages.
+          Record the screening mode with each call. Compare runs using the same languages,
+          devices and measurement boundary.
         </p>
       </section>
       <div className="performance-reference-links">

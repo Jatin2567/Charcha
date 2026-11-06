@@ -58,7 +58,7 @@ def test_fresh_script_and_cli_do_not_read_environment_files_or_construct_network
         raise AssertionError("The offline plan must not access files, environment, network or ledger")
 
     def restricted_import(name, *args, **kwargs):
-        if name.split(".", 1)[0] in {"artha_mesh", "dotenv", "httpx", "websockets", "socket", "sqlite3", "pydantic_settings"}:
+        if name.split(".", 1)[0] in {"charcha", "dotenv", "httpx", "websockets", "socket", "sqlite3", "pydantic_settings"}:
             raise AssertionError("The offline plan must not import application/provider clients")
         return original_import(name, *args, **kwargs)
 

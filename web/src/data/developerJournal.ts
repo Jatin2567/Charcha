@@ -33,7 +33,7 @@ export interface JournalFilter {
   area: JournalArea | 'all';
   search: string;
 }
-export const JOURNAL_UPDATED = '2026-11-03';
+export const JOURNAL_UPDATED = '2026-11-09';
 export const JOURNAL_STATUS_LABELS: Record<JournalStatus, string> = {
   fixed: 'Fixed',
   improved: 'Improved',
@@ -65,19 +65,69 @@ export const DEFAULT_JOURNAL_FILTER: JournalFilter = {
 // Curated engineering notes, not generated room activity. Update only with evidence.
 export const developerJournal: DeveloperJournalEntry[] = [
   {
+    id: 'recovery-confirmations-exports-20261108', date: '2026-11-08', status: 'improved', area: 'experience',
+    title: 'Clear recovery and a bilingual recap you can keep',
+    summary: 'Each message now lists the listeners who confirmed understanding and those who have not. Failed or interrupted turns keep their captions and show the next step.',
+    cause: 'An acknowledgement count did not identify the people still waiting, and recap exports needed readable bilingual sharing formats.',
+    change: 'Listener lists are captured for every new turn. Speakers and late arrivals cannot confirm for those listeners. The recap offers browser PDF printing and a reviewable WhatsApp copy, preserving original wording, translation gaps, corrections and confirmation states.',
+    verification: 'Local permission and pipeline regressions, export escaping tests, and isolated Chrome checks for Hindi/Tamil rendering, long-document page breaks, WhatsApp preview and blocked print-window recovery. No provider requests.',
+    evidence: ['automated', 'browser'], references: ['docs/ON_DEMAND_MEETINGS.md'],
+    outstanding: 'Older records without a listener list remain explicitly unknown. Confirmations establish understanding, not agreement or factual accuracy. PDF output uses the browser print dialog and device fonts.',
+  },
+  {
+    id: 'ordered-lookahead-and-real-observations-20261107', date: '2026-11-07', status: 'improved', area: 'measurement',
+    title: 'Prepare the next phrase and measure what reaches the browser',
+    summary: 'The previous speaker queue waited for complete audio playback before preparing the next turn. Preparation now overlaps playback, while output remains ordered and stale waiting turns are flagged.',
+    cause: 'Serial preparation accumulated a backlog; recognition timing depended on a provider processing event, and server first audio did not establish listener playback.',
+    change: 'Bounded lookahead, explicit queue expiry, separate preparation/output wait, energy-estimated speech-end intervals and per-turn browser observations with clock uncertainty. Reports now retry disk failures outside the audio loop and display saving status.',
+    verification: 'Offline queue regressions, two real local WebRTC peers with generated tones, clock/route/privacy tests and injected storage failures. Test-provider timings are not live speech benchmarks.',
+    evidence: ['automated', 'synthetic-rtc'], references: ['docs/ON_DEMAND_MEETINGS.md'],
+    outstanding: 'Live provider latency requires a new real conversation. Browser detection excludes microphone uplink and physical speaker hardware; ambiguous observations remain unavailable. Pending memory can be lost if the server stops before saving succeeds.',
+  },
+  {
+    id: 'saved-performance-reports-20261106', date: '2026-11-06', status: 'fixed', area: 'measurement',
+    title: 'Keep meeting performance after leaving',
+    summary: 'Performance previously depended on an active room membership and became unavailable after leaving. Account-linked reports now remain available from a meeting selector.',
+    cause: 'Leaving revoked the membership used by the report lookup; no durable performance history existed.',
+    change: 'Save server timings and the last browser connection snapshot, preserve private listener checks, and label saved versus live observations. Re-signing in restores access by account identity. Missing measurements stay unavailable.',
+    verification: 'Offline tests cover leave, re-sign-in, expiry, restart, missing timings, retention and access isolation. No transcript text or voice reference is stored in a performance report.',
+    evidence: ['automated'], references: ['docs/ON_DEMAND_MEETINGS.md'],
+    outstanding: 'Earlier calls whose measurements were discarded cannot be reconstructed. Snapshots do not measure acoustic speech-to-listener latency.',
+  },
+  {
+    id: 'meeting-held-gpu-20261106', date: '2026-11-06', status: 'fixed', area: 'reliability',
+    title: 'Keep interpretation ready for the whole meeting',
+    summary: 'Connected interpreted meetings now start and retain the shared GPU, including silent periods. The previous release could sleep between translations.',
+    cause: 'Request-triggered startup and idle scale-down did not follow the meeting lifecycle.',
+    change: 'Actual connected memberships hold one shared engine. Last departure releases it; unexpected disconnects have a short reconnect grace. Opening Performance, unused invitations and original-audio rooms do not start compute.',
+    verification: '17 offline lifecycle and voice-setup tests passed with mocked model health. Checks cover shared meetings, silence, expiry, cancellation and denied startup from an unconnected seat.',
+    evidence: ['automated'], references: ['docs/ON_DEMAND_MEETINGS.md'],
+    outstanding: 'GPU time is billed during silent meeting periods. Provider scale-down timing and availability remain outside the application; this change was tested without a new paid GPU run.',
+  },
+  {
+    id: 'serverless-personal-voices-20261106', date: '2026-11-06', status: 'improved', area: 'delivery',
+    title: 'On-demand interpretation and meeting voice setup',
+    summary: 'The GPU can scale to zero between requests. Admitted participants set up their own voice before speaking in an interpreted meeting.',
+    cause: 'Fixed GPU test windows and standard-only speaking rules did not fit ongoing meetings.',
+    change: 'Single shared model startup, no GPU calls from status polling, required consent-based voice enrollment, owner-monitored Gnani billing, and no product participant cap. VoiceShield defaults to monitoring.',
+    verification: '169 targeted offline backend tests and 293 frontend tests passed before deployment. Provider audio quality and cross-language cloning still require real listening tests.',
+    evidence: ['automated'], references: ['docs/MODAL_AGENT_HANDOFF.md'],
+    outstanding: 'Cold startup can take minutes. Detector accuracy and acoustic end-to-end latency are not established by these tests. Historical entries below describe their original test stages.',
+  },
+  {
     id: 'dual-language-consensus-and-deal-memo',
     date: '2026-11-03',
     status: 'improved',
     area: 'experience',
-    title: 'Synchronous dual-language ribbon, entity tagging, and cryptographic B2B deal memorandum',
+    title: 'Dual-language ribbon, entity tagging, and a fingerprinted conversation recap',
     summary:
-      'Turned passive speech translation into an active consensus protocol. Dual-language ribbons now display source and translated texts side-by-side with high-contrast entity tags for numbers and negation, supported by inline 1-click confirmation consensus and SHA-256 session audit hashing.',
+      'Added side-by-side source and translated text, entity tags for numbers and negation, inline listener confirmations, and a SHA-256 source-record fingerprint. Historical terminology in this entry has been corrected: confirmation records understanding, not agreement.',
     cause:
-      'Passive machine translation creates silent semantic drift: models occasionally misinterpret numbers (e.g. 1976 vs 1972) or drop crucial negation particles (e.g. nahi / vendam / not), causing catastrophic miscoordination in B2B transactions without either speaker realizing.',
+      'Translation and recognition errors in numbers or negation can change intended meaning. The saved Marathi STT routes returned 1972 for the reference year 1976, motivating visible review of important details.',
     change:
-      'Introduced regex-based entity highlighting for western/Indic numbers and cross-lingual negation particles across Hindi, Tamil, Telugu, Bengali, and Marathi. Added inline turn confirmation consensus and computed client-side SHA-256 session memorandum hash over immutable turn IDs, timestamps, and consensus states. Updated VoiceShield UI to enforce waveform DSP tracking transparency.',
+      'Introduced regex-based highlighting for western/Indic numbers and selected negation terms across Hindi, Tamil, Telugu, Bengali, and Marathi. Added listener confirmations and a client-side SHA-256 content fingerprint of the recap record. VoiceShield exposes AASIST classifier scores separately from diagnostic pitch and jitter/shimmer proxies; those diagnostics do not establish authenticity.',
     verification:
-      'Unit tests in MeetingCaptions.test.ts verify entity tag injection, attribute retention for accessibility, and dual-language deck rendering. Vitest passed 276 tests; pytest passed 1,370 tests. Web build passed with zero TypeScript or bundle errors.',
+      'The original 3 November entry reported MeetingCaptions.test.ts checks for entity tags, accessibility attributes, and dual-language rendering; 276 Vitest and 1,370 pytest passes; and a successful web build. These are historical results, not a fresh verification of the current checkout.',
     evidence: ['automated', 'browser', 'review'],
     references: [
       'web/src/components/MeetingCaptions.tsx',
@@ -88,6 +138,8 @@ export const developerJournal: DeveloperJournalEntry[] = [
       'web/src/pages/Impact.css',
       'web/src/components/VoiceShieldPanel.tsx',
     ],
+    outstanding:
+      'A SHA-256 fingerprint is not a digital signature, immutable record, or proof of agreement or accuracy. Listener confirmations do not validate translation quality. VoiceShield detection accuracy remains unvalidated.',
   },
   {
     id: 'docker-https-gpu-preparation',
@@ -151,7 +203,7 @@ export const developerJournal: DeveloperJournalEntry[] = [
       'docs/FIVE_LANGUAGE_SCREENING.md',
       'scripts/evon_prepare.py',
       'scripts/prepare_lan_test.py',
-      'server/artha_mesh/providers/evon.py',
+      'server/charcha/providers/evon.py',
       'evaluation/audio_screening.py',
       'web/src/components/LatencyGroups.tsx',
       'docs/GPU_TESTING.md',
@@ -177,7 +229,7 @@ export const developerJournal: DeveloperJournalEntry[] = [
       'All three baseline and three repaired RTC runs passed routing, mute, receiver detach and unmute. Six directions per group gave ranges of 322.65–1,149.82 ms before and 172.18–379.97 ms after, with a 69.3% lower observed median. First-run agent-input to first relay PCM submission fell from 886.18 ms to 35.04 ms. A separate real-model monitor fixture received PCM at 158.74 ms and used 566.684 ms compute after a 4,037.5 ms window. The full suites passed 348 backend and 129 frontend tests, including six new audio and five comparison cases; the production build passed. No provider requests were used.',
     evidence: ['automated', 'synthetic-rtc', 'browser', 'review', 'live-pending'],
     references: [
-      'server/artha_mesh/transport/livekit.py',
+      'server/charcha/transport/livekit.py',
       'server/tests/test_cold_start_audio.py',
       'scripts/verify_transport.py',
       'web/src/components/ColdStartComparison.tsx',
@@ -210,7 +262,7 @@ export const developerJournal: DeveloperJournalEntry[] = [
       'web/src/components/VoiceShieldPanel.test.ts',
       'web/src/services/voiceShield.ts',
       'web/src/services/localDiagnostics.test.ts',
-      'server/artha_mesh/services/audio_screening.py',
+      'server/charcha/services/audio_screening.py',
       'scripts/verify_audio_screening.py',
       'scripts/benchmark_screening_compute.py',
       'scripts/compare_screening_durations.py',
@@ -257,7 +309,7 @@ export const developerJournal: DeveloperJournalEntry[] = [
       'web/src/components/CameraVideo.tsx',
       'server/tests/test_conference_transport.py',
       'server/tests/test_five_language_rtc_diagnostics.py',
-      'server/artha_mesh/transport/livekit.py',
+      'server/charcha/transport/livekit.py',
       'server/tests/test_conference_readiness.py',
       'docs/LIVE_CONFERENCING.md',
       'docs/LOCAL_TESTING.md',
@@ -315,7 +367,7 @@ export const developerJournal: DeveloperJournalEntry[] = [
     evidence: ['automated', 'synthetic-rtc'],
     references: [
       'web/src/hooks/useMeetingAudio.ts',
-      'server/artha_mesh/transport/livekit.py',
+      'server/charcha/transport/livekit.py',
       'scripts/verify_same_language.py',
     ],
     outstanding: 'Repeat permission, network-failure and mute checks on the intended live devices.',
@@ -360,8 +412,8 @@ export const developerJournal: DeveloperJournalEntry[] = [
     evidence: ['automated', 'synthetic-rtc'],
     references: [
       'web/src/services/livekit.ts',
-      'server/artha_mesh/services/routing.py',
-      'server/artha_mesh/transport/livekit.py',
+      'server/charcha/services/routing.py',
+      'server/charcha/transport/livekit.py',
       'scripts/verify_routing.py',
     ],
     outstanding:
@@ -382,7 +434,7 @@ export const developerJournal: DeveloperJournalEntry[] = [
     verification:
       'Short-first-PCM regression checks cover 16/24 kHz, delayed next chunks, odd-byte carry and cancellation. In a mocked 125 ms provider-gap experiment, median dispatch wait fell from 135.372 ms to 0.124 ms. This is a controlled local result, not a measured Gnani improvement. Earlier Hindi/Hindi/Tamil synthetic RTC checks covered forwarding, output, mute/unmute and expiry.',
     evidence: ['synthetic-rtc', 'automated'],
-    references: ['server/artha_mesh/transport/livekit.py', 'scripts/verify_same_language.py', 'server/tests/test_streaming_first_pcm.py'],
+    references: ['server/charcha/transport/livekit.py', 'scripts/verify_same_language.py', 'server/tests/test_streaming_first_pcm.py'],
     outstanding:
       'Measure the changed first-chunk path with approved real-provider speech and physical listener output. Saved paid timing records are unchanged; listening quality and real-world latency improvement remain unverified.',
   },
@@ -423,7 +475,7 @@ export const developerJournal: DeveloperJournalEntry[] = [
     verification:
       'Backend tests cover authenticated upgrades, invalid credentials and room scope. The implementation was reviewed alongside the documented contract.',
     evidence: ['automated', 'review'],
-    references: ['web/src/hooks/useRoomEvents.ts', 'server/artha_mesh/main.py', 'docs/CONTRACT.md'],
+    references: ['web/src/hooks/useRoomEvents.ts', 'server/charcha/main.py', 'docs/CONTRACT.md'],
     outstanding:
       'Check reverse-proxy header forwarding, HTTPS/WSS and operational logging on the deployment host.',
   },
@@ -442,7 +494,7 @@ export const developerJournal: DeveloperJournalEntry[] = [
       'Backend and frontend checks cover missing markers, nearest-rank percentiles, branch failures, first PCM versus playout completion, and exclusions.',
     evidence: ['automated'],
     references: [
-      'server/artha_mesh/services/pipeline.py',
+      'server/charcha/services/pipeline.py',
       'web/src/services/performance.ts',
       'web/src/services/performance.test.ts',
       'docs/GO_LIVE.md',
@@ -467,7 +519,7 @@ export const developerJournal: DeveloperJournalEntry[] = [
     references: [
       'web/src/services/performance.ts',
       'web/src/types/performance.ts',
-      'server/artha_mesh/store.py',
+      'server/charcha/store.py',
       'docs/GO_LIVE.md',
     ],
     outstanding:
@@ -489,13 +541,13 @@ export const developerJournal: DeveloperJournalEntry[] = [
       'Browser checks cover the desktop sidebar and narrow-screen header with no microphone or camera enabled. Both gradient endpoints exceed 3:1 graphical contrast against their intended light/dark surfaces. The favicon switches colour for the browser theme. These are targeted visual checks, not a complete accessibility certification. No provider/API credits were used.',
     evidence: ['automated', 'browser'],
     references: [
-      'web/public/artha-waveform.svg',
-      'web/public/artha-waveform-icon.svg',
+      'web/public/charcha-waveform.svg',
+      'web/public/charcha-waveform-icon.svg',
       'web/public/voice-mesh-mark.svg',
       'web/src/components/ConversationIllustration.tsx',
-      'web/public/artha-mesh-logo.png',
-      'web/public/artha-mesh-mark-transparent.png',
-      'web/public/artha-mesh-logo-blue.png',
+      'web/public/charcha-logo.png',
+      'web/public/charcha-mark-transparent.png',
+      'web/public/charcha-logo-blue.png',
       'web/src/components/ui.tsx',
       'web/src/pages/Meeting.tsx',
       'web/src/pages/Performance.tsx',
@@ -524,8 +576,8 @@ export const developerJournal: DeveloperJournalEntry[] = [
       'Mocked checks cover grant expiry/replacement, atomic caps, privacy, reconciliation and a bounded test runner. One separately approved Gnani TTS→STT check passed and closed its grant; the Usage page records its units and timings. Actual invoice and cloning checks remain pending.',
     evidence: ['automated', 'review', 'live-provider'],
     references: [
-      'server/artha_mesh/services/usage.py',
-      'server/artha_mesh/services/approvals.py',
+      'server/charcha/services/usage.py',
+      'server/charcha/services/approvals.py',
       'server/tests/test_approvals.py',
       'scripts/check_gnani.py',
       'docs/GNANI_CHECKS.md',
@@ -552,8 +604,8 @@ export const developerJournal: DeveloperJournalEntry[] = [
       'Four mocked MT/TTS admission fixtures expire the source or remove the last listener while work waits. They verify no upstream request and no usage increment for the abandoned branch.',
     evidence: ['automated', 'review'],
     references: [
-      'server/artha_mesh/services/pipeline.py',
-      'server/artha_mesh/services/usage.py',
+      'server/charcha/services/pipeline.py',
+      'server/charcha/services/usage.py',
       'server/tests/test_usage.py',
     ],
     outstanding:
@@ -620,7 +672,7 @@ export const developerJournal: DeveloperJournalEntry[] = [
     references: [
       'scripts/prepare_deployment.py',
       'deploy/production/README.md',
-      'server/artha_mesh/services/readiness.py',
+      'server/charcha/services/readiness.py',
       'web/src/pages/Deployment.tsx',
       'docs/INDIA_HOSTING.md',
       'docs/VALIDATION.md',

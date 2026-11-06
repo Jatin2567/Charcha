@@ -48,7 +48,7 @@ export function privateEvonOverrides(file, endpoint, model) {
 export function apiEnvironment(base, root, webPort, options, privateOverrides = {}) {
   const live = options.mode === 'live';
   const environment = { ...base, ...privateOverrides,
-    ARTHA_MODE: options.mode, LIVEKIT_URL: 'ws://127.0.0.1:7880',
+    CHARCHA_MODE: options.mode, LIVEKIT_URL: 'ws://127.0.0.1:7880',
     LIVEKIT_INTERNAL_URL: 'ws://127.0.0.1:7880', LIVEKIT_API_KEY: 'devkey', LIVEKIT_API_SECRET: 'secret',
     AUDIO_SCREENING_MODE: options.screening || 'off', LOCAL_AUDIO_LAB_ENABLED: live ? 'false' : 'true',
     USAGE_REQUIRE_FLOW_APPROVAL: 'true', USAGE_SHOW_PRIVATE_BALANCE: 'false',
@@ -56,6 +56,7 @@ export function apiEnvironment(base, root, webPort, options, privateOverrides = 
     CORS_ORIGINS: `http://127.0.0.1:${webPort},http://localhost:${webPort}`,
     VITE_API_BASE_URL: '/api', VITE_DEMO_MODE: 'false' };
   if (options.evonBase) environment.EVON_BASE_URL = options.evonBase;
+  if (live && options.screening === 'monitor') environment.USAGE_REQUIRE_ROOM_SCOPE = 'true';
   if (options.evonModel) environment.EVON_MODEL = options.evonModel;
   if (!live) {
     Object.assign(environment, { GNANI_API_KEY: '', EVON_BASE_URL: '', EVON_MODEL: '', EVON_API_KEY: '',
@@ -68,7 +69,7 @@ export function apiEnvironment(base, root, webPort, options, privateOverrides = 
 
 export function webEnvironment(base, apiPort) {
   const environment = { ...base, VITE_API_BASE_URL: '/api', VITE_DEMO_MODE: 'false',
-    ARTHA_API_TARGET: `http://127.0.0.1:${apiPort}` };
+    CHARCHA_API_TARGET: `http://127.0.0.1:${apiPort}` };
   for (const key of Object.keys(environment))
     if (/^(?:GNANI_|EVON_|LIVEKIT_|TIMBRE_|VOICE_CLONE_|VITE_(?:GNANI|EVON|LIVEKIT|TIMBRE|VOICE_CLONE))/.test(key))
       delete environment[key];

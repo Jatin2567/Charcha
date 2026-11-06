@@ -18,7 +18,7 @@ import time
 from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
-_prompt_spec = importlib.util.spec_from_file_location("evon_pure_prompt", ROOT / "server/artha_mesh/providers/translation_prompt.py")
+_prompt_spec = importlib.util.spec_from_file_location("evon_pure_prompt", ROOT / "server/charcha/providers/translation_prompt.py")
 _prompt = importlib.util.module_from_spec(_prompt_spec)
 _prompt_spec.loader.exec_module(_prompt)
 PROMPT_VERSION = _prompt.PROMPT_VERSION

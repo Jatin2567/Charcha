@@ -134,7 +134,7 @@ def test_fixture_generator_is_fixed_bounded_and_unlabelled():
 
 
 def test_experiment_does_not_enable_short_audio_in_the_live_classifier():
-    from artha_mesh.services.audio_screening import LocalAudioScreener
+    from charcha.services.audio_screening import LocalAudioScreener
 
     live = LocalAudioScreener(load_model=False)
     short = recording()["pcm"][:16000]

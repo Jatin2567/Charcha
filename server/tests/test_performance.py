@@ -4,14 +4,14 @@ import json
 import pytest
 from conftest import auth, create_member
 
-from artha_mesh.config import Settings
-from artha_mesh.errors import ProviderError
-from artha_mesh.models import Participant, PerformanceSample, Turn, VoiceProfile
-from artha_mesh.providers.demo import SAMPLES, DemoTranslator
-from artha_mesh.services.performance import milliseconds, performance_snapshot
-from artha_mesh.services.pipeline import Pipeline, WorkItem
-from artha_mesh.services.readiness import readiness_snapshot
-from artha_mesh.store import Store, StoredVoice
+from charcha.config import Settings
+from charcha.errors import ProviderError
+from charcha.models import Participant, PerformanceSample, Turn, VoiceProfile
+from charcha.providers.demo import SAMPLES, DemoTranslator
+from charcha.services.performance import milliseconds, performance_snapshot
+from charcha.services.pipeline import Pipeline, WorkItem
+from charcha.services.readiness import readiness_snapshot
+from charcha.store import Store, StoredVoice
 
 
 def test_performance_requires_membership_for_exact_room_and_has_no_transcript(client):
@@ -39,7 +39,7 @@ def test_readiness_shows_configuration_in_demo_without_exposing_values(client):
     rows = {row["key"]: row for row in data["requirements"]}
     assert rows["GNANI_API_KEY"]["configured"] is True
     assert rows["LIVEKIT_API_SECRET"]["configured"] is True
-    assert rows["ARTHA_MODE"]["configured"] is False
+    assert rows["CHARCHA_MODE"]["configured"] is False
     assert rows["EVON_BASE_URL"]["configured"] is False
     assert rows["EVON_API_KEY"]["required"] is False
     assert data["provider_verification"] == "not_checked"
@@ -107,7 +107,7 @@ def live_pipeline(translator, speech=None):
 @pytest.mark.parametrize("from_audio,reported_stt", [(True, 40.0), (False, None), (True, None)])
 async def test_timing_ends_at_first_pcm_not_playout_and_typed_stt_is_na(monkeypatch, from_audio, reported_stt):
     clock = Clock()
-    monkeypatch.setattr("artha_mesh.services.pipeline.time.perf_counter", clock)
+    monkeypatch.setattr("charcha.services.pipeline.time.perf_counter", clock)
 
     class Translator:
         async def translate(self, *_args):

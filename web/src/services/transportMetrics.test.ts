@@ -75,9 +75,9 @@ describe('report tab isolation', () => {
     const open = vi.fn(() => child);
     vi.stubGlobal('window', { open, location: { href: 'https://meeting.example/#/room/abc' } });
     vi.stubGlobal('sessionStorage', { getItem: vi.fn(() => 'scoped-membership') });
-    expect(openPerformancePage()).toBe(true);
+    expect(openPerformancePage('current-session')).toBe(true);
     expect(open).toHaveBeenCalledWith('https://meeting.example/#/performance', '_blank');
-    expect(setItem).toHaveBeenCalledExactlyOnceWith('artha.membership', 'scoped-membership');
+    expect(setItem).toHaveBeenCalledExactlyOnceWith('charcha.membership.current-session', 'scoped-membership');
     expect(child.opener).toBeNull();
   });
   it('handles popup denial without changing the original meeting', () => {

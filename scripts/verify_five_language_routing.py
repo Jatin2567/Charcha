@@ -28,13 +28,13 @@ sys.path.insert(0, str(ROOT / "server"))
 
 from livekit import rtc
 
-from artha_mesh.config import Settings
-from artha_mesh.models import JoinRoom, UpdateParticipant
-from artha_mesh.providers.gnani import Transcript
-from artha_mesh.services.pipeline import Pipeline
-from artha_mesh.services.rooms import RoomService
-from artha_mesh.store import Store
-from artha_mesh.transport.livekit import TransportManager
+from charcha.config import Settings
+from charcha.models import JoinRoom, UpdateParticipant
+from charcha.providers.gnani import Transcript
+from charcha.services.pipeline import Pipeline
+from charcha.services.rooms import RoomService
+from charcha.store import Store
+from charcha.transport.livekit import TransportManager
 
 LANGUAGES = ("hi", "ta", "bn", "te", "mr")
 
@@ -45,13 +45,16 @@ def progress(stage, **values):
 
 class Providers:
     """Synthetic PCM and deterministic text only; records call topology."""
-    def __init__(self):
+    def __init__(self, usage=None):
+        self.usage = usage
         self.recognition_opened = Counter()
         self.recognition_closed = Counter()
         self.translations = []
         self.synthesis = []
 
     async def transcribe(self, audio, language, on_processing=None):
+        if self.usage:
+            self.usage.reserve({"stt_connections": 1, "stt_seconds": 1})
         self.recognition_opened[language] += 1
         observed, emitted = 0, False
         try:
@@ -68,10 +71,14 @@ class Providers:
             self.recognition_closed[language] += 1
 
     async def translate(self, text, source, target):
+        if self.usage:
+            self.usage.reserve({"mt_requests": 1, "mt_characters": len(text)})
         self.translations.append((source, target))
         return f"Synthetic route fixture {source} to {target}"
 
     async def synthesize(self, text, language, embedding=None):
+        if self.usage:
+            self.usage.reserve({"tts_requests": 1, "tts_characters": len(text)})
         assert embedding is None, "Voice cloning is outside this test"
         self.synthesis.append((text, language))
         for offset in range(0, 24000 * 2, 480):
@@ -147,15 +154,15 @@ def fixture_snapshot(runtime, state, fixture, memberships, received, source_prog
 
 
 @asynccontextmanager
-async def fixture_runtime(settings, fixture, diagnostics):
+async def fixture_runtime(settings, fixture, diagnostics, *, screening=None):
     # Construct only the actual room/pipeline/RTC services with explicit
     # settings and doubles. Importing main.py would construct its global app
     # from the operator's environment, which this isolated verifier avoids.
     store = Store(settings)
     pipeline = Pipeline(store, fixture, fixture)
-    transport = TransportManager(store, fixture, pipeline)
+    transport = TransportManager(store, fixture, pipeline, screening)
     pipeline.transport = transport
-    service = RoomService(store, pipeline, transport, None)
+    service = RoomService(store, pipeline, transport, None, fixture.usage)
     try:
         yield SimpleNamespace(store=store, pipeline=pipeline, transport=transport, service=service)
     finally:

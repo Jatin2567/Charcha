@@ -6,14 +6,14 @@ from contextlib import asynccontextmanager
 import httpx
 import pytest
 
-from artha_mesh.config import Settings
-from artha_mesh.errors import ProviderError
-from artha_mesh.models import Participant, Turn
-from artha_mesh.providers.clauses import ClauseSplitter
-from artha_mesh.providers.evon import EvonTranslator, stream_delta
-from artha_mesh.services.performance import performance_snapshot
-from artha_mesh.services.pipeline import Pipeline, WorkItem
-from artha_mesh.store import Store
+from charcha.config import Settings
+from charcha.errors import ProviderError
+from charcha.models import Participant, Turn
+from charcha.providers.clauses import ClauseSplitter
+from charcha.providers.evon import EvonTranslator, stream_delta
+from charcha.services.performance import performance_snapshot
+from charcha.services.pipeline import Pipeline, WorkItem
+from charcha.store import Store
 
 KEY = "private-fixture-key"
 

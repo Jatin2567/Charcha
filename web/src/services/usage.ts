@@ -321,6 +321,8 @@ function validateApproval(
     required: value.required,
     status: value.status as FlowApproval['status'],
     active_flow_id: value.active_flow_id as string | null,
+    ...(value.host_allowance_enabled === true ? { host_allowance_enabled: true } : {}),
+    ...(value.owner_tracks_billing === true ? { owner_tracks_billing: true } : {}),
     expires_at: value.expires_at as string | null,
     detail: safeText(value.detail),
   };

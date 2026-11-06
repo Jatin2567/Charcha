@@ -1,9 +1,9 @@
 import asyncio
 
-from artha_mesh.config import Settings
-from artha_mesh.models import Participant
-from artha_mesh.services.routing import recipients_for, target_languages
-from artha_mesh.store import Consumer, Store
+from charcha.config import Settings
+from charcha.models import Participant
+from charcha.services.routing import recipients_for, target_languages
+from charcha.store import Consumer, Store
 
 
 def test_three_way_routing_no_echo_and_shared_language_fanout():

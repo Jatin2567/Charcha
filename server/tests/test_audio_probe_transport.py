@@ -4,11 +4,11 @@ from types import SimpleNamespace
 
 import pytest
 
-from artha_mesh.config import Settings
-from artha_mesh.errors import ProviderError
-from artha_mesh.models import Participant
-from artha_mesh.store import Store
-from artha_mesh.transport.livekit import RoomTransport
+from charcha.config import Settings
+from charcha.errors import ProviderError
+from charcha.models import Participant
+from charcha.store import Store
+from charcha.transport.livekit import RoomTransport
 
 
 @pytest.fixture

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+  <title>Privacy · Charcha</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;background:#111827;color:#e5e7eb;font:17px/1.7 system-ui,sans-serif}main{max-width:800px;margin:auto;padding:48px 24px 80px}a{color:#93c5fd}a:focus-visible{outline:3px solid #60a5fa;outline-offset:5px}h1,h2{color:#fff;line-height:1.25}h1{font-size:40px;letter-spacing:-1px}h2{font-size:23px;margin-top:36px}.meta{color:#cbd5e1}.notice{padding:20px;border:1px solid #475569;border-radius:16px;background:#1e293b}li{margin:10px 0}
+  </style>
+</head>
+<body>
+<main>
+  <a href="/">← Back to Charcha</a>
+  <h1>Your conversations, your choice.</h1>
+  <p class="meta">Charcha demonstration · Updated 7 November 2026</p>
+  <p class="notice">The host controls VoiceShield during a meeting. When it is on, the meeting server analyzes original microphone audio and shares experimental per-speaker assessments with admitted participants. You can see the setting in the room and mute or leave at any time. In interpreted meetings, speech goes to the configured recognition service, transcripts to the translation model, and translated text to speech synthesis. Personal voice synthesis requires your explicit consent and a short reference recording.</p>
+  <h2>What sign-in shares</h2>
+  <p>Google sign-in provides basic account information, including your email address and profile information, to Charcha’s identity service. Charcha uses your verified email to identify you and apply meeting access rules. Charcha does not request access to your Gmail messages, contacts, calendar or Drive files.</p>
+  <h2>Who can see you in a meeting</h2>
+  <p>The meeting host sees your verified email when you request entry and can approve or deny your request. People admitted to the meeting can see participant names and hear or see the microphone, camera and screen tracks that you choose to share. Keep your microphone and camera off until you are ready.</p>
+  <h2>Where the application runs</h2>
+  <p>The application server, meeting server and identity database are configured in Google Cloud’s Delhi region. Google sign-in uses Google’s own identity service, and the public HTTPS address uses Google Cloud Run. This does not guarantee that all identity or network processing stays in India.</p>
+  <h2>Storage and cookies</h2>
+  <ul>
+    <li>The identity database stores your account profile and sign-in information.</li>
+    <li>Essential cookies bind sign-in requests and maintain your account session. The identity provider also uses its own session cookies.</li>
+    <li>The application stores operational usage records and workspace access settings. Active meeting state is held in server memory and may be lost when the server restarts.</li>
+    <li>Performance reports are saved on the application server for up to 90 days, subject to a 500-report storage limit. They contain the meeting title, timing samples, errors and language directions, but no transcript text, audio, video or voice embeddings. Only accounts that joined the meeting can open its report. Your browser connection statistics and receiver checks are visible only to your own account.</li>
+    <li>Automatic latency checks estimate speech ending from incoming audio energy and detect translated audio in your browser. Only timing observations and uncertainty are retained, not waveform samples. These observations are private to your account and do not prove physical speaker output.</li>
+    <li>This deployment does not automatically record meeting audio or video. Other participants may independently record what they hear or see.</li>
+    <li>Infrastructure services may retain operational and security logs under their configured retention policies.</li>
+  </ul>
+  <h2>Your controls</h2>
+  <p>You can decline microphone or camera permission, mute, leave a meeting and sign out. Ask the workspace owner to remove stored account information using the support contact displayed on the Google consent screen. Signing out or revoking Google access does not automatically delete records already stored by the workspace.</p>
+  <h2>Before using sensitive information</h2>
+  <p>Charcha is a demonstration. Use ordinary test conversations while access controls and two-device behaviour are being verified. Microphone processing begins when you join with consent and unmute.</p>
+</main>
+</body>
+</html>

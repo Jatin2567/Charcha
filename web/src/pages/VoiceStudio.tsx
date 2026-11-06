@@ -10,7 +10,7 @@ export function VoiceStudio() {
       <PageHeading
         eyebrow="THE HUMAN PART OF EVERY CONVERSATION"
         title="A voice that feels like you."
-        description="Optional personal voice enrollment. Always your choice, always with consent."
+        description="Set up your own voice for interpreted meetings, with your consent. Your profile lasts only for this meeting."
         action={
           membership ? (
             <Link className="button secondary" to={`/room/${membership.room.code}`}>
@@ -24,7 +24,7 @@ export function VoiceStudio() {
         <section className="panel">
           <div className="panel-head">
             <h2>Your voice reference</h2>
-            <Badge tone="orange">Optional</Badge>
+            <Badge tone="neutral">Meeting voice</Badge>
           </div>
           <p className="panel-intro">
             Record 5–30 seconds of natural speech. A quiet room and your normal speaking voice work
@@ -81,9 +81,9 @@ export function VoiceStudio() {
       </div>
       <div className="voice-assurance">
         <Leaf size={16} />
-        <span>Standard voices are always available.</span>
+        <span>Your voice is used for interpreted speech.</span>
         <Check size={14} />
-        <span>Enrollment is optional.</span>
+        <span>You can listen without enrolling. Voice setup is required to speak in interpreted meetings.</span>
       </div>
     </>
   );

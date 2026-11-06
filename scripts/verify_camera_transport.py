@@ -21,8 +21,8 @@ sys.path.insert(0, str(ROOT / "server"))
 
 from livekit import rtc
 
-from artha_mesh.config import Settings
-from artha_mesh.transport.tokens import room_token
+from charcha.config import Settings
+from charcha.transport.tokens import room_token
 
 
 async def run(diagnostics):

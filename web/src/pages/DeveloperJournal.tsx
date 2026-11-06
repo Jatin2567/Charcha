@@ -121,7 +121,7 @@ export function DeveloperJournal() {
         action={
           <button
             className="button secondary"
-            onClick={() => downloadJson('artha-mesh-development.json', journalReport(entries))}
+            onClick={() => downloadJson('charcha-development.json', journalReport(entries))}
           >
             <Download size={16} />
             Export notes

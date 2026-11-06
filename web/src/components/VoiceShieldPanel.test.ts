@@ -60,6 +60,7 @@ const render = (
     createElement(VoiceShieldPanel, {
       samples,
       participants: [participant],
+      onViewPerformance: () => {},
       connected,
       status,
       demo,

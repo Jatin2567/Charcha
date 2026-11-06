@@ -82,12 +82,13 @@ export function ConferenceStatus({
               : report.mode === 'transport'
                 ? 'Original audio'
                 : report.provider_flow.required
-                  ? 'Standard-voice interpretation'
+                  ? 'Live interpretation'
                   : 'No speech service required'}
         </Badge>
       </div>
       {!stale && report?.provider_flow.status === 'approved' && report.provider_flow.required && (
-        <p className="conference-window">{timeLeft(seconds)} · No automatic renewal</p>
+        <p className="conference-window">{report.provider_flow.authorization === 'host_budget'
+          ? 'Interpretation enabled by your host' : timeLeft(seconds) + ' · No automatic renewal'}</p>
       )}
       <div className="conference-status-actions">
         {stale ? (

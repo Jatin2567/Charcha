@@ -21,18 +21,24 @@ export async function request<T>(
   timeoutMs = 12000,
 ): Promise<T> {
   const controller = new AbortController();
+  const callerAbort = () => controller.abort(options.signal?.reason);
+  if (options.signal?.aborted) callerAbort();
+  else options.signal?.addEventListener('abort', callerAbort, { once: true });
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
     const response = await fetch(`${API_BASE}${path}`, {
       ...options,
+      credentials: 'same-origin',
       signal: controller.signal,
       headers: {
+        'X-Charcha-Request': '1',
         ...(options.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }),
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...options.headers,
       },
     });
     if (!response.ok) {
+      if (response.status === 401 && path !== '/account') window.dispatchEvent(new Event('charcha-sign-in-required'));
       let message = `Request failed (${response.status}).`;
       try {
         const body = await response.json();
@@ -47,11 +53,13 @@ export async function request<T>(
     }
     return response.json() as Promise<T>;
   } catch (error) {
+    if (options.signal?.aborted) throw error;
     if (error instanceof DOMException && error.name === 'AbortError')
       throw new Error('The service took too long to respond. Please try again.');
     throw error;
   } finally {
     clearTimeout(timer);
+    options.signal?.removeEventListener('abort', callerAbort);
   }
 }
 export async function checkHealth(): Promise<Health> {
@@ -76,7 +84,7 @@ export async function checkHealth(): Promise<Health> {
           typeof provider.detail !== 'string',
       )
     )
-      throw new Error('This endpoint is not an Artha Mesh workspace service.');
+      throw new Error('This endpoint is not an Charcha workspace service.');
     fallback = false;
     return result;
   } catch {
@@ -88,10 +96,10 @@ export async function checkHealth(): Promise<Health> {
     return { status: 'local', mode: 'demo', providers: [], languages: [], version: '1.0.0' };
   }
 }
-export const createRoom = (title: string): Promise<Room> =>
+export const createRoom = (title: string, audioMode?: 'original' | 'interpreted'): Promise<Room> =>
   fallback
     ? Promise.resolve(createDemoRoom(title))
-    : request('/rooms', { method: 'POST', body: JSON.stringify({ title }) });
+    : request('/rooms', { method: 'POST', body: JSON.stringify({ title, audio_mode: audioMode }) });
 export const getRoom = (code: string): Promise<Room> =>
   fallback ? Promise.resolve(getDemoRoom(code)) : request(`/rooms/${encodeURIComponent(code)}`);
 export const joinRoom = (
@@ -101,6 +109,7 @@ export const joinRoom = (
   voice_mode: VoiceMode,
   consent: boolean,
   profile?: string,
+  screeningConsent = false,
 ): Promise<Membership> =>
   fallback
     ? Promise.resolve(joinDemo(code, name, language, voice_mode))
@@ -108,7 +117,8 @@ export const joinRoom = (
         `/rooms/${encodeURIComponent(code)}/join`,
         {
           method: 'POST',
-          body: JSON.stringify({ name, language, voice_mode, consent, voice_profile_id: profile }),
+          body: JSON.stringify({ name, language, voice_mode, consent, voice_profile_id: profile,
+            ...(screeningConsent ? { screening_consent: true } : {}) }),
         },
         undefined,
         35000,
@@ -153,6 +163,11 @@ export const confirmTurn = (m: Membership, id: string) =>
     `/rooms/${m.room.code}/confirmations`,
     { method: 'POST', body: JSON.stringify({ utterance_id: id }) },
     m.session_token,
+  );
+export const correctTurn = (m: Membership, id: string, text: string) =>
+  request<{ utterance_id: string }>(
+    `/rooms/${encodeURIComponent(m.room.code)}/turns/${encodeURIComponent(id)}/correct`,
+    { method: 'POST', body: JSON.stringify({ text }) }, m.session_token,
   );
 export async function uploadVoice(blob: Blob, name: string, m: Membership): Promise<VoiceProfile> {
   if (m.localDemo)

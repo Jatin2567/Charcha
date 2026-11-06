@@ -13,11 +13,11 @@ import httpx
 import pytest
 from pydantic import ValidationError
 
-from artha_mesh.config import Settings
-from artha_mesh.errors import ProviderError
-from artha_mesh.providers.evon import EvonTranslator
-from artha_mesh.providers.gnani import GnaniSpeech
-from artha_mesh.services.usage import UsageGuard
+from charcha.config import Settings
+from charcha.errors import ProviderError
+from charcha.providers.evon import EvonTranslator
+from charcha.providers.gnani import GnaniSpeech
+from charcha.services.usage import UsageGuard, provider_flow, provider_room
 
 
 def settings(**values):
@@ -31,6 +31,50 @@ def approve(guard, budgets=None, **values):
 
 def row(guard, key):
     return next(resource for resource in guard.snapshot()["resources"] if resource["key"] == key)
+
+
+def test_room_and_queued_turns_share_only_the_original_approval():
+    guard = UsageGuard(settings(usage_require_room_scope=True))
+    first, second = "abcdef012345", "abcdef012346"
+    params = dict(purpose="live_interpretation", seconds=30,
+                  budgets={key: 20 for key in ("stt_seconds", "stt_connections", "mt_requests",
+                                                "mt_characters", "tts_requests", "tts_characters")})
+    queued_before = guard.queued_turn_flow(first)
+    with pytest.raises(ValueError, match="meeting code"):
+        guard.approve_flow(**params)
+    flow = guard.approve_flow(room_code=first.upper(), **params)
+    assert guard.conference_capacity(1, room_code=second)["status"] == "locked"
+    assert guard.conference_capacity(1, room_code=first)["status"] == "approved"
+    assert "room_digest" not in guard.public_snapshot()["programme"]["flows"][0]
+    with pytest.raises(ProviderError):
+        guard.reserve({"mt_requests": 1})
+    with provider_room(second), pytest.raises(ProviderError):
+        guard.reserve({"stt_seconds": 1})
+    with provider_room(first), provider_flow(queued_before), pytest.raises(ProviderError):
+        guard.reserve({"tts_requests": 1})
+    queued_during = guard.queued_turn_flow(first)
+    assert queued_during == flow["id"]
+    with provider_room(first), provider_flow(queued_during):
+        guard.reserve({"mt_requests": 1})
+    used = guard.inspect_flow(flow["id"])["used"]
+    assert sum(used.values()) == used["mt_requests"] == 1
+    guard.close_flow(flow["id"])
+    next_flow = guard.approve_flow(room_code=first, **params)
+    with provider_room(first), provider_flow(queued_during), pytest.raises(ProviderError):
+        guard.reserve({"tts_requests": 1})
+    assert not any(guard.inspect_flow(next_flow["id"])["used"].values())
+
+
+def test_unscoped_grant_cannot_open_a_strict_meeting_after_restart():
+    guard = UsageGuard(settings())
+    flow = guard.approve_flow(purpose="live_interpretation", seconds=30, budgets={"mt_requests": 5})
+    guard.close()
+    strict = UsageGuard(settings(usage_require_room_scope=True))
+    with provider_room("abcdef123456"), pytest.raises(ProviderError):
+        strict.reserve({"mt_requests": 1})
+    with strict.bind_flow(flow["id"]):
+        strict.reserve({"mt_requests": 1})
+    assert strict.inspect_flow(flow["id"])["used"]["mt_requests"] == 1
 
 
 def test_approval_is_default_and_no_grant_blocks_without_daily_debit(monkeypatch):
@@ -165,7 +209,7 @@ async def test_unapproved_adapters_never_contact_any_provider(monkeypatch):
         raise AssertionError("Unapproved provider call")
 
     translator.client = httpx.AsyncClient(transport=httpx.MockTransport(forbidden))
-    monkeypatch.setattr("artha_mesh.providers.gnani.websockets.connect", forbidden)
+    monkeypatch.setattr("charcha.providers.gnani.websockets.connect", forbidden)
     await speech.client.aclose()
     speech.client = httpx.AsyncClient(transport=httpx.MockTransport(forbidden))
 
@@ -213,7 +257,7 @@ async def test_stt_ticker_closes_socket_when_flow_seconds_exhausted(monkeypatch)
     guard = UsageGuard(settings())
     flow = approve(guard, {"stt_connections": 1, "stt_seconds": 1})
     speech, socket = GnaniSpeech(guard.settings, guard), Socket()
-    monkeypatch.setattr("artha_mesh.providers.gnani.websockets.connect", lambda *_a, **_kw: socket)
+    monkeypatch.setattr("charcha.providers.gnani.websockets.connect", lambda *_a, **_kw: socket)
 
     async def audio():
         yield b"\x00" * 1024

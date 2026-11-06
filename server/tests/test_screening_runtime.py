@@ -6,7 +6,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from artha_mesh.services.screening_runtime import ScreeningGate, ScreeningRuntime
+from charcha.services.screening_runtime import RoomScreening, ScreeningGate, ScreeningRuntime
 
 
 class ControlledRuntime:
@@ -40,6 +40,34 @@ def fixture_gate(runtime):
     return ScreeningGate(runtime, on_audio, on_result, lambda: active[0]), audio, results, active
 
 
+async def test_switch_during_audio_keeps_forwarding_and_discards_old_windows():
+    runtime = ControlledRuntime()
+    room = SimpleNamespace(screening_mode="off")
+    gate, audio, results, _ = fixture_gate(RoomScreening(runtime, room))
+    pcm = b"\x02\x00" * 320
+    try:
+        await gate.feed(pcm)
+        assert runtime.inputs == []
+        room.screening_mode = "monitor"
+        gate.reset(cancel_analysis=True)
+        await gate.feed(pcm)
+        await asyncio.wait_for(runtime.started.wait(), 1)
+        room.screening_mode = "off"
+        gate.reset(cancel_analysis=True)
+        await gate.feed(pcm)
+        await asyncio.wait_for(gate.queue.join(), 1)
+        assert results == [] and len(runtime.inputs) == 1
+        room.screening_mode = "monitor"
+        gate.reset(cancel_analysis=True)
+        runtime.release.set()
+        await gate.feed(pcm)
+        await asyncio.wait_for(gate.queue.join(), 1)
+        assert len(results) == 1 and results[0]["mode"] == "monitor"
+        assert audio == [pcm] * 4 and len(runtime.inputs) == 2
+    finally:
+        await gate.close()
+
+
 async def test_monitor_forwards_immediately_while_model_runs():
     runtime = ControlledRuntime(mode="monitor", verdict="suspicious")
     gate, audio, results, _ = fixture_gate(runtime)
@@ -54,6 +82,26 @@ async def test_monitor_forwards_immediately_while_model_runs():
         assert results[0]["action"] == "observed"
         assert results[0]["hold_ms"] == 0
         assert audio == [pcm]
+    finally:
+        await gate.close()
+
+
+async def test_reset_discards_pre_mute_audio_and_late_verdict():
+    runtime = ControlledRuntime(mode="monitor")
+    gate, _, results, _ = fixture_gate(runtime)
+    frame = bytes(640)
+    try:
+        await gate.feed(frame)
+        await runtime.started.wait()
+        await gate.feed(frame + frame[:320])
+        gate.reset()
+        runtime.release.set()
+        await gate.queue.join()
+        await gate.feed(frame[:320])
+        assert not results and len(gate.buffer) == 320
+        await gate.feed(frame[320:])
+        await gate.queue.join()
+        assert len(results) == 1
     finally:
         await gate.close()
 
@@ -209,7 +257,7 @@ async def test_result_consumer_failure_keeps_worker_alive_and_enforce_closed():
 
 
 async def test_cpu_slots_remain_held_after_repeated_cancellation(monkeypatch):
-    import artha_mesh.services.screening_runtime as module
+    import charcha.services.screening_runtime as module
 
     release = threading.Event()
     lock = threading.Lock()

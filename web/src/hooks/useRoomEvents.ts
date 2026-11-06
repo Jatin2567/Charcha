@@ -17,8 +17,8 @@ export function useRoomEvents(m: Membership) {
     }
     let disposed = false;
     const ws = new WebSocket(websocketUrl(m.room.code), [
-      'artha-events',
-      `artha-token.${m.session_token}`,
+      'charcha-events',
+      `charcha-token.${m.session_token}`,
     ]);
     socket.current = ws;
     ws.onopen = () => {
@@ -64,6 +64,8 @@ export function useRoomEvents(m: Membership) {
         return;
       }
       const turn = makeDemoTurn(index++);
+      turn.listeners_recorded = true;
+      turn.listeners = turn.speaker_id === m.participant.id ? {} : { [m.participant.id]: m.participant.name };
       dispatch(demoEvent('transcript.final', { turn }));
     };
     next();

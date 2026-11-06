@@ -1,7 +1,7 @@
 import { TEST_SCENARIOS, TEST_STAGES } from '../data/testLab';
 import type { TestStageId } from '../data/testLab';
 
-export const TEST_LAB_STORAGE_KEY = 'artha.test-lab.v1';
+export const TEST_LAB_STORAGE_KEY = 'charcha.test-lab.v1';
 export type TestOutcome = 'pending' | 'pass' | 'fail' | 'blocked';
 export interface TestObservation {
   stage: TestStageId;

@@ -17,10 +17,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "server"))
 
 from livekit import rtc
 
-from artha_mesh.config import Settings
-from artha_mesh.main import create_app
-from artha_mesh.models import JoinRoom, UpdateParticipant
-from artha_mesh.providers.gnani import Transcript
+from charcha.config import Settings
+from charcha.main import create_app
+from charcha.models import JoinRoom, UpdateParticipant
+from charcha.providers.gnani import Transcript
 
 
 class TestProviders:

@@ -156,7 +156,7 @@ beforeEach(() => {
     throw new Error('Analysis unavailable');
   });
   vi.stubGlobal('BroadcastChannel', undefined);
-  vi.stubGlobal('window', { setInterval: vi.fn(() => 1001), setTimeout });
+  vi.stubGlobal('window', Object.assign(new EventTarget(), { setInterval: vi.fn(() => 1001), setTimeout }));
   vi.stubGlobal('document', { body: { appendChild: vi.fn() } });
 });
 afterEach(async () => {
