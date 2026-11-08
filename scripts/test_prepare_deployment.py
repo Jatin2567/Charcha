@@ -23,9 +23,9 @@ class DeploymentPreparationTests(unittest.TestCase):
         self.config_path = self.base / "inputs.json"
         self.env_path = self.base / "provider.env"
         self.output = self.base / "generated"
-        self.inputs = {"app_domain": "meet.artha-fixture.in", "livekit_domain": "rtc.artha-fixture.in", "turn_domain": "turn.artha-fixture.in", "public_ipv4": "8.8.4.4"}
+        self.inputs = {"app_domain": "meet.charcha-fixture.in", "livekit_domain": "rtc.charcha-fixture.in", "turn_domain": "turn.charcha-fixture.in", "public_ipv4": "8.8.4.4"}
         self.config_path.write_text(json.dumps(self.inputs), encoding="utf-8")
-        self.env_path.write_text("ARTHA_MODE=demo\nGNANI_API_KEY=private-$literal-gnani\nEVON_BASE_URL=https://evon.artha-fixture.in/v1\nEVON_MODEL=actual-evon-served-id\nEVON_API_KEY=private-evon\nLIVEKIT_API_SECRET=must-not-be-reused\n", encoding="utf-8")
+        self.env_path.write_text("CHARCHA_MODE=demo\nGNANI_API_KEY=private-$literal-gnani\nEVON_BASE_URL=https://evon.charcha-fixture.in/v1\nEVON_MODEL=actual-evon-served-id\nEVON_API_KEY=private-evon\nLIVEKIT_API_SECRET=must-not-be-reused\n", encoding="utf-8")
 
     def prepare(self):
         return prepare(self.config_path, self.env_path, self.output)
@@ -42,10 +42,10 @@ class DeploymentPreparationTests(unittest.TestCase):
     def test_live_configuration_and_private_internal_urls(self):
         self.prepare()
         env = read_env(self.output / "api.env", raw=True)
-        self.assertEqual(env["ARTHA_MODE"], "live")
-        self.assertEqual(env["LIVEKIT_URL"], "wss://rtc.artha-fixture.in")
+        self.assertEqual(env["CHARCHA_MODE"], "live")
+        self.assertEqual(env["LIVEKIT_URL"], "wss://rtc.charcha-fixture.in")
         self.assertEqual(env["LIVEKIT_INTERNAL_URL"], "ws://127.0.0.1:7880")
-        self.assertEqual(env["CORS_ORIGINS"], "https://meet.artha-fixture.in")
+        self.assertEqual(env["CORS_ORIGINS"], "https://meet.charcha-fixture.in")
         self.assertEqual(env["USAGE_DB_PATH"], "/app/data/usage.sqlite3")
         self.assertEqual(env["USAGE_REQUIRE_FLOW_APPROVAL"], "true")
         self.assertEqual(env["USAGE_SHOW_PRIVATE_BALANCE"], "false")
@@ -59,19 +59,19 @@ class DeploymentPreparationTests(unittest.TestCase):
         server = caddy["apps"]["layer4"]["servers"]["main"]
         self.assertEqual(server["listen"], [":443"])
         routes = server["routes"]
-        self.assertEqual([r["match"][0]["tls"]["sni"][0] for r in routes], ["turn.artha-fixture.in", "rtc.artha-fixture.in", "meet.artha-fixture.in"])
+        self.assertEqual([r["match"][0]["tls"]["sni"][0] for r in routes], ["turn.charcha-fixture.in", "rtc.charcha-fixture.in", "meet.charcha-fixture.in"])
         self.assertEqual([r["handle"][1]["upstreams"][0]["dial"][0] for r in routes], ["127.0.0.1:5349", "127.0.0.1:7880", "127.0.0.1:8080"])
         self.assertEqual(routes[2]["handle"][0]["connection_policies"][0]["alpn"], ["http/1.1"])
         livekit = (self.output / "livekit.yaml").read_text()
         self.assertIn("development: false", livekit)
         self.assertIn("bind_addresses: [127.0.0.1]", livekit)
         self.assertIn("external_tls: true", livekit)
-        self.assertIn('stun_servers: ["turn.artha-fixture.in:3478"]', livekit)
+        self.assertIn('stun_servers: ["turn.charcha-fixture.in:3478"]', livekit)
         self.assertIn("use_external_ip: false", livekit)
 
     def test_modal_credentials_and_language_voice_overrides_survive_preparation(self):
         values = ("GNANI_API_KEY=private-gnani\nEVON_MODEL=evon\n"
-                  "EVON_BASE_URL=https://owned-artha-serve.modal.run/v1\n"
+                  "EVON_BASE_URL=https://owned-charcha-serve.modal.run/v1\n"
                   "EVON_MODAL_KEY=private-$literal-modal-key\nEVON_MODAL_SECRET=private-modal-secret\n"
                   "TIMBRE_VOICE_HI=Nalini\nTIMBRE_VOICE_TA=Trisha\nTIMBRE_VOICE_BN=Kirra\n"
                   "TIMBRE_VOICE_TE=Suhana\nTIMBRE_VOICE_MR=Zahira\nUSAGE_MAX_CONCURRENT_STT=5\n"
@@ -91,7 +91,7 @@ class DeploymentPreparationTests(unittest.TestCase):
         for endpoint, key, secret in [
             ("https://owned.modal.run/v1", "private-key", ""),
             ("https://owned.modal.run/v1", "", "private-secret"),
-            ("https://evon.artha-fixture.in/v1", "private-key", "private-secret"),
+            ("https://evon.charcha-fixture.in/v1", "private-key", "private-secret"),
             ("http://127.0.0.1:8001/v1", "private-key", "private-secret"),
             ("https://owned.modal.run:8443/v1", "private-key", "private-secret"),
             ("https://owned.modal.run/v1", "private key", "private-secret"),
@@ -127,7 +127,7 @@ class DeploymentPreparationTests(unittest.TestCase):
                     self.prepare()
                 self.assertEqual(str(caught.exception), "GNANI_STT_MODEL requires prisma-v2.5 or prisma-v3.0, or leave it unset.")
                 self.assertFalse(self.output.exists())
-                self.assertEqual(list(self.base.glob(".artha-prepare-*")), [])
+                self.assertEqual(list(self.base.glob(".charcha-prepare-*")), [])
 
     def test_host_network_single_worker_persistence_and_literal_secrets(self):
         self.prepare()
@@ -143,13 +143,13 @@ class DeploymentPreparationTests(unittest.TestCase):
         self.assertEqual(compose["volumes"]["usage-ledger"]["name"], "artha-mesh-usage-ledger")
 
     def test_missing_credential_writes_nothing(self):
-        self.env_path.write_text("GNANI_API_KEY=secret\nEVON_BASE_URL=https://evon.artha-fixture.in/v1\n")
+        self.env_path.write_text("GNANI_API_KEY=secret\nEVON_BASE_URL=https://evon.charcha-fixture.in/v1\n")
         with self.assertRaisesRegex(PreparationError, "EVON_MODEL"):
             self.prepare()
         self.assertFalse(self.output.exists())
 
     def test_invalid_domains_rejected(self):
-        for domain in ["http://meet.artha-fixture.in", "*.artha-fixture.in", "localhost", "meet.artha-fixture.in\nother", "-bad.artha-fixture.in", "meet.example.com", "meet.example.net", "meet.example.org", "meet.internal", "meet.local", "meet.test", "meet.invalid", "meet.example"]:
+        for domain in ["http://meet.charcha-fixture.in", "*.charcha-fixture.in", "localhost", "meet.charcha-fixture.in\nother", "-bad.charcha-fixture.in", "meet.example.com", "meet.example.net", "meet.example.org", "meet.internal", "meet.local", "meet.test", "meet.invalid", "meet.example"]:
             with self.subTest(domain=domain), self.assertRaises(PreparationError):
                 validate_inputs({**self.inputs, "app_domain": domain})
 
@@ -164,7 +164,7 @@ class DeploymentPreparationTests(unittest.TestCase):
                 validate_inputs({**self.inputs, "public_ipv4": address})
 
     def test_public_unencrypted_or_credential_urls_rejected(self):
-        for url in ["http://evon.artha-fixture.in/v1", "https://secret@evon.artha-fixture.in/v1", "https://evon.artha-fixture.in/v1?api_key=secret", "https://bad host.in/v1", "https://placeholder.example/v1", "https://placeholder.invalid/v1", "https://evon.example.com/v1", "https://example.org/v1", "https://example.net/v1", "https://evon.artha-fixture.in/v1 "]:
+        for url in ["http://evon.charcha-fixture.in/v1", "https://secret@evon.charcha-fixture.in/v1", "https://evon.charcha-fixture.in/v1?api_key=secret", "https://bad host.in/v1", "https://placeholder.example/v1", "https://placeholder.invalid/v1", "https://evon.example.com/v1", "https://example.org/v1", "https://example.net/v1", "https://evon.charcha-fixture.in/v1 "]:
             self.env_path.write_text(f"GNANI_API_KEY=private-secret\nEVON_MODEL=evon\nEVON_BASE_URL='{url}'\n")
             with self.subTest(url=url), self.assertRaises(PreparationError) as caught:
                 self.prepare()
@@ -173,7 +173,7 @@ class DeploymentPreparationTests(unittest.TestCase):
 
     def test_whitespace_only_credentials_or_model_rejected(self):
         for name in ["GNANI_API_KEY", "EVON_MODEL"]:
-            values = {"GNANI_API_KEY": "secret", "EVON_MODEL": "evon", "EVON_BASE_URL": "https://evon.artha-fixture.in/v1"}
+            values = {"GNANI_API_KEY": "secret", "EVON_MODEL": "evon", "EVON_BASE_URL": "https://evon.charcha-fixture.in/v1"}
             values[name] = "'   '"
             self.env_path.write_text("".join(f"{key}={value}\n" for key, value in values.items()))
             with self.subTest(name=name), self.assertRaisesRegex(PreparationError, name):
@@ -192,6 +192,26 @@ class DeploymentPreparationTests(unittest.TestCase):
         env = read_env(self.output / "api.env", raw=True)
         self.assertEqual(env["USAGE_TTS_REQUESTS_PER_DAY"], "0")
         self.assertEqual(env["USAGE_VOICE_ENROLLMENTS_PER_DAY"], "0")
+
+    def test_transport_preparation_needs_no_model_or_speech_credentials(self):
+        self.env_path.write_text("CHARCHA_MEETING_HOST_EMAIL=host@charcha-fixture.in\n", encoding="utf-8")
+        prepare(self.config_path, self.env_path, self.output, mode="transport")
+        env = read_env(self.output / "api.env", raw=True)
+        self.assertEqual(env["CHARCHA_MODE"], "transport")
+        self.assertEqual(env["CHARCHA_MEETING_HOST_EMAIL"], "host@charcha-fixture.in")
+        self.assertEqual(env["AUDIO_SCREENING_MODE"], "off")
+        self.assertEqual(check(self.output)["status"], "configuration_valid")
+
+    def test_transport_preparation_strips_existing_credentials_and_allowances(self):
+        with self.env_path.open("a", encoding="utf-8") as handle:
+            handle.write("EVON_MODAL_KEY=private-modal-key\nEVON_MODAL_SECRET=private-modal-secret\nUSAGE_TTS_REQUESTS_PER_DAY=200\n")
+        prepare(self.config_path, self.env_path, self.output, mode="transport")
+        raw = (self.output / "api.env").read_text(encoding="utf-8")
+        self.assertNotIn("private-", raw)
+        env = read_env(self.output / "api.env", raw=True)
+        self.assertTrue(all(value == "0" for key, value in env.items() if key.startswith("USAGE_") and key.endswith("_PER_DAY")))
+        self.assertTrue(all(env[key] == "" for key in ("GNANI_API_KEY", "EVON_API_KEY", "EVON_MODAL_KEY", "EVON_MODAL_SECRET", "EVON_BASE_URL", "EVON_MODEL")))
+        self.assertEqual(check(self.output)["status"], "configuration_valid")
 
     def test_invalid_credit_limit_fails_before_write(self):
         with self.env_path.open("a") as handle:
@@ -253,7 +273,7 @@ class DeploymentPreparationTests(unittest.TestCase):
             self.assertEqual(stat.S_IMODE(path.stat().st_mode), 0o600)
 
     def test_cli_never_prints_provider_values(self):
-        self.env_path.write_text("GNANI_API_KEY=do-not-print-this\nEVON_BASE_URL=https://evon.artha-fixture.in/v1\n")
+        self.env_path.write_text("GNANI_API_KEY=do-not-print-this\nEVON_BASE_URL=https://evon.charcha-fixture.in/v1\n")
         stdout, stderr = io.StringIO(), io.StringIO()
         with patch.object(sys, "argv", ["prepare", "--config", str(self.config_path), "--env-file", str(self.env_path), "--output", str(self.output)]), contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
             result = main()

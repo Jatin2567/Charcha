@@ -1,0 +1,82 @@
+{
+  "realm": "charcha",
+  "displayName": "Charcha",
+  "enabled": true,
+  "sslRequired": "external",
+  "loginWithEmailAllowed": true,
+  "registrationAllowed": false,
+  "resetPasswordAllowed": false,
+  "verifyEmail": true,
+  "editUsernameAllowed": false,
+  "duplicateEmailsAllowed": false,
+  "passwordPolicy": "length(15) and notUsername and notEmail and passwordHistory(5)",
+  "bruteForceProtected": true,
+  "permanentLockout": false,
+  "failureFactor": 5,
+  "accessTokenLifespan": 300,
+  "ssoSessionIdleTimeout": 1800,
+  "ssoSessionMaxLifespan": 14400,
+  "clients": [
+    {
+      "clientId": "charcha-web",
+      "name": "Charcha",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "${CHARCHA_AUTH_CLIENT_SECRET}",
+      "standardFlowEnabled": true,
+      "frontchannelLogout": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": [
+        "${CHARCHA_PUBLIC_ORIGIN}/api/account/callback"
+      ],
+      "webOrigins": [
+        "${CHARCHA_PUBLIC_ORIGIN}"
+      ],
+      "defaultClientScopes": [
+        "basic",
+        "profile",
+        "email"
+      ],
+      "attributes": {
+        "access.token.lifespan": "14400",
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "${CHARCHA_PUBLIC_ORIGIN}/",
+        "backchannel.logout.url": "${CHARCHA_PUBLIC_ORIGIN}/api/account/backchannel-logout",
+        "backchannel.logout.session.required": "true"
+      },
+      "protocolMappers": [
+        {
+          "name": "authentication-methods",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-amr-mapper",
+          "config": {
+            "claim.name": "amr",
+            "id.token.claim": "true",
+            "access.token.claim": "false"
+          }
+        }
+      ]
+    }
+  ],
+  "identityProviders": [
+    {
+      "alias": "google",
+      "displayName": "Google",
+      "providerId": "google",
+      "enabled": true,
+      "trustEmail": true,
+      "storeToken": false,
+      "firstBrokerLoginFlowAlias": "first broker login",
+      "config": {
+        "clientId": "${GOOGLE_CLIENT_ID}",
+        "clientSecret": "${GOOGLE_CLIENT_SECRET}",
+        "defaultScope": "openid email profile",
+        "syncMode": "IMPORT"
+      }
+    }
+  ]
+}

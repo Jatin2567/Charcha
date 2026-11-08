@@ -51,6 +51,9 @@ PROVIDER_DEFAULTS = {
 }
 STOCK_VOICE_KEYS = {"TIMBRE_VOICE_" + language for language in ("HI", "TA", "BN", "EN", "TE", "KN", "ML", "MR", "GU", "PA")}
 PROVIDER_KEYS = {"GNANI_API_KEY", "GNANI_STT_MODEL", "EVON_BASE_URL", "EVON_MODEL", "EVON_API_KEY",
+                 "CHARCHA_AUTH_DOMAIN", "CHARCHA_AUTH_CLIENT_ID", "CHARCHA_AUTH_CLIENT_SECRET",
+                 "CHARCHA_IDENTITY_PROVIDER", "CHARCHA_OIDC_ISSUER",
+                 "CHARCHA_ADMIN_SUBJECT", "CHARCHA_ADMIN_CONNECTION", "CHARCHA_MEETING_HOST_EMAIL",
                  "EVON_MODAL_KEY", "EVON_MODAL_SECRET", *STOCK_VOICE_KEYS,
                  *PROVIDER_DEFAULTS, *BOUNDS, *FLOAT_BOUNDS, *REFERENCE_PRICES}
 
@@ -140,18 +143,27 @@ def validate_url(name: str, value: str, *, websocket: bool = False, private_http
     raise PreparationError(f"{name} requires {secure}; private Evon HTTP is allowed only on a trusted private network.")
 
 
-def runtime_env(config: dict[str, str], supplied: dict[str, str], api_key: str, api_secret: str) -> dict[str, str]:
+def runtime_env(config: dict[str, str], supplied: dict[str, str], api_key: str, api_secret: str, *, mode: str = "live") -> dict[str, str]:
+    if mode not in {"live", "transport"}:
+        raise PreparationError("Deployment mode must be live or transport.")
     settings = dict(PROVIDER_DEFAULTS)
     settings.update({name: value for name, value in supplied.items() if name in PROVIDER_KEYS and value != ""})
+    if mode == "transport":
+        # The first hosted audio test has no inference clients, secrets or allowance.
+        settings = {name: value for name, value in settings.items()
+                    if not name.startswith(("GNANI_", "EVON_", "TIMBRE_", "VOICE_CLONE_"))}
+        for name in BOUNDS:
+            if name.startswith("USAGE_") and name.endswith("_PER_DAY"):
+                settings[name] = "0"
     if "GNANI_STT_MODEL" in settings:
         if not settings["GNANI_STT_MODEL"].strip():
             settings.pop("GNANI_STT_MODEL")
         elif settings["GNANI_STT_MODEL"] not in {"prisma-v2.5", "prisma-v3.0"}:
             raise PreparationError("GNANI_STT_MODEL requires prisma-v2.5 or prisma-v3.0, or leave it unset.")
-    for name in ("GNANI_API_KEY", "EVON_BASE_URL", "EVON_MODEL"):
+    for name in (("GNANI_API_KEY", "EVON_BASE_URL", "EVON_MODEL") if mode == "live" else ()):
         if not settings.get(name, "").strip():
             raise PreparationError(f"{name} is required in the server environment file.")
-    for name in ("GNANI_STT_URL", "GNANI_TTS_URL", "GNANI_EMBEDDING_URL", "EVON_BASE_URL"):
+    for name in (("GNANI_STT_URL", "GNANI_TTS_URL", "GNANI_EMBEDDING_URL", "EVON_BASE_URL") if mode == "live" else ()):
         validate_url(name, settings[name], websocket=name in {"GNANI_STT_URL", "GNANI_TTS_URL"}, private_http=name == "EVON_BASE_URL")
     modal_key, modal_secret = settings.get("EVON_MODAL_KEY", ""), settings.get("EVON_MODAL_SECRET", "")
     if modal_key or modal_secret:
@@ -186,12 +198,16 @@ def runtime_env(config: dict[str, str], supplied: dict[str, str], api_key: str, 
                 raise PreparationError(f"{name} requires a finite nonnegative reference rate.")
             settings[name] = str(amount)
     settings.update({
-        "ARTHA_MODE": "live", "CORS_ORIGINS": f"https://{config['app_domain']}",
+        "CHARCHA_PUBLIC_ORIGIN": f"https://{config['app_domain']}",
+        "CHARCHA_MODE": mode, "CORS_ORIGINS": f"https://{config['app_domain']}",
         "LIVEKIT_URL": f"wss://{config['livekit_domain']}", "LIVEKIT_INTERNAL_URL": "ws://127.0.0.1:7880",
         "LIVEKIT_API_KEY": api_key, "LIVEKIT_API_SECRET": api_secret,
         "USAGE_DB_PATH": "/app/data/usage.sqlite3",
         "USAGE_REQUIRE_FLOW_APPROVAL": "true", "USAGE_SHOW_PRIVATE_BALANCE": "false",
     })
+    if mode == "transport":
+        settings.update({name: "" for name in ("GNANI_API_KEY", "EVON_BASE_URL", "EVON_MODEL", "EVON_API_KEY", "EVON_MODAL_KEY", "EVON_MODAL_SECRET")})
+        settings.update(AUDIO_SCREENING_MODE="off", LOCAL_AUDIO_LAB_ENABLED="false")
     return settings
 
 
@@ -233,12 +249,12 @@ def render(config: dict[str, str], settings: dict[str, str], output: Path, proje
     logging = {"driver": "json-file", "options": {"max-size": "10m", "max-file": "3"}}
     common = {"network_mode": "host", "restart": "unless-stopped", "logging": logging, "stop_grace_period": "30s"}
     compose = {
-        "name": "artha-mesh-production",
+        "name": "charcha-production",
         "services": {
             "livekit": {**common, "image": "livekit/livekit-server:v1.9.1", "command": ["--config", "/etc/livekit.yaml"], "volumes": ["./livekit.yaml:/etc/livekit.yaml:ro"]},
             "api": {
                 **common, "build": {"context": root_relative, "dockerfile": "Dockerfile.api"},
-                "command": ["uvicorn", "artha_mesh.main:app", "--host", "127.0.0.1", "--port", "8000", "--workers", "1", "--no-access-log", "--log-level", "warning", "--proxy-headers", "--forwarded-allow-ips", "127.0.0.1"],
+                "command": ["uvicorn", "charcha.main:app", "--host", "127.0.0.1", "--port", "8000", "--workers", "1", "--no-access-log", "--log-level", "warning", "--proxy-headers", "--forwarded-allow-ips", "127.0.0.1"],
                 "env_file": [{"path": "./api.env", "format": "raw"}], "volumes": ["usage-ledger:/app/data"],
                 "cap_drop": ["ALL"], "security_opt": ["no-new-privileges:true"],
                 "depends_on": {"livekit": {"condition": "service_started"}},
@@ -264,15 +280,15 @@ def render(config: dict[str, str], settings: dict[str, str], output: Path, proje
     }
 
 
-def prepare(config_path: Path, env_path: Path, output: Path = DEFAULT_OUTPUT, project_root: Path = PROJECT_ROOT) -> dict:
+def prepare(config_path: Path, env_path: Path, output: Path = DEFAULT_OUTPUT, project_root: Path = PROJECT_ROOT, *, mode: str = "live") -> dict:
     config = validate_inputs(json.loads(config_path.read_text(encoding="utf-8-sig")))
     supplied = read_env(env_path)
-    settings = runtime_env(config, supplied, "API" + secrets.token_hex(12), secrets.token_urlsafe(48))
+    settings = runtime_env(config, supplied, "API" + secrets.token_hex(12), secrets.token_urlsafe(48), mode=mode)
     if output.exists():
         raise PreparationError("Output directory already exists. Preserve it and its keys; choose a new --output path for a separate deployment.")
     output.parent.mkdir(parents=True, exist_ok=True)
     # Atomic directory rename prevents a partially written stack. No overwriting or implicit key rotation.
-    with tempfile.TemporaryDirectory(prefix=".artha-prepare-", dir=output.parent) as temporary:
+    with tempfile.TemporaryDirectory(prefix=".charcha-prepare-", dir=output.parent) as temporary:
         staged = Path(temporary) / "generated"
         staged.mkdir(mode=0o700)
         for name, content in render(config, settings, output, project_root).items():
@@ -295,7 +311,7 @@ def check(output: Path = DEFAULT_OUTPUT, project_root: Path = PROJECT_ROOT) -> d
     api_key, api_secret = supplied.get("LIVEKIT_API_KEY", ""), supplied.get("LIVEKIT_API_SECRET", "")
     if not re.fullmatch(r"API[a-f0-9]{24}", api_key) or not re.fullmatch(r"[A-Za-z0-9_-]{64}", api_secret):
         raise PreparationError("Generated LiveKit credentials are missing or invalid.")
-    expected = render(config, runtime_env(config, supplied, api_key, api_secret), output, project_root)
+    expected = render(config, runtime_env(config, supplied, api_key, api_secret, mode=supplied.get("CHARCHA_MODE", "live")), output, project_root)
     for name, content in expected.items():
         path = output / name
         if path.is_symlink() or path.read_text(encoding="utf-8") != content:
@@ -313,6 +329,7 @@ def main() -> int:
     parser.add_argument("--env-file", type=Path, default=PROJECT_ROOT / "server" / ".env", help="Private server environment file")
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--check", action="store_true", help="Check an existing generated stack offline")
+    parser.add_argument("--mode", choices=["live", "transport"], default="live", help="transport disables inference and prepares original-audio meetings")
     args = parser.parse_args()
     try:
         if args.check:
@@ -320,7 +337,7 @@ def main() -> int:
         else:
             if not args.config:
                 parser.error("--config is required when preparing a deployment")
-            result = prepare(args.config, args.env_file, Path(os.path.abspath(args.output)))
+            result = prepare(args.config, args.env_file, Path(os.path.abspath(args.output)), mode=args.mode)
         print(json.dumps(result))
         return 0
     except PreparationError as error:

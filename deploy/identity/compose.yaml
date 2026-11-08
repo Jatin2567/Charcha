@@ -1,0 +1,49 @@
+# Run on the same India-region Linux host as the API and LiveKit.
+# Provide a private .env using identity.env.example and keep the data volumes.
+services:
+  identity-db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: charcha
+      POSTGRES_USER: charcha
+      POSTGRES_PASSWORD: ${CHARCHA_IDENTITY_DB_PASSWORD:?Set the private database password}
+    volumes:
+      - identity-db:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U charcha -d charcha]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks: [identity]
+  identity:
+    image: quay.io/keycloak/keycloak:26.7.5
+    command: [start, --import-realm]
+    restart: unless-stopped
+    depends_on:
+      identity-db:
+        condition: service_healthy
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://identity-db:5432/charcha
+      KC_DB_USERNAME: charcha
+      KC_DB_PASSWORD: ${CHARCHA_IDENTITY_DB_PASSWORD:?Set the private database password}
+      KC_HOSTNAME: ${CHARCHA_PUBLIC_ORIGIN:?Set the HTTPS application origin}/identity
+      KC_HTTP_ENABLED: "true"
+      KC_HTTP_RELATIVE_PATH: /identity
+      KC_PROXY_HEADERS: xforwarded
+      KC_HEALTH_ENABLED: "true"
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${CHARCHA_IDENTITY_ADMIN_USERNAME:?Set the bootstrap administrator username}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${CHARCHA_IDENTITY_ADMIN_PASSWORD:?Set the bootstrap administrator password}
+      CHARCHA_PUBLIC_ORIGIN: ${CHARCHA_PUBLIC_ORIGIN:?Set the HTTPS application origin}
+      CHARCHA_AUTH_CLIENT_SECRET: ${CHARCHA_AUTH_CLIENT_SECRET:?Set the private OIDC client secret}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:?Set the Google OAuth client ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:?Set the Google OAuth client secret}
+    ports: ["127.0.0.1:8180:8080"]
+    volumes:
+      - ./charcha-realm.json:/opt/keycloak/data/import/charcha-realm.json:ro
+    networks: [identity]
+networks:
+  identity:
+volumes:
+  identity-db:

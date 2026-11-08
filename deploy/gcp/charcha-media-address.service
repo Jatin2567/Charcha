@@ -1,0 +1,15 @@
+[Unit]
+Description=Set Charcha's media address to this boot's public IP
+Wants=network-online.target
+Requires=docker.service
+After=network-online.target docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /opt/charcha/sync_media_ip.py
+Restart=on-failure
+RestartSec=15
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

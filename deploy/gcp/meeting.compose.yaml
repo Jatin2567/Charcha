@@ -1,0 +1,14 @@
+# Paths resolve relative to the generated base compose.json.
+services:
+  api:
+    image: charcha-api:${CHARCHA_RELEASE_TAG:-screened}
+    build:
+      context: ${CHARCHA_RELEASE_CONTEXT:-../../..}
+      target: screened
+    env_file:
+      - path: ${CHARCHA_MEETING_ENV:-./meeting-features.env}
+        format: raw
+  web:
+    image: charcha-web:${CHARCHA_RELEASE_TAG:-screened}
+    build:
+      context: ${CHARCHA_RELEASE_CONTEXT:-../../..}

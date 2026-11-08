@@ -1,5 +1,7 @@
 # Single Linux VM deployment
 
+Configure [verified sign-in, the designated host and administrator MFA](../identity/README.md) before starting a deployment.
+
 This prepares the frontend, one API/RTC worker, open-source LiveKit and Caddy on one India-region Linux VM. It uses your own LiveKit credentials and does not require a LiveKit Cloud account. Evon inference remains a separate, approved OpenAI-compatible endpoint; this CPU stack does not download or run a 30B model.
 
 The preparation step is offline. It does not provision a VM, modify DNS/firewalls, start containers, request certificates or spend provider credits. The current delivered evidence covers generated configuration and tests. Real DNS, certificates, restrictive-network TURN and Gnani/Evon access require acceptance on your actual server.
@@ -19,6 +21,17 @@ check keeps existing admission defaults; five active microphones require an
 explicitly reviewed `USAGE_MAX_CONCURRENT_STT=5` and measured operation/queue
 capacity within the provider's limits. Five language selections do not prove
 that five simultaneously speaking participants have passed acceptance.
+
+## First hosted meeting without inference credits
+
+Prepare this stage with `--mode transport`. It removes supplied Gnani, Evon and Modal credentials from the generated runtime and sets all daily provider allowances to zero. The server constructs disabled providers in this mode. Configure the identity settings and LiveKit host for original-audio meetings. Google OAuth credentials are independent of speech credentials.
+
+```sh
+python3 scripts/prepare_deployment.py --mode transport --config deploy/production/inputs.json --env-file server/.env
+sh deploy/production/check.sh
+```
+
+The built frontend needs its `/api` requests to reach the backend on the same HTTPS origin. A static Slate upload by itself provides no API route. Until a documented reverse proxy is configured for that deployment, use the complete web/API/media stack on the chosen host. The Slate preview remains useful as the hosted UI shell.
 
 ## Inputs from the owner
 
