@@ -2,7 +2,7 @@
 
 **Multilingual meetings with shared understanding.** Charcha combines spoken interpretation, personal voices, original/translated captions, participant corrections and a bilingual conversation record. It is an independent project built using Gnani AI technology.
 
-[Hosted app](https://charcha-234398803946.asia-south2.run.app/) · [Submission package](docs/SUBMISSION.md) · [Live rehearsal](docs/LIVE_SUBMISSION_REHEARSAL.md) · [Operating guide](docs/ON_DEMAND_MEETINGS.md)
+[Hosted app](https://charcha-234398803946.asia-south2.run.app/) · [One-Page Pitch (PDF)](docs/Charcha-one-page-pitch.pdf) · [Submission package](docs/SUBMISSION.md) · [Live rehearsal](docs/LIVE_SUBMISSION_REHEARSAL.md) · [Operating guide](docs/ON_DEMAND_MEETINGS.md)
 
 ## Current stage — 9 November 2026
 

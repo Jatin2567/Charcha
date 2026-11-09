@@ -4,9 +4,13 @@ Updated 9 November 2026. These are prepared materials, not a submitted entry. Pu
 
 ## What to submit
 
+**Correction after inspecting the actual Microsoft submission form:** the required demo field specifies **2–3 minutes**, and the required project URL must include a solution-pitch document of **no more than one page**. The existing 60-second film is for the social post / short-demo category; it does not by itself satisfy the longer form requirement. A 2–3 minute walkthrough is still to be prepared. The form marks the social link optional for bonus awards, while the public challenge page instructs entrants to post publicly; include it for this entry.
+
+Actual fields, in order: full name; registered email; teammate's registered email (optional); higher-education institution; project URL containing the one-page pitch; 2–3 minute demo URL; LinkedIn/X post URL (optional field for bonus awards). No separate architecture essay field is present: put the technical explanation and evidence in the linked pitch. Copy-ready post and pitch text are in `work/submission-final/LINKEDIN_FINAL.txt` and `ONE_PAGE_PITCH.txt`.
+
 The [official challenge page](https://www.gnani.ai/internship) states **10 November 2026, 11:59 PM IST** as the deadline. Use the submission form sent to the registered email.
 
-1. Demo video: `work/demo-video/story-v11/Charcha-60-second-final.mp4` — verified 60 seconds, 1920×1080, with audio. Optional subtitles are beside it.
+1. Required form demo: a **2–3 minute** video link (pending). The existing `work/demo-video/story-v11/Charcha-60-second-final.mp4` is the verified 60-second social/short-demo cut, not a replacement for that field.
 2. Written project explanation and Gnani technology details below.
 3. Each entrant's actual contribution and requested registration/eligibility details.
 4. A public LinkedIn or X post published before submission. Tag Gnani AI and use `#GreatIndianAIInternshipChallenge` and `#GnaniAI`. Nominate one post link per platform used.
