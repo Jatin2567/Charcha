@@ -1,6 +1,6 @@
 # Charcha — final submission package
 
-Updated 10 November 2026. The full application suites were checked on 9 November; the build and seven runtime checks were repeated successfully on 10 November. These materials are ready for publication and entry preparation; a social post and final form submission still require the owner.
+Updated 10 November 2026. The full application suites were checked on 9 November; the build and seven runtime checks were repeated successfully on 10 November. These materials are published for entry preparation; a social post and final form submission still require the owner.
 
 ## What to submit
 
@@ -58,6 +58,8 @@ Project and one-page pitch: https://github.com/Jatin2567/Charcha
 When publishing, select Gnani AI's actual account in the tag selector and attach the MP4. This draft has not been posted. Host admission is required; the app link does not promise unattended judge access or active inference.
 
 ## Evidence and remaining actions
+
+The [final submission review](FINAL_SUBMISSION_CHECK.md) records the package, public-file, layout, caption and claim checks.
 
 Full local suites on 9 November: **1,468 backend tests passed, one skipped; 322 frontend tests and seven runtime checks passed; production build passed**. The build and seven runtime checks passed again on 10 November; the build retains an advisory for a bundle above 500 kB. The 9 November hosted checks returned 200 for the page and health endpoint and 401 for anonymous performance history. No fresh live interpretation test was performed for this release. Video files passed full decoding; hashes, duration and subtitle checks are recorded in the [media verification record](media/verification.json).
 
