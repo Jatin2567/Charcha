@@ -57,7 +57,9 @@ hosted-beta alternative and is not the current missing input or an active grant.
 
 The user reported the local original-audio check complete. The next gate is a small **typed translation and standard-speech pair**. Keep microphones off so STT is not introduced before MT/TTS has been checked. Voice cloning remains deferred. Preparing this plan makes no provider call and grants no permission.
 
-## Evon information still needed
+> Historical standard-voice plan. Current deployment uses Modal-hosted Evon and required personal-voice setup. Its original missing-endpoint and deferred-cloning notes below describe the earlier prototype. For a new approved participant run, use [the current rehearsal](LIVE_SUBMISSION_REHEARSAL.md). Preparing either document spends no credits; connecting interpreted meeting audio can start compute even while muted.
+
+## Historical Evon information request
 
 Use the **existing Gnani key**; no second key is requested. We need the official Evon quickstart or a request/response example with secrets removed, showing:
 

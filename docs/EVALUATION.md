@@ -1,12 +1,14 @@
 # Evaluation and verification
 
+**Current hosted acceptance, 9 November:** use [the live submission rehearsal](LIVE_SUBMISSION_REHEARSAL.md) for Hindi–Telugu, Hindi–Tamil and Hindi–Punjabi. Hosted interpreted meetings now require consented personal-voice setup and authenticated admission. Older collectors below use synthetic memberships/standard voices and are historical development tools, not the current hosted acceptance path. Connecting interpreted meeting audio can start Modal even while muted; obtain explicit approval before doing so.
+
 The automated suite checks application behavior without provider keys. It cannot establish that a real microphone is transcribed accurately, a remote participant hears the correct audio, or a cloned voice resembles the consenting speaker. Those require an actual credentialed run and human listening.
 
 An additional development verification script, `scripts/verify_routing.py`, connects actual local LiveKit participants and checks three-publisher/six-direction routing with synthetic provider fixtures. This exercises real WebRTC transport and recipient permissions; its generated tones and scripted provider responses do not establish Gnani recognition, translation or cloned-voice quality. Keep that evidence separate from a real provider evaluation.
 
 ## Included data
 
-The separate [Performance & readiness reference](GO_LIVE.md#what-the-performance-page-measures) documents each in-app timing field and the nearest-rank p50/p95 calculation. Room measurements retain at most 1,000 terminal language branches. Completed live first-PCM branches contribute to latency percentiles; simulated, failed, cancelled and same-language-forwarded samples do not. Keep typed and microphone observations separate. The original blueprint's under-800-ms end-to-end budget remains an unverified goal; these server measurements cannot establish audible listener latency.
+The separate [current measurement reference](ON_DEMAND_MEETINGS.md#queue-and-measurement-correction--7-november-2026) documents the timing boundaries. Room measurements retain at most 1,000 terminal language branches. Completed live first-PCM branches contribute to latency percentiles; simulated, failed, cancelled and same-language-forwarded samples do not. Report failures separately using all attempts. Keep typed and microphone observations separate. Browser observations are estimates of server-ingress speech-end to decoded audio, with uncertainty; physical audible latency needs a common recording.
 
 `evaluation/everyday_cases.jsonl` contains 18 synthetic everyday utterances across Hindi, Tamil and Bengali: meeting times, directions, names, classroom objects, quantities, units, polite requests, corrections, conditions and code mixing. Each case includes a draft target translation, critical values and a meaning/negation check. These drafts are **unreviewed author examples**, not bilingual-validated gold labels. No personal speech, customer data or recordings are included. Do not quote an accuracy percentage on this set before qualified bilingual review. A short script is useful for smoke testing, not a population-level quality claim.
 
@@ -48,7 +50,7 @@ Outputs are `case_report.csv` and `summary.json`. They keep unreviewed cases exp
 
 ## Actual voice and browser acceptance
 
-Follow the gates in [TEST_FLOWS.md](TEST_FLOWS.md): local transport first, typed interpretation next, two-way microphone speech, second-device and Sites checks, then multi-party and cloning. Run each later stage only after the preceding stage passes. Use standard voices until the separate cloning gate.
+Follow the current [participant rehearsal](LIVE_SUBMISSION_REHEARSAL.md). Hosted speaking requires consented voice enrollment. The earlier [TEST_FLOWS.md](TEST_FLOWS.md) describes historical staged checks and must not override the current deployment or the owner's permission for provider usage.
 
 1. Hindi A speaks while Tamil B listens; repeat in reverse; add Bengali C. Confirm each listener hears their selected language and the speaker does not hear their own translation.
 2. Add two listeners with the same language. Confirm one synthesis per unique language and both intended recipients receive it. Test two participants with the same source/listening language.

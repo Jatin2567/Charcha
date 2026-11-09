@@ -54,7 +54,7 @@ The offline generator uses an existing OpenSSL executable (including the one bun
 .\server\.venv\Scripts\python.exe scripts/create_lan_certificate.py --ip 192.168.1.23 --output work/lan-tls
 ```
 
-This creates public `artha-lan-ca.cer` and `ca.pem`, server `cert.pem`, private server `key.pem`, and a non-secret manifest. It never retains the CA signing key. **Transfer only `artha-lan-ca.cer` to the second device.** The server private key stays on the laptop hosting the stack.
+This creates public `charcha-lan-ca.cer` and `ca.pem`, server `cert.pem`, private server `key.pem`, and a non-secret manifest. It never retains the CA signing key. **Transfer only `charcha-lan-ca.cer` to the second device.** The server private key stays on the laptop hosting the stack.
 
 Run from the repository root. Substitute the actual private address. The first command is a dry run, writes nothing and needs no certificate:
 
@@ -75,8 +75,8 @@ It copies the supplied TLS files and creates `compose.json`, `nginx.conf`, `live
 Use the paths and fingerprints from your generated manifest, and compare the fingerprint through a separate trusted channel before importing on the second device. In a normal PowerShell window under the same account that runs Chrome:
 
 ```powershell
-Get-FileHash -Algorithm SHA256 -LiteralPath 'C:/path/to/artha-lan-ca.cer'
-Import-Certificate -FilePath 'C:/path/to/artha-lan-ca.cer' -CertStoreLocation Cert:\CurrentUser\Root
+Get-FileHash -Algorithm SHA256 -LiteralPath 'C:/path/to/charcha-lan-ca.cer'
+Import-Certificate -FilePath 'C:/path/to/charcha-lan-ca.cer' -CertStoreLocation Cert:\CurrentUser\Root
 ```
 
 The SHA-256 must match `issuer_sha256` in the manifest. Windows' displayed certificate thumbprint uses SHA-1 as a store identifier and should match `issuer_windows_thumbprint`; the certificate itself is signed with SHA-256. Close and reopen Chrome if it was already open. This changes trust only for the current Windows account and should be removed afterward using the exact manifest thumbprint:

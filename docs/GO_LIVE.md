@@ -26,7 +26,7 @@ The optional GPU profile is a deployment starting point, not proof that a specif
 
 Deployment can wait while you perform [the bounded local Gnani speech checks](GNANI_CHECKS.md). Every paid flow first requires separate human permission and a local operator grant. The default plan is free to inspect. A grant expires within five minutes and its resource budgets are enforced together with the daily caps. Finish or stop the current flow before approving another; restart microphones deliberately when a new room-flow grant is ready.
 
-1. Run `scripts/setup.ps1` once. It preserves an existing environment file. Fill the settings above in `server/.env` and set `ARTHA_MODE=live`.
+1. Run `scripts/setup.ps1` once. It preserves an existing environment file. Fill the settings above in `server/.env` and set `CHARCHA_MODE=live`.
 2. Run `uv run --project server python scripts/check_config.py`. This checks configuration presence; it does not perform a paid provider request or prove account access.
 3. Start `npm run dev` and open the frontend URL it prints. The launcher chooses an available local API port and configures the frontend proxy.
 4. Open `/#/performance` for setup, definitions and the live-test checklist. During a call, use **Room details → Performance** to open its measurements in a separate tab. The original meeting tab continues the call and sends browser network statistics to the Performance tab on the same origin. The room's membership is copied into that tab's session only; the new tab clears its opener reference.

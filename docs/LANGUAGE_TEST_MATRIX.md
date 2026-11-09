@@ -7,7 +7,7 @@ Latency optimization is deferred and does not block joining or routing. See
 
 The optional latency-research workflow below optimizes **Hindi→Tamil first**, accepts the reverse direction only after the first physical latency gate, and opens the other **88 directed pairs for test review only after both gates pass**. It is a separate research planner, not a production call gate. Every live flow still needs a fresh bounded approval. Planning and a passing gate grant no permission and make no API request.
 
-The current offline entry point is `scripts/plan_latency_language_workflow.py`. It reads the exact ten-language stock catalog from `server/artha_mesh/voice_catalog.py`, includes 90 directed cross-language pairs and ten optional same-language forwarding checks, and provides 40 ordinary-conversation drafts in `evaluation/language_latency_cases.json`. Existing paid Hindi/Tamil reports remain separate and unchanged. They do not satisfy a physical speech-end-to-listener gate.
+The current offline entry point is `scripts/plan_latency_language_workflow.py`. It reads the exact ten-language stock catalog from `server/charcha/voice_catalog.py`, includes 90 directed cross-language pairs and ten optional same-language forwarding checks, and provides 40 ordinary-conversation drafts in `evaluation/language_latency_cases.json`. Existing paid Hindi/Tamil reports remain separate and unchanged. They do not satisfy a physical speech-end-to-listener gate.
 
 ## Documented common language set
 

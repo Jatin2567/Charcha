@@ -2,8 +2,8 @@
 
 The project goal is **under 2,000 ms after source speech ends**, on a warm
 service, with standard voices and meaning preserved. This is an engineering
-target, not an achieved result or an industry certification. Deepfake screening
-and voice cloning are deferred.
+target. The baseline uses standard voices with VoiceShield off. Record the
+actual VoiceShield mode when measuring a monitored meeting and report it separately.
 
 The saved 5,457 ms Hindi→Tamil and 7,489 ms Tamil→Hindi provider results start
 before connecting/uploading their clips. Neither establishes this new boundary.
@@ -99,6 +99,7 @@ Example annotation shape (replace indices/hash and review flags after review):
   "provider_kind": "live",
   "capture_kind": "acoustic_two_channel",
   "voice_mode": "standard",
+  "screening_mode": "off",
   "status": "complete",
   "source_speech_end_sample": 48000,
   "listener_audio_start_sample": 96000,
@@ -114,6 +115,13 @@ electrical output, use `electrical_loopback_two_channel`. Browser render recordi
 use `browser_render_dual_channel` and do not qualify as physical output.
 Capture/provider provenance is **operator-attested**; the analyzer cannot prove
 that a file came from real hardware or a named provider.
+
+Use `"screening_mode": "monitor"` for monitored rooms or `"enforce"` for rooms
+that hold audio for screening. Older annotations without this field describe
+the original screening-off baseline. In **Performance → Speech end → listener**,
+choose **Open a playback observation** and select the resulting JSON. Only a
+completed, operator-attested, reviewed live capture can be displayed as physical
+playback. Importing reads metadata inside the tab and makes no upload.
 
 ```powershell
 .\server\.venv\Scripts\python.exe scripts/measure_speech_end_playback.py --analyze --wav work/capture.wav --annotations work/capture.json --output work/observation-01.json
@@ -176,7 +184,7 @@ Request Prisma v3.0 explicitly. Keep the existing 600-ms finalization setting;
 this first canary measures the current route before risking shorter pauses.
 Apply `USAGE_STT_MAX_RETRIES=0` and `USAGE_REQUIRE_FLOW_APPROVAL=true` only to the
 live-test process. Warm and verify Evon before issuing the short speech grant.
-Keep other live rooms closed so the grant cannot be consumed by another source.
+Use a room-scoped grant for the chosen meeting. Unmute only the intended test speaker.
 
 At the supplied ₹27/hour STT and ₹27/10,000-character TTS rates, the ceiling is
 **₹0.9975 reference**, excluding unverified rounding/taxes. Modal compute is
@@ -185,7 +193,7 @@ most 30 minutes and explicit shutdown immediately after the turn or failure.
 No GCP server is needed. The following prints the local grant proposal only:
 
 ```powershell
-.\server\.venv\Scripts\python.exe scripts/provider_flow.py plan --purpose live_interpretation --seconds 180 --stt-seconds 25 --stt-connections 1 --mt-requests 1 --mt-characters 500 --tts-requests 1 --tts-characters 300
+.\server\.venv\Scripts\python.exe scripts/provider_flow.py plan --purpose live_interpretation --room-code MEETING_CODE --seconds 180 --stt-seconds 25 --stt-connections 1 --mt-requests 1 --mt-characters 500 --tts-requests 1 --tts-characters 300
 ```
 
 Do not run `approve`, enable live processing or unmute a paid source before the

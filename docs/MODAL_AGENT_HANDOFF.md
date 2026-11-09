@@ -1,6 +1,13 @@
 # Modal connection handoff for another AI agent
 
-This guide is for an agent taking over Artha-Mesh's existing Modal/Evon setup. It is a connection and safety handoff, not permission to spend credits. It was prepared on 2 November 2026 from the local repository; account balance, access, deployed Apps and prices must be checked again.
+**Current policy, 6 November:** Follow [ON_DEMAND_MEETINGS.md](ON_DEMAND_MEETINGS.md).
+The owner authorized automatic meeting-held GPU use within available Modal credits and manual
+Gnani billing monitoring. Voice cloning is required for translated speech after explicit participant
+consent. An occupied interpreted meeting keeps the shared GPU warm through silence; the last
+meeting's departure releases it. Performance/status GETs never wake compute. The bounded test
+instructions below are historical and must not override this newer policy.
+
+This guide is for an agent taking over Charcha's existing Modal/Evon setup. It is a connection and safety handoff, not permission to spend credits. It was prepared on 2 November 2026 from the local repository; account balance, access, deployed Apps and prices must be checked again.
 
 ## Project and boundaries
 
@@ -80,3 +87,28 @@ Use the exact approved App and workspace, record timestamps and measured stages,
 - [Modal getting started and authentication](https://modal.com/docs/guide/getting-started), [token CLI](https://modal.com/docs/cli/latest/token).
 - [Modal budgets and spend limits](https://modal.com/docs/guide/budgets), [pricing](https://modal.com/pricing), [billing CLI](https://modal.com/docs/cli/latest/billing).
 - [Modal region selection](https://modal.com/docs/guide/region-selection), [managing deployments](https://modal.com/docs/guide/managing-deployments), [Volumes](https://modal.com/docs/guide/volumes).
+# Current operating policy — 6 November 2026
+
+The owner now authorizes on-demand interpretation in meetings created by
+`jatin.aggarwal1098@gmail.com`, without per-turn operator approval. They monitor
+Gnani billing themselves; keep service-unit telemetry, do not invent monetary
+balances. Automatic consent-based meeting voice enrollment is now requested.
+
+`MODAL_EVON_SERVERLESS=true` selects the separate `charcha-evon` deployment:
+minimum/buffer containers zero, maximum one, 120-second idle scale-down, cached
+weights, existing private proxy/inference credentials. No fixed session watchdog
+in that explicit mode. The default historical test mode still requires a fixed
+expiry. Never add health keepalive loops: local engine status reads do not call
+Modal. An admitted participant's unmute starts the model; a cold request can take
+minutes. The backend deduplicates startup and handles same-origin Modal 303
+continuations without exposing private request URLs. Status is a last observed
+readiness result, not an authoritative current GPU allocation/billing meter.
+
+At 06:40 IST, Modal showed $23.77 remaining of $30 included monthly compute,
+$6.23 used, $0 charges. The workspace gross usage limit was changed to $30 in
+accordance with the owner's available-credit instruction. The spend-limit form
+showed a default of $0. Provider budget enforcement can lag; storage is separate.
+Do not silently enable paid overages. These figures are a dated observation, not
+an ongoing balance feed. This paragraph supersedes the old per-flow approval and
+voice-cloning-deferred instructions below for owner-authorized meetings.
+

@@ -12,7 +12,7 @@ Evon hosted API access is a separate account/contract check. The public speech k
 
 ## Permission before each flow
 
-After the normal dependency setup, run `npm run dev:checks` and open `/#/usage` at the printed frontend URL (normally `http://127.0.0.1:5180`). The dedicated port avoids mixing this report with another development app on 5173; `ARTHA_WEB_PORT` can select a different free port. This starts a loopback-only live API with the approval lock enabled; opening it performs no inference. It does not change the saved demo mode or deploy a server. The normal `npm run dev` still follows your saved configuration. Stop either command with Ctrl+C when finished.
+After the normal dependency setup, run `npm run dev:checks` and open `/#/usage` at the printed frontend URL (normally `http://127.0.0.1:5180`). The dedicated port avoids mixing this report with another development app on 5173; `CHARCHA_WEB_PORT` can select a different free port. This starts a loopback-only live API with the approval lock enabled; opening it performs no inference. It does not change the saved demo mode or deploy a server. The normal `npm run dev` still follows your saved configuration. Stop either command with Ctrl+C when finished.
 
 `USAGE_REQUIRE_FLOW_APPROVAL=true` is the default. With no active local operator grant, provider reservations fail before an upstream request. Existing daily caps still apply. A grant has one allowlisted purpose, a maximum 300-second lifetime and explicit budgets for all seven resource types; unspecified resources have a zero budget. There is no automatic renewal. Stop unrelated meetings during an approved check, because an unbound meeting can consume the active operator allocation.
 

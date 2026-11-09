@@ -97,7 +97,7 @@ npm run dev:local
 
 The pinned LiveKit executable is downloaded from its [official release](https://github.com/livekit/livekit/releases/tag/v1.9.1) and checked against the verified Windows executable checksum. It is kept in ignored `work/bin/`. On macOS/Linux install that release's appropriate binary and set `LIVEKIT_BINARY` to its absolute path. No media-server binary is committed or included in a source archive.
 
-The launcher checks local ports, starts LiveKit, waits for the API to report transport mode, and starts the web interface at **http://127.0.0.1:5180/#/tests**. It prints the selected API port, normally 8000, with 8100/8200 as alternatives. Set `ARTHA_WEB_PORT` or `ARTHA_API_PORT` in the shell when needed. It refuses to stop an unrelated process occupying a port.
+The launcher checks local ports, starts LiveKit, waits for the API to report transport mode, and starts the web interface at **http://127.0.0.1:5180/#/tests**. It prints the selected API port, normally 8000, with 8100/8200 as alternatives. Set `CHARCHA_WEB_PORT` or `CHARCHA_API_PORT` in the shell when needed. It refuses to stop an unrelated process occupying a port.
 
 The frontend, API and LiveKit signaling bind to loopback. LiveKit selects usable local-interface media candidates, with loopback and browser mDNS support enabled. Its development media credentials are suitable only for this local test. The saved `server/.env` remains unchanged; the launcher clears provider credentials for its child processes. Transport mode never constructs the Gnani/Evon clients, rejects interpretation and enrollment, and exposes no translated-caption or interpretation-latency result. All media goes through the local agent so source routing and mute enforcement are exercised.
 

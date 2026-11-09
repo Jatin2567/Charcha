@@ -1,4 +1,4 @@
-# Artha-Mesh architecture
+# Charcha architecture
 
 ## Local screening and receiver measurements
 
@@ -8,7 +8,7 @@
 
 `ListenerMetrics` issues expiring single-use challenges bound to a room and participant. The server restricts each dedicated probe track to that listener. Browser `ProbeSignalTracker` measures request-to-decoded-track energy on a single monotonic clock with two observations, then submits an authenticated report. Delivery errors, cancellation, timeout and expiry remain outside successful percentiles. The browser measurement is client-reported, excludes physical playback and translation, and never changes the existing server-first-PCM boundary. Shared-recording manual annotations provide a separate explicitly human-reviewed path for actual listener timing.
 
-Artha-Mesh is a browser-based Indic conversation interpreter with ten configurable languages: Hindi, Tamil, Bengali, English, Telugu, Kannada, Malayalam, Marathi, Gujarati and Punjabi. A four-language scripted demonstration, provider-free original-audio transport and the credential-dependent live pipeline are explicit modes. The ten-language registry and mocked routing are implemented; real meaning/listening acceptance is tracked separately for each of the ninety directed pairs. See [the language flow](LANGUAGE_TEST_MATRIX.md) for fan-out, stock voices and staged testing.
+Charcha is a browser-based Indic conversation interpreter with ten configurable languages: Hindi, Tamil, Bengali, English, Telugu, Kannada, Malayalam, Marathi, Gujarati and Punjabi. A four-language scripted demonstration, provider-free original-audio transport and the credential-dependent live pipeline are explicit modes. The ten-language registry and mocked routing are implemented; real meaning/listening acceptance is tracked separately for each of the ninety directed pairs. See [the language flow](LANGUAGE_TEST_MATRIX.md) for fan-out, stock voices and staged testing.
 
 ## Product pages and responsibilities
 
@@ -38,14 +38,14 @@ No microphone permission is needed on the home page. A page does not directly ca
 | `web/src/services/demo.ts`               | Explicitly labelled offline scripted behavior                              |
 | `web/src/state/`                         | Application preferences/session storage and room event reducer             |
 | `web/src/types/domain.ts`                | Browser contract types                                                     |
-| `server/artha_mesh/main.py`              | API transport, validation dependencies, lifecycle and response headers     |
-| `server/artha_mesh/services/rooms.py`    | Membership, consent, participant changes and demo orchestration            |
-| `server/artha_mesh/services/pipeline.py` | Per-source ordered queues, target fanout and metrics                       |
-| `server/artha_mesh/services/routing.py`  | Language/recipient policy independent of UI/media SDK                      |
-| `server/artha_mesh/services/voice.py`    | Reference validation and profile ownership                                 |
-| `server/artha_mesh/providers/`           | Gnani, Evon-compatible endpoint and dictionary adapters                    |
-| `server/artha_mesh/transport/`           | Media tokens, per-room agent, original streams and PCM output              |
-| `server/artha_mesh/store.py`             | Ephemeral rooms, hashed credentials, bounded consumers and retention       |
+| `server/charcha/main.py`              | API transport, validation dependencies, lifecycle and response headers     |
+| `server/charcha/services/rooms.py`    | Membership, consent, participant changes and demo orchestration            |
+| `server/charcha/services/pipeline.py` | Per-source ordered queues, target fanout and metrics                       |
+| `server/charcha/services/routing.py`  | Language/recipient policy independent of UI/media SDK                      |
+| `server/charcha/services/voice.py`    | Reference validation and profile ownership                                 |
+| `server/charcha/providers/`           | Gnani, Evon-compatible endpoint and dictionary adapters                    |
+| `server/charcha/transport/`           | Media tokens, per-room agent, original streams and PCM output              |
+| `server/charcha/store.py`             | Ephemeral rooms, hashed credentials, bounded consumers and retention       |
 | `server/tests/`                          | Behavior, authorization, queue and mocked provider-contract tests          |
 | `evaluation/`                            | Synthetic draft cases, actual-run collector and externally rated reporting |
 
@@ -180,7 +180,7 @@ Membership validity is checked separately from whether a participant still appea
 
 Use HTTPS/WSS outside localhost; configure the exact permitted frontend origins and protect the reverse proxy. The browser sends its scoped membership credential in a WebSocket upgrade subprotocol header, not the URL. Treat that header as a bearer credential and redact it from diagnostics. Legacy query-token compatibility exists for older clients and tests; exclude those URLs from access logs.
 
-Artha-Mesh demonstrates use of Indic models. It does **not** establish that every byte remains in India. Record each deployment location separately: LiveKit media/signaling, agent host, application store, Gnani processing, translation inference, diagnostics and backups. [LiveKit region pinning](https://docs.livekit.io/deploy/admin/regions/region-pinning/) restricts its network region separately from the agent host. Use an evidenced deployment inventory before making any sovereignty or residency claim.
+Charcha demonstrates use of Indic models. It does **not** establish that every byte remains in India. Record each deployment location separately: LiveKit media/signaling, agent host, application store, Gnani processing, translation inference, diagnostics and backups. [LiveKit region pinning](https://docs.livekit.io/deploy/admin/regions/region-pinning/) restricts its network region separately from the agent host. Use an evidenced deployment inventory before making any sovereignty or residency claim.
 
 ## Release evidence
 

@@ -1,6 +1,6 @@
 # Product and page specification
 
-Artha-Mesh Track B is an audio meeting application for people who prefer different Indian languages. Its primary journey is **start a room → choose a language → invite someone → speak → hear interpretation → review and confirm meaning**.
+Charcha Track B is an audio meeting application for people who prefer different Indian languages. Its primary journey is **start a room → choose a language → invite someone → speak → hear interpretation → review and confirm meaning**.
 
 ## Design direction
 
