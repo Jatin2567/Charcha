@@ -1,0 +1,39 @@
+1
+00:00:00,000 --> 00:00:04,758
+Meet Asha. Her team speaks different languages.
+
+2
+00:00:06,000 --> 00:00:11,981
+नमस्ते। कल की बैठक के लिए शाम चार बजे कमरा तीन में बारह नीली फाइलें लाना।
+
+3
+00:00:13,000 --> 00:00:17,785
+Please bring twelve blue files to room 3 at 4 PM for tomorrow's meeting.
+
+4
+00:00:18,000 --> 00:00:23,098
+Charcha translates your words, using your voice with consent.
+
+5
+00:00:25,000 --> 00:00:27,251
+Then the room changes.
+
+6
+00:00:28,000 --> 00:00:33,664
+Bring twelve blue files to Room Four at 4 PM for tomorrow's meeting, not to Room Three.
+
+7
+00:00:34,000 --> 00:00:41,947
+An earlier confirmation stays with the old message. Alex checks the update, then confirms.
+
+8
+00:00:42,000 --> 00:00:47,878
+Their recap keeps both versions, in both languages, ready to share.
+
+9
+00:00:48,000 --> 00:00:53,964
+See recorded server timings, alongside experimental AI-voice screening.
+
+10
+00:00:57,000 --> 00:00:58,390
+Charcha.

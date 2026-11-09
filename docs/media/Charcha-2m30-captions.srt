@@ -1,0 +1,87 @@
+1
+00:00:00,000 --> 00:00:04,758
+Meet Asha. Her team speaks different languages.
+
+2
+00:00:06,000 --> 00:00:11,981
+नमस्ते। कल की बैठक के लिए शाम चार बजे कमरा तीन में बारह नीली फाइलें लाना।
+
+3
+00:00:13,000 --> 00:00:17,785
+Please bring twelve blue files to room 3 at 4 PM for tomorrow's meeting.
+
+4
+00:00:18,000 --> 00:00:23,098
+Charcha translates your words, using your voice with consent.
+
+5
+00:00:25,000 --> 00:00:27,251
+Then the room changes.
+
+6
+00:00:28,000 --> 00:00:33,664
+Bring twelve blue files to Room Four at 4 PM for tomorrow's meeting, not to Room Three.
+
+7
+00:00:34,000 --> 00:00:41,947
+An earlier confirmation stays with the old message. Alex checks the update, then confirms.
+
+8
+00:00:42,000 --> 00:00:47,878
+Their recap keeps both versions, in both languages, ready to share.
+
+9
+00:00:48,000 --> 00:00:53,964
+See recorded server timings, alongside experimental AI-voice screening.
+
+10
+00:00:57,350 --> 00:01:03,573
+Room three becomes room four. The original instruction stays in the record.
+
+11
+00:01:05,427 --> 00:01:12,165
+The update gets a new translation. Earlier acknowledgements stay with the old version.
+
+12
+00:01:14,019 --> 00:01:20,550
+Each listener can acknowledge the update. The bilingual recap keeps both versions.
+
+13
+00:01:21,350 --> 00:01:27,319
+Prisma, Evon, and Gnani voices bring interpretation into the meeting.
+
+14
+00:01:28,130 --> 00:01:34,406
+Listeners sharing a language share translation work. Playback stays ordered.
+
+15
+00:01:35,217 --> 00:01:42,550
+Hosts admit guests. Voices need consent. Compute starts with meetings.
+
+16
+00:01:43,350 --> 00:01:49,358
+Recorded timings show translation and speech generation, stage by stage.
+
+17
+00:01:52,402 --> 00:01:56,854
+Saved performance reports support review after the meeting.
+
+18
+00:01:59,898 --> 00:02:06,550
+Backend, frontend, and runtime checks support a measurable engineering workflow.
+
+19
+00:02:07,350 --> 00:02:11,701
+VoiceShield adds audio-based screening and visible status.
+
+20
+00:02:12,900 --> 00:02:17,492
+Digital-arrest scams make independent caller checks essential.
+
+21
+00:02:18,692 --> 00:02:26,550
+Ten language options. Teams, workshops, and communities can meet in one place.
+
+22
+00:02:27,000 --> 00:02:28,390
+Charcha.

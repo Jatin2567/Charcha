@@ -1,0 +1,67 @@
+{
+  "prepared_date": "2026-11-10",
+  "submission_video": {
+    "duration_seconds": 150.0,
+    "resolution": [
+      1920,
+      1080
+    ],
+    "fps": 24.0,
+    "full_decode_passed": true,
+    "sha256": "03d70521904741d61658095270ca6f684d954c932adb959d6007fd10516a78a9",
+    "audio_max_dbfs": -1.3,
+    "subtitle_cues": 22,
+    "subtitles_ordered_nonoverlapping": true,
+    "new_gnani_requests": 0,
+    "new_modal_sessions": 0,
+    "disclosures": [
+      "Synthetic test speech; saved real-provider output; labelled UI replay.",
+      "Original provider audio is played at 85% speed, not real-time latency evidence.",
+      "3.94s/4.23s are two saved partial-server cases, not full end-to-end latency.",
+      "VoiceShield accuracy not established; 10 configured languages not quality certification."
+    ]
+  },
+  "social_video": {
+    "duration": 59.97,
+    "size": [
+      1920,
+      1080
+    ],
+    "fps": 24.02,
+    "full_decode_passed": true,
+    "sha256": "6343585c21777b09c704021ea7be895105ff679859857e42834ed3e23973872b",
+    "new_provider_calls": 0
+  },
+  "pitch_pdf": {
+    "file": "../Charcha-one-page-pitch.pdf",
+    "pages": 1,
+    "sha256": "8040f30c3528d03c3ba2024869e5e5330157b844f2f2bc8cfe6fd47e693c4f9b"
+  },
+  "local_application_checks": {
+    "full_suites_date": "2026-11-09",
+    "backend_passed": 1468,
+    "backend_skipped": 1,
+    "frontend_passed": 322,
+    "runtime_passed": 7,
+    "production_build": "passed",
+    "publication_recheck_date": "2026-11-10",
+    "publication_recheck": "production build and all seven runtime checks passed",
+    "build_advisory": "LiveKit bundle above 500 kB",
+    "scope": "Local fixture tests; no fresh provider quality or detector accuracy test."
+  },
+  "publication_pattern_check": {
+    "history_blobs_checked": 927,
+    "current_files_checked": 494,
+    "patterns": [
+      "gnani_key",
+      "github_token",
+      "google_client_secret",
+      "private_key",
+      "aws_access_key"
+    ],
+    "findings": [],
+    "scope": "Bounded credential-pattern scan of reachable Git objects and publishable files; not a full security audit."
+  },
+  "form_submitted": false,
+  "social_post_published": false
+}
