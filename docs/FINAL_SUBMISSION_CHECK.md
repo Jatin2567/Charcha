@@ -5,13 +5,13 @@ Updated 10 November 2026. **This source revision includes the refreshed films, o
 | Check | Result and scope |
 | --- | --- |
 | Actual form requirements | Saved form definition requires a 2–3 minute video and a project URL containing a pitch of at most one page. Field order and optional teammate/social fields match the submission guide. |
-| Required film | 160.0 seconds (2:40), 1920 × 1080; final full decode passed; 22 subtitle cues are ordered and non-overlapping. |
-| Social film | 60.0 seconds, 1920 × 1080; final full decode passed; nine subtitle cues are ordered and non-overlapping. |
+| Required film | 160.0 seconds (2:40), 1920 × 1080; final full decode passed; 24 subtitle cues are ordered and non-overlapping. |
+| Social film | 60.0 seconds, 1920 × 1080; final full decode passed; 11 subtitle cues are ordered and non-overlapping. |
 | Pitch and feedback | One-page A4 pitch rendered and visually reviewed. The public-copy hash matches the verified PDF. Sathvika's full approved review is included, retaining her latency observation; exact text was checked after PDF extraction. |
 | Final pitch refresh | Clearer three-language story and workflow, Gnani architecture, 10 November application checks and dated 9 November partial timings. Visible headline and metadata agree; repository/app hyperlinks checked; independent claim and layout review passed. |
-| Social-post link | Entrant supplied https://lnkd.in/p/g9n3W6Cj; saved in the kit and form draft. Automated lookup did not expose the post content, so public visibility, company mentions and hashtags are not independently verified. |
+| Social-post link | Entrant supplied https://lnkd.in/p/g5rqTQaZ; saved in the kit; the form draft is tracked separately. Automated lookup did not expose the post content, so public visibility, company mentions and hashtags are not independently verified. |
 | Portal views | Captured Home, Prejoin, Performance, Voice Studio, Test lab and Audio lab, plus meeting/recap. Final encoded frames reviewed for layout and evidence labels. |
-| Music and speech | Original quiet instrumental music with speech ducking and extra attenuation during Indic readings. Mono speech gain preserved in stereo; encoded peaks below 0 dBFS. Timing unchanged; no new provider calls. Human listening preference remains subjective. |
+| Music and speech | Original instrumental music with speech ducking and extra attenuation during language examples. Natural-speed speech is preserved; final caption timing follows the edit and encoded peaks stay below 0 dBFS. No new provider calls. Human listening preference remains subjective. |
 | Source publication | This revision contains the intended source, media and pitch. Verify its commit and asset URLs on the public repository after push; a source release does not deploy the application. |
 | Download package | Package assembled from reviewed assets, including full participant feedback and reviewer guide; ZIP CRC and every packaged hash verified. |
 | Documentation links | New filenames and relative targets checked after media/PDF placement. |
@@ -30,7 +30,7 @@ This is a submission-material review. It does not certify live multi-user transl
 1. Verify that the intended source revision, refreshed reviewed assets and pitch are visible on the public repository.
 2. Upload the [2:40 build film](media/Charcha-2m40-multilingual-build.mp4) to a video host and check that its viewing link works while signed out.
 3. Use **https://github.com/Jatin2567/Charcha** for the project field after checking the [refreshed one-page pitch](Charcha-one-page-pitch.pdf) while signed out.
-4. Check the [entrant-supplied social post](https://lnkd.in/p/g9n3W6Cj) is public and includes the actual Gnani company mention and both required hashtags.
+4. Check the [entrant-supplied social post](https://lnkd.in/p/g5rqTQaZ) is public and includes the actual Gnani company mention and both required hashtags.
 5. Review the confirmed entrant details and saved post link in the form draft; add the build video's viewing link and submit the official form. No submission or receipt is claimed by this review.
 
 See the [submission guide](SUBMISSION.md), [award evidence map](AWARD_POSITIONING.md), [media verification](media/verification.json) and [sources/editing notes](media/SOURCES_AND_NOTES.txt). No form or social post was submitted by this review.

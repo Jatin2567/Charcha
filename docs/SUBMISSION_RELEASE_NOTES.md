@@ -1,5 +1,14 @@
 # Submission publication record
 
+## Final voice-cloning films and repository presentation, 10 November 2026
+
+- Rebuilt the 60-second social film and 2:40 build film at 1080p from original source frames. Corrected clipped Prejoin, Test lab, Audio lab and language-list controls, and replaced the crowded closing scene. Both films use one caption area and a persistent technology footer.
+- Made voice cloning prominent using the saved synthetic Hindi reference and its English cloned output. The films label the synthetic reference; Telugu/Punjabi examples remain standard-voice readings. No new provider requests were made.
+- Added a more energetic original 120 BPM story score, speech ducking and music-only transitions. Speech remains at natural speed. Full decoding, encoded keyframes, peak levels and 24 build / 11 social caption cues were checked.
+- Refreshed the README with a charcoal/royal-blue banner, clickable film previews, workflow cards and architecture diagram. The one-page pitch retains the full approved feedback and dated evidence; its film disclosure now includes the saved cloning example.
+- Saved the latest entrant-supplied social link: https://lnkd.in/p/g5rqTQaZ. Earlier links remain historical below. Public post content and tags were not independently verified.
+- This is a source/media publication, not an application redeployment, live provider test or form submission. Application test and deployment evidence remains separately dated.
+
 ## Final one-page pitch and supplied social link, 10 November 2026
 
 - Refined the pitch around a Hindi/Telugu/Punjabi workshop update, three product actions and the Gnani processing chain. It now cites the latest 10 November application checks and 43-file deployment comparison while retaining the dated, partial 9 November latency cases.

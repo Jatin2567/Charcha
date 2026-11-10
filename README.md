@@ -1,35 +1,77 @@
+![Charcha — speak in your language, review the change, keep one shared plan. Illustrated correction and acknowledgement workflow.](docs/media/charcha-readme-banner.svg)
+
 # Charcha · चर्चा
 
-**Speak in your language. Review the change. Keep one shared plan.**
+**Multilingual meetings with a reviewable record of what changed.**
 
-Charcha combines multilingual audio/video meetings with spoken interpretation, original/translated captions, versioned corrections, fresh listener acknowledgements and a bilingual recap. It is an independent project built using Gnani AI.
+Speak, read both languages, correct a message and acknowledge the updated version. Charcha brings spoken interpretation, original/translated captions and a bilingual recap into one audio/video meeting. An independent project built using Gnani AI.
 
-[One-page pitch](docs/Charcha-one-page-pitch.pdf) · [2:40 build film](docs/media/Charcha-2m40-multilingual-build.mp4) · [60-second multilingual story](docs/media/Charcha-60s-multilingual-voices.mp4) · [Hosted app](https://charcha-234398803946.asia-south2.run.app/) · [Submission guide](docs/SUBMISSION.md)
+| Watch the build | Hear the voice demo |
+| :--- | :--- |
+| [![Preview of the Charcha build film](docs/media/charcha-build-preview.jpg)](docs/media/Charcha-2m40-multilingual-build.mp4) | [![Preview of the Charcha voice demo](docs/media/charcha-social-preview.jpg)](docs/media/Charcha-60s-voice-cloning-social.mp4) |
+| **[▶ 2:40 build film](docs/media/Charcha-2m40-multilingual-build.mp4)** | **[▶ 60-second social film](docs/media/Charcha-60s-voice-cloning-social.mp4)** |
+| Voice samples, product workflow, architecture and dated evidence | Saved synthetic Hindi reference → English clone, plus Telugu/Punjabi stock voices |
 
-[Entrant's LinkedIn post](https://lnkd.in/p/g9n3W6Cj) · Final pitch refreshed on 10 November with current application checks and separately dated provider timings.
+**[Read the one-page pitch ↗](docs/Charcha-one-page-pitch.pdf)** · **[Open the app ↗](https://charcha-234398803946.asia-south2.run.app/)** · [Reviewer access](docs/REVIEWER_GUIDE.md) · [Run locally](#run-locally-without-provider-credits) · [Submission guide](docs/SUBMISSION.md) · [Latest LinkedIn post](https://lnkd.in/p/g5rqTQaZ)
 
-**Evaluating the portal?** The [reviewer setup guide](docs/REVIEWER_GUIDE.md) explains authenticated invitations, creating and admitting participants to your own meetings, shared or reviewer-supplied Gnani/Evon resources, preparing translation before joining, and account-scoped activity/readiness reports. Release `reviewer-reporting-20261110` was deployed and checked on 10 November. Reviewers still need a private invitation; no invitation or live provider test is implied by this deployment.
+> **For reviewers:** Hosted evaluation requires a private invitation. The [setup guide](docs/REVIEWER_GUIDE.md) covers your own meetings, participant admission, shared or reviewer-supplied Gnani/Evon resources, preparing translation before joining, and account-scoped reports. Deployment alone does not issue an invitation or demonstrate a live provider flow.
 
-**Source revision, 10 November 2026:** this revision includes the refreshed films and pitch, Sathvika's approved feedback, reviewer access and pre-meeting translation preparation. Hosted health, served components and access restrictions were checked separately from local tests. Public-video/social links and challenge submission remain separate steps. See the [release record](docs/SUBMISSION_RELEASE_NOTES.md).
+[The workflow](#one-small-correction-three-important-steps) · [Features](#inside-the-application) · [Architecture](#how-it-fits-together) · [Evidence](#what-has-been-checked) · [Project record](#checks-and-project-record)
 
-## The problem, in one conversation
+## One small correction. Three important steps.
 
-A workshop organiser says, **“Bring twelve blue files to room three at four.”** The room changes to four. Hearing the first translation is no longer enough: each participant needs the updated instruction and a visible way to acknowledge it.
+A workshop organiser says, **“Bring twelve blue files to room three at four.”** Then the room changes to four. Each participant needs the updated instruction and a visible way to acknowledge it.
 
-Charcha preserves the earlier message, translates the correction, separates old and new acknowledgements, and retains both versions in the recap. Teams, students and community organisers can use this workflow for changed times, quantities or locations. The latest film follows fictional Asha, Ravi and Meher through Hindi, Telugu and Punjabi, using actual interface screens from a scripted three-account rehearsal and prepared speech readings.
+| 01 · Hear and read | 02 · Review the change | 03 · Keep the shared plan |
+| :--- | :--- | :--- |
+| Listen to an interpretation and see original/translated captions. | Preserve the original and create a new version of the corrected message. | Acknowledge the new version individually; retain both versions in the bilingual recap. |
 
-## What the application does
+For teams, students and community organisers coordinating changed times, quantities or locations. The build film follows fictional Asha, Ravi and Meher through Hindi, Telugu and Punjabi, using actual interface screens from a scripted three-account rehearsal and prepared speech readings.
 
-- **Multilingual meetings:** LiveKit browser audio/video with ten language options: Hindi, Tamil, Bengali, English, Telugu, Kannada, Malayalam, Marathi, Gujarati and Punjabi.
-- **Gnani interpretation:** Prisma recognition → hosted Evon translation → Gnani speech synthesis and consented own-voice cloning. Live interpretation needs configured credentials and available compute.
-- **Reviewable messages:** Original/translated captions, number and selected-negation highlighting, versioned corrections and acknowledgements per eligible listener. Acknowledgement records understanding, not contractual agreement or automatic accuracy verification.
-- **Useful recaps:** PDF printing, WhatsApp preview/copy, text and JSON export. Sharing is user-initiated. The SHA-256 fingerprint identifies the recorded payload; it is not a signature or immutable ledger.
-- **Meeting controls:** Host sign-in and admission, separate administrator authenticator verification, device controls and refresh/reconnect recovery for an admitted seat.
-- **Inspectable performance:** Queue and stage measurements, browser observations and account-scoped saved performance reports. Missing measurements remain explicit.
-- **Efficient routing:** Shared translation/synthesis per target language, ordered playback and bounded preparation concurrency. Modal compute follows occupied interpreted meetings and scales down afterward; startup and idle time still consume compute.
-- **VoiceShield:** Optional experimental source-audio screening, visible results and a local Audio lab. Model scores are separate from DSP diagnostics and do not establish identity or validated fraud prevention.
+## Inside the application
 
-## Recorded evidence
+| Capability | What is implemented |
+| :--- | :--- |
+| **Speak across languages** | LiveKit browser audio/video with Hindi, Tamil, Bengali, English, Telugu, Kannada, Malayalam, Marathi, Gujarati and Punjabi options. Prisma recognition → hosted Evon translation → Gnani speech synthesis and consented own-voice cloning. Live interpretation needs configured credentials and available compute. |
+| **Review each version** | Original/translated captions, number and selected-negation highlighting, versioned corrections and acknowledgements per eligible listener. An acknowledgement records understanding; it does not establish contractual agreement or verify accuracy. |
+| **Take the recap with you** | PDF printing, WhatsApp preview/copy, text and JSON export. Sharing is user-initiated. The SHA-256 fingerprint identifies the recorded payload; it is not a signature or immutable ledger. |
+| **Control the meeting** | Host sign-in and admission, separate administrator authenticator verification, device controls and refresh/reconnect recovery for an admitted seat. |
+| **Inspect performance** | Queue and stage measurements, browser observations and account-scoped saved performance reports. Missing measurements remain explicit. |
+| **Share language work** | Shared translation/synthesis per target language, ordered playback and bounded preparation concurrency. Modal compute follows occupied interpreted meetings and scales down afterward; startup and idle time still consume compute. |
+| **Explore VoiceShield** | Optional experimental source-audio screening, visible results and a local Audio lab. Model scores are separate from DSP diagnostics and do not establish identity or validated fraud prevention. |
+
+## How it fits together
+
+```mermaid
+flowchart TB
+    UI["Browser clients<br/>React + TypeScript"] <--> LK["LiveKit SFU<br/>Audio / video"]
+    LK <--> Agent["Python room agent"]
+    Agent -->|Speech input| Pipeline
+    Pipeline -->|Ordered audio output| Agent
+    subgraph Pipeline["Interpretation · shared target-language branches"]
+        direction LR
+        STT["Gnani Prisma<br/>Speech recognition"] --> MT["Hosted Evon<br/>Translation"]
+        MT --> TTS["Gnani synthesis<br/>Stock or consented cloned voice"]
+    end
+    Agent --> Screen["Optional experimental<br/>audio screening"]
+    UI <--> API["FastAPI services<br/>Admission · captions · corrections · timing"]
+    API <--> Store["Identity / room /<br/>report persistence"]
+
+    classDef client fill:#eaf0ff,stroke:#365bd6,color:#24272e
+    classDef provider fill:#365bd6,stroke:#2847b3,color:#ffffff
+    classDef system fill:#30343d,stroke:#78859c,color:#f3f5fa
+    class UI client
+    class STT,MT,TTS provider
+    class LK,Agent,Screen,API,Store system
+```
+
+Pages, hooks, services and media adapters are separated under `web/src/`. Provider adapters, routing, screening, membership and persistence live under `server/charcha/`. Tests are in `web/src/`, `server/tests/` and `evaluation/`. [Read the architecture →](docs/ARCHITECTURE.md)
+
+The app/media/identity deployment uses GCP Delhi; Evon uses the configured Modal allocation. The full processing chain is not verified India-only. LiveKit is an SFU, not a peer-to-peer mesh. Active rooms and embeddings are memory-resident: use one API worker and consult the [operating guide](docs/ON_DEMAND_MEETINGS.md). Server performance history and browser-saved recaps have distinct persistence scopes.
+
+## What has been checked
+
+**Dated results, with their measurement boundaries.** Application tests, deployment checks and provider measurements answer different questions.
 
 | Evidence | Result | Measurement boundary |
 | --- | --- | --- |
@@ -40,23 +82,16 @@ Charcha preserves the earlier message, translates the correction, separates old 
 | Five-language stage, 31 Oct 2026 | Nine of ten attempted routes delivered across Hindi, Tamil, Bengali, Telugu and Marathi | One failed during local setup before provider use; delivery is not a meaning-accuracy score |
 | Media-token recovery | Same admitted seat reconnects after injected token expiry in isolated local Chrome | Original-audio transport; microphone/camera remain off after reload |
 
-The latest films use fictional illustrations, a scripted three-account UI rehearsal and prepared stock-voice readings, with quiet locally synthesized background music. They are edited workflow demonstrations, not newly recorded live three-device interpretation or cloned-voice tests. The build film separately explains the dated provider measurements above. Ten configurable languages do not imply tested quality for every pair. VoiceShield has no established detection-accuracy figure. See [evaluation](docs/EVALUATION.md), [route evidence](web/src/data/fiveLanguageStageResults.json) and [submission evidence](docs/SUBMISSION.md).
+<details>
+<summary><strong>What the films demonstrate — and the limits of the evidence</strong></summary>
 
-## Architecture
+The films use fictional illustrations, actual interface screens from a scripted three-account rehearsal and prepared speech, with original locally synthesized background music. Both films include a saved **synthetic Hindi reference → English cloned-voice sample**, alongside Telugu and Punjabi stock-voice readings. This is an edited sample comparison, not evidence of cloning a real participant's voice or a new live three-device interpretation test. The build film also explains the architecture and separately dated provider measurements above. This film refresh reuses saved audio and makes no new provider calls.
 
-```text
-Browsers ←→ LiveKit SFU ←→ Python room agent
-                           ├─ Prisma STT → Evon MT → Gnani synthesis
-                           │               └─ shared target-language branches
-                           ├─ optional CPU audio screening
-                           └─ ordered audio, captions, corrections and timing events
+Ten configurable languages do not imply tested quality for every pair. VoiceShield has no established detection-accuracy figure. See [evaluation](docs/EVALUATION.md), [route evidence](web/src/data/fiveLanguageStageResults.json) and [submission evidence](docs/SUBMISSION.md).
 
-React / TypeScript UI ←→ FastAPI services ←→ identity / room / report persistence
-```
+</details>
 
-Pages, hooks, services and media adapters are separated under `web/src/`. Provider adapters, routing, screening, membership and persistence live under `server/charcha/`. Tests are in `web/src/`, `server/tests/` and `evaluation/`.
-
-The app/media/identity deployment uses GCP Delhi; Evon uses the configured Modal allocation. The full processing chain is not verified India-only. LiveKit is an SFU, not a peer-to-peer mesh. Active rooms and embeddings are memory-resident: use one API worker and consult the [operating guide](docs/ON_DEMAND_MEETINGS.md). Server performance history and browser-saved recaps have distinct persistence scopes.
+**Release record · 10 November 2026:** `reviewer-reporting-20261110` was deployed and checked. This source revision includes the films and pitch, Sathvika's approved feedback, reviewer access and pre-meeting translation preparation. Hosted health, served components and access restrictions were checked separately from local tests. Public-video/social links and challenge submission remain separate steps. [Full release record →](docs/SUBMISSION_RELEASE_NOTES.md)
 
 ## Run locally without provider credits
 
@@ -86,6 +121,10 @@ npm run build
 
 Tests use fixtures and isolated services. Keep date, scope and command alongside results; test counts do not establish human translation quality.
 
-[Architecture](docs/ARCHITECTURE.md) · [Evaluation](docs/EVALUATION.md) · [Award evidence map](docs/AWARD_POSITIONING.md) · [Publication record](docs/SUBMISSION_RELEASE_NOTES.md) · [Commit history](https://github.com/Jatin2567/Charcha/commits/main/)
+| Build and operate | Evaluate and review | Follow the project |
+| :--- | :--- | :--- |
+| [Architecture](docs/ARCHITECTURE.md) | [Evaluation](docs/EVALUATION.md) | [Submission guide](docs/SUBMISSION.md) |
+| [Operating guide](docs/ON_DEMAND_MEETINGS.md) | [Reviewer setup](docs/REVIEWER_GUIDE.md) | [Publication record](docs/SUBMISSION_RELEASE_NOTES.md) |
+| [Source and commit history](https://github.com/Jatin2567/Charcha/commits/main/) | [Award evidence map](docs/AWARD_POSITIONING.md) | [Final submission review](docs/FINAL_SUBMISSION_CHECK.md) |
 
 Charcha is not an official Gnani, Google or Modal product. Development and demo production used AI assistance and established libraries. Awards and internships depend on Gnani's review and [programme rules](https://www.gnani.ai/internship).

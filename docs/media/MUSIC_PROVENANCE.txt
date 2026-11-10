@@ -1,3 +1,17 @@
+SHARED MOMENTUM — CHARCHA SOCIAL FILM
+
+Original local procedural composition, prepared 10 November 2026.
+120 BPM; D major / B minor / G major / A major; punchy electronic kick, snare and clap,
+eighth-note hats, syncopated bass, bright short plucks and offbeat chord stabs.
+Clear opening ident; build at 7 seconds; thinner speech windows at 14–20 and 29–35 seconds;
+lift at 45 seconds; D-major resolution at 58 seconds; fade over 59–60 seconds.
+
+All sounds generated mathematically in compose.py from oscillators and seeded noise.
+No copyrighted samples, stock recordings, external downloads or provider calls.
+This describes provenance and does not claim legal exclusivity.
+Stereo 48 kHz PCM16; stem RMS -20 dBFS, peak below -3 dBFS; final narration ducking belongs in the film mix.
+
+BUILD ENGINEERING SEGMENT
 A SHARED PLAN — CHARCHA BACKGROUND MUSIC
 
 Original procedural arrangement prepared locally for these films on 10 November 2026.

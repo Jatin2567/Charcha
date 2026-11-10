@@ -3,88 +3,93 @@
 This is Asha. Tomorrow, her whole team meets.
 
 2
-00:00:07,250 --> 00:00:12,233
-Ravi joins in Telugu. Meher joins in Punjabi.
+00:00:05,600 --> 00:00:10,698
+Charcha translates your words, using your voice with consent.
 
 3
-00:00:14,500 --> 00:00:19,620
-नमस्ते। कल की बैठक के लिए शाम चार बजे कमरा तीन में बारह नीली फाइलें लाना।
+00:00:12,000 --> 00:00:17,120
 [Hindi] Hello. Bring twelve blue files to room three at four tomorrow for the meeting.
 
 4
+00:00:17,700 --> 00:00:21,776
+Please bring twelve blue files to room 3 at 4 PM for tomorrow's meeting.
+
+5
 00:00:22,250 --> 00:00:27,382
 Room four, not three. Everyone needs the update.
 
-5
-00:00:29,300 --> 00:00:32,020
-నాలుగో గది, మూడో గది కాదు.
+6
+00:00:29,000 --> 00:00:31,720
 [Telugu] Room four, not room three.
 
-6
-00:00:32,520 --> 00:00:35,080
-ਕਮਰਾ ਚਾਰ, ਕਮਰਾ ਤਿੰਨ ਨਹੀਂ।
+7
+00:00:32,000 --> 00:00:34,560
 [Punjabi] Room four, not room three.
 
-7
-00:00:37,250 --> 00:00:44,105
+8
+00:00:35,000 --> 00:00:41,855
 Ravi confirms. Then Meher. The update needs fresh confirmation.
 
-8
-00:00:45,250 --> 00:00:51,243
+9
+00:00:42,100 --> 00:00:48,093
 When they leave, the message and confirmations stay together in a bilingual recap.
 
-9
-00:00:54,139 --> 00:01:00,645
-That small correction is versioned. Earlier acknowledgements stay with the old version.
-
 10
-00:01:01,784 --> 00:01:09,861
-Each participant confirms the latest message, and the bilingual recap saves the message and confirmations together.
+00:00:48,150 --> 00:00:54,114
+See recorded server timings, alongside experimental AI-voice screening.
 
 11
-00:01:11,724 --> 00:01:22,501
-Behind that exchange, Prisma recognizes speech, Evon translates, and Gnani Timbre speaks. LiveKit carries the call.
+00:00:55,339 --> 00:01:01,845
+That small correction is versioned. Earlier acknowledgements stay with the old version.
 
 12
-00:01:23,224 --> 00:01:29,177
-People sharing a target language share one branch, with playback kept in order.
+00:01:02,984 --> 00:01:11,061
+Each participant confirms the latest message, and the bilingual recap saves the message and confirmations together.
 
 13
-00:01:29,901 --> 00:01:34,276
-Ten language options let each person choose how they listen.
+00:01:12,924 --> 00:01:23,701
+Behind that exchange, Prisma recognizes speech, Evon translates, and Gnani Timbre speaks. LiveKit carries the call.
 
 14
-00:01:36,366 --> 00:01:39,467
-Hosts sign in and admit guests.
+00:01:24,424 --> 00:01:30,377
+People sharing a target language share one branch, with playback kept in order.
 
 15
-00:01:40,833 --> 00:01:47,626
-The translation GPU warms up for meetings, then scales down after an idle window.
+00:01:31,101 --> 00:01:35,476
+Ten language options let each person choose how they listen.
 
 16
-00:01:48,992 --> 00:01:51,634
-Idle time can still be billed.
+00:01:37,566 --> 00:01:40,667
+Hosts sign in and admit guests.
 
 17
-00:01:53,706 --> 00:02:03,944
-Two saved November ninth cases took three point nine four and four point two three seconds, from translation start to first decoded P C M.
+00:01:42,033 --> 00:01:48,826
+The translation GPU warms up for meetings, then scales down after an idle window.
 
 18
-00:02:04,650 --> 00:02:14,294
-Recognition, network, and playback sit outside those measurements. Reports stay available for review after the meeting.
+00:01:50,192 --> 00:01:52,834
+Idle time can still be billed.
 
 19
-00:02:15,428 --> 00:02:21,772
-Experimental VoiceShield screens original incoming audio, before any cloned output.
+00:01:54,906 --> 00:02:05,144
+Two saved cases: 3.94s and 4.23s, translation start to first decoded audio.
 
 20
-00:02:22,199 --> 00:02:28,016
-Visible flags or unknown results guide review, without proving identity.
+00:02:05,850 --> 00:02:15,494
+Recognition, network, and playback sit outside those measurements. Reports stay available for review after the meeting.
 
 21
-00:02:28,444 --> 00:02:32,572
-Consented voice cloning preserves the speaker’s voice.
+00:02:16,628 --> 00:02:22,972
+Experimental VoiceShield screens original incoming audio, before any cloned output.
 
 22
-00:02:33,250 --> 00:02:38,748
+00:02:23,399 --> 00:02:29,216
+Visible flags or unknown results guide review, without proving identity.
+
+23
+00:02:29,644 --> 00:02:33,772
+Consented voice cloning preserves the speaker’s voice.
+
+24
+00:02:34,200 --> 00:02:39,698
 Charcha. Different languages. One shared plan.

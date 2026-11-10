@@ -1,56 +1,60 @@
-CHARCHA — MUSIC & PORTAL EDIT
-Prepared locally, 10 November 2026. Not published or submitted by this edit.
+CHARCHA — FINAL VOICE / PORTAL FILMS · 10 NOVEMBER 2026
 
 CURRENT FILES
-Charcha-2m40-multilingual-build.mp4 — 160 seconds, form/build walkthrough.
-Charcha-60s-multilingual-voices.mp4 — 60 seconds, social story.
-Matching captions and verification.json describe these exact files.
+Charcha-2m40-multilingual-build.mp4 — 160 seconds, required build walkthrough.
+Charcha-60s-voice-cloning-social.mp4 — 60 seconds, social story.
+Both are 1920x1080 at 24fps, encoded once from original images and layouts.
+Matching captions and verification.json identify these exact files. Older films
+remain historical versions and are not covered by these final hashes.
 
-STORY AND SCREEN EVIDENCE
-Fictional Asha (Hindi), Ravi (Telugu) and Meher (Punjabi) coordinate a workshop.
-A correction changes room three to room four. The actual React/FastAPI portal
-was captured using three isolated local test accounts and authored translations.
-Host admission, separate acknowledgements, correction versioning, refresh,
-saved bilingual recap and WhatsApp text were checked without provider inference.
-Home, Prejoin, Performance, Voice studio, Test lab and Audio lab are actual
-offline screens. No detection result or provider measurement was invented.
-The films are not a new live three-device interpreted call or a load benchmark.
+STORY AND PRODUCT SCREENS
+Fictional Asha, Ravi and Meher represent Hindi, Telugu and Punjabi participants.
+The actual portal was captured in a scripted three-account local rehearsal.
+Its authored translations demonstrate correction/version/acknowledgement UI;
+they are not provider translations captured in a simultaneous live conference.
+Home, Prejoin, Meeting, Recap, Voice Studio, Performance, Test lab and Audio lab
+are actual app screens. The current portal views are offline interface states.
 
-SPEECH AND MUSIC
-The full saved synthetic Hindi source from 9 November is reused at normal speed.
-The Telugu and Punjabi standard-voice readings were previously created in exactly
-two approved Gnani TTS requests. They are not translations generated during the
-rehearsal and are not cloned human voices. Existing English narration is reused.
-Speech lengths and caption times are unchanged. Music ducks beneath speech and
-is additionally reduced during the three Indic examples. The arrangement was
-synthesized locally without third-party recordings; see MUSIC_PROVENANCE.txt.
-No new Gnani, Modal, paid narration or music service was called for this refresh.
+SAVED CLONING EXAMPLE
+Both films replay a saved Hindi synthetic reference and English cloned output
+from the completed 9 November provider-adapter test. Its receipt states
+synthetic_test_voice=true and voice_embedding_completed=true. This shows the
+embedding/synthesis path with a synthetic reference, not a real participant's
+voice, validated human likeness or a new live interpretation test.
+Hindi reference SHA256:
+992aeecb35bc837834178677b1b66efd1a4d5b03fc2f9b74968f18a88bfa8179
+English cloned output SHA256:
+0ce229621058398cffb356f818c637673d3bc2a6a99f3914ed77a336beb0a250
+Telugu and Punjabi are separately prepared standard-voice readings from the
+previously approved two-request grant, not cloned voices. All speech is reused
+at natural speed; this refresh creates no new speech or provider request.
 
-PERFORMANCE EVIDENCE
-3.94 s and 4.23 s are two saved Hindi-to-English provider cases from 9 November:
+MUSIC AND EDITING
+The 60-second story uses the original local 120 BPM Shared Momentum arrangement.
+The build film uses its first 54.2 seconds, then 100 seconds of saved engineering
+narration with a quieter original instrumental, and the final story close.
+Music-only crossfades preserve full narration timing. Music ducks under speech.
+There is one caption band and one technology footer throughout. Full decoding,
+24 build / 11 social nonoverlapping cues, audio peaks and encoded keyframes were
+checked. Test lab, Prejoin, language pills and Audio lab crops were corrected.
+
+MEASUREMENTS AND BOUNDARIES
+3.94 s and 4.23 s are two saved Hindi-to-English cases from 9 November:
 translation start to first decoded synthesis audio. They exclude STT, meeting
-transport and listener playback. They are not medians or measurements of the
-Hindi/Telugu/Punjabi story. The offline Performance screen appears separately.
-Full local suites on 9 November: 1,468 backend passed, one skipped; 322 frontend
-passed; seven runtime checks passed. Build and seven runtime checks passed again
-on 10 November for this refresh. The full application suites were not rerun.
-The new local rehearsal passed; it does not establish human translation quality.
-
-FEATURE BOUNDARIES
-VoiceShield is experimental incoming-audio screening, not verified identity or
-proven digital-arrest prevention. Audio lab CPU figures are labelled historical
-synthetic diagnostics. Ten configurable languages do not certify all pairs.
-Acknowledgements record understanding; recap hashes are not legal signatures.
-The application supports consented voice cloning, but these stock readings do
-not demonstrate a new cloning run. GPU diagrams illustrate implementation;
-warm-up and idle windows can still incur charges. No India-only inference claim.
+transport and listener playback; they are not medians or timings for this
+Hindi/Telugu/Punjabi UI rehearsal. The build's historical 9 November test counts
+are dated. README and pitch separately cite the later 10 November checks.
+VoiceShield is experimental source-audio screening, not identity proof or
+validated digital-arrest prevention. Ten options do not certify all language
+pairs. Acknowledgements record understanding; hashes are not legal signatures.
+GPU diagrams illustrate the implementation, not measured concurrency. Startup
+and idle time can be billed; the inference chain is not verified India-only.
 
 TECHNOLOGY MARKS
-Marks identify application technologies, not endorsement or activity in this edit.
+Marks identify implementation technologies, not endorsement or live activity.
 Gnani: https://docs.gnani.ai/api/introduction/introduction
 LiveKit: https://livekit.com/brand
 Modal: https://modal.com/
 Google Cloud: https://cloud.google.com/
-Development, artwork, narration and editing used AI assistance. The filenames
-above identify the current edit; older 2:30/60-second files are retained as prior
-versions and are not certified by the new file hashes.
+Development, illustrations, narration and editing used AI assistance.
+No new Gnani requests or Modal sessions. No form submission or social posting.

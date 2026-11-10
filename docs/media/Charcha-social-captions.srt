@@ -3,36 +3,41 @@
 This is Asha. Tomorrow, her whole team meets.
 
 2
-00:00:07,250 --> 00:00:12,233
-Ravi joins in Telugu. Meher joins in Punjabi.
+00:00:05,600 --> 00:00:10,698
+Charcha translates your words, using your voice with consent.
 
 3
-00:00:14,500 --> 00:00:19,620
-नमस्ते। कल की बैठक के लिए शाम चार बजे कमरा तीन में बारह नीली फाइलें लाना।
+00:00:12,000 --> 00:00:17,120
 [Hindi] Hello. Bring twelve blue files to room three at four tomorrow for the meeting.
 
 4
+00:00:17,700 --> 00:00:21,776
+Please bring twelve blue files to room 3 at 4 PM for tomorrow's meeting.
+
+5
 00:00:22,250 --> 00:00:27,382
 Room four, not three. Everyone needs the update.
 
-5
-00:00:29,300 --> 00:00:32,020
-నాలుగో గది, మూడో గది కాదు.
+6
+00:00:29,000 --> 00:00:31,720
 [Telugu] Room four, not room three.
 
-6
-00:00:32,520 --> 00:00:35,080
-ਕਮਰਾ ਚਾਰ, ਕਮਰਾ ਤਿੰਨ ਨਹੀਂ।
+7
+00:00:32,000 --> 00:00:34,560
 [Punjabi] Room four, not room three.
 
-7
-00:00:37,250 --> 00:00:44,105
+8
+00:00:35,000 --> 00:00:41,855
 Ravi confirms. Then Meher. The update needs fresh confirmation.
 
-8
-00:00:45,250 --> 00:00:51,243
+9
+00:00:42,100 --> 00:00:48,093
 When they leave, the message and confirmations stay together in a bilingual recap.
 
-9
-00:00:53,250 --> 00:00:58,748
+10
+00:00:48,150 --> 00:00:54,114
+See recorded server timings, alongside experimental AI-voice screening.
+
+11
+00:00:54,200 --> 00:00:59,698
 Charcha. Different languages. One shared plan.
