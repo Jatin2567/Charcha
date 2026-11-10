@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 import {
   ArrowUpRight,
   AudioLines,
@@ -450,7 +451,8 @@ function ResourceCard({ resource, reference }: { resource: UsageResource; refere
 
 export function Usage() {
   const { healthLoading } = useApp();
-  const usage = useUsage(isLocalDemo(), healthLoading);
+  const [ledger, setLedger] = useState<'auto' | 'shared' | 'reviewer'>('auto');
+  const usage = useUsage(isLocalDemo(), healthLoading, ledger);
   const { report, available } = usage;
   const reference = !available;
   const exhausted = report.resources.filter((item) => item.status === 'exhausted');
@@ -458,6 +460,16 @@ export function Usage() {
   const demo = report.mode === 'demo';
   const ready = available && report.enforcement.status === 'ready';
   const reset = new Date(report.period.reset_at);
+  const scope = report.resource_scope;
+  const scopeNotice = <section className="notice info" aria-label="Usage account scope"><div>
+    <strong>{scope?.label || 'Workspace ledger · account scope not reported'}</strong>
+    <p>{scope?.detail || 'The server has not identified which provider account these units belong to. Do not treat this report as your personal provider balance.'}</p>
+    {!!scope?.available?.length && <label className="field"><span>Activity ledger</span><select value={ledger} onChange={event => setLedger(event.target.value as typeof ledger)}>
+      <option value="auto">Choose automatically for my account</option>
+      {scope.available.includes('reviewer') && <option value="reviewer">My reviewer provider activity</option>}
+      {scope.available.includes('shared') && <option value="shared">Shared workspace activity</option>}
+    </select></label>}
+  </div></section>;
 
   if (!available) return <div className="usage-page">
     <PageHeading eyebrow="SERVICE ACTIVITY" title="Usage" description="Live readings appear after the workspace service responds." />
@@ -467,18 +479,19 @@ export function Usage() {
     </section>
   </div>;
 
-  if (report.approval.owner_tracks_billing) return <div className="usage-page">
-    <PageHeading eyebrow="MEASURED SERVICE ACTIVITY" title="Usage" description="You monitor credits in Gnani. Charcha does not estimate or deduct a rupee balance." />
+  if (scope?.kind === 'reviewer' || report.approval.owner_tracks_billing) return <div className="usage-page">
+    <PageHeading eyebrow="MEASURED SERVICE ACTIVITY" title="Usage" description={scope?.kind === 'reviewer' ? 'Service units recorded for your reviewer resources. Your provider dashboards remain the billing authority.' : 'The workspace owner monitors provider credits. Charcha does not estimate or deduct a rupee balance.'} />
+    {scopeNotice}
     <ErrorNotice message={usage.error} />
     <section className="panel">
-      <h2>Automatic interpretation</h2>
-      <p>Meetings created by the workspace host can use every supported language and meeting voice. No operator approval is required.</p>
+      <h2>{scope?.kind === 'reviewer' ? 'Your recorded service activity' : 'Shared workspace activity'}</h2>
+      {scope?.kind !== 'reviewer' && <p>Meetings created by the workspace host can use every supported language and meeting voice. No operator approval is required.</p>}
       <p>These are actual attempted service units for {report.period.date} UTC, including failed requests and recognition connection time. They are not billed charges or an accuracy score.</p>
       <button className="button secondary" onClick={usage.refresh}>Refresh activity</button>
       <table><thead><tr><th>Service activity</th><th>Recorded units</th></tr></thead>
         <tbody>{report.resources.map((item) => <tr key={item.key}><td>{item.label}</td><td>{available ? amount(item.used) : 'Unavailable'} {item.unit}</td></tr>)}</tbody>
       </table>
-      <p>Gnani balance: not tracked. Modal credit balance: not connected to this page. Check each provider’s dashboard for billing.</p>
+      <p>Gnani and GPU balances are not connected to this page. Provider limits, credit balances and billed charges must be checked in the account that supplies each selected service.</p>
       <Link className="button secondary" to="/performance">Open live performance</Link>
     </section>
   </div>;
@@ -497,6 +510,7 @@ export function Usage() {
         }
       />
 
+      {scopeNotice}
       <section
         className={`usage-scope ${exhausted.length ? 'usage-scope-stop' : ''}`}
         aria-labelledby="usage-scope-title"

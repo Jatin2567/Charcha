@@ -8,6 +8,7 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import ipaddress
+import inspect
 import re
 import time
 from contextlib import asynccontextmanager
@@ -163,6 +164,9 @@ class ReviewerResources:
         self.shared_usage, self.shared_speech, self.shared_translator = usage, speech, translator
         self.profiles: dict[str, ResourceSelection] = {}
         self.rooms: dict[str, RoomResources] = {}
+        # Retry media teardown without retaining any provider credentials/client.
+        self.pending_teardown: dict[str, tuple[str, ...]] = {}
+        self.teardown_locks: dict[str, asyncio.Lock] = {}
         self.service = self.lifecycle = None
 
     def account_valid(self, who):
@@ -326,50 +330,116 @@ class ReviewerResources:
 
     async def clear(self, key):
         self.profiles.pop(key, None)
+        errors = []
         for code, runtime in list(self.rooms.items()):
             if runtime.account.key == key:
-                await self.close_room(code)
+                await self._cleanup_attempt(lambda code=code: self.close_room(code), errors)
+        self._raise_cleanup_errors(errors)
 
     async def revoke_subject(self, subject):
         keys = {r.account.key for r in self.rooms.values() if r.account.subject == subject}
         keys.update(k for k in self.profiles if self.accounts.sessions.get(k) and self.accounts.sessions[k].subject == subject)
+        errors = []
         for key in keys:
-            await self.clear(key)
+            await self._cleanup_attempt(lambda key=key: self.clear(key), errors)
+        self._raise_cleanup_errors(errors)
+
+    @staticmethod
+    async def _cleanup_attempt(action, errors):
+        try:
+            result = action()
+            if inspect.isawaitable(result):
+                await result
+        except BaseException as error:
+            # Cancellation still propagates, after independent resource closes.
+            errors.append(error)
+
+    @staticmethod
+    def _raise_cleanup_errors(errors):
+        if errors:
+            fatal = next((error for error in errors if not isinstance(error, Exception)), None)
+            raise fatal if fatal is not None else errors[0]
+
+    async def _teardown_room(self, code, *, retry):
+        errors = []
+        if self.lifecycle:
+            await self._cleanup_attempt(lambda: self.lifecycle.cancel_preparation(code), errors)
+        if self.service:
+            if retry:
+                # Store.prune removes a room before awaiting media cleanup. A
+                # second prune alone cannot revisit that partially removed room.
+                pipeline = getattr(self.service, "pipeline", None)
+                transport = getattr(self.service, "transport", None)
+                if pipeline:
+                    await self._cleanup_attempt(lambda: pipeline.close_room(code), errors)
+                if transport:
+                    before_media = len(errors)
+                    for participant_id in self.pending_teardown.get(code, ()):
+                        await self._cleanup_attempt(lambda pid=participant_id: transport.remove(code, pid), errors)
+                    # Preserve its handle if participant removal needs another
+                    # attempt; closing the manager room would discard it.
+                    if len(errors) == before_media:
+                        await self._cleanup_attempt(lambda: transport.close_room(code), errors)
+            if not retry or not errors:
+                await self._cleanup_attempt(self.service.prune_expired, errors)
+        if not errors:
+            self.pending_teardown.pop(code, None)
+        self._raise_cleanup_errors(errors)
 
     async def close_room(self, code):
+        lock = self.teardown_locks.setdefault(code, asyncio.Lock())
+        try:
+            async with lock:
+                await self._close_room(code)
+        finally:
+            if code not in self.rooms and code not in self.pending_teardown:
+                self.teardown_locks.pop(code, None)
+
+    async def _close_room(self, code):
         r = self.rooms.get(code)
-        if not r or r.closed:
+        if not r:
+            if code in self.pending_teardown:
+                await self._teardown_room(code, retry=True)
             return
         r.closed = True  # Blocks any new call before cancelling in-flight work.
         state = self.store.rooms.get(code)
         if state:
             state.expires_at = 0
-        if self.lifecycle:
-            self.lifecycle.cancel_preparation(code)
-        if self.service:
-            await self.service.prune_expired()
-        await r.speech.aclose()
-        # Shared engine belongs to the application, never an individual reviewer.
-        await r.translator.client.aclose()
-        if r.profile.evon_source == "own":
-            await r.translator.engine.aclose()
-        if r.own_usage:
-            r.own_usage.close()
+        self.pending_teardown[code] = tuple(p.id for p in state.room.participants
+            if not p.is_agent and not p.is_demo) if state else ()
+        # Expire first: detaching must never allow stale tasks to use owner keys.
         self.rooms.pop(code, None)
+        errors = []
+        await self._cleanup_attempt(lambda: self._teardown_room(code, retry=False), errors)
+        await self._cleanup_attempt(r.speech.aclose, errors)
+        # Shared engine belongs to the application, never an individual reviewer.
+        await self._cleanup_attempt(r.translator.client.aclose, errors)
+        if r.profile.evon_source == "own":
+            await self._cleanup_attempt(r.translator.engine.aclose, errors)
+        if r.own_usage:
+            await self._cleanup_attempt(r.own_usage.close, errors)
+        self._raise_cleanup_errors(errors)
 
     async def prune(self):
+        pending = list(self.pending_teardown)
+        errors = []
         for key in list(self.profiles):
             who = self.accounts.sessions.get(key)
             if not who or not self.account_valid(who):
-                await self.clear(key)
+                await self._cleanup_attempt(lambda key=key: self.clear(key), errors)
         for code in list(self.rooms):
             if not self.valid(code):
-                await self.close_room(code)
+                await self._cleanup_attempt(lambda code=code: self.close_room(code), errors)
+        for code in pending:
+            await self._cleanup_attempt(lambda code=code: self.close_room(code), errors)
+        self._raise_cleanup_errors(errors)
 
     async def aclose(self):
-        for code in list(self.rooms):
-            await self.close_room(code)
+        errors = []
+        for code in set(self.rooms) | set(self.pending_teardown):
+            await self._cleanup_attempt(lambda code=code: self.close_room(code), errors)
         self.profiles.clear()
+        self._raise_cleanup_errors(errors)
 
     def router(self):
         router = APIRouter()

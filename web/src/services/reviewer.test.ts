@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { changeResource, preparationLabel, resourcePayload, type ResourceForm } from './reviewer';
+import {
+  changeResource,
+  preparationLabel,
+  resourcePayload,
+  reviewerAccessIsCurrent,
+  type ResourceForm,
+} from './reviewer';
 
 const form: ResourceForm = {
   gnani_source: 'own',
@@ -12,6 +18,18 @@ const form: ResourceForm = {
   evon_modal_secret: 'proxy-secret-test',
 };
 describe('reviewer resource boundaries', () => {
+  it('ends local reviewer permission at expiry even before the next server poll', () => {
+    const access = {
+      reviewer: true,
+      can_host: true,
+      reviewer_shared_allowed: true,
+      expires_at: 100,
+    };
+    expect(reviewerAccessIsCurrent(access, 99999)).toBe(true);
+    expect(reviewerAccessIsCurrent(access, 100000)).toBe(false);
+    expect(reviewerAccessIsCurrent({ ...access, can_host: false }, 90000)).toBe(false);
+    expect(reviewerAccessIsCurrent(null)).toBe(false);
+  });
   it('discards credentials typed for a previous endpoint before changing destination', () => {
     const changed = changeResource(form, 'evon_base_url', 'https://another.modal.run/v1');
     expect(changed.evon_api_key).toBe('');

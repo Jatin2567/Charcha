@@ -13,7 +13,7 @@ export interface UsageResource {
   label: string;
   unit: 'seconds' | 'connections' | 'requests' | 'characters' | 'enrollments';
   used: number | null;
-  limit: number;
+  limit: number | null;
   remaining: number | null;
   utilization_percent: number | null;
   status: UsageStatus;
@@ -83,10 +83,18 @@ export interface ProgrammeUsage {
   flows: ProviderFlow[];
 }
 export interface UsageReport {
+  resource_scope?: {
+    kind: 'shared' | 'reviewer';
+    label: string;
+    detail: string;
+    gnani_source?: 'own' | 'shared';
+    evon_source?: 'own' | 'shared';
+    available?: ('shared' | 'reviewer')[];
+  };
   mode: 'demo' | 'live' | 'transport';
   period: { date: string; reset_at: string };
   enforcement: {
-    enabled: true;
+    enabled: boolean;
     persistent: boolean;
     status: 'ready' | 'unavailable' | 'demo' | 'disabled';
     detail: string;

@@ -472,9 +472,19 @@ class Accounts:
     async def revoke(self, who, service):
         self.sessions.pop(who.key, None)
         resources = getattr(service, "reviewer_resources", None)
+        error = None
         if resources:
-            await resources.clear(who.key)
+            try:
+                await resources.clear(who.key)
+            except BaseException as caught:
+                error = caught
         for session in self.store.sessions.values():
             if session.account_session == who.key:
                 session.expires_at = 0
-        await service.prune_expired()
+        try:
+            await service.prune_expired()
+        except BaseException as caught:
+            if error is None or (isinstance(error, Exception) and not isinstance(caught, Exception)):
+                error = caught
+        if error is not None:
+            raise error

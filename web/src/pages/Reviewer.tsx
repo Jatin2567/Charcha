@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, KeyRound, Server, ShieldCheck } from 'lucide-react';
 import { request } from '../services/api';
 import {
   changeResource,
   reviewerAccess,
+  reviewerAccessIsCurrent,
   reviewerWorkspace,
   saveReviewerWorkspace,
   type ReviewerAccess,
@@ -38,8 +39,31 @@ export function Reviewer() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [confirmClear, setConfirmClear] = useState(false);
+  const resourcesLoaded = useRef(false);
+  const resourceRevision = useRef(0);
+  const currentAccess = useRef<ReviewerAccess | null>(null);
+
+  function loseAccess(value: ReviewerAccess) {
+    resourceRevision.current++;
+    resourcesLoaded.current = false;
+    currentAccess.current = value;
+    setAccess({ ...value, can_host: false });
+    setWorkspace(null);
+    setForm({ ...empty });
+    setConsent(false);
+    setDirty(false);
+    setConfirmClear(false);
+    setMessage('Reviewer access has ended. Your private form fields were cleared.');
+  }
 
   function apply(value: ReviewerWorkspace) {
+    if (!reviewerAccessIsCurrent(value.access)) {
+      loseAccess(value.access);
+      return;
+    }
+    resourceRevision.current++;
+    resourcesLoaded.current = true;
+    currentAccess.current = value.access;
     setAccess(value.access);
     setWorkspace(value);
     const own = !value.access.reviewer_shared_allowed;
@@ -67,20 +91,61 @@ export function Reviewer() {
   }
   useEffect(() => {
     let active = true;
-    void reviewerAccess()
-      .then(async (current) => {
-        if (!active) return;
-        setAccess(current);
-        if (current.can_host) {
-          const result = await reviewerWorkspace();
-          if (active) apply(result);
+    let requestRevision = 0;
+    let expiryTimer: ReturnType<typeof setTimeout>;
+    const check = async () => {
+      const revision = ++requestRevision;
+      try {
+        const current = await reviewerAccess();
+        if (!active || revision !== requestRevision) return;
+        setError((previous) =>
+          previous.startsWith('Reviewer access could not be verified.') ? '' : previous,
+        );
+        clearTimeout(expiryTimer);
+        currentAccess.current = current;
+        if (!reviewerAccessIsCurrent(current)) {
+          if (resourcesLoaded.current) loseAccess(current);
+          else setAccess({ ...current, can_host: false });
+          return;
         }
-      })
-      .catch((e) => {
-        if (active) setError((e as Error).message);
-      });
+        setAccess(current);
+        if (current.reviewer && current.expires_at != null) {
+          expiryTimer = setTimeout(
+            () => {
+              if (active && !reviewerAccessIsCurrent(currentAccess.current)) {
+                loseAccess(currentAccess.current!);
+                void check();
+              }
+            },
+            Math.max(0, current.expires_at * 1000 - Date.now()) + 25,
+          );
+        }
+        if (!resourcesLoaded.current) {
+          const resourceCheck = resourceRevision.current;
+          const result = await reviewerWorkspace();
+          if (active && revision === requestRevision && resourceCheck === resourceRevision.current)
+            apply(result);
+        }
+      } catch (e) {
+        if (active && revision === requestRevision) {
+          setAccess(null);
+          setError('Reviewer access could not be verified. ' + (e as Error).message);
+        }
+      }
+    };
+    const onVisible = () => {
+      if (document.visibilityState !== 'hidden') void check();
+    };
+    void check();
+    const timer = setInterval(onVisible, 30000);
+    window.addEventListener('focus', onVisible);
+    document.addEventListener('visibilitychange', onVisible);
     return () => {
       active = false;
+      clearInterval(timer);
+      clearTimeout(expiryTimer);
+      window.removeEventListener('focus', onVisible);
+      document.removeEventListener('visibilitychange', onVisible);
     };
   }, []);
   function change<K extends keyof ResourceForm>(key: K, value: ResourceForm[K]) {
@@ -90,6 +155,8 @@ export function Reviewer() {
     setMessage('');
   }
   const allowed = !!access?.reviewer_shared_allowed;
+  const hostAllowed = reviewerAccessIsCurrent(access);
+  const sourcesAllowed = allowed || (form.gnani_source === 'own' && form.evon_source === 'own');
   const sameEvon =
     workspace?.profile?.evon_source === 'own' &&
     form.evon_base_url.trim() === workspace.profile.evon_base_url;
@@ -118,7 +185,7 @@ export function Reviewer() {
         </p>
       )}
       {!access && !error && <p role="status">Checking reviewer access…</p>}
-      {access && !access.can_host && (
+      {access && !hostAllowed && (
         <section className="panel reviewer-invitation">
           <ShieldCheck size={25} />
           <h2>Reviewer invitation</h2>
@@ -168,7 +235,7 @@ export function Reviewer() {
           </p>
         </section>
       )}
-      {access?.can_host && (
+      {hostAllowed && access && (
         <>
           <section className="panel reviewer-status">
             <ShieldCheck size={24} />
@@ -189,11 +256,14 @@ export function Reviewer() {
           <form
             onSubmit={async (e) => {
               e.preventDefault();
-              if (!consent) return;
+              if (!consent || !reviewerAccessIsCurrent(currentAccess.current)) return;
+              const resourceCheck = resourceRevision.current;
               setBusy('save');
               setError('');
               try {
-                apply(await saveReviewerWorkspace(form));
+                const saved = await saveReviewerWorkspace(form);
+                if (resourceCheck !== resourceRevision.current) return;
+                apply(saved);
                 setMessage(
                   'Resource choices saved for this sign-in session. No speech or GPU request was started.',
                 );
@@ -447,10 +517,24 @@ export function Reviewer() {
                 Save your changed resource choices before creating a meeting.
               </p>
             )}
+            {!sourcesAllowed && (
+              <p role="alert">
+                Shared resources are no longer allowed by your invitation. Choose and save your own
+                services before creating a meeting.
+              </p>
+            )}
             <button
               className="button primary"
-              disabled={!!busy || dirty || !workspace?.configured || !title.trim()}
+              disabled={
+                !!busy ||
+                !hostAllowed ||
+                !sourcesAllowed ||
+                dirty ||
+                !workspace?.configured ||
+                !title.trim()
+              }
               onClick={async () => {
+                if (!reviewerAccessIsCurrent(currentAccess.current)) return;
                 setBusy('create');
                 setError('');
                 try {

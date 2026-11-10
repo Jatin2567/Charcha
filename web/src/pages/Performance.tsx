@@ -816,16 +816,16 @@ export function Performance() {
         </div>
       </section>
 
-      <InterpretationEngineStatus />
+      <InterpretationEngineStatus membership={membership && !archived && membership.room.code === roomCode ? membership : undefined} />
 
       <section className="performance-readiness" id="readiness">
         <div className="performance-section-heading">
           <div>
-            <div className="eyebrow">READY FOR A REAL CONVERSATION</div>
-            <h2>Your setup checklist.</h2>
+            <div className="eyebrow">SHARED DEPLOYMENT SETTINGS</div>
+            <h2>Workspace configuration checklist.</h2>
             <p>
-              Put credentials in the server environment. This page shows configuration presence
-              only.
+              These are the shared server’s default settings, not a check of personal reviewer resources.
+              Configure your own services in <Link to="/reviewer">Reviewer workspace</Link>. Presence alone does not verify a provider.
             </p>
           </div>
           <Badge

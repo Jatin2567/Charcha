@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import asyncio
 import contextlib
+import logging
 from contextlib import asynccontextmanager
+from typing import Literal
 
 import anyio
 from fastapi import (
@@ -57,6 +59,7 @@ from .services.usage import UsageGuard
 from .services.voice import MAX_REFERENCE_BYTES, VoiceService
 from .services.meeting_engine import MeetingEngineLifecycle
 from .services.reviewer_resources import ReviewerResources, RoutedSpeech, RoutedTranslator, RoutedUsage
+from .services import reviewer_reporting
 from .store import Consumer, Store, account_deadline, account_session, account_history_key, token_digest
 from .transport.livekit import TransportManager
 
@@ -104,9 +107,16 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     async def cleanup():
         while True:
             await asyncio.sleep(30)
-            accounts.prune()
-            await reviewer_resources.prune()
-            await service.prune_expired()
+            try:
+                accounts.prune()
+            except Exception:
+                logging.getLogger(__name__).warning("Account cleanup deferred; retrying on the next cleanup interval.")
+            for action in (reviewer_resources.prune, service.prune_expired):
+                try:
+                    await action()
+                except Exception:
+                    # Never log exception bodies or retained provider credentials.
+                    logging.getLogger(__name__).warning("Room cleanup deferred; retrying on the next cleanup interval.")
 
     async def save_reports():
         while True:
@@ -128,7 +138,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             engine_task.cancel()
             history_task.cancel()
             await asyncio.gather(task, engine_task, history_task, return_exceptions=True)
-            await reviewer_resources.aclose()
+            try:
+                await reviewer_resources.aclose()
+            except Exception:
+                logging.getLogger(__name__).warning("Reviewer teardown reported an error; continuing application shutdown.")
             demo_tasks = []
             for state in store.rooms.values():
                 if state.demo_task:
@@ -237,8 +250,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         return {"samples": SAMPLES, "simulated": True}
 
     @app.get("/api/usage")
-    async def usage_summary():
-        return usage.public_snapshot()
+    async def usage_summary(request: Request, scope: Literal["auto", "shared", "reviewer"] = "auto"):
+        return reviewer_reporting.usage_summary(reviewer_resources, accounts.require(request), scope)
 
     @app.get("/api/readiness")
     async def readiness():
@@ -378,9 +391,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @app.get("/api/rooms/{code}/engine")
     async def engine_status(code: str, token: str = Depends(bearer_token)):
+        code = code.lower()
         store.authenticate(token, code)
-        engine = reviewer_resources.engine_for(code)
-        return engine.status() if engine else {"state": "external"}
+        return reviewer_reporting.room_engine_status(reviewer_resources, code)
 
     def preparation_status(code, who):
         state = store.room(code)
@@ -420,12 +433,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @app.get("/api/account/interpretation-engine")
     async def account_engine_status(request: Request):
-        accounts.require(request)
-        engine = getattr(translator, "engine", None)
-        return engine.status() if engine else {"state": "external"}
+        return reviewer_reporting.account_engine_status(reviewer_resources, accounts.require(request))
 
     @app.post("/api/rooms/{code}/engine")
     async def start_engine(code: str, token: str = Depends(bearer_token)):
+        code = code.lower()
         session = store.authenticate(token, code)
         state = store.room(code)
         engine = reviewer_resources.engine_for(code)

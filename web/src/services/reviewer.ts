@@ -6,6 +6,12 @@ export type ReviewerAccess = {
   reviewer_shared_allowed: boolean;
   expires_at?: number | null;
 };
+export function reviewerAccessIsCurrent(access: ReviewerAccess | null, now = Date.now()) {
+  return (
+    !!access?.can_host &&
+    !(access.reviewer && access.expires_at != null && access.expires_at * 1000 <= now)
+  );
+}
 export type ResourceSource = 'shared' | 'own';
 export type ReviewerProfile = {
   gnani_source: ResourceSource;

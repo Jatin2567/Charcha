@@ -189,6 +189,7 @@ export function validateUsage(value: unknown, now = new Date()): UsageReport {
   };
   if (!record(value) || !['demo', 'live', 'transport'].includes(String(value.mode))) return invalid();
   const { period, enforcement, resources, billing } = value;
+  const personalLedger = record(value.resource_scope) && value.resource_scope.kind === 'reviewer' && record(enforcement) && enforcement.enabled === false;
   if (
     !record(period) ||
     typeof period.date !== 'string' ||
@@ -202,10 +203,10 @@ export function validateUsage(value: unknown, now = new Date()): UsageReport {
     return invalid();
   if (
     !record(enforcement) ||
-    enforcement.enabled !== true ||
+    (enforcement.enabled !== true && !(enforcement.enabled === false && record(value.resource_scope) && value.resource_scope.kind === 'reviewer')) ||
     typeof enforcement.persistent !== 'boolean' ||
     !['ready', 'unavailable', 'demo', 'disabled'].includes(String(enforcement.status)) ||
-    (enforcement.status === 'disabled' && value.mode !== 'transport') ||
+    (enforcement.status === 'disabled' && value.mode !== 'transport' && !personalLedger) ||
     typeof enforcement.detail !== 'string'
   )
     return invalid();
@@ -221,7 +222,7 @@ export function validateUsage(value: unknown, now = new Date()): UsageReport {
       seen.has(spec.key) ||
       resource.unit !== spec.unit ||
       typeof resource.label !== 'string' ||
-      !nonnegative(resource.limit) ||
+      (personalLedger ? resource.limit !== null : !nonnegative(resource.limit)) ||
       !nullableNumber(resource.used) ||
       !nullableNumber(resource.remaining) ||
       !nullableNumber(resource.utilization_percent) ||
@@ -230,6 +231,11 @@ export function validateUsage(value: unknown, now = new Date()): UsageReport {
       return invalid();
     seen.add(spec.key);
     const used = resource.used as number | null;
+    if (personalLedger) {
+      if (resource.remaining !== null || resource.utilization_percent !== null || resource.status !== 'unknown') return invalid();
+      continue;
+    }
+    if (!nonnegative(resource.limit)) return invalid();
     if (used === null) {
       if (
         resource.remaining !== null ||
@@ -257,14 +263,31 @@ export function validateUsage(value: unknown, now = new Date()): UsageReport {
     value.mode as UsageReport['mode'],
     now,
     invalid,
+    personalLedger,
   );
   const programme = validateProgramme(value.programme, now, invalid);
+  let resourceScope: UsageReport['resource_scope'];
+  if (value.resource_scope !== undefined) {
+    const scope = value.resource_scope;
+    if (!record(scope) || !['shared', 'reviewer'].includes(String(scope.kind)) ||
+        typeof scope.label !== 'string' || typeof scope.detail !== 'string' ||
+        (scope.gnani_source !== undefined && !['shared', 'own'].includes(String(scope.gnani_source))) ||
+        (scope.evon_source !== undefined && !['shared', 'own'].includes(String(scope.evon_source))) ||
+        (scope.available !== undefined && (!Array.isArray(scope.available) || scope.available.some(kind => !['shared','reviewer'].includes(String(kind)))))) return invalid();
+    resourceScope = {
+      kind: scope.kind as 'shared' | 'reviewer', label: safeText(scope.label), detail: safeText(scope.detail),
+      ...(scope.gnani_source ? { gnani_source: scope.gnani_source as 'shared' | 'own' } : {}),
+      ...(scope.evon_source ? { evon_source: scope.evon_source as 'shared' | 'own' } : {}),
+      ...(scope.available ? { available: [...new Set(scope.available as ('shared' | 'reviewer')[])] } : {}),
+    };
+  }
   // Keep only documented fields. Server diagnostics or credentials must never enter UI exports.
   return {
+    ...(resourceScope ? { resource_scope: resourceScope } : {}),
     mode: value.mode as UsageReport['mode'],
     period: { date: period.date, reset_at: period.reset_at },
     enforcement: {
-      enabled: true,
+      enabled: enforcement.enabled as boolean,
       persistent: enforcement.persistent,
       status: enforcement.status as UsageReport['enforcement']['status'],
       detail: safeText(enforcement.detail),
@@ -293,6 +316,7 @@ function validateApproval(
   mode: UsageReport['mode'],
   now: Date,
   invalid: () => never,
+  personalLedger = false,
 ): FlowApproval {
   // An older server cannot silently turn the new approval gate off.
   if (value === undefined) return lockedApproval();
@@ -300,13 +324,13 @@ function validateApproval(
     !record(value) ||
     typeof value.required !== 'boolean' ||
     !['locked', 'approved', 'unavailable', 'demo', 'disabled'].includes(String(value.status)) ||
-    (value.status === 'disabled' && mode !== 'transport') ||
+    (value.status === 'disabled' && mode !== 'transport' && !personalLedger) ||
     typeof value.detail !== 'string' ||
     (value.active_flow_id !== null && !flowId(value.active_flow_id)) ||
     (value.expires_at !== null && !timestamp(value.expires_at))
   )
     return invalid();
-  if (mode === 'live' && value.required !== true) return invalid();
+  if (mode === 'live' && value.required !== true && !personalLedger) return invalid();
   if (mode === 'live' && value.status === 'demo') return invalid();
   if (value.status === 'approved') {
     if (mode !== 'live' || !value.required || !value.active_flow_id || !value.expires_at)
@@ -538,8 +562,8 @@ function validateFlow(value: unknown, now: Date, invalid: () => never): Provider
 }
 
 /** Summary polling reads our ledger only; it never invokes a paid AI endpoint. */
-export async function fetchUsage(signal: AbortSignal): Promise<UsageReport> {
-  const response = await fetch(`${API_BASE}/usage`, {
+export async function fetchUsage(signal: AbortSignal, scope: 'auto' | 'shared' | 'reviewer' = 'auto'): Promise<UsageReport> {
+  const response = await fetch(`${API_BASE}/usage${scope === 'auto' ? '' : '?scope=' + scope}`, {
     signal,
     headers: { Accept: 'application/json' },
   });

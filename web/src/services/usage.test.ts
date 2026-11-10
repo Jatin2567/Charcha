@@ -30,6 +30,37 @@ const liveReport = (): UsageReport => {
 afterEach(() => vi.unstubAllGlobals());
 
 describe('daily usage evidence', () => {
+  it('preserves reviewer ledger scope and strips unrecognized credential fields', () => {
+    const report = liveReport();
+    report.enforcement.enabled = false;
+    report.resources = report.resources.map(item => ({ ...item, limit: null, remaining: null, utilization_percent: null, status: 'unknown' }));
+    report.approval.required = false;
+    const scoped = { ...report, resource_scope: { kind: 'reviewer', label: 'My service units', detail: 'Own services only; shared service units excluded.', gnani_source: 'own', evon_source: 'shared', available: ['shared', 'reviewer'], api_key: 'must-not-export' } };
+    const result = validateUsage(scoped);
+    expect(result.resource_scope).toEqual({ kind: 'reviewer', label: 'My service units', detail: scoped.resource_scope.detail, gnani_source: 'own', evon_source: 'shared', available: ['shared', 'reviewer'] });
+    expect(result.enforcement.enabled).toBe(false);
+    expect(result.resources.every(item => item.used === 0 && item.limit === null && item.remaining === null && item.status === 'unknown')).toBe(true);
+    expect(JSON.stringify(result)).not.toContain('must-not-export');
+  });
+  it('does not treat disabled enforcement as an enforced shared account limit', () => {
+    const report = liveReport(); report.enforcement.enabled = false;
+    expect(() => validateUsage({ ...report, resource_scope: { kind: 'shared', label: 'Shared', detail: 'Shared activity' } })).toThrow();
+    expect(() => validateUsage({ ...report, resource_scope: { kind: 'unknown', label: 'Wrong account', detail: 'Unknown' } })).toThrow();
+  });
+  it('rejects invented remaining allowance in a reporting-only personal ledger', () => {
+    const report = liveReport();
+    report.enforcement.enabled = false;
+    report.resources = report.resources.map(item => ({ ...item, limit: null, remaining: null, utilization_percent: null, status: 'unknown' }));
+    report.resources[0].remaining = 30;
+    expect(() => validateUsage({ ...report, resource_scope: { kind: 'reviewer', label: 'Personal activity', detail: 'Billing remains in the provider dashboard.' } })).toThrow();
+  });
+  it('requests the chosen reviewer ledger explicitly without triggering provider work', async () => {
+    const fetcher = vi.fn().mockResolvedValue({ ok: true, json: async () => liveReport() });
+    vi.stubGlobal('fetch', fetcher);
+    await fetchUsage(new AbortController().signal, 'reviewer');
+    expect(fetcher.mock.calls[0][0]).toBe('/api/usage?scope=reviewer');
+    expect(fetcher.mock.calls[0][1]).not.toHaveProperty('method');
+  });
   it('uses UTC calendar rollover independently of local time', () => {
     const report = referenceUsage(new Date('2026-10-24T23:59:59Z'));
     expect(report.period).toEqual({ date: '2026-10-24', reset_at: '2026-10-25T00:00:00.000Z' });

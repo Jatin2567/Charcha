@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { fetchUsage, referenceUsage } from '../services/usage';
 import type { UsageReport } from '../types/usage';
 
-export function useUsage(localDemo: boolean, waiting: boolean) {
+export function useUsage(localDemo: boolean, waiting: boolean, scope: 'auto' | 'shared' | 'reviewer' = 'auto') {
   const [report, setReport] = useState<UsageReport>(() => referenceUsage());
   const [available, setAvailable] = useState(false);
   const [error, setError] = useState('');
@@ -32,6 +32,8 @@ export function useUsage(localDemo: boolean, waiting: boolean) {
       return;
     }
     let alive = true;
+    // A previous account's ledger must not remain visible during a scope switch.
+    setAvailable(false);
     let refreshTimer: ReturnType<typeof setTimeout> | undefined;
     let deadline: ReturnType<typeof setTimeout> | undefined;
     let controller: AbortController | undefined;
@@ -40,7 +42,7 @@ export function useUsage(localDemo: boolean, waiting: boolean) {
       deadline = setTimeout(() => controller?.abort(), 12000);
       setLoading(true);
       try {
-        const next = await fetchUsage(controller.signal);
+        const next = await fetchUsage(controller.signal, scope);
         if (!alive) return;
         setReport(next);
         setAvailable(true);
@@ -71,7 +73,7 @@ export function useUsage(localDemo: boolean, waiting: boolean) {
       clearTimeout(deadline);
       controller?.abort();
     };
-  }, [localDemo, waiting, visible, autoRefresh, revision]);
+  }, [localDemo, waiting, visible, autoRefresh, revision, scope]);
 
   return {
     report,
