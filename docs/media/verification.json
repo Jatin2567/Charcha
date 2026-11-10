@@ -278,10 +278,15 @@
   "pitch_pdf": {
     "file": "../Charcha-one-page-pitch.pdf",
     "pages": 1,
-    "sha256": "0f1cb2322f0cf436c16098e7c5b6981dfd755180b1f4c456d9fd48b3008947f4",
+    "sha256": "3bd6d6518ae365218ab050008061cb8c599178cd560cacdef039ee15fe98f437",
     "existing_visual_review_passed": true,
     "full_approved_sathvika_review_included": true,
-    "latency_observation_preserved": true
+    "latency_observation_preserved": true,
+    "content_review_passed": true,
+    "latest_application_test_date": "2026-11-10",
+    "historical_latency_date": "2026-11-09",
+    "final_refresh_date": "2026-11-10",
+    "linked_repository_and_app_annotations_checked": true
   },
   "local_application_checks": {
     "full_suites_date": "2026-11-09",
@@ -386,5 +391,12 @@
     }
   },
   "form_submitted": false,
-  "social_post_published": false
+  "social_post_published": true,
+  "social_post": {
+    "url": "https://lnkd.in/p/g9n3W6Cj",
+    "publication_basis": "Owner supplied published-post link",
+    "public_content_verified": false,
+    "company_mentions_and_hashtags_verified": false,
+    "verification_note": "Automated web lookup could not read the short-link destination. No post was published by this preparation."
+  }
 }

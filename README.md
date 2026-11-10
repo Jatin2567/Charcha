@@ -6,6 +6,8 @@ Charcha combines multilingual audio/video meetings with spoken interpretation, o
 
 [One-page pitch](docs/Charcha-one-page-pitch.pdf) · [2:40 build film](docs/media/Charcha-2m40-multilingual-build.mp4) · [60-second multilingual story](docs/media/Charcha-60s-multilingual-voices.mp4) · [Hosted app](https://charcha-234398803946.asia-south2.run.app/) · [Submission guide](docs/SUBMISSION.md)
 
+[Entrant's LinkedIn post](https://lnkd.in/p/g9n3W6Cj) · Final pitch refreshed on 10 November with current application checks and separately dated provider timings.
+
 **Evaluating the portal?** The [reviewer setup guide](docs/REVIEWER_GUIDE.md) explains authenticated invitations, creating and admitting participants to your own meetings, shared or reviewer-supplied Gnani/Evon resources, preparing translation before joining, and account-scoped activity/readiness reports. Release `reviewer-reporting-20261110` was deployed and checked on 10 November. Reviewers still need a private invitation; no invitation or live provider test is implied by this deployment.
 
 **Source revision, 10 November 2026:** this revision includes the refreshed films and pitch, Sathvika's approved feedback, reviewer access and pre-meeting translation preparation. Hosted health, served components and access restrictions were checked separately from local tests. Public-video/social links and challenge submission remain separate steps. See the [release record](docs/SUBMISSION_RELEASE_NOTES.md).

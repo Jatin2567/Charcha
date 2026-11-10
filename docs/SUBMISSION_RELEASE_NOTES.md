@@ -1,5 +1,12 @@
 # Submission publication record
 
+## Final one-page pitch and supplied social link, 10 November 2026
+
+- Refined the pitch around a Hindi/Telugu/Punjabi workshop update, three product actions and the Gnani processing chain. It now cites the latest 10 November application checks and 43-file deployment comparison while retaining the dated, partial 9 November latency cases.
+- Preserved Sathvika's full approved review, including her response-latency observation. Rendered the one-page A4 PDF, checked extracted text, metadata and hyperlinks, and completed independent claim/layout review. The two published films are unchanged.
+- Saved the entrant-supplied social link, https://lnkd.in/p/g9n3W6Cj, in the submission records and form draft. Automated lookup did not verify its content or tags. No social post was published and no form was submitted by this preparation.
+- This document-only update makes no Gnani requests, starts no Modal sessions and does not redeploy the application.
+
 ## Verified follow-up: `reviewer-reporting-20261110`
 
 - Separated personal reviewer activity from shared workspace usage. Personal reports read the signed-in account's persistent attempted-unit ledger, use UTC daily boundaries and show unknown values when storage is unavailable. They never substitute the owner's activity or infer provider balances/prices.
