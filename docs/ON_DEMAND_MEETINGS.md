@@ -7,10 +7,15 @@ Application: https://charcha-234398803946.asia-south2.run.app/
 The new [reviewer workflow](REVIEWER_GUIDE.md) adds expiring administrator-issued
 reviewer invitations, session-private Gnani/Evon resource selection and explicit
 prejoin preparation. The matching API/frontend release was deployed and checked
-on 10 November: health, served controls, identity configuration and anonymous
-access restrictions passed, and 13 deployed source-file hashes matched. No
+on 10 November. The reporting follow-up at 16:31 UTC passed health, updated
+reviewer/prejoin/usage/performance controls, identity configuration and anonymous
+access restrictions; all 43 deployed backend source-file hashes matched. No
 invitation or authenticated live provider flow was part of that verification.
 The dated operating observations below remain historical.
+
+The follow-up separates personal provider usage and engine readiness from shared
+workspace reporting and makes revoked-session cleanup retry-safe. See the
+[verification record](REVIEWER_RELEASE_VERIFICATION.json) for exact test scopes.
 
 An authorized host can prepare interpretation on the Prejoin page for up to 15
 minutes before connecting media. Account/access/room expiry can shorten that

@@ -1,6 +1,7 @@
 {
   "prepared_date": "2026-11-10",
-  "publication_status": "local_reviewed_files_not_yet_published",
+  "publication_status": "media_and_pitch_verified_in_public_source",
+  "published_asset_commit": "b0781e3a180ffe4c15986f5cf71f77b7c16f7deb",
   "submission_video": {
     "file": "Charcha-2m40-multilingual-build.mp4",
     "duration_seconds": 160.0,
@@ -277,8 +278,10 @@
   "pitch_pdf": {
     "file": "../Charcha-one-page-pitch.pdf",
     "pages": 1,
-    "sha256": "8ff886911a14cb8087ab00b45f77305d445c967669ac8480f427b3dfdab1d4bd",
-    "existing_visual_review_passed": true
+    "sha256": "0f1cb2322f0cf436c16098e7c5b6981dfd755180b1f4c456d9fd48b3008947f4",
+    "existing_visual_review_passed": true,
+    "full_approved_sathvika_review_included": true,
+    "latency_observation_preserved": true
   },
   "local_application_checks": {
     "full_suites_date": "2026-11-09",

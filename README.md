@@ -6,7 +6,7 @@ Charcha combines multilingual audio/video meetings with spoken interpretation, o
 
 [One-page pitch](docs/Charcha-one-page-pitch.pdf) · [2:40 build film](docs/media/Charcha-2m40-multilingual-build.mp4) · [60-second multilingual story](docs/media/Charcha-60s-multilingual-voices.mp4) · [Hosted app](https://charcha-234398803946.asia-south2.run.app/) · [Submission guide](docs/SUBMISSION.md)
 
-**Evaluating the portal?** The [reviewer setup guide](docs/REVIEWER_GUIDE.md) explains authenticated invitations, creating and admitting participants to your own meetings, shared or reviewer-supplied Gnani/Evon resources, and preparing translation before joining. The matching API and web release was deployed and checked on 10 November. Reviewers still need a private invitation; no invitation or live provider test is implied by this deployment.
+**Evaluating the portal?** The [reviewer setup guide](docs/REVIEWER_GUIDE.md) explains authenticated invitations, creating and admitting participants to your own meetings, shared or reviewer-supplied Gnani/Evon resources, preparing translation before joining, and account-scoped activity/readiness reports. Release `reviewer-reporting-20261110` was deployed and checked on 10 November. Reviewers still need a private invitation; no invitation or live provider test is implied by this deployment.
 
 **Source revision, 10 November 2026:** this revision includes the refreshed films and pitch, Sathvika's approved feedback, reviewer access and pre-meeting translation preparation. Hosted health, served components and access restrictions were checked separately from local tests. Public-video/social links and challenge submission remain separate steps. See the [release record](docs/SUBMISSION_RELEASE_NOTES.md).
 
@@ -31,8 +31,8 @@ Charcha preserves the earlier message, translates the correction, separates old 
 
 | Evidence | Result | Measurement boundary |
 | --- | --- | --- |
-| Reviewer release checks, 10 Nov 2026 | **1,558 backend tests passed, one skipped; 328 frontend tests across 47 files; seven runtime checks; build passed** | Local checks with provider responses mocked; desktop/mobile reviewer walkthrough passed without provider calls |
-| Hosted release checks, 10 Nov 2026 | Health 200; reviewer/prejoin/admin controls present; anonymous protected requests denied; 13 deployed source hashes matched | Deployment/access verification at 16:01:36 UTC; no authenticated live provider flow and no provider calls |
+| Reviewer reporting release checks, 10 Nov 2026 | **1,579 backend tests passed, one skipped; 335 frontend tests across 47 files; seven runtime checks; build passed** | Local checks with provider responses mocked. Eight focused reporting tests also passed, overlapping the full suite; counts are not additive. Desktop/mobile scoped-report walkthrough passed against the local API without provider calls |
+| Hosted reporting release checks, 10 Nov 2026 | Health 200; reviewer/prejoin/usage/performance components present; protected anonymous requests denied; all 43 deployed source hashes matched with no missing/extra files | Health/access checked at 16:31:03 UTC; full source match at 16:31:12 UTC. No authenticated live provider flow or provider calls |
 | Local checks, 9 Nov 2026 | 1,468 backend tests passed, one skipped; 322 frontend tests and seven runtime checks passed; build passed | Isolated application checks, not a new provider-quality test |
 | Two demo cases, 9 Nov 2026 | **3.94 s** original turn; **4.23 s** typed correction | Translation start → first decoded synthesis audio; excludes STT, meeting transport and listener playback |
 | Five-language stage, 31 Oct 2026 | Nine of ten attempted routes delivered across Hindi, Tamil, Bengali, Telugu and Marathi | One failed during local setup before provider use; delivery is not a meaning-accuracy score |

@@ -1,5 +1,15 @@
 # Submission publication record
 
+## Verified follow-up: `reviewer-reporting-20261110`
+
+- Separated personal reviewer activity from shared workspace usage. Personal reports read the signed-in account's persistent attempted-unit ledger, use UTC daily boundaries and show unknown values when storage is unavailable. They never substitute the owner's activity or infer provider balances/prices.
+- Added an explicit ledger selector and scoped interpretation-engine reporting. Current meetings use their selected endpoint; multiple personal engines do not receive an invented aggregate readiness or startup measurement. Report/status reads do not start provider calls or compute.
+- Hardened reviewer teardown so access/credentials are invalidated and cleanup of remaining resources is attempted when one cleanup action fails; deferred media teardown can be retried. Normalized uppercase room codes in engine GET/POST routes to match membership authentication.
+- Corrected the media verification record's stale publication wording and older pitch hash. The published films, caption timing and approved-feedback PDF are unchanged; their hashes and package copies were independently checked. Sathvika's full review still includes her response-latency observation.
+- Updated the [reviewer guide](REVIEWER_GUIDE.md) with ledger scope, UTC/zero/unknown meanings, usage-history persistence and current-versus-saved engine reporting. Desktop/mobile browser checks used the actual local API with provider responses mocked and verified personal/shared activity and engine scope; no Gnani/Modal calls were made.
+- Final full backend: **1,579 passed, one skipped, in 224.65 seconds**. Frontend: **335 passed across 47 files**; seven runtime checks and production build passed. The final focused reporting run passed eight cases: seven overlap full-suite coverage and one uppercase-code case was added after full-suite collection. These counts must not be summed.
+- Deployed tested code commit `d0091916cc29c3a1cd1a4375d5db9fbc4c9f340e`. At **2026-11-10 16:31:03.205358 UTC**, health returned 200, new Reviewer/Prejoin/Usage/Performance components were present, identity was configured, and protected anonymous endpoints including usage/account engine returned 401. At **16:31:12.692545 UTC**, all 43 deployed source-file hashes matched, with no extra or missing files. No real reviewer invitations were issued, no authenticated live provider flow was exercised and no Gnani/Modal calls were made. This verifies deployment and application boundaries, not provider quality, actual billing or physical speech-to-ear latency.
+
 ## Source revision: participant feedback and reviewer setup, 10 November 2026
 
 - Added Sathvika's approved full review, attributed to a tech student and Telugu speaker, in the submission guide and one-page pitch. Only sentence spacing changed; her response-latency observation remains intact.

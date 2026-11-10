@@ -2,7 +2,7 @@
 
 This guide is for an invited evaluator who wants to host a meeting, admit participants and inspect Charcha. Reviewer access is granted by the project administrator; selecting a label saying “Gnani judge” is not sufficient. Charcha is an independent submission, not an official Gnani service.
 
-**Release status:** the matching web/API release `reviewer-preparation-20261110` was deployed and checked on 10 November 2026. Health, served controls, configured sign-in and anonymous-access restrictions passed; 13 deployed source-file hashes matched. No invitation was issued and no authenticated live provider flow was exercised by that verification. This guide does not assert that compute is running.
+**Release status:** web/API release `reviewer-reporting-20261110` was deployed and checked on 10 November 2026. Health, Reviewer/Prejoin/Usage/Performance components, configured sign-in and protected anonymous-access checks passed at 16:31:03 UTC; all 43 deployed source-file hashes matched tested code at 16:31:12 UTC, with no missing or extra files. No real invitation was issued and no authenticated live provider flow or Gnani/Modal call was made by that verification. Local desktop/mobile walkthroughs separately exercised the actual local API with mocked providers, including scoped reports. This guide does not assert that compute is running.
 
 ## 1. Receive and activate a private invitation
 
@@ -61,6 +61,21 @@ Use separate browser profiles or devices and headphones to avoid acoustic feedba
 5. Inspect VoiceShield separately if desired. It screens source audio experimentally; scores are not an identity check or an established AI-voice detection-accuracy result. Voice cloning changes synthesized output with consent and is separate from source screening.
 
 Prepared demo fixtures are useful for reviewing interface behavior. They are not evidence of a live provider run. The [submission guide](SUBMISSION.md) and [evaluation notes](EVALUATION.md) distinguish recorded measurements, fixtures and remaining validation.
+
+## Read the correct activity and readiness report
+
+On **Usage**, the **Activity ledger** selector separates **My reviewer provider activity** from **Shared workspace activity**. Automatic selection prefers your personal ledger when you selected personal resources or have recorded personal-provider history. Use the selector to inspect the shared portion of a mixed setup.
+
+- **Personal activity** contains Charcha-recorded attempted units for your signed-in account across its reviewer meetings. It does not contain another reviewer's units or silently substitute the workspace owner's ledger. Changing your resource choices does not reassign earlier activity to the new choice.
+- **Shared activity** is explicitly workspace-wide, across meetings using the configured shared providers. It is not your personal provider total. If you use a personal Gnani key with shared Evon, your speech attempts appear in your personal ledger and shared translation attempts in the workspace ledger; the reverse selection splits them the other way.
+- The displayed day and reset boundary use **UTC**, not the browser's local calendar. Daily units are application reservations, including failed/partial attempts and recognition connection time; they are not invoices or measured provider charges.
+- **Zero** means no Charcha-recorded attempts for that resource today. It does not mean your provider account has used no credits. **Unknown** means the ledger could not be read; Charcha does not replace unavailable data with zero or another account's numbers.
+- Personal activity records persist on the server by account. Deleting saved provider configuration, ending a meeting or signing out removes session credentials/resources but does not erase recorded usage history. The ledger does not store the provider secret.
+- Personal provider balances, prices and remaining credits are not inferred. Use the provider dashboards for billing. Opening Usage, switching its ledger or refreshing it reads application records only; it does not start speech, synthesis or GPU compute.
+
+The interpretation-engine panel also identifies its scope. In a current meeting, it reports that meeting's selected endpoint. Outside a current meeting, it reports your active reviewer engine, the permitted shared workspace engine, or that no engine is selected. If your meetings use multiple engines, it asks you to open a current meeting instead of inventing a combined startup time. Shared-engine meeting counts may include other workspace meetings and are labelled accordingly.
+
+When viewing an archived Performance report, the engine panel describes current account readiness; it is not a reconstruction of the engine at the time of that saved call. Last measured startup and readiness are service-response observations, separate from translation-stage and listener-playback timings. Status polling neither starts compute nor extends a preparation hold. Use the explicit pre-meeting preparation action or an authorized occupied meeting to start the selected engine.
 
 ## 5. Finish and clear resources
 
