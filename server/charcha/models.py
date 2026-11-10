@@ -40,6 +40,7 @@ class RequestModel(BaseModel):
 
 class CreateRoom(RequestModel):
     audio_mode: Literal["original", "interpreted"] | None = None
+    resource_mode: Literal["shared", "reviewer"] = "shared"
     title: str = Field(default="A new conversation", min_length=1, max_length=100)
 
 

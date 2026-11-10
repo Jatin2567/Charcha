@@ -13,6 +13,7 @@ class MeetingProfileTests(unittest.TestCase):
         self.assertEqual(env["AUDIO_SCREENING_ON_DEMAND"], "true")
         self.assertEqual(env["GNANI_API_KEY"], "")
         self.assertEqual(env["EVON_BASE_URL"], "")
+        self.assertEqual(env["EVON_SERVERLESS"], "false")
         self.assertTrue(all(value == "0" for key, value in env.items() if key.endswith("_PER_DAY")))
 
     def test_live_profile_keeps_existing_identity_and_usage_ledger(self):
@@ -41,6 +42,23 @@ class MeetingProfileTests(unittest.TestCase):
         with self.assertRaises(PreparationError):
             feature_environment({"GNANI_API_KEY": "fixture-only", "EVON_MODEL": "fixture",
                                  "EVON_BASE_URL": "https://example.com/v1"})
+
+    def test_reviewer_allowlist_is_preserved_and_can_be_explicitly_cleared(self):
+        base = {"GNANI_API_KEY":"fixture-only", "EVON_MODEL":"fixture",
+                "EVON_BASE_URL":"https://evon.charcha-fixture.in/v1"}
+        for value, expected in [("https://GPU.charcha-fixture.in/", "https://gpu.charcha-fixture.in"), ("", "")]:
+            env = feature_environment({**base, "REVIEWER_GPU_ALLOWED_ORIGINS":value})
+            self.assertEqual(env["REVIEWER_GPU_ALLOWED_ORIGINS"], expected)
+        with self.assertRaises(PreparationError):
+            feature_environment({**base, "REVIEWER_GPU_ALLOWED_ORIGINS":"https://127.0.0.1"})
+
+    def test_serverless_flag_survives_live_feature_environment(self):
+        base = {"GNANI_API_KEY":"fixture-only", "EVON_MODEL":"fixture",
+                "EVON_BASE_URL":"https://evon.charcha-fixture.in/v1"}
+        for value in ("true", "false"):
+            self.assertEqual(feature_environment({**base, "EVON_SERVERLESS":value})["EVON_SERVERLESS"], value)
+        with self.assertRaises(PreparationError):
+            feature_environment({**base, "EVON_SERVERLESS":"yes"})
 
 
 if __name__ == "__main__":

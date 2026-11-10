@@ -46,6 +46,7 @@ export function Shell() {
             { to: '/development', name: 'Developer journal', icon: Wrench },
             { to: '/deployment', name: 'Deployment setup', icon: Server },
             { to: '/settings', name: 'Settings', icon: Settings2 },
+            { to: '/reviewer', name: 'Reviewer workspace', icon: ClipboardCheck },
           ].map((item) => (
             <NavLink
               key={item.to}
@@ -56,7 +57,6 @@ export function Shell() {
             >
               <item.icon size={19} />
               {item.name}
-              {item.to === '/voices' && <Badge tone="neutral">Later</Badge>}
               {item.to === '/' && <span className="nav-dot" />}
             </NavLink>
           ))}
@@ -117,6 +117,8 @@ export function Shell() {
                 ? 'Voice studio'
                 : location.pathname === '/audio-lab'
                   ? 'Audio lab'
+                : location.pathname === '/reviewer'
+                  ? 'Reviewer workspace'
                 : location.pathname === '/settings'
                   ? 'Settings'
                   : location.pathname === '/performance'

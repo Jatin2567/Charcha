@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { request } from '../services/api';
 import { useAccount, loginUrl } from '../components/AccountGate';
 import { AdminGnaniBudget } from '../components/AdminGnaniBudget';
+import { AdminReviewers } from '../components/AdminReviewers';
 
 type Summary = {
   host_email: string;
@@ -86,6 +87,7 @@ export function AdminPage() {
             </button>
           </form>
           <AdminGnaniBudget />
+          <AdminReviewers />
           <h2>Active meetings</h2>
           {summary.rooms.length ? (
             <ul>

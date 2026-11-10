@@ -1,0 +1,26 @@
+{
+  "kind": "authored_offline_fixture",
+  "title": "Tomorrow, understood together.",
+  "human_reviewed": false,
+  "participants": [
+    {"subject": "host", "name": "Asha · Hindi", "language": "hi"},
+    {"subject": "telugu", "name": "Ravi · Telugu", "language": "te"},
+    {"subject": "punjabi", "name": "Meher · Punjabi", "language": "pa"}
+  ],
+  "turns": [
+    {
+      "source": "कल शाम चार बजे कमरा तीन में बारह नीली फ़ाइलें लाना।",
+      "translations": {
+        "te": "రేపు సాయంత్రం నాలుగు గంటలకు పన్నెండు నీలి ఫైళ్లను మూడో గదికి తీసుకురండి.",
+        "pa": "ਕੱਲ੍ਹ ਸ਼ਾਮ ਚਾਰ ਵਜੇ ਬਾਰ੍ਹਾਂ ਨੀਲੀਆਂ ਫਾਈਲਾਂ ਕਮਰਾ ਤਿੰਨ ਵਿੱਚ ਲਿਆਓ।"
+      }
+    },
+    {
+      "source": "कल शाम चार बजे कमरा चार में बारह नीली फ़ाइलें लाना, कमरा तीन में नहीं।",
+      "translations": {
+        "te": "రేపు సాయంత్రం నాలుగు గంటలకు పన్నెండు నీలి ఫైళ్లను నాలుగో గదికి తీసుకురండి, మూడో గదికి కాదు.",
+        "pa": "ਕੱਲ੍ਹ ਸ਼ਾਮ ਚਾਰ ਵਜੇ ਬਾਰ੍ਹਾਂ ਨੀਲੀਆਂ ਫਾਈਲਾਂ ਕਮਰਾ ਚਾਰ ਵਿੱਚ ਲਿਆਓ, ਕਮਰਾ ਤਿੰਨ ਵਿੱਚ ਨਹੀਂ।"
+      }
+    }
+  ]
+}

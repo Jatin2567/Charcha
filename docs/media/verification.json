@@ -1,66 +1,386 @@
 {
   "prepared_date": "2026-11-10",
+  "publication_status": "local_reviewed_files_not_yet_published",
   "submission_video": {
-    "duration_seconds": 150.0,
+    "file": "Charcha-2m40-multilingual-build.mp4",
+    "duration_seconds": 160.0,
     "resolution": [
       1920,
       1080
     ],
     "fps": 24.0,
+    "sha256": "3e85f64d485328ded5c31f50366782caeb4a55f097f76f41e1bb31e858e1f594",
     "full_decode_passed": true,
-    "sha256": "03d70521904741d61658095270ca6f684d954c932adb959d6007fd10516a78a9",
-    "audio_max_dbfs": -1.3,
-    "subtitle_cues": 22,
-    "subtitles_ordered_nonoverlapping": true,
+    "peak_dbfs": -1.4,
     "new_gnani_requests": 0,
     "new_modal_sessions": 0,
-    "disclosures": [
-      "Synthetic test speech; saved real-provider output; labelled UI replay.",
-      "Original provider audio is played at 85% speed, not real-time latency evidence.",
-      "3.94s/4.23s are two saved partial-server cases, not full end-to-end latency.",
-      "VoiceShield accuracy not established; 10 configured languages not quality certification."
-    ]
+    "provider_recordings": "Reused only, including the two previously approved Telugu/Punjabi readings.",
+    "chapters": [
+      {
+        "name": "Multilingual story",
+        "start": 0,
+        "duration": 53
+      },
+      {
+        "name": "workflow",
+        "start": 53,
+        "duration": 18
+      },
+      {
+        "name": "routing",
+        "start": 71,
+        "duration": 24
+      },
+      {
+        "name": "access",
+        "start": 95,
+        "duration": 18
+      },
+      {
+        "name": "metrics",
+        "start": 113,
+        "duration": 22
+      },
+      {
+        "name": "screening",
+        "start": 135,
+        "duration": 18
+      },
+      {
+        "name": "Closing",
+        "start": 153,
+        "duration": 7
+      }
+    ],
+    "source_video_sha256": "909d3d3fd0366498886d6b6cc97573af8ddd26dc1a30d8a14b3efddf8d8aeeae",
+    "subtitle_cues": 22,
+    "subtitle_nonoverlap_passed": true,
+    "measurement_source_sha256": "c587a40424f0d6ca0c5dc8147a1e2fed541bb2fecacda6a3e69490cc551b962e",
+    "capture_receipt_sha256": "bcec83f10f24c2c67a47ceb25004c25d4e34e4f75abb53dbf924bc46c78820ed",
+    "notes": [
+      "Scripted three-account UI rehearsal and separately prepared standard voices, not a simultaneous live interpreted call.",
+      "Architecture diagrams are illustrative, not measured workloads.",
+      "Two dated Nov9 server cases exclude STT, network and listener playback.",
+      "VoiceShield is experimental audio screening, not identity proof.",
+      "Historical Nov9 test counts are labelled; no fresh application test run is implied.",
+      "Portal refresh reuses prior recordings; no new speech requests.",
+      "Performance and Audio lab screenshots are current offline UI, not fresh live metrics.",
+      "Product logos describe the implementation and do not imply provider activity during this edit."
+    ],
+    "refresh_date": "2026-11-10",
+    "previous_video_sha256": "6599fb4148ff1561c5bbc384c30b2d0376983e2651e44ded6b06aa2e98ec4bb0",
+    "portal_screens": [
+      "Home",
+      "Prejoin",
+      "Meeting",
+      "Recap",
+      "Performance",
+      "Voice studio",
+      "Test lab",
+      "Audio lab"
+    ],
+    "music": {
+      "title": "A Shared Plan",
+      "source_sha256": "37ff933584b7c80bcfcff22c100425da5990177b3eeb2beac9f1e6ce6e9044a1",
+      "third_party_samples": false,
+      "speech_ducking": true,
+      "native_reading_extra_attenuation_db": 6.02
+    },
+    "speech_timing_changed": false,
+    "captions_reused_without_timing_changes": true,
+    "capture_hashes": {
+      "01-three-participants.png": "1697506d52878c27ef8b655dfb97a45545ff253c8f43f5f024bb2f7ec6e079d6",
+      "02-telugu-original.png": "3232fd47f46ee1b0eb5badfd03b59567cbf9a8790ea115a130e292a2ff80de8f",
+      "03-punjabi-original.png": "37b11f3a194efe8a9fc63003f1574209937184d68bcf07f827a10d84c84fa61b",
+      "04-one-listener-pending.png": "b25bedf3209f3214bdf35a18ea2e5b4ee5327400d380f087f6e4eeb01d615ef6",
+      "05-correction-editor.png": "b65a91c3459774621846c0ca454975c1e0c2f603f75e3a4de4da9a6b2342187c",
+      "06-telugu-correction-pending.png": "3adce5feb999dc2004ef1551f11c13bd8524a5ab8f064a5e59699ebe32656934",
+      "07-punjabi-correction-pending.png": "d2d9ada0ab96d112a64b5ab8c9423c3a34fc3c659dec4b48e3b56d1d6b2e4a82",
+      "08-both-confirmed.png": "a3b808b60bbd5699b383a7d11a4d2f4208db6285fa5cd2ad26dab17abf8a0f69",
+      "09-refreshed.png": "2fb96f402afb83268ed351509c0dc33f18bff429652c7e1b211ae20acdb9671d",
+      "10-recap.png": "6de9d24a118de7c07755193762ce31e9f07a8c66719214efed865768549b8a3f",
+      "11-whatsapp.png": "3a6505e602627a928f50f70f2aa1ea94990f573d87f227463c7c2d367ba29639",
+      "page-audio-lab.png": "456304e536d6abb441c4f4425284fc96813308fb068b60cf84fad6c5c10bc439",
+      "page-history.png": "df5962878f6714b771cc98b3a16736ea722bba78524d710064de317b65561c9e",
+      "page-home.png": "c8879dac46a95ceedb5864f285da43d0a61e216915875881291bf43e99fa9568",
+      "page-join.png": "1f8a0c69e9108135ae9cbff18bee37b21e5f042d8ab60550c8bd2f32b107d945",
+      "page-performance.png": "65789b176a37a14b6f59b843e4266c2056280c92f2f8553a8a48af8b7976b3f7",
+      "page-settings.png": "b4027af2caabe7ffd1e5999b31b6e970bce925c2b3402938c1e1015fdde5bb7e",
+      "page-tests.png": "ecc8ee66baaab00c388262a867a593d611ebf3e85a4cbef28a053833df15e4c8",
+      "page-voices.png": "704de2882df986bef0dc3bcd0f58fe306be7b9105d3c51aab160e7e8753e150a"
+    },
+    "speech_gain_preserved": true,
+    "closing_portal_layout_reviewed": true,
+    "encoded_frames_reviewed": true
   },
   "social_video": {
-    "duration": 59.97,
+    "file": "Charcha-60s-multilingual-voices.mp4",
+    "duration_seconds": 60.0,
     "size": [
       1920,
       1080
     ],
-    "fps": 24.02,
+    "fps": 24.0,
+    "sha256": "d39e15c20531f65e42d0d7f237f1808c2a55f7161f3915f740fcf160fee529e8",
     "full_decode_passed": true,
-    "sha256": "6343585c21777b09c704021ea7be895105ff679859857e42834ed3e23973872b",
-    "new_provider_calls": 0
+    "peak_dbfs": -1.4,
+    "new_gnani_requests": 0,
+    "new_modal_sessions": 0,
+    "translation_mode": "scripted offline UI fixture; separate standard-voice readings",
+    "spoken_languages": [
+      "English",
+      "Hindi",
+      "Telugu",
+      "Punjabi"
+    ],
+    "interface_languages": [
+      "Hindi",
+      "Telugu",
+      "Punjabi"
+    ],
+    "audio_events": [
+      {
+        "name": "hook",
+        "audio_start": 0.25,
+        "duration": 4.862630385487528,
+        "audio_end": 5.112630385487528,
+        "scene_deadline": 7,
+        "sha256": "ba8d372d4802442538471fddc388ecaa47d2c321ec6791a564d1317506ae7127",
+        "playback_speed": 1.0
+      },
+      {
+        "name": "people",
+        "audio_start": 7.25,
+        "duration": 4.983083900226758,
+        "audio_end": 12.233083900226758,
+        "scene_deadline": 14,
+        "sha256": "68f53b36c236ef4679147749fca30aaf2346307feb6a4901d1b418b302f288b0",
+        "playback_speed": 1.0
+      },
+      {
+        "name": "hi",
+        "audio_start": 14.5,
+        "duration": 5.12,
+        "audio_end": 19.62,
+        "scene_deadline": 22,
+        "sha256": "992aeecb35bc837834178677b1b66efd1a4d5b03fc2f9b74968f18a88bfa8179",
+        "playback_speed": 1.0
+      },
+      {
+        "name": "change",
+        "audio_start": 22.25,
+        "duration": 5.131746031746032,
+        "audio_end": 27.381746031746033,
+        "scene_deadline": 29,
+        "sha256": "6c3d297d8645e89cc60f1a89eadf20eec042fcdd86df65c5c1c8df6243faf510",
+        "playback_speed": 1.0
+      },
+      {
+        "name": "te",
+        "audio_start": 29.3,
+        "duration": 2.72,
+        "audio_end": 32.02,
+        "scene_deadline": 32.02,
+        "sha256": "1f260e5135dfa3afadf76144094d09e23ae97c9ec0c5f341381a9fcc282e6795",
+        "playback_speed": 1.0
+      },
+      {
+        "name": "pa",
+        "audio_start": 32.52,
+        "duration": 2.56,
+        "audio_end": 35.080000000000005,
+        "scene_deadline": 36.9,
+        "sha256": "21eb62cc01595257e12643a321b17937f7eac7a5b661dc989f5bdb6eff0cfc6b",
+        "playback_speed": 1.0
+      },
+      {
+        "name": "confirm",
+        "audio_start": 37.25,
+        "duration": 6.855238095238096,
+        "audio_end": 44.10523809523809,
+        "scene_deadline": 45,
+        "sha256": "a100ced036aa26a4e3562f602ac47ef3909a37cfdf9d78968326e27afb55df2d",
+        "playback_speed": 1.0
+      },
+      {
+        "name": "recap",
+        "audio_start": 45.25,
+        "duration": 5.99297052154195,
+        "audio_end": 51.24297052154195,
+        "scene_deadline": 53,
+        "sha256": "16ce18fcce745c885e1ee5f254f4d3731ff2cb456ec6bfefe419a72d7c120f44",
+        "playback_speed": 1.0
+      },
+      {
+        "name": "closing",
+        "audio_start": 53.25,
+        "duration": 5.497641723356009,
+        "audio_end": 58.74764172335601,
+        "scene_deadline": 60,
+        "sha256": "78059c708c022786d8270626c23eddf817273126f23fd2a97f9373c4644dfc32",
+        "playback_speed": 1.0
+      }
+    ],
+    "reading_receipt_sha256": "7eabe8d447959552577e6eea75cc6b6962c1a203d1d6a1aeca882aedf9ccdbac",
+    "capture_hashes": {
+      "01-three-participants.png": "1697506d52878c27ef8b655dfb97a45545ff253c8f43f5f024bb2f7ec6e079d6",
+      "02-telugu-original.png": "3232fd47f46ee1b0eb5badfd03b59567cbf9a8790ea115a130e292a2ff80de8f",
+      "03-punjabi-original.png": "37b11f3a194efe8a9fc63003f1574209937184d68bcf07f827a10d84c84fa61b",
+      "04-one-listener-pending.png": "b25bedf3209f3214bdf35a18ea2e5b4ee5327400d380f087f6e4eeb01d615ef6",
+      "05-correction-editor.png": "b65a91c3459774621846c0ca454975c1e0c2f603f75e3a4de4da9a6b2342187c",
+      "06-telugu-correction-pending.png": "3adce5feb999dc2004ef1551f11c13bd8524a5ab8f064a5e59699ebe32656934",
+      "07-punjabi-correction-pending.png": "d2d9ada0ab96d112a64b5ab8c9423c3a34fc3c659dec4b48e3b56d1d6b2e4a82",
+      "08-both-confirmed.png": "a3b808b60bbd5699b383a7d11a4d2f4208db6285fa5cd2ad26dab17abf8a0f69",
+      "09-refreshed.png": "2fb96f402afb83268ed351509c0dc33f18bff429652c7e1b211ae20acdb9671d",
+      "10-recap.png": "6de9d24a118de7c07755193762ce31e9f07a8c66719214efed865768549b8a3f",
+      "11-whatsapp.png": "3a6505e602627a928f50f70f2aa1ea94990f573d87f227463c7c2d367ba29639",
+      "page-audio-lab.png": "456304e536d6abb441c4f4425284fc96813308fb068b60cf84fad6c5c10bc439",
+      "page-history.png": "df5962878f6714b771cc98b3a16736ea722bba78524d710064de317b65561c9e",
+      "page-home.png": "c8879dac46a95ceedb5864f285da43d0a61e216915875881291bf43e99fa9568",
+      "page-join.png": "1f8a0c69e9108135ae9cbff18bee37b21e5f042d8ab60550c8bd2f32b107d945",
+      "page-performance.png": "65789b176a37a14b6f59b843e4266c2056280c92f2f8553a8a48af8b7976b3f7",
+      "page-settings.png": "b4027af2caabe7ffd1e5999b31b6e970bce925c2b3402938c1e1015fdde5bb7e",
+      "page-tests.png": "ecc8ee66baaab00c388262a867a593d611ebf3e85a4cbef28a053833df15e4c8",
+      "page-voices.png": "704de2882df986bef0dc3bcd0f58fe306be7b9105d3c51aab160e7e8753e150a"
+    },
+    "notes": [
+      "Actual application UI with local automated accounts and authored translations.",
+      "Hindi reuses the full saved synthetic source; Telugu and Punjabi are two separate prepared stock-voice readings.",
+      "These readings are not a live multilingual call, fresh MT, voice clones or a measured latency benchmark.",
+      "Portal refresh reuses prior recordings; no new speech requests.",
+      "Performance and Audio lab screenshots are current offline UI, not fresh live metrics.",
+      "Product logos describe the implementation and do not imply provider activity during this edit."
+    ],
+    "refresh_date": "2026-11-10",
+    "previous_video_sha256": "909d3d3fd0366498886d6b6cc97573af8ddd26dc1a30d8a14b3efddf8d8aeeae",
+    "capture_receipt_sha256": "bcec83f10f24c2c67a47ceb25004c25d4e34e4f75abb53dbf924bc46c78820ed",
+    "portal_screens": [
+      "Home",
+      "Prejoin",
+      "Meeting",
+      "Recap",
+      "Performance"
+    ],
+    "music": {
+      "title": "A Shared Plan",
+      "source_sha256": "f88e581a45499fc4860ee038d7aef48c9e2c449cb2aac00d0a4f0d62b6b80b19",
+      "third_party_samples": false,
+      "speech_ducking": true,
+      "native_reading_extra_attenuation_db": 6.02
+    },
+    "speech_timing_changed": false,
+    "captions_reused_without_timing_changes": true,
+    "subtitle_cues": 9,
+    "subtitle_nonoverlap_passed": true,
+    "encoded_frames_reviewed": true
   },
   "pitch_pdf": {
     "file": "../Charcha-one-page-pitch.pdf",
     "pages": 1,
-    "sha256": "8040f30c3528d03c3ba2024869e5e5330157b844f2f2bc8cfe6fd47e693c4f9b"
+    "sha256": "8ff886911a14cb8087ab00b45f77305d445c967669ac8480f427b3dfdab1d4bd",
+    "existing_visual_review_passed": true
   },
   "local_application_checks": {
     "full_suites_date": "2026-11-09",
     "backend_passed": 1468,
     "backend_skipped": 1,
     "frontend_passed": 322,
-    "runtime_passed": 7,
+    "refresh_date": "2026-11-10",
     "production_build": "passed",
-    "publication_recheck_date": "2026-11-10",
-    "publication_recheck": "production build and all seven runtime checks passed",
+    "runtime_checks_passed": 7,
+    "offline_three_account_rehearsal": {
+      "kind": "automated_offline_three_party_rehearsal",
+      "status": "passed",
+      "provider_calls": 0,
+      "physical_rtc_call": false,
+      "test_accounts": 3,
+      "translation_evidence": "authored fixture, not provider output",
+      "human_translation_review": false,
+      "provider_latency_measured": false,
+      "fixture_sha256": "eed9503cdf6028664c540fc0160209ec733de1d22cb033f816cdda6bcfb0464a",
+      "checks": [
+        "two real admission requests approved by fixture host",
+        "two language branches with independent listener acknowledgements",
+        "correction preserves earlier version and resets both confirmations",
+        "refresh retains the same fixture membership and corrected caption",
+        "bilingual saved recap and WhatsApp text contain corrected content",
+        "current portal gallery captured without provider measurements",
+        "zero external Python connections and zero invented provider timing samples"
+      ],
+      "screenshots": [
+        "01-three-participants.png",
+        "02-telugu-original.png",
+        "03-punjabi-original.png",
+        "04-one-listener-pending.png",
+        "05-correction-editor.png",
+        "06-telugu-correction-pending.png",
+        "07-punjabi-correction-pending.png",
+        "08-both-confirmed.png",
+        "09-refreshed.png",
+        "10-recap.png",
+        "11-whatsapp.png",
+        "page-home.png",
+        "page-join.png",
+        "page-performance.png",
+        "page-audio-lab.png",
+        "page-voices.png",
+        "page-tests.png",
+        "page-history.png",
+        "page-settings.png"
+      ],
+      "processes_stopped": true,
+      "blocked_external_attempts": 0
+    },
     "build_advisory": "LiveKit bundle above 500 kB",
-    "scope": "Local fixture tests; no fresh provider quality or detector accuracy test."
+    "scope": "No new provider inference, physical RTC or detector accuracy test."
   },
-  "publication_pattern_check": {
-    "history_blobs_checked": 927,
-    "current_files_checked": 494,
-    "patterns": [
-      "gnani_key",
-      "github_token",
-      "google_client_secret",
-      "private_key",
-      "aws_access_key"
+  "music": {
+    "title": "A Shared Plan",
+    "arranged_for": "Charcha portal films, 10 November 2026",
+    "tempo_bpm": 80,
+    "provenance": "Locally synthesized arrangement using mathematical oscillators; no third-party recordings or music sampled.",
+    "provider_calls": 0,
+    "external_downloads": 0,
+    "voices": false,
+    "mastering": "Low-level music stem, -29 dBFS RMS; use additional speech ducking in final mix.",
+    "files": [
+      {
+        "file": "Charcha-background-60s.wav",
+        "duration_seconds": 60.0,
+        "sample_rate": 48000,
+        "channels": 2,
+        "sample_format": "PCM signed 16-bit",
+        "rms_dbfs": -29.0,
+        "peak_dbfs": -16.498,
+        "clipped_samples": 0,
+        "sha256": "f88e581a45499fc4860ee038d7aef48c9e2c449cb2aac00d0a4f0d62b6b80b19",
+        "bytes": 11520044
+      },
+      {
+        "file": "Charcha-background-160s.wav",
+        "duration_seconds": 160.0,
+        "sample_rate": 48000,
+        "channels": 2,
+        "sample_format": "PCM signed 16-bit",
+        "rms_dbfs": -29.0,
+        "peak_dbfs": -15.664,
+        "clipped_samples": 0,
+        "sha256": "37ff933584b7c80bcfcff22c100425da5990177b3eeb2beac9f1e6ce6e9044a1",
+        "bytes": 30720044
+      }
     ],
-    "findings": [],
-    "scope": "Bounded credential-pattern scan of reachable Git objects and publishable files; not a full security audit."
+    "preview": {
+      "file": "Charcha-background-preview-10s.wav",
+      "duration_seconds": 10.0,
+      "sample_rate": 48000,
+      "channels": 2,
+      "sample_format": "PCM signed 16-bit",
+      "rms_dbfs": -28.598,
+      "peak_dbfs": -16.902,
+      "clipped_samples": 0,
+      "sha256": "b6c3a8277b42695cf9a5fc09a22c566ccdca8394dac1dbfd2100b4ad6dec24fa",
+      "bytes": 1920044
+    }
   },
   "form_submitted": false,
   "social_post_published": false

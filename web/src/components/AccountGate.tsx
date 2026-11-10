@@ -10,6 +10,8 @@ type Identity = {
   scope: string | null;
   session_scope: string | null;
   can_host: boolean;
+  reviewer?: boolean;
+  reviewer_shared_allowed?: boolean;
   admin: boolean;
   password_security_available?: boolean;
 };
@@ -89,6 +91,7 @@ export function AccountGate({ children }: { children: ReactNode }) {
     window.addEventListener('storage', onStorage);
     document.addEventListener('visibilitychange', onVisible);
     window.addEventListener('charcha-sign-in-required', refresh);
+    window.addEventListener('charcha-account-changed', refresh);
     return () => {
       active = false;
       clearInterval(timer);
@@ -98,6 +101,7 @@ export function AccountGate({ children }: { children: ReactNode }) {
       window.removeEventListener('storage', onStorage);
       document.removeEventListener('visibilitychange', onVisible);
       window.removeEventListener('charcha-sign-in-required', refresh);
+      window.removeEventListener('charcha-account-changed', refresh);
     };
   }, [retry]);
   if (who?.authenticated)
@@ -131,6 +135,10 @@ export function AccountGate({ children }: { children: ReactNode }) {
                 <a className="button secondary" href={loginUrl(pathname)}>Sign in with a password</a>
               )}
             </div>
+            {pathname !== '/admin' && <p className="account-help">
+              Reviewing Charcha for Gnani? <a href={loginUrl('/reviewer', false, !!who.password_security_available)}>Reviewer sign-in</a>.
+              {' '}Use your verified email and the private invitation supplied by the submitter.
+            </p>}
             {who.password_security_available && pathname !== '/admin' && (
               <p className="account-help">First visit? Verify your email with Google, then open Password &amp; security to add a password. You can use either method afterward. Use Google if you forget your password.</p>
             )}
@@ -164,7 +172,7 @@ export function AccountMenu() {
     <div className="account-menu">
       <span title={who.email || ''}>{who.email}</span>
       {who.password_security_available && <a href={API_BASE + '/account/security'}>Password &amp; security</a>}
-      <Link to="/admin">Admin</Link>
+      {(who.admin || (who.can_host && !who.reviewer)) && <Link to="/admin">Admin</Link>}
       <SignOutButton />
     </div>
   );

@@ -1,0 +1,11 @@
+A SHARED PLAN — CHARCHA BACKGROUND MUSIC
+
+Original procedural arrangement prepared locally for these films on 10 November 2026.
+80 BPM, D major / B minor colour, soft felt-like synthesized plucks, airy sustained harmony, and a very quiet pulse.
+All audio is generated from mathematical oscillators in compose.py. No third-party recordings, sampled song, stock-music download, or voice is included.
+This is a provenance statement, not a guarantee of legal exclusivity.
+
+Stems: stereo 48 kHz PCM16, 60 and 160 seconds, fades included. RMS approximately -29 dBFS.
+Mix below the existing narration with additional ducking, especially during Hindi/Telugu/Punjabi example readings.
+Suggested sidechain: threshold 0.014, ratio 4, attack 50 ms, release 500 ms, minimum further attenuation 6 dB during language examples.
+No Gnani, Modal, or other provider calls; no external downloads.

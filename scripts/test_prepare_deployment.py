@@ -12,7 +12,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from prepare_deployment import PreparationError, check, main, prepare, read_env, validate_inputs
+from prepare_deployment import PreparationError, check, main, prepare, read_env, validate_inputs, validate_reviewer_origins
 
 
 class DeploymentPreparationTests(unittest.TestCase):
@@ -52,6 +52,46 @@ class DeploymentPreparationTests(unittest.TestCase):
         self.assertEqual(env["GNANI_API_KEY"], "private-$literal-gnani")
         self.assertEqual(env["EVON_MODEL"], "actual-evon-served-id")
         self.assertNotEqual(env["LIVEKIT_API_SECRET"], "must-not-be-reused")
+
+    def test_reviewer_origins_survive_generated_runtime_without_extra_settings(self):
+        with self.env_path.open("a", encoding="utf-8") as source:
+            source.write("REVIEWER_GPU_ALLOWED_ORIGINS=https://GPU.charcha-fixture.in:443/, https://model.charcha-fixture.in\n")
+        self.prepare()
+        env = read_env(self.output / "api.env", raw=True)
+        self.assertEqual(env["REVIEWER_GPU_ALLOWED_ORIGINS"],
+                         "https://gpu.charcha-fixture.in,https://model.charcha-fixture.in")
+        self.assertEqual(check(self.output)["status"], "configuration_valid")
+
+    def test_reviewer_origins_reject_unsafe_values_without_echoing_them(self):
+        invalid = ["http://gpu.charcha-fixture.in", "https://127.0.0.1", "https://169.254.169.254",
+                   "https://[::1]", "https://gpu.internal", "https://gpu.company.local",
+                   "https://gpu.company.localhost", "https://gpu.home.arpa", "https://localhost",
+                   "https://private-secret@gpu.charcha-fixture.in", "https://gpu.charcha-fixture.in:8443",
+                   "https://gpu.charcha-fixture.in/v1", "https://gpu.charcha-fixture.in?key=private-secret",
+                   "https://gpu.charcha-fixture.in#private-secret", "https://gpu.charcha-fixture.in%2f",
+                   "https://gpu.charcha-fixture.in,", "https://gpu.charcha-fixture.in\\@evil.com"]
+        for value in invalid:
+            with self.subTest(value=value), self.assertRaisesRegex(PreparationError, "REVIEWER_GPU_ALLOWED_ORIGINS") as error:
+                validate_reviewer_origins(value)
+            self.assertNotIn(value, str(error.exception))
+            self.assertNotIn("private-secret", str(error.exception))
+        self.assertEqual(validate_reviewer_origins("  "), "")
+        self.assertEqual(validate_reviewer_origins("https://gpu.charcha-fixture.in,https://gpu.charcha-fixture.in/"),
+                         "https://gpu.charcha-fixture.in")
+
+    def test_optional_serverless_flag_is_preserved_and_strict(self):
+        original = self.env_path.read_text(encoding="utf-8")
+        for value in ("true", "false"):
+            self.output = self.base / ("serverless-" + value)
+            self.env_path.write_text(original + "EVON_SERVERLESS=" + value + "\n", encoding="utf-8")
+            self.prepare()
+            self.assertEqual(read_env(self.output / "api.env", raw=True)["EVON_SERVERLESS"], value)
+        self.output = self.base / "serverless-invalid"
+        for value in ("TRUE", "yes", "1", "", "private-invalid"):
+            self.env_path.write_text(original + "EVON_SERVERLESS=" + value + "\n", encoding="utf-8")
+            with self.assertRaisesRegex(PreparationError, "EVON_SERVERLESS"):
+                self.prepare()
+            self.assertFalse(self.output.exists())
 
     def test_shared_tls_port_routes_and_owned_stun(self):
         self.prepare()

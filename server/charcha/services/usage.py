@@ -37,6 +37,11 @@ def current_provider_flow() -> str | None:
     return _approved_flow.get()
 
 
+def current_provider_room() -> str | None:
+    """Trusted internal routing context, never a client-supplied provider setting."""
+    return _room.get()
+
+
 @contextmanager
 def provider_flow(flow_id: str | None):
     token = _approved_flow.set(flow_id)

@@ -25,6 +25,7 @@ const P = {
   history: pages['/history'],
   recap: pages['/recap'],
   room: pages['/room'],
+  reviewer: pages['/reviewer'],
 };
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -39,6 +40,7 @@ createRoot(document.getElementById('root')!).render(
               <Route path="join/:code" element={<P.join />} />
               <Route path="voices" element={<P.voices />} />
               <Route path="settings" element={<P.settings />} />
+              <Route path="reviewer" element={<P.reviewer />} />
               <Route path="performance" element={<P.performance />} />
               <Route path="tests" element={<P.tests />} />
               <Route path="audio-lab" element={<P.audio />} />

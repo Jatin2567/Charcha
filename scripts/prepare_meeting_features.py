@@ -19,7 +19,8 @@ def feature_environment(providers: dict[str, str] | None) -> dict[str, str]:
     validated = runtime_env({"app_domain": "localhost", "livekit_domain": "localhost"},
                             supplied, "", "", mode=mode)
     features = {key: value for key, value in validated.items()
-                if key.startswith(("GNANI_", "EVON_", "TIMBRE_", "USAGE_")) and key != "USAGE_DB_PATH"}
+                if (key.startswith(("GNANI_", "EVON_", "TIMBRE_", "USAGE_")) and key != "USAGE_DB_PATH")
+                or key == "REVIEWER_GPU_ALLOWED_ORIGINS"}
     features.update(CHARCHA_MODE=mode, AUDIO_SCREENING_MODE="off", AUDIO_SCREENING_ON_DEMAND="true", LOCAL_AUDIO_LAB_ENABLED="false",
                     USAGE_REQUIRE_FLOW_APPROVAL="true", USAGE_REQUIRE_ROOM_SCOPE="true", USAGE_SHOW_PRIVATE_BALANCE="false",
                     USAGE_VOICE_ENROLLMENTS_PER_DAY="0", USAGE_STT_MAX_RETRIES="0")

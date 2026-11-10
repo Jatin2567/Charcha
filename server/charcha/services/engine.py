@@ -12,7 +12,7 @@ MEETING_KEEPALIVE_SECONDS = 45
 
 
 class InterpretationEngine:
-    def __init__(self, settings, headers):
+    def __init__(self, settings, headers, *, client=None):
         self.settings = settings
         self.headers = headers
         self.task = None
@@ -23,8 +23,10 @@ class InterpretationEngine:
         self.observed_at = None
         self.meeting_managed = False
         self.meeting_rooms: set[str] = set()
+        # A bounded host-requested prejoin hold is distinct from an occupied call.
+        self.preparing_rooms: set[str] = set()
         self.meeting_task = None
-        self.client = httpx.AsyncClient(follow_redirects=False, trust_env=False, timeout=165)
+        self.client = client if client is not None else httpx.AsyncClient(follow_redirects=False, trust_env=False, timeout=165)
 
     def status(self):
         state = self.state
@@ -33,10 +35,11 @@ class InterpretationEngine:
         return {"state": state, "startup_ms": self.duration_ms, "observed_at": self.observed_at,
                 "elapsed_ms": round((time.monotonic()-self.started)*1000) if state == "starting" else None,
                 "lifecycle": "meeting" if self.meeting_managed else "request",
-                "active_meetings": len(self.meeting_rooms)}
+                "active_meetings": len(self.meeting_rooms - self.preparing_rooms),
+                "preparing_meetings": len(self.meeting_rooms & self.preparing_rooms)}
 
     def hold_meetings(self, codes: set[str]):
-        """Called only by authoritative media/session reconciliation, never a status GET."""
+        """Called by media/session or bounded prejoin reconciliation, never a status GET."""
         self.meeting_rooms = set(codes)
         if not self.settings.evon_serverless:
             return
@@ -68,7 +71,7 @@ class InterpretationEngine:
         if not self.settings.evon_serverless:
             return
         if self.meeting_managed and not self.meeting_rooms:
-            raise ProviderError("Connect to an active meeting before starting interpretation.", False)
+            raise ProviderError("Prepare the meeting or connect to an active meeting before starting interpretation.", False)
         if self.task and not self.task.done():
             return
         warm_check = self.status()["state"] == "ready"
@@ -126,6 +129,7 @@ class InterpretationEngine:
 
     async def aclose(self):
         self.meeting_rooms.clear()
+        self.preparing_rooms.clear()
         if self.meeting_task and not self.meeting_task.done():
             self.meeting_task.cancel()
             await asyncio.gather(self.meeting_task, return_exceptions=True)

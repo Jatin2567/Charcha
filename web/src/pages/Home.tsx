@@ -25,7 +25,8 @@ import { createRoom } from '../services/api';
 import { languageName } from '../types/domain';
 export function Home() {
   const app = useApp();
-  const host = useAccount()?.can_host ?? true;
+  const identity = useAccount();
+  const host = identity?.can_host ?? true;
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -35,6 +36,10 @@ export function Home() {
   const [audioMode, setAudioMode] = useState<'original' | 'interpreted'>('interpreted');
   const start = async () => {
     if (!host) {setJoin(true);return;}
+    if (identity?.reviewer && app.health?.mode === 'live' && audioMode === 'interpreted') {
+      navigate('/reviewer');
+      return;
+    }
     setBusy(true);
     setError('');
     try {
@@ -85,7 +90,7 @@ export function Home() {
           <h1>
             Good conversations.
             <br />
-            <span>No language barriers.</span>
+            <span>Across languages.</span>
           </h1>
           <p>
             Your voice, their language. A shared space to listen,
@@ -175,8 +180,8 @@ export function Home() {
             <AudioLines size={21} />
           </span>
           <span>
-            <strong>Natural speech understanding</strong>
-            <small>Real-time interpretation without awkward delay or hesitation</small>
+            <strong>Spoken interpretation</strong>
+            <small>Hear translated speech and follow both versions in captions</small>
           </span>
         </div>
         <div>
@@ -184,8 +189,8 @@ export function Home() {
             <ShieldCheck size={21} />
           </span>
           <span>
-            <strong>Trust every agreed detail</strong>
-            <small>Dual captions highlight prices, dates &amp; commitments</small>
+            <strong>Review important details</strong>
+            <small>Compare captions, correct a message &amp; acknowledge the update</small>
           </span>
         </div>
       </section>

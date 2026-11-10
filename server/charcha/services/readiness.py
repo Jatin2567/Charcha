@@ -82,13 +82,14 @@ CONFERENCE_DETAILS = {
     "provider_flow_exhausted": "The current flow has insufficient remaining resources for this audience. Ask the operator for a new bounded flow.",
     "provider_flow_unavailable": "Provider approval storage or enforcement is unavailable; translated sources are blocked.",
     "voice_setup_required": "Set up your own meeting voice before enabling the microphone.",
+    "engine_not_ready": "Interpretation is preparing. Wait for translation readiness before speaking; you can remain joined with your microphone muted.",
     "demo_no_microphone": "This is a scripted demonstration. Use the original-audio or live conference mode for microphone calls.",
 }
 
 
 def conference_readiness(store, state, member, transport, usage) -> ConferenceReadiness:
     """Local state only; no model probes and no provider/approval side effects."""
-    settings = store.settings
+    settings = store.settings_for_room(state.room.code)
     audio = getattr(transport, "rooms", {}).get(state.room.code) if transport else None
     connected = bool(audio and audio.room and not audio.closed and not audio.disconnected
                      and not getattr(audio, "reconnecting", False))
@@ -104,6 +105,14 @@ def conference_readiness(store, state, member, transport, usage) -> ConferenceRe
                 if active_source and state.room.mode == "live" else flow)
     missing = settings.missing_live_config() if state.room.mode == "live" else settings.missing_transport_config() if state.room.mode == "transport" else []
     media_ready = connected and member.id in remote
+    engine_ready = True
+    registry = getattr(store, "reviewer_resources", None)
+    if registry and state.room.engine_on_demand and settings.evon_serverless:
+        try:
+            engine = registry.engine_for(state.room.code)
+            engine_ready = bool(engine and engine.status()["state"] == "ready")
+        except Exception:
+            engine_ready = False
     allowed, new_allowed = False, False
     if state.room.mode == "demo":
         reason = "demo_no_microphone"
@@ -123,6 +132,8 @@ def conference_readiness(store, state, member, transport, usage) -> ConferenceRe
         reason = "source_already_active"
     elif missing:
         reason = "provider_configuration_missing"
+    elif not engine_ready:
+        reason = "engine_not_ready"
     elif not connected_targets:
         reason = "listener_media_not_ready"
     elif flow["status"] != "approved":

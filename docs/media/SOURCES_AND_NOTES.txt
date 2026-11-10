@@ -1,48 +1,56 @@
-CHARCHA — ONE SHARED PLAN
-Submission edition, 10 November 2026
+CHARCHA — MUSIC & PORTAL EDIT
+Prepared locally, 10 November 2026. Not published or submitted by this edit.
 
-CONTENTS
-Charcha-2m30-submission-demo.mp4 — 2:30 form walkthrough.
-Charcha-60-second-social.mp4 — 60-second social / short-demo cut.
-Matching SRT captions and verification.json accompany these files.
+CURRENT FILES
+Charcha-2m40-multilingual-build.mp4 — 160 seconds, form/build walkthrough.
+Charcha-60s-multilingual-voices.mp4 — 60 seconds, social story.
+Matching captions and verification.json describe these exact files.
 
-STORY AND EVIDENCE
-A workshop instruction changes from room three to room four. The film uses saved Hindi-to-English provider output and the actual Charcha interface in a labelled UI replay. The correction was typed. The test listener acknowledges the original, then separately acknowledges the corrected version; the recap retains both. This is a demonstration of the workflow, not evidence of human comprehension or a legally binding agreement.
+STORY AND SCREEN EVIDENCE
+Fictional Asha (Hindi), Ravi (Telugu) and Meher (Punjabi) coordinate a workshop.
+A correction changes room three to room four. The actual React/FastAPI portal
+was captured using three isolated local test accounts and authored translations.
+Host admission, separate acknowledgements, correction versioning, refresh,
+saved bilingual recap and WhatsApp text were checked without provider inference.
+Home, Prejoin, Performance, Voice studio, Test lab and Audio lab are actual
+offline screens. No detection result or provider measurement was invented.
+The films are not a new live three-device interpreted call or a load benchmark.
 
-The source speech is synthetic test speech, and Asha and Alex are fictional illustrated personas. The presentation includes AI-assisted artwork and offline narration, edited screenshots, animation and audio-reactive graphics. Provider-speech presentation copies play at 85% speed and are level-normalised. Playback in the film is not a real-time latency benchmark.
+SPEECH AND MUSIC
+The full saved synthetic Hindi source from 9 November is reused at normal speed.
+The Telugu and Punjabi standard-voice readings were previously created in exactly
+two approved Gnani TTS requests. They are not translations generated during the
+rehearsal and are not cloned human voices. Existing English narration is reused.
+Speech lengths and caption times are unchanged. Music ducks beneath speech and
+is additionally reduced during the three Indic examples. The arrangement was
+synthesized locally without third-party recordings; see MUSIC_PROVENANCE.txt.
+No new Gnani, Modal, paid narration or music service was called for this refresh.
 
-The small recap strip shows exact excerpts of Tamil, Bengali and Telugu output from separate tests on 31 October 2026. Ellipses mark shortened excerpts. The visible note identifies their separate recording date. They were not produced by the workshop meeting. Ten language choices are configured; this film does not certify quality for every language pair or demonstrate a multi-user load test.
+PERFORMANCE EVIDENCE
+3.94 s and 4.23 s are two saved Hindi-to-English provider cases from 9 November:
+translation start to first decoded synthesis audio. They exclude STT, meeting
+transport and listener playback. They are not medians or measurements of the
+Hindi/Telugu/Punjabi story. The offline Performance screen appears separately.
+Full local suites on 9 November: 1,468 backend passed, one skipped; 322 frontend
+passed; seven runtime checks passed. Build and seven runtime checks passed again
+on 10 November for this refresh. The full application suites were not rerun.
+The new local rehearsal passed; it does not establish human translation quality.
 
-ENGINEERING SECTIONS
-The extended walkthrough explains versioned corrections, per-listener acknowledgements, shared target-language branches, ordered playback, host admission, consented voices, saved reports and meeting-driven compute. Its portal images were captured previously; diagrams describe the implementation. No new live meeting or provider recording was made for this edition.
-
-3.94 s and 4.23 s are two saved cases from 9 November 2026: translation adapter start to first decoded synthesis audio chunk. The original uses 1.33657 s MT plus 2.60182 s first audio; the correction uses 1.25053 s MT plus 2.97699 s first audio. These figures exclude speech recognition, transport and listener playback. They are neither a median nor full end-to-end latency.
-
-Full local application suites on 9 November: 1,468 backend tests passed, one skipped; 322 frontend tests passed; seven runtime checks passed; production build passed. The build and seven runtime checks passed again on 10 November. Automated local tests do not establish translation quality or detector accuracy.
-
-VoiceShield is experimental audio-based screening with visible status and timings. The film shows saved interface imagery, not a fresh deepfake test. Detection accuracy and identity assurance are not established.
-
-CONTEXTUAL DATA SOURCES
-121 classified languages: Census of India 2011, Language Paper published in 2018. This is a classification of mother-tongue returns, not every dialect.
-https://censusindia.gov.in/nada/index.php/catalog/42458/download/46089/C-1625062018.pdf
-
-Around 86.3% of Indian households had internet access within household premises: MoSPI Comprehensive Modular Survey: Telecom, January–March 2025; release 29 May 2025.
-https://www.pib.gov.in/PressReleasePage.aspx?PRID=2132330
-
-These facts establish diversity and connectivity. They do not quantify translation errors, financial losses or Charcha's effectiveness.
-
-DIGITAL-ARREST CONTEXT
-Ministry of Home Affairs / Press Information Bureau, 14 May 2024, advisory on blackmail and digital-arrest incidents involving impersonation of law-enforcement agencies.
-https://www.pib.gov.in/Pressreleaseshare.aspx?PRID=2020570&lang=2&reg=48
-
-The advisory concerns impersonation and coercion over calls/video platforms. It does not establish that those scams require synthetic voices. The film encourages independent caller verification; it does not claim that Charcha detects or prevents digital-arrest scams.
+FEATURE BOUNDARIES
+VoiceShield is experimental incoming-audio screening, not verified identity or
+proven digital-arrest prevention. Audio lab CPU figures are labelled historical
+synthetic diagnostics. Ten configurable languages do not certify all pairs.
+Acknowledgements record understanding; recap hashes are not legal signatures.
+The application supports consented voice cloning, but these stock readings do
+not demonstrate a new cloning run. GPU diagrams illustrate implementation;
+warm-up and idle windows can still incur charges. No India-only inference claim.
 
 TECHNOLOGY MARKS
-Logos identify technologies used; they do not imply sponsorship or endorsement. Artwork is from the providers' official sources and retains its proportions and colours. Official source pages:
+Marks identify application technologies, not endorsement or activity in this edit.
 Gnani: https://docs.gnani.ai/api/introduction/introduction
 LiveKit: https://livekit.com/brand
 Modal: https://modal.com/
 Google Cloud: https://cloud.google.com/
-
-PUBLICATION
-No new Gnani requests, Modal sessions or paid narration services were used for this revision. Verification records hashes, decoding, duration and subtitle checks, not product-wide certification. Source publication and media preparation do not submit the challenge entry or publish a social post.
+Development, artwork, narration and editing used AI assistance. The filenames
+above identify the current edit; older 2:30/60-second files are retained as prior
+versions and are not certified by the new file hashes.

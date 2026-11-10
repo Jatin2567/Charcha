@@ -19,6 +19,7 @@ from pydantic import BaseModel, Field
 
 from .store import token_digest
 from .services.host_budget import BudgetChange
+from .reviewer_access import ReviewerAccess
 
 COOKIE = "charcha_session"
 STATE_COOKIE = "charcha_login"
@@ -71,6 +72,7 @@ class Accounts:
         self.signing_keys: dict[str, dict] = {}
         self.keys_valid_until = 0.0
         self.db = settings.usage_db_path.with_name("accounts.sqlite3")
+        self.reviewers = ReviewerAccess(self.db, self.issuer)
 
     @property
     def configured(self):
@@ -110,10 +112,23 @@ class Accounts:
     def host_email(self):
         if self.db.is_file():
             with sqlite3.connect(self.db) as db:
-                row = db.execute("SELECT email FROM host_policy WHERE id=1").fetchone()
+                present = db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='host_policy'").fetchone()
+                row = db.execute("SELECT email FROM host_policy WHERE id=1").fetchone() if present else None
                 if row:
                     return row[0]
         return self.settings.charcha_meeting_host_email.strip().casefold()
+
+    def can_host(self, who):
+        return bool(who and who.expires > time.time() and (
+            who.email.casefold() == self.host_email() or self.reviewers.active(who)))
+
+    def shared_resources_allowed(self, who):
+        if not who or who.expires <= time.time():
+            return False
+        if who.email.casefold() == self.host_email():
+            return True
+        grant = self.reviewers.active(who)
+        return bool(grant and grant["share_resources"])
 
     def set_host(self, who, email):
         email = email.strip().casefold()
@@ -232,13 +247,16 @@ class Accounts:
         @router.get("/api/account")
         async def status(request: Request):
             who = self.current(request)
+            reviewer = self.reviewers.active(who)
             return {
                 "authenticated": bool(who),
                 "configured": self.configured,
                 "scope": token_digest(who.subject) if who else None,
                 "session_scope": token_digest(who.key)[:24] if who else None,
                 "email": who.email if who else None,
-                "can_host": bool(who and who.email == self.host_email()),
+                "can_host": self.can_host(who),
+                "reviewer": bool(reviewer),
+                "reviewer_shared_allowed": self.shared_resources_allowed(who),
                 "admin": bool(who and who.admin),
                 "password_security_available": bool(self.self_hosted and self.configured),
             }
@@ -400,12 +418,14 @@ class Accounts:
             changes = []
             if self.db.is_file():
                 with sqlite3.connect(self.db) as db:
-                    changes = [
-                        {"at": stamp, "email": email}
-                        for stamp, email in db.execute(
-                            "SELECT stamp,email FROM host_changes ORDER BY rowid DESC LIMIT 10"
-                        )
-                    ]
+                    present = db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='host_changes'").fetchone()
+                    if present:
+                        changes = [
+                            {"at": stamp, "email": email}
+                            for stamp, email in db.execute(
+                                "SELECT stamp,email FROM host_changes ORDER BY rowid DESC LIMIT 10"
+                            )
+                        ]
             return {
                 "host_email": self.host_email(),
                 "changes": changes,
@@ -446,10 +466,14 @@ class Accounts:
             except ValueError as exc:
                 raise HTTPException(409, str(exc)) from None
 
+        router.include_router(self.reviewers.router(self))
         return router
 
     async def revoke(self, who, service):
         self.sessions.pop(who.key, None)
+        resources = getattr(service, "reviewer_resources", None)
+        if resources:
+            await resources.clear(who.key)
         for session in self.store.sessions.values():
             if session.account_session == who.key:
                 session.expires_at = 0

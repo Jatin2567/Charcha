@@ -25,6 +25,7 @@ import { isScriptedLanguage } from '../types/domain';
 import { useCameraPreview } from '../hooks/useCameraPreview';
 import { LocalCameraPreview } from '../components/CameraVideo';
 import { ConversationIllustration } from '../components/ConversationIllustration';
+import { PreMeetingPreparation } from '../components/PreMeetingPreparation';
 export function Prejoin() {
   const {code = ''} = useParams();
   return <AdmissionGate key={code} code={code}><DeviceSetup /></AdmissionGate>;
@@ -273,8 +274,8 @@ function DeviceSetup() {
             {room?.mode === 'live' && (
               <p className="source-note">
                 Ten language choices are available. Translation quality still needs human review.
-                Joining keeps your microphone and camera off; paid interpretation starts only with
-                an approved flow and an explicit unmute.
+                Joining keeps your microphone and camera off. Voice enrollment and interpretation
+                use the services selected for this meeting; your host controls access.
               </p>
             )}
             <label className="field">
@@ -363,6 +364,7 @@ function DeviceSetup() {
               </span>
             </label>
             <ErrorNotice message={error} />
+            {room?.mode === 'live' && <PreMeetingPreparation code={code} />}
             <button
               className="button primary full"
               style={{ marginTop: 20 }}

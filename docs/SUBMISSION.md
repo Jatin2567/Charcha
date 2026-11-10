@@ -1,6 +1,6 @@
 # Charcha — final submission package
 
-Updated 10 November 2026. The full application suites were checked on 9 November; the build and seven runtime checks were repeated successfully on 10 November. These materials are published for entry preparation; a social post and final form submission still require the owner.
+Updated 10 November 2026. This source revision includes the 2:40 build film, 60-second multilingual story, refreshed one-page pitch, approved participant feedback and reviewer setup guide. Media and packaging have been checked locally. The matching reviewer web/API release was deployed and its health, served components and access restrictions checked on 10 November; no authenticated live provider flow was run. Source publication, video/social publication and challenge submission are separate actions. Dated evidence is listed below.
 
 ## What to submit
 
@@ -10,8 +10,8 @@ Actual fields, in order: full name; registered email; teammate's registered emai
 
 The [official challenge page](https://www.gnani.ai/internship) states **10 November 2026, 11:59 PM IST** as the deadline. Use the submission form sent to the registered email.
 
-1. Required form demo: [2:30 submission film](media/Charcha-2m30-submission-demo.mp4), 1080p with full decoding verified. Upload it to a viewable video host and enter that link. The [60-second social film](media/Charcha-60-second-social.mp4) is the short-demo cut, not a replacement for the form's longer video.
-2. Project URL: [github.com/Jatin2567/Charcha](https://github.com/Jatin2567/Charcha), containing the [one-page pitch PDF](Charcha-one-page-pitch.pdf), source, architecture and evidence.
+1. Required form demo: [2:40 build film](media/Charcha-2m40-multilingual-build.mp4). The final render and full decode passed. Upload it to a viewable video host and enter its watch link. The [60-second multilingual film](media/Charcha-60s-multilingual-voices.mp4) is the social cut, not a replacement for the form's longer video.
+2. Project URL: [github.com/Jatin2567/Charcha](https://github.com/Jatin2567/Charcha). This revision contains source, architecture, the [refreshed one-page pitch](Charcha-one-page-pitch.pdf) and reviewed media. Verify these exact files are visible at the submitted public revision.
 3. Each entrant's actual contribution and requested registration/eligibility details.
 4. A public LinkedIn or X post published before submission. Tag Gnani AI and use `#GreatIndianAIInternshipChallenge` and `#GnaniAI`. Nominate one post link per platform used.
 
@@ -29,11 +29,11 @@ Check the repository, PDF and uploaded video while signed out before submitting.
 
 **Gnani technology:** Prisma, Evon v3.3, Timbre and voice embeddings/cloned synthesis. The recording runner explicitly requested `prisma-v3.0`; adapter defaults are `timbre-v2.5` and `vachana-vc-v1`. The prepared Evon deployment uses `gnani/gnani-evon-v3.3-30B-A3B`. Defaults are not independent provider-returned version attestations.
 
-**Demo evidence:** Saved Hindi→English provider output is replayed through the actual interface. A typed correction changes room three to room four. Automated test listener Alex separately acknowledges the corrected version; the bilingual recap retains both versions. This demonstrates the workflow, not human comprehension. The source voice is synthetic test speech, the personas are illustrated, and the video is edited. It is not a current live latency or multi-user load benchmark.
+**Demo evidence:** Fictional Asha, Ravi and Meher represent Hindi, Telugu and Punjabi participants. Actual app screens from a scripted three-account rehearsal show a room-three-to-room-four correction, individual acknowledgements of the new version and a bilingual recap. The speech consists of saved Hindi test audio and separately prepared Telugu/Punjabi standard-voice readings. These are not new translations captured from a live three-device conference, and the readings are not cloned voices.
 
-The recap scene also displays exact Tamil, Bengali and Telugu outputs from separate 31 October tests. Their date and separate-recording provenance are shown; they are not represented as translations from the workshop meeting.
+**Presentation refresh:** Quiet original background music is synthesized locally, beneath the speech. The portal walkthrough includes Home, Prejoin, Performance, Voice Studio, Test lab and Audio lab alongside the meeting and recap. These offline views show implemented product surfaces; they do not imply active provider services, real-time readings or successful deepfake detection. Final coverage and media checks are recorded in the [verification record](media/verification.json).
 
-**Recorded timing shown:** 3.94 s for the original turn and 4.23 s for the typed correction, from translation start to first decoded synthesis audio. These are two recorded cases from 9 November, excluding speech recognition, meeting transport and listener playback. VoiceShield is visibly labelled experimental.
+**Recorded timing shown:** 3.94 s for an original turn and 4.23 s for a typed correction, from translation start to first decoded synthesis audio. These are separate saved Hindi→English cases from 9 November, excluding speech recognition, meeting transport and listener playback. They are not measurements of the Hindi/Telugu/Punjabi rehearsal. VoiceShield remains experimental.
 
 **Limits:** Ten languages are configurable; measured quality coverage is narrower. Historical provider tests delivered nine of ten attempted routes across five languages, with meaning review pending. VoiceShield is experimental, without an established AI-voice detection rate. Acknowledgements and recap hashes are not identity checks, legal agreement or guaranteed translation accuracy.
 
@@ -41,17 +41,31 @@ The recap scene also displays exact Tamil, Bengali and Telugu outputs from separ
 
 **App:** https://charcha-234398803946.asia-south2.run.app/
 
+## Approved participant feedback
+
+> The platform provides a really useful way to communicate with people who speak different languages through both text and voice translation. I liked how it makes conversations more accessible and helps people understand each other better. The experience was engaging and easy to follow, although there is some scope to improve response latency. Overall, it's a useful platform that can help people connect without language barriers.
+
+**Sathvika — tech student and Telugu speaker.** Publication approved; only sentence spacing has been corrected. This is personal product feedback, not a controlled language-accuracy evaluation or a latency measurement. Her observation about response latency is retained in full. The same review is included in the one-page pitch and submission kit.
+
+For hands-on evaluation, the [reviewer guide](REVIEWER_GUIDE.md) explains the deployed private, authenticated meeting-host invitations, optional reviewer-owned resources and explicit pre-meeting translation preparation. An evaluator still needs an invitation; deployment did not issue one, grant public administrator access or start provider usage. Personal providers still depend on running Charcha identity, application and meeting-media services.
+
 ## Social post to accompany the video
 
-One corrected room number can change everyone's plan.
+“Room four, not room three.”
 
-I built चर्चा (Charcha) to help multilingual teams keep track of what was said, what changed, and who acknowledged the update. Built using Gnani Prisma, Evon and speech/voice-cloning APIs, it combines multilingual meetings, consented personal voices, original and translated captions, versioned corrections and bilingual PDF/WhatsApp recaps.
+One small correction. Three languages. Everyone needs the same update.
 
-The engineering extends beyond the call screen: shared translation branches per target language, ordered playback, refresh/reconnect recovery, host admission, separate administrator MFA, saved performance reports and meeting-driven GPU lifecycle management. VoiceShield adds experimental audio-based screening with visible status.
+I built चर्चा (Charcha) for teams who share a goal without sharing a fluent language.
 
-The demo follows a workshop instruction from room three to room four, with a fresh acknowledgement and both versions retained in the recap. It uses recorded Hindi–English provider output, synthetic test speech, illustrated personas and labelled UI replay, alongside earlier Tamil, Bengali and Telugu excerpts. Development and presentation used AI assistance. This is a workflow demonstration, not a live latency or deepfake-accuracy benchmark.
+The story follows Asha, Ravi and Meher through Hindi, Telugu and Punjabi. Charcha helps them review both texts, correct the message, acknowledge the updated version individually and keep a bilingual recap.
 
-Project and one-page pitch: https://github.com/Jatin2567/Charcha
+At its core: @gnani.ai Prisma for speech recognition, Evon for translation and Timbre for speech synthesis. Behind the interface: shared translation branches, ordered playback, reconnect recovery, host admission, meeting-driven GPU lifecycle, saved performance reports, consented voice cloning and experimental VoiceShield audio screening.
+
+Built for The Great Indian AI Internship Challenge, with AI-assisted development and demo production. The film uses fictional personas, actual app screens from a scripted three-account rehearsal and prepared speech. The build film explains the architecture and separately recorded performance evidence.
+
+Where have language differences made a simple instruction harder to follow? I’d value feedback from multilingual teams and voice-AI builders.
+
+Code and engineering notes: https://github.com/Jatin2567/Charcha
 
 #GreatIndianAIInternshipChallenge #GnaniAI #IndicAI #VoiceAI #WebRTC
 
@@ -59,15 +73,20 @@ When publishing, select Gnani AI's actual account in the tag selector and attach
 
 ## Evidence and remaining actions
 
-The [final submission review](FINAL_SUBMISSION_CHECK.md) records the package, public-file, layout, caption and claim checks.
+The [submission review](FINAL_SUBMISSION_CHECK.md) separates this source revision's local checks from hosted operation and lists the remaining publication and submission steps.
 
-Full local suites on 9 November: **1,468 backend tests passed, one skipped; 322 frontend tests and seven runtime checks passed; production build passed**. The build and seven runtime checks passed again on 10 November; the build retains an advisory for a bundle above 500 kB. The 9 November hosted checks returned 200 for the page and health endpoint and 401 for anonymous performance history. No fresh live interpretation test was performed for this release. Video files passed full decoding; hashes, duration and subtitle checks are recorded in the [media verification record](media/verification.json).
+The final **10 November reviewer-release checks passed: 1,558 backend tests, one skipped; 328 frontend tests across 47 files; seven runtime checks; production build**. The backend run took 194.81 seconds. A separate generator suite passed 40 tests with two platform skips. Desktop/mobile reviewer walkthroughs also passed locally. Provider responses were mocked and no provider calls were made. These checks establish application behavior, not live provider accuracy, availability or speed. The pitch and films retain their explicitly dated 9 November evidence. The [source-release verification record](REVIEWER_RELEASE_VERIFICATION.json) keeps these results separate from media evidence.
+
+At **10 November 2026, 16:01:36 UTC**, the final hosted release returned health 200, served the new reviewer/prejoin and admin invitation controls, exposed the updated privacy content and configured identity, and denied anonymous access to protected reviewer/preparation endpoints with 401. All 13 checked deployed source-file hashes matched. This verified deployment and access boundaries; it issued no invitations and made no provider calls. An authenticated live speech/GPU evaluation remains a separate step.
+
+Historical local suites on 9 November: **1,468 backend tests passed, one skipped; 322 frontend tests and seven runtime checks passed; production build passed**. The earlier 10 November media pass repeated the build, seven runtime checks and an offline three-account rehearsal. These are dated results; current reviewer-release checks belong in the [final review](FINAL_SUBMISSION_CHECK.md). The 9 November hosted checks returned 200 for the page and health endpoint and 401 for anonymous performance history. They are not a current hosted-health check. No fresh live interpretation test was performed for this revision. Media duration, decode, captions and integrity results refer to the exact files in the [media verification record](media/verification.json).
 
 - [Media sources and editing disclosures](media/SOURCES_AND_NOTES.txt).
-- [Submission-film captions](media/Charcha-2m30-captions.srt) and [social-film captions](media/Charcha-social-captions.srt).
+- [Build-film captions](media/Charcha-build-captions.srt) and [social-film captions](media/Charcha-social-captions.srt).
 - [Release notes](SUBMISSION_RELEASE_NOTES.md) and [actual commit history](https://github.com/Jatin2567/Charcha/commits/main/).
 - Detailed local logs and provider receipts remain private; they are not published with account or billing information.
 - Separate Hindi–Telugu/Punjabi human review remains unperformed: [rehearsal guide](LIVE_SUBMISSION_REHEARSAL.md).
-- Owner still needs to publish the demo post, provide its URL, complete entrant details and submit the emailed form.
+- Latest music/portal edits use no new Gnani or Modal calls. Earlier Telugu and Punjabi readings consumed their separate approved two-request grant; they are reused here.
+- Verify the submitted public source revision and pitch, upload the build film, publish the demo post, provide their viewing URLs, complete entrant details and submit the emailed form.
 
 Do not upload the private work directory, .env, credentials, identity backups or billing records. Only reviewed source and sanitised evidence belong in the public repository. Repository publication does not post to social media or submit the challenge form.

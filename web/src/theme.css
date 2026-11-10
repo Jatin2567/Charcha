@@ -723,5 +723,15 @@ textarea {
 .account-privacy {display:inline-block;margin-top:1rem;color:#2453ba;font-size:.85rem}
 .account-menu,.admin-access form,.host-lobby div {display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
 .account-menu {font-size:.8rem}.account-menu span {max-width:13rem;overflow:hidden;text-overflow:ellipsis}.account-menu a,.account-menu button {color:#2453ba;background:none;border:0;font:inherit}
+@media (max-width: 600px) {
+  .topbar { height: auto; min-height: 96px; flex-wrap: wrap; gap: 8px; padding-top: 12px; padding-bottom: 12px; }
+  .topbar-right { min-width: 0; flex: 1 0 100%; justify-content: flex-end; }
+  .account-menu { min-width: 0; flex: 1; flex-wrap: nowrap; gap: .5rem; }
+  .account-menu span { min-width: 0; max-width: 100%; flex: 1; white-space: nowrap; }
+  .account-menu a, .account-menu button { flex-shrink: 0; white-space: nowrap; }
+  .topbar .breadcrumb { min-width: 0; flex: 1 0 100%; }
+  .topbar .breadcrumb strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .topbar .profile-button { flex-shrink: 0; }
+}
 .admission-card .text-link {display:block;margin-top:1rem}.admin-access input{display:block;border:1px solid #a8b4ca;border-radius:.5rem;padding:.65rem;margin:.3rem 0}.admin-access h2{margin-top:1.5rem}
 .host-lobby {position:fixed;z-index:60;top:4.5rem;right:1rem;width:min(25rem,calc(100vw - 2rem));max-height:50vh;overflow:auto;background:#212938;color:#fff;padding:1rem;border:1px solid #8194bd;border-radius:.8rem;box-shadow:0 4px 24px #16214655}.host-lobby div {padding:.5rem 0}.host-lobby span {overflow-wrap:anywhere;flex:1}.meeting-app [hidden]{display:none!important}

@@ -51,7 +51,8 @@ def render(origin: str, public_ip: str, private_ip: str, identity: dict[str, str
     host = urlsplit(origin).hostname
     # Fresh isolated credentials; no Gnani, Modal or historical account secrets.
     settings = runtime_env(
-        {"app_domain": host, "livekit_domain": host}, {},
+        {"app_domain": host, "livekit_domain": host},
+        {key: identity[key] for key in ("REVIEWER_GPU_ALLOWED_ORIGINS",) if key in identity},
         "API" + secrets.token_hex(12), secrets.token_urlsafe(48), mode="transport",
     )
     settings.update({

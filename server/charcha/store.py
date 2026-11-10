@@ -79,6 +79,10 @@ class RoomState:
 
 
 class Store:
+    def settings_for_room(self, code: str):
+        resolver = getattr(self, "resource_settings", None)
+        return resolver(code) if resolver else self.settings
+
     def __init__(self, settings: Settings):
         self.settings = settings
         self.rooms: dict[str, RoomState] = {}

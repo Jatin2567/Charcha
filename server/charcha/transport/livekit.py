@@ -489,11 +489,19 @@ class RoomTransport:
             listeners = [p for p in listeners if p.id in remote]
         if not listeners:
             return False
+        registry = getattr(self.store, "reviewer_resources", None)
+        if registry and self.state.room.engine_on_demand and speaker_id not in self.recognition_active:
+            try:
+                engine = registry.engine_for(self.state.room.code)
+                if not engine or engine.status()["state"] != "ready":
+                    return False
+            except Exception:
+                return False
         if self.store.settings.usage_require_flow_approval:
             # A source already running keeps its reserved connection. New sources
             # wait while approval is locked, including after an audience change.
             usage = getattr(self.speech, "usage", None)
-            if usage is None or self.store.settings.missing_live_config():
+            if usage is None or self.store.settings_for_room(self.state.room.code).missing_live_config():
                 return False
             if speaker_id not in self.recognition_active:
                 return usage.conference_capacity(len({p.language for p in listeners}),

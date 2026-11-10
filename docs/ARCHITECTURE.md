@@ -15,7 +15,7 @@ Charcha is a browser-based Indic conversation interpreter with ten configurable 
 | Page           | User task                                                    | Owns                                                                                 | Must delegate                                                   |
 | -------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
 | Home           | Create or join a conversation; try the demonstration         | Invitation entry, room title and mode explanation                                    | Room creation and invitation validation to the API              |
-| Prejoin        | Choose name, spoken/listening language, microphone and voice | Device preview, permissions, stock/cloned voice choice and explicit consent          | Membership credentials and voice authorization to the API       |
+| Prejoin        | Choose name, spoken/listening language and devices          | Device preview, permissions, processing consent and room voice requirements           | Admission, membership credentials and voice authorization to the API |
 | Meeting        | Speak, listen, read translations and confirm understanding   | Speaker cards, connection state, audio controls, transcript and confirmation actions | Audio routing to LiveKit/agent; translation to server services  |
 | Recap/history  | Review, export, explicitly save or delete a local recap      | Local saved recap lifecycle; clear provenance                                        | Protected live transcript retrieval to the API                  |
 | Voice studio   | Enroll or delete a consented voice reference                 | Recorded/uploaded reference, consent, validation feedback                            | Media validation and embedding generation/storage to the server |
@@ -85,9 +85,13 @@ flowchart LR
   Voice --> Embed[Gnani embedding endpoint]
 ```
 
-The application server exposes no API keys, embeddings or upstream raw errors to clients. A room invitation is a capability to request membership, not a user account. The membership bearer is scoped to its room and participant. Voice profiles are owned by that membership, cannot be attached by another member and remain session-scoped. This is a prototype identity model; use authenticated accounts, revocation and an admission policy before public multi-tenant hosting.
+The application server exposes no API keys, embeddings or upstream raw errors to clients. Configured deployments authenticate accounts through the identity provider. The designated host and authenticated reviewers with a valid administrator-issued invitation can create meetings; only a room's owner can admit or deny guests. A room invitation lets a signed-in guest request admission; it does not grant membership by itself. Reviewer access never grants administrator access. The separate administrator session requires the configured administrator identity and fresh multifactor authentication. Room membership bearers remain scoped to their room and participant; account sign-out, departure and expiry invalidate access. Voice profiles are owned by that membership, cannot be attached by another member and remain session-scoped. These controls do not establish general organisation tenancy or production-scale isolation.
 
-The current store is in-memory. Run one application worker: multiple independent workers do not share rooms, tokens, embeddings or WebSocket consumers. Restarting loses unsaved server state. A production extension needs a shared transactional store, event bus, TTL cleanup, quotas and admission controls. Do not turn an in-memory demo into a persistent store by logging sensitive payloads.
+Reviewer provider selections are held only in the authenticated session's server memory and frozen per new meeting. Trusted internal room context routes speech and translation to those adapters. Own providers use a separate persistent units ledger, so an exhausted owner balance does not block a fully reviewer-funded meeting. Shared resources retain their normal safeguards. Expiry, sign-out, deletion and administrator revocation invalidate and close associated reviewer-resource meetings; a failed personal provider never falls back to owner credentials. Public HTTPS Modal endpoints are supported; other origins require operator review and restricted network egress. See the [reviewer guide](REVIEWER_GUIDE.md).
+
+An explicit owner preparation request holds on-demand interpretation for at most 15 minutes, bounded by session and room expiry. Status polling has no network side effects. Connected media supersedes that temporary lease and retains the existing meeting-based lifecycle. New translated microphone sources wait for an observed ready response, avoiding paid recognition while the selected engine is cold. These controls prepare availability; they do not certify translation quality or end-to-end playback latency.
+
+Active room state is in-memory. Run one application worker: multiple independent workers do not share rooms, tokens, embeddings or WebSocket consumers. Restarting loses that active state; account-scoped technical performance reports have separate persistent storage. Host admission, expiry cleanup and bounded resource controls are implemented. A multi-worker extension still needs shared transactional room state and event distribution. Do not turn an in-memory room into a persistent store by logging sensitive payloads.
 
 ## Live interpretation sequence
 
@@ -101,8 +105,12 @@ sequenceDiagram
   participant MT as Translation provider
   participant TTS as Timbre
   participant B as Tamil browser B
-  A->>API: Join room, language hi, stock voice
+  A->>API: Signed-in host or admitted guest joins, language hi
   API-->>A: Room-scoped session and media credentials
+  opt Room requires personal voice
+    A->>API: Consent and enroll own 5–30-second reference
+    API-->>A: Session voice profile ready
+  end
   A->>LK: Set original-track subscriber permissions
   A->>LK: Publish microphone track
   LK->>Agent: Original PCM audio only
@@ -111,13 +119,15 @@ sequenceDiagram
   Agent->>API: Enqueue source turn
   API->>MT: Translate hi to unique target ta
   MT-->>API: Translated text
-  API->>TTS: Synthesize standard target-language voice in ta
+  API->>TTS: Synthesize ta with the speaker's consented voice profile
   TTS-->>Agent: PCM audio
   Agent->>LK: Set recipients then publish translated:A:ta
   LK-->>B: Translated audio
   API-->>A: Transcript and status events
   API-->>B: Translation and timing events
 ```
+
+Hosted interpreted rooms require a consented personal voice before microphone speech is enabled; listening does not require enrollment. Deleting the profile mutes its speaker until enrollment is repeated. Separately configured optional-voice test rooms can use standard target-language synthesis instead. The sequence above depicts personal-voice interpretation, not proof of speaker identity.
 
 The transcription boundary matters: a streaming transport is not simultaneous word-by-word interpretation. Speech segmentation and sentence completion contribute latency. Translation jobs for a source are ordered; unique target languages may execute concurrently. Output must retain source order for a given listener. Queues are bounded and provider operations time out; saturation is surfaced instead of silently accumulating unlimited work. Leaving a room must cancel/reject further work for that membership.
 

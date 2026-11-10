@@ -50,7 +50,8 @@ PROVIDER_DEFAULTS = {
     "TIMBRE_MODEL": "timbre-v2.5", "TIMBRE_VOICE": "Nalini", "VOICE_CLONE_MODEL": "vachana-vc-v1",
 }
 STOCK_VOICE_KEYS = {"TIMBRE_VOICE_" + language for language in ("HI", "TA", "BN", "EN", "TE", "KN", "ML", "MR", "GU", "PA")}
-PROVIDER_KEYS = {"GNANI_API_KEY", "GNANI_STT_MODEL", "EVON_BASE_URL", "EVON_MODEL", "EVON_API_KEY",
+PROVIDER_KEYS = {"GNANI_API_KEY", "GNANI_STT_MODEL", "EVON_BASE_URL", "EVON_MODEL", "EVON_API_KEY", "EVON_SERVERLESS",
+                 "REVIEWER_GPU_ALLOWED_ORIGINS",
                  "CHARCHA_AUTH_DOMAIN", "CHARCHA_AUTH_CLIENT_ID", "CHARCHA_AUTH_CLIENT_SECRET",
                  "CHARCHA_IDENTITY_PROVIDER", "CHARCHA_OIDC_ISSUER",
                  "CHARCHA_ADMIN_SUBJECT", "CHARCHA_ADMIN_CONNECTION", "CHARCHA_MEETING_HOST_EMAIL",
@@ -143,11 +144,45 @@ def validate_url(name: str, value: str, *, websocket: bool = False, private_http
     raise PreparationError(f"{name} requires {secure}; private Evon HTTP is allowed only on a trusted private network.")
 
 
+def validate_reviewer_origins(value: str) -> str:
+    """Canonical public DNS origins only; DNS ownership/egress remain operator checks."""
+    if not value.strip():
+        return ""
+    origins = []
+    for item in value.split(","):
+        item = item.strip()
+        try:
+            parsed = urlsplit(item)
+            host = parsed.hostname or ""
+            try:
+                ipaddress.ip_address(host)
+            except ValueError:
+                pass
+            else:
+                raise ValueError()
+            if (parsed.scheme != "https" or parsed.port not in (None, 443)
+                    or len(host.split(".")) < 3 or not DOMAIN.fullmatch(host)
+                    or parsed.username or parsed.password or parsed.query or parsed.fragment
+                    or parsed.path not in ("", "/") or re.search(r"[\s%\\]", item)
+                    or host.endswith((".local", ".internal", ".localhost", ".test", ".invalid", ".example", ".home.arpa", ".onion"))):
+                raise ValueError()
+            origins.append("https://" + host)
+        except ValueError:
+            raise PreparationError("REVIEWER_GPU_ALLOWED_ORIGINS requires comma-separated public HTTPS DNS origins without credentials, IP addresses, paths or alternate ports.") from None
+    return ",".join(dict.fromkeys(origins))
+
+
 def runtime_env(config: dict[str, str], supplied: dict[str, str], api_key: str, api_secret: str, *, mode: str = "live") -> dict[str, str]:
     if mode not in {"live", "transport"}:
         raise PreparationError("Deployment mode must be live or transport.")
     settings = dict(PROVIDER_DEFAULTS)
     settings.update({name: value for name, value in supplied.items() if name in PROVIDER_KEYS and value != ""})
+    if "REVIEWER_GPU_ALLOWED_ORIGINS" in supplied:
+        settings["REVIEWER_GPU_ALLOWED_ORIGINS"] = validate_reviewer_origins(supplied["REVIEWER_GPU_ALLOWED_ORIGINS"])
+    if mode == "live" and "EVON_SERVERLESS" in supplied:
+        if supplied["EVON_SERVERLESS"] not in {"true", "false"}:
+            raise PreparationError("EVON_SERVERLESS requires exactly true or false.")
+        settings["EVON_SERVERLESS"] = supplied["EVON_SERVERLESS"]
     if mode == "transport":
         # The first hosted audio test has no inference clients, secrets or allowance.
         settings = {name: value for name, value in settings.items()
@@ -207,6 +242,7 @@ def runtime_env(config: dict[str, str], supplied: dict[str, str], api_key: str, 
     })
     if mode == "transport":
         settings.update({name: "" for name in ("GNANI_API_KEY", "EVON_BASE_URL", "EVON_MODEL", "EVON_API_KEY", "EVON_MODAL_KEY", "EVON_MODAL_SECRET")})
+        settings["EVON_SERVERLESS"] = "false"
         settings.update(AUDIO_SCREENING_MODE="off", LOCAL_AUDIO_LAB_ENABLED="false")
     return settings
 

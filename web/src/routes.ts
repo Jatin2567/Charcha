@@ -15,6 +15,7 @@ const loaders: Record<string, Loader> = {
   '/join': () => import('./pages/Prejoin').then((m) => ({ default: m.Prejoin })),
   '/voices': () => import('./pages/VoiceStudio').then((m) => ({ default: m.VoiceStudio })),
   '/settings': () => import('./pages/Settings').then((m) => ({ default: m.Settings })),
+  '/reviewer': () => import('./pages/Reviewer').then((m) => ({ default: m.Reviewer })),
   '/performance': () => import('./pages/Performance').then((m) => ({ default: m.Performance })),
   '/tests': () => import('./pages/TestLab').then((m) => ({ default: m.TestLab })),
   '/audio-lab': () => import('./pages/AudioLab').then((m) => ({ default: m.AudioLab })),

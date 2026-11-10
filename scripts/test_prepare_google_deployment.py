@@ -11,13 +11,14 @@ class GoogleDeploymentTests(unittest.TestCase):
         return render("https://charcha-example-uc.a.run.app", "8.8.8.8", "10.54.0.10", identity or {})
 
     def test_provider_isolation_and_india_identity(self):
-        files = self.bundle({"GNANI_API_KEY": "must-not-be-copied", "EVON_API_KEY": "also-private"})
+        files = self.bundle({"GNANI_API_KEY": "must-not-be-copied", "EVON_API_KEY": "also-private", "EVON_SERVERLESS":"true"})
         env = dict(line.split("=", 1) for line in files["api.env"].splitlines() if line and not line.startswith("#"))
         self.assertEqual(env["CHARCHA_MODE"], "transport")
         self.assertEqual(env["CHARCHA_IDENTITY_PROVIDER"], "keycloak")
         self.assertEqual(env["AUDIO_SCREENING_MODE"], "off")
         self.assertEqual(env["CHARCHA_ADMIN_SUBJECT"], "")
         self.assertEqual(env["EVON_BASE_URL"], "")
+        self.assertEqual(env["EVON_SERVERLESS"], "false")
         self.assertEqual(env["GNANI_API_KEY"], "")
         self.assertTrue(all(value == "0" for key, value in env.items() if key.startswith("USAGE_") and key.endswith("_PER_DAY")))
         self.assertNotIn("must-not-be-copied", "".join(files.values()))
@@ -35,6 +36,16 @@ class GoogleDeploymentTests(unittest.TestCase):
         self.assertIn("location /identity/admin/ { return 404; }", files["nginx.conf"])
         self.assertIn("udp_port: 7882", files["livekit.yaml"])
         self.assertIn("KC_HOSTNAME=https://charcha-example-uc.a.run.app/identity\n", files["identity.env"])
+
+    def test_explicit_reviewer_origins_survive_without_copying_provider_credentials(self):
+        files = self.bundle({"REVIEWER_GPU_ALLOWED_ORIGINS":"https://GPU.charcha-fixture.in/",
+                             "GNANI_API_KEY":"private-do-not-copy", "EVON_MODAL_SECRET":"private-do-not-copy"})
+        env = dict(line.split("=", 1) for line in files["api.env"].splitlines() if line and not line.startswith("#"))
+        self.assertEqual(env["REVIEWER_GPU_ALLOWED_ORIGINS"], "https://gpu.charcha-fixture.in")
+        self.assertEqual(env["CHARCHA_MODE"], "transport")
+        self.assertNotIn("private-do-not-copy", "".join(files.values()))
+        with self.assertRaises(PreparationError):
+            self.bundle({"REVIEWER_GPU_ALLOWED_ORIGINS":"https://169.254.169.254"})
 
     def test_google_is_not_advertised_without_credentials(self):
         files = self.bundle()

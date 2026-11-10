@@ -2,6 +2,26 @@
 
 Application: https://charcha-234398803946.asia-south2.run.app/
 
+## Deployed reviewer update — 10 November 2026
+
+The new [reviewer workflow](REVIEWER_GUIDE.md) adds expiring administrator-issued
+reviewer invitations, session-private Gnani/Evon resource selection and explicit
+prejoin preparation. The matching API/frontend release was deployed and checked
+on 10 November: health, served controls, identity configuration and anonymous
+access restrictions passed, and 13 deployed source-file hashes matched. No
+invitation or authenticated live provider flow was part of that verification.
+The dated operating observations below remain historical.
+
+An authorized host can prepare interpretation on the Prejoin page for up to 15
+minutes before connecting media. Account/access/room expiry can shorten that
+window. Status reads never start or renew compute. Once actual media connects,
+the normal occupied-meeting hold takes over. New translated microphone sources
+wait for the ready response. Personal endpoints use their own provider account;
+shared resources retain the application's controls. An externally managed VM must
+be stopped by its owner; releasing a Charcha hold does not stop such a VM.
+Personal providers still require running Charcha application, identity and
+LiveKit media services; they do not bypass hosting or make a stopped app available.
+
 ## Meeting flow
 
 ### Refreshing a meeting — 9 November correction

@@ -56,6 +56,7 @@ from .services.rooms import RoomService
 from .services.usage import UsageGuard
 from .services.voice import MAX_REFERENCE_BYTES, VoiceService
 from .services.meeting_engine import MeetingEngineLifecycle
+from .services.reviewer_resources import ReviewerResources, RoutedSpeech, RoutedTranslator, RoutedUsage
 from .store import Consumer, Store, account_deadline, account_session, account_history_key, token_digest
 from .transport.livekit import TransportManager
 
@@ -69,6 +70,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     history = PerformanceHistory(config, listener_metrics)
     def host_room_expiry(code):
         state = store.rooms.get(code)
+        registry = getattr(store, "reviewer_resources", None)
+        if registry and code in registry.rooms and not registry.valid(code):
+            return None
         return state.expires_at if state and state.host_funded else None
 
     usage = UsageGuard(config, host_room_expiry=host_room_expiry)
@@ -78,17 +82,30 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     else:
         speech = GnaniSpeech(config, usage)
         translator = DemoTranslator() if config.mode == "demo" else EvonTranslator(config, usage)
+    reviewer_resources = ReviewerResources(config, store, accounts, usage, speech, translator)
+    store.reviewer_resources = reviewer_resources
+    store.resource_settings = reviewer_resources.settings_for
+    routed_usage = RoutedUsage(reviewer_resources)
+    if config.mode == "live":
+        speech = RoutedSpeech(reviewer_resources, routed_usage)
+        translator = RoutedTranslator(reviewer_resources)
     pipeline = Pipeline(store, translator, speech)
     transport = TransportManager(store, speech, pipeline, screening)
     pipeline.transport = transport
     voices = VoiceService(store, speech)
-    service = RoomService(store, pipeline, transport, voices, usage, history)
-    meeting_engine = MeetingEngineLifecycle(store, transport, getattr(translator, "engine", None))
+    service = RoomService(store, pipeline, transport, voices, routed_usage, history)
+    meeting_engine = MeetingEngineLifecycle(store, transport, getattr(translator, "engine", None),
+        resolve_engine=reviewer_resources.engine_for,
+        is_authorized=lambda state: reviewer_resources.valid(state.room.code)
+            if state.room.code in reviewer_resources.rooms else state.host_funded)
+    reviewer_resources.service, reviewer_resources.lifecycle = service, meeting_engine
+    service.reviewer_resources = reviewer_resources
 
     async def cleanup():
         while True:
             await asyncio.sleep(30)
             accounts.prune()
+            await reviewer_resources.prune()
             await service.prune_expired()
 
     async def save_reports():
@@ -111,6 +128,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             engine_task.cancel()
             history_task.cancel()
             await asyncio.gather(task, engine_task, history_task, return_exceptions=True)
+            await reviewer_resources.aclose()
             demo_tasks = []
             for state in store.rooms.values():
                 if state.demo_task:
@@ -136,7 +154,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.service, app.state.voices = service, voices
     app.state.meeting_engine = meeting_engine
     app.state.accounts = accounts
+    app.state.reviewer_resources = reviewer_resources
     app.include_router(accounts.router(service))
+    app.include_router(reviewer_resources.router())
     app.include_router(admission_router(store, accounts, service))
     app.state.usage = usage
     app.state.screening = screening
@@ -229,12 +249,23 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         await service.prune_expired()
         store.rate_limit("create", request.client.host if request.client else "unknown", 20)
         who = accounts.require(request)
-        if who.email != accounts.host_email():
-            raise HTTPException(403, "Only the designated host can create a meeting")
-        budget = usage.host_policy() if config.mode == "live" and body.audio_mode != "original" else None
+        if not accounts.can_host(who):
+            raise HTTPException(403, "Only the designated host or an invited reviewer can create a meeting")
+        reviewer_mode = body.resource_mode == "reviewer"
+        if config.mode == "live" and body.audio_mode != "original" and who.email != accounts.host_email() and not reviewer_mode:
+            raise HTTPException(409, "Choose your resources on the reviewer page before creating a meeting")
+        if reviewer_mode and (config.mode != "live" or body.audio_mode == "original"):
+            raise HTTPException(409, "Reviewer resources are for live interpreted meetings")
+        budget = usage.host_policy() if config.mode == "live" and body.audio_mode != "original" and not reviewer_mode else None
         state = store.create_room(body.title, body.audio_mode,
-                                  host_funded=bool(budget and budget["host_email"] == who.email))
+                                  host_funded=reviewer_mode or bool(budget and budget["host_email"] == who.email))
         state.owner = who.subject
+        if reviewer_mode:
+            try:
+                await reviewer_resources.bind(who, state)
+            except BaseException:
+                store.rooms.pop(state.room.code, None)
+                raise
         return state.room
 
     @app.get("/api/rooms/{code}")
@@ -348,8 +379,44 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @app.get("/api/rooms/{code}/engine")
     async def engine_status(code: str, token: str = Depends(bearer_token)):
         store.authenticate(token, code)
-        engine = getattr(translator, "engine", None)
+        engine = reviewer_resources.engine_for(code)
         return engine.status() if engine else {"state": "external"}
+
+    def preparation_status(code, who):
+        state = store.room(code)
+        if who.subject != state.owner and admission_status(state, who) not in {"approved", "joining", "joined"}:
+            raise HTTPException(403, "The meeting host must admit you before you can view preparation")
+        available = bool(state.room.mode == "live" and state.room.engine_on_demand)
+        status = meeting_engine.status(code)
+        return {**status, "available": available,
+                "can_prepare": available and who.subject == state.owner and accounts.can_host(who),
+                "detail": ("Preparation contacts the selected model endpoint and may use compute credits. Readiness checks do not synthesize speech."
+                           if available else "This meeting uses original audio or an externally managed interpretation endpoint; on-demand preparation is unavailable.")}
+
+    @app.get("/api/rooms/{code}/preparation")
+    async def preparation(code: str, request: Request):
+        return preparation_status(code.lower(), accounts.require(request))
+
+    @app.post("/api/rooms/{code}/preparation")
+    async def prepare_meeting(code: str, request: Request):
+        code, who = code.lower(), accounts.require(request)
+        status = preparation_status(code, who)
+        if not status["can_prepare"]:
+            raise HTTPException(403, "Only the authorized meeting host can prepare interpretation")
+        store.rate_limit("prepare", who.subject, 6)
+        meeting_engine.prepare(code, account_deadline=who.expires,
+            authorization_check=lambda: reviewer_resources.account_valid(who)
+                and (reviewer_resources.valid(code) if code in reviewer_resources.rooms else accounts.shared_resources_allowed(who)))
+        return preparation_status(code, who)
+
+    @app.delete("/api/rooms/{code}/preparation")
+    async def cancel_preparation(code: str, request: Request):
+        code, who = code.lower(), accounts.require(request)
+        state = store.room(code)
+        if who.subject != state.owner:
+            raise HTTPException(403, "Only the meeting host can cancel preparation")
+        meeting_engine.cancel_preparation(code)
+        return preparation_status(code, who)
 
     @app.get("/api/account/interpretation-engine")
     async def account_engine_status(request: Request):
@@ -361,7 +428,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     async def start_engine(code: str, token: str = Depends(bearer_token)):
         session = store.authenticate(token, code)
         state = store.room(code)
-        engine = getattr(translator, "engine", None)
+        engine = reviewer_resources.engine_for(code)
         if not state.host_funded or not state.room.engine_on_demand or not engine:
             raise HTTPException(409, "On-demand interpretation is unavailable in this meeting")
         # A seat alone does not hold compute; media must be connected to a live meeting.

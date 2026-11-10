@@ -38,6 +38,9 @@ class Settings(BaseSettings):
     evon_modal_key: SecretStr = SecretStr("")
     evon_modal_secret: SecretStr = SecretStr("")
     evon_model: str = ""
+    # Operator-reviewed additional public HTTPS origins for reviewer-owned Evon.
+    # Modal-owned subdomains are supported without expanding this allowlist.
+    reviewer_gpu_allowed_origins: Annotated[list[str], NoDecode] = []
     gnani_stt_url: str = "wss://api.vachana.ai/stt/v3/stream"
     # Unset preserves the provider-selected legacy default; opt in explicitly.
     gnani_stt_model: Literal["prisma-v2.5", "prisma-v3.0"] | None = None
@@ -117,7 +120,7 @@ class Settings(BaseSettings):
     gnani_stt_idle_timeout_sec: int = Field(default=900, ge=5, le=900)
     usage_max_live_room_seconds: int = Field(default=900, ge=60, le=86400)
 
-    @field_validator("cors_origins", mode="before")
+    @field_validator("cors_origins", "reviewer_gpu_allowed_origins", mode="before")
     @classmethod
     def split_origins(cls, value):
         if isinstance(value, str):
