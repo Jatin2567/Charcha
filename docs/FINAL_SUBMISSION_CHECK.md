@@ -1,5 +1,7 @@
 # Final submission review
 
+**Application follow-up, 11 November 2026:** verified-domain access and the administrator approval queue are deployed and checked. Full local suites passed 1,614 backend tests (one skipped), 342 frontend tests and seven runtime checks. Hosted health/access checks and all 43 backend source hashes passed. No Gnani/Modal calls or real Gnani-account sign-in were made. See the [new access verification record](REVIEWER_DOMAIN_ACCESS_VERIFICATION.json); the media/submission review below remains dated 10 November.
+
 Updated 10 November 2026. **This source revision includes the refreshed films, one-page pitch, approved feedback and reviewer workflow with scoped reporting.** Local media/packaging checks passed. Release `reviewer-reporting-20261110`, from tested code commit `d0091916cc29c3a1cd1a4375d5db9fbc4c9f340e`, was deployed and its health/access checks verified. Source publication, public video/social links and form submission remain distinct actions; deployment did not issue reviewer invitations or exercise a live provider flow.
 
 | Check | Result and scope |

@@ -75,6 +75,7 @@ The app/media/identity deployment uses GCP Delhi; Evon uses the configured Modal
 
 | Evidence | Result | Measurement boundary |
 | --- | --- | --- |
+| Reviewer access release, 11 Nov 2026 | **1,614 backend tests passed, one skipped; 342 frontend tests; seven runtime checks; build passed** | Local desktop/mobile checks covered automatic domain access, admin approval, denial and revocation. Hosted health/access checks passed; all 43 backend source hashes matched. No live provider flow or Gnani/Modal calls. [Verification record](docs/REVIEWER_DOMAIN_ACCESS_VERIFICATION.json) |
 | Reviewer reporting release checks, 10 Nov 2026 | **1,579 backend tests passed, one skipped; 335 frontend tests across 47 files; seven runtime checks; build passed** | Local checks with provider responses mocked. Eight focused reporting tests also passed, overlapping the full suite; counts are not additive. Desktop/mobile scoped-report walkthrough passed against the local API without provider calls |
 | Hosted reporting release checks, 10 Nov 2026 | Health 200; reviewer/prejoin/usage/performance components present; protected anonymous requests denied; all 43 deployed source hashes matched with no missing/extra files | Health/access checked at 16:31:03 UTC; full source match at 16:31:12 UTC. No authenticated live provider flow or provider calls |
 | Local checks, 9 Nov 2026 | 1,468 backend tests passed, one skipped; 322 frontend tests and seven runtime checks passed; build passed | Isolated application checks, not a new provider-quality test |
@@ -91,7 +92,7 @@ Ten configurable languages do not imply tested quality for every pair. VoiceShie
 
 </details>
 
-**Release record · 10 November 2026:** `reviewer-reporting-20261110` was deployed and checked. This source revision includes the films and pitch, Sathvika's approved feedback, reviewer access and pre-meeting translation preparation. Hosted health, served components and access restrictions were checked separately from local tests. Public-video/social links and challenge submission remain separate steps. [Full release record →](docs/SUBMISSION_RELEASE_NOTES.md)
+**Release record · 11 November 2026:** `reviewer-domain-access-20261111` is deployed and checked. Verified `@gnani.ai` accounts receive reviewer access automatically; other verified accounts request administrator approval. Existing invitations, personal provider choices and pre-meeting preparation remain available. The films, pitch and their dated evidence are unchanged. [Full release record →](docs/SUBMISSION_RELEASE_NOTES.md)
 
 ## Run locally without provider credits
 

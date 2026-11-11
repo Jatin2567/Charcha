@@ -2,7 +2,7 @@
 
 This guide is for an evaluator who wants to host meetings, admit participants and inspect Charcha. Charcha is an independent submission, not an official Gnani service. A verified company-domain email qualifies for a workspace permission; it does not prove that someone is an appointed competition judge.
 
-**Access update, 11 November 2026:** the source implements verified-domain automatic access and an administrator request queue. Deployment and verification of this update are recorded separately in the release notes. The earlier 10 November reporting release passed hosted health/access and 43 source-hash checks; that historical result does not validate this newer access policy or a live provider flow.
+**Access update, 11 November 2026:** verified-domain automatic access and the administrator request queue are deployed. Local checks passed 1,614 backend tests (one skipped), 342 frontend tests, seven runtime checks and the desktop/mobile access walkthrough. Hosted health/access checks passed at 08:09 UTC; all 43 backend source hashes matched. These checks made no Gnani/Modal calls and did not sign in with a real Gnani account. See the [verification record](REVIEWER_DOMAIN_ACCESS_VERIFICATION.json).
 
 ## 1. Sign in and obtain reviewer access
 
@@ -12,7 +12,7 @@ Open [Reviewer workspace](https://charcha-234398803946.asia-south2.run.app/#/rev
 - **Any other verified address:** select **Request reviewer access**. Your signed-in email is submitted to the administrator. Pending requests do not permit meeting creation. Check the status again after the administrator approves or denies it; no invitation code or direct contact is required to submit a request.
 - **Already have a private invitation:** the existing one-use invitation flow remains available. An email-bound invitation requires that exact verified account. Never publish its code.
 
-Automatic reviewer grants last up to seven days. Refreshing or polling does not extend an active grant. After expiry, a qualifying account can renew through a new sign-in or explicit access request. An administrator's denial or revocation persists across refresh and sign-in; only explicit administrator approval can restore that access. Permission is bound to the verified identity and email, not a name or checkbox supplied by the browser.
+Automatic reviewer grants last up to seven days. Refreshing or polling does not extend an active grant. After expiry, a qualifying account can renew through a new sign-in or explicit access request. An administrator's denial or revocation persists across refresh and sign-in; only explicit administrator approval can restore that access. Permission is bound to the verified identity and email, not a name or checkbox supplied by the browser. Gnani publishes its `hello@gnani.ai` contact in its [official collections case study](https://www.gnani.ai/wp-content/uploads/2024/10/Gnani_Collections_Case_Study-Intl-1-1.pdf).
 
 Reviewer permission permits your own meeting creation and host admission. It never gives administrator privileges or access to another account's reports or provider credentials. Shared-provider permission remains separate and still requires resource consent and available services. Signing in, requesting access and reading status do not make speech requests or wake a GPU.
 

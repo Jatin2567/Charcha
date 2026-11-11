@@ -1,5 +1,14 @@
 # Submission publication record
 
+## Verified reviewer access release — 11 November 2026
+
+- Deployed tested code commit `edd71418abf7c88f868c8823790edb8c8532c694` as `reviewer-domain-access-20261111` on the existing application VM. The deployment guard found no connected meeting participants before restarting web/API services.
+- Verified exact `@gnani.ai` accounts receive automatic reviewer meeting-host access. Other verified accounts submit a request; the admin portal approves, denies or revokes it. Shared-resource permission and expiry are visible. Private invitations remain supported. Reviewer access never grants administrator permissions or attests that someone is an appointed competition judge.
+- Denial/revocation is durable across sign-in, refreshed sessions and same-email identity changes. Revocation releases affected reviewer resources; interrupted cleanup is retryable. Identity comes from signed, verified OIDC claims, not user-supplied request fields. Lookalike domains and unverified claims fail closed.
+- Full local checks: **1,614 backend tests passed, one skipped, in 219.34 seconds; 342 frontend tests across 47 files; seven runtime checks; production build passed**. The 85 focused backend checks overlap the full suite. Isolated local Chrome walkthroughs covered automatic access, request/approval, denial, revocation after refresh and mobile layout; external provider calls were blocked.
+- Hosted checks at **08:09:35 UTC** returned health 200, served new access/admin/privacy controls, retained configured identity and rejected eight anonymous access routes with 401. At **08:09:43 UTC**, all **43** deployed backend source hashes matched and the effective domain was exactly `gnani.ai`, with 168-hour automatic grants and shared resources enabled. No production reviewer identities or invitations were created by verification. No real Gnani-account sign-in or live speech/GPU flow was tested.
+- No Gnani/Modal credits were used. Films, pitch and provider-performance claims remain unchanged. [Machine-readable verification](REVIEWER_DOMAIN_ACCESS_VERIFICATION.json) · [Reviewer guide](REVIEWER_GUIDE.md).
+
 ## Final voice-cloning films and repository presentation, 10 November 2026
 
 - Rebuilt the 60-second social film and 2:40 build film at 1080p from original source frames. Corrected clipped Prejoin, Test lab, Audio lab and language-list controls, and replaced the crowded closing scene. Both films use one caption area and a persistent technology footer.

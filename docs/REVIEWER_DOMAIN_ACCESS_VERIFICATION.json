@@ -1,0 +1,141 @@
+{
+  "date": "2026-11-11",
+  "scope": "Verified-domain reviewer meeting-host access and administrator approval queue",
+  "tested_code_commit": "edd71418abf7c88f868c8823790edb8c8532c694",
+  "backend": {
+    "passed": 1614,
+    "skipped": 1,
+    "failed": 0,
+    "duration_seconds": 219.34
+  },
+  "frontend": {
+    "passed": 342,
+    "files": 47,
+    "failed": 0
+  },
+  "runtime": {
+    "passed": 7,
+    "failed": 0
+  },
+  "focused_backend": {
+    "passed": 85,
+    "overlaps_full_suite": true
+  },
+  "production_build": "passed",
+  "local_browser_walkthrough": [
+    {
+      "screen": "request-pending-mobile",
+      "width": 390,
+      "scroll": 375,
+      "overflow": false,
+      "offenders": []
+    },
+    {
+      "screen": "admin-pending-desktop",
+      "width": 1440,
+      "scroll": 1425,
+      "overflow": false,
+      "offenders": []
+    },
+    {
+      "screen": "approved-reviewer-mobile",
+      "width": 390,
+      "scroll": 375,
+      "overflow": false,
+      "offenders": []
+    },
+    {
+      "screen": "automatic-reviewer-desktop",
+      "width": 1440,
+      "scroll": 1425,
+      "overflow": false,
+      "offenders": []
+    },
+    {
+      "screen": "revoked-domain-mobile",
+      "width": 390,
+      "scroll": 375,
+      "overflow": false,
+      "offenders": []
+    },
+    {
+      "screen": "admin-decisions-mobile",
+      "width": 390,
+      "scroll": 375,
+      "overflow": false,
+      "offenders": []
+    },
+    {
+      "automatic_exact_domain_access": true,
+      "non_domain_request_approval": true,
+      "deny_and_revoke_ui": true,
+      "revocation_survives_reload": true,
+      "no_meeting_or_preparation_started": true,
+      "provider_calls": 0
+    }
+  ],
+  "deployment": {
+    "observed_at": "2026-11-11T08:09:35.373439+00:00",
+    "release": "reviewer-domain-access-20261111",
+    "app_origin": "https://charcha-234398803946.asia-south2.run.app",
+    "provider_calls_by_this_check": 0,
+    "authenticated_checks": false,
+    "assets": {
+      "/assets/index-CiyWsYGH.js": {
+        "sha256": "238f2795482af7a0158f1b518dd93ad6acaea48305d6305286ca99c9bf3d5bd8",
+        "matched_local_build": null
+      },
+      "/assets/Reviewer-D7T9RQfV.js": {
+        "sha256": "7c45ccd41ba15694176172037ca456e950489cacfc6f08d0dc1e853981e44c1a",
+        "matched_local_build": null
+      },
+      "/assets/Prejoin-BvT70SUF.js": {
+        "sha256": "b5a1e8f02cdb1aa274739c77d54d0ab5937152e1ed635022e6d6903b49365f04",
+        "matched_local_build": null
+      },
+      "/assets/Usage-DuYqVEuS.js": {
+        "sha256": "492a2d2474daf302b24c03a26d73000af3c112f01e1f573950b48c83cfb0b3cf",
+        "matched_local_build": null
+      },
+      "/assets/Performance-4lIIg0tl.js": {
+        "sha256": "b62617e90d1859c0d2f9a5baef279beb4e309b6448825f5eb02330e494a09c62",
+        "matched_local_build": null
+      }
+    },
+    "health_status": 200,
+    "admin_approval_controls_present": true,
+    "privacy_updated": true,
+    "anonymous_gates": {
+      "GET /api/reviewer/access": 401,
+      "GET /api/reviewer/workspace": 401,
+      "GET /api/admin/reviewer-requests": 401,
+      "GET /api/admin/reviewers": 401,
+      "POST /api/reviewer/access/request": 401,
+      "POST /api/admin/reviewer-requests/deployment-verification-nonexistent/decision": 401,
+      "POST /api/reviewer/access/redeem": 401,
+      "POST /api/admin/reviewer-invitations": 401
+    },
+    "identity_configured_anonymous": true
+  },
+  "deployed_source_and_configuration": {
+    "observed_at": "2026-11-11T08:09:43.710548+00:00",
+    "release": "reviewer-domain-access-20261111",
+    "checked_source_files": 43,
+    "source_hashes_match": true,
+    "missing_files": 0,
+    "extra_files": 0,
+    "reviewer_auto_domains": [
+      "gnani.ai"
+    ],
+    "reviewer_auto_access_hours": 168,
+    "reviewer_auto_shared_resources": true,
+    "live_mode": true,
+    "shared_serverless_configured": true,
+    "provider_calls_by_this_check": 0,
+    "runtime_room_state_checked": false
+  },
+  "provider_calls_by_this_work": 0,
+  "real_gnani_account_sign_in_tested": false,
+  "production_reviewer_accounts_created": false,
+  "evidence_boundary": "Local trusted-session and signed-token fixtures plus public deployment/access checks. No live speech/GPU test, provider-availability or translation-quality claim. Domain qualification is not proof of an appointed judging role."
+}

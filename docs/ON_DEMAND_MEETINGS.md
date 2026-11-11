@@ -2,6 +2,17 @@
 
 Application: https://charcha-234398803946.asia-south2.run.app/
 
+## Deployed reviewer access update — 11 November 2026
+
+Verified exact `@gnani.ai` accounts now receive reviewer meeting-host access
+automatically. Other verified accounts request approval in Reviewer workspace;
+the administrator approves, denies or revokes in **Reviewer access and approvals**.
+Denial/revocation persists across refresh and sign-in. These roles do not confer
+administrator access or prove a judging appointment. Signing in or requesting
+access does not start provider usage. The existing provider-choice and preparation
+workflow below is unchanged. See the [reviewer guide](REVIEWER_GUIDE.md) and
+[current verification record](REVIEWER_DOMAIN_ACCESS_VERIFICATION.json).
+
 ## Deployed reviewer update — 10 November 2026
 
 The new [reviewer workflow](REVIEWER_GUIDE.md) adds expiring administrator-issued
