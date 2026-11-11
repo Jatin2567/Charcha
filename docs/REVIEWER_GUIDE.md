@@ -1,21 +1,30 @@
 # Charcha reviewer guide
 
-This guide is for an invited evaluator who wants to host a meeting, admit participants and inspect Charcha. Reviewer access is granted by the project administrator; selecting a label saying “Gnani judge” is not sufficient. Charcha is an independent submission, not an official Gnani service.
+This guide is for an evaluator who wants to host meetings, admit participants and inspect Charcha. Charcha is an independent submission, not an official Gnani service. A verified company-domain email qualifies for a workspace permission; it does not prove that someone is an appointed competition judge.
 
-**Release status:** web/API release `reviewer-reporting-20261110` was deployed and checked on 10 November 2026. Health, Reviewer/Prejoin/Usage/Performance components, configured sign-in and protected anonymous-access checks passed at 16:31:03 UTC; all 43 deployed source-file hashes matched tested code at 16:31:12 UTC, with no missing or extra files. No real invitation was issued and no authenticated live provider flow or Gnani/Modal call was made by that verification. Local desktop/mobile walkthroughs separately exercised the actual local API with mocked providers, including scoped reports. This guide does not assert that compute is running.
+**Access update, 11 November 2026:** the source implements verified-domain automatic access and an administrator request queue. Deployment and verification of this update are recorded separately in the release notes. The earlier 10 November reporting release passed hosted health/access and 43 source-hash checks; that historical result does not validate this newer access policy or a live provider flow.
 
-## 1. Receive and activate a private invitation
+## 1. Sign in and obtain reviewer access
 
-1. Ask the submitter for a reviewer invitation and the portal address. The administrator creates an expiring, one-use invitation from **Admin → Gnani reviewer invitations** and may bind it to your email. Invitations expire in at most seven days.
-2. Sign in to Charcha with your verified email. If the invitation specifies an email, use that exact account. Keep passwords and verification codes on the sign-in page.
-3. Open **Reviewer workspace**, at `/#/reviewer`, and paste the private invitation into **Activate reviewer access**. Do not put the invitation in a public URL, issue, screenshot or repository.
-4. Successful redemption permits meeting creation and host admission. It does not grant administrator access. Access can expire or be revoked.
+Open [Reviewer workspace](https://charcha-234398803946.asia-south2.run.app/#/reviewer) and sign in through the configured identity provider with a verified email.
 
-The operator can privately share `https://charcha-234398803946.asia-south2.run.app/#/reviewer` with the invitation. A working sign-in alone does not imply active reviewer permission or provider availability.
+- **Exact `@gnani.ai` address:** automatic reviewer access becomes available without an invitation, unless an administrator has denied or revoked it. Domain matching is case-insensitive and exact. Subdomains, `notgnani.ai`, `gnani.ai.example.com`, lookalikes and unverified email claims do not qualify. The allowlist is based on Gnani's published `hello@gnani.ai` contact; other domains are not assumed to belong to Gnani.
+- **Any other verified address:** select **Request reviewer access**. Your signed-in email is submitted to the administrator. Pending requests do not permit meeting creation. Check the status again after the administrator approves or denies it; no invitation code or direct contact is required to submit a request.
+- **Already have a private invitation:** the existing one-use invitation flow remains available. An email-bound invitation requires that exact verified account. Never publish its code.
+
+Automatic reviewer grants last up to seven days. Refreshing or polling does not extend an active grant. After expiry, a qualifying account can renew through a new sign-in or explicit access request. An administrator's denial or revocation persists across refresh and sign-in; only explicit administrator approval can restore that access. Permission is bound to the verified identity and email, not a name or checkbox supplied by the browser.
+
+Reviewer permission permits your own meeting creation and host admission. It never gives administrator privileges or access to another account's reports or provider credentials. Shared-provider permission remains separate and still requires resource consent and available services. Signing in, requesting access and reading status do not make speech requests or wake a GPU.
+
+### Administrator: review requests and manage access
+
+Open **Admin → Reviewer access and approvals**. Pending entries show the verified account email. Choose the access expiry and whether shared Gnani/Evon resources are allowed, then approve or deny the request. Review active automatic and manually approved entries and revoke access when needed. Revocation ends reviewer-resource meetings and releases their resources; cleanup failures remain retryable. Never share the administrator login with evaluators.
+
+Automatic grants allow the configured shared resources. The underlying provider pricing, billing controls and availability still apply; this policy is not a promise of unlimited free inference. An administrator can deny/revoke individual automatic grants. Private invitations remain available under the existing invitation controls.
 
 ## 2. Choose the speech and translation resources
 
-Each service can use the shared configuration or your own configuration. Shared choices appear only when your invitation permits the application's provider resources.
+Each service can use the shared configuration or your own configuration. Shared choices appear only when your reviewer grant permits the application's provider resources.
 
 | Choice | What you enter | Who supplies the resources |
 | --- | --- | --- |
@@ -81,14 +90,15 @@ When viewing an archived Performance report, the engine panel describes current 
 
 Leave/end reviewer meetings and cancel any unused preparation. In Reviewer workspace, **Delete saved configuration → End meetings and delete** removes the session's resource choices and ends meetings using those reviewer resources. Sign out when done. Verify shutdown in your own provider console when using your own deployment; Charcha cannot promise that an externally hosted server has stopped billing.
 
-The administrator can revoke an invitation or active reviewer grant from **Admin → Current invitations and access**. Do not share the privileged administrator account with reviewers.
+The administrator can revoke automatic or approved access from **Admin → Reviewer access and approvals**, and invitation grants from **Admin → Current invitations and access**. Do not share the privileged administrator account with reviewers.
 
 ## Operator deployment checklist
 
 - Deploy the matching web/API release together; restart the API after server configuration changes. Keep one API worker because live rooms and reviewer secrets are memory-resident.
+- `REVIEWER_AUTO_DOMAINS=gnani.ai` allows the exact verified email domain. Leave it empty to disable automatic grants. Do not add a related-looking domain without confirming ownership. `REVIEWER_AUTO_ACCESS_HOURS=168` sets the grant lifetime (maximum seven days); `REVIEWER_AUTO_SHARED_RESOURCES=true` permits shared resources for automatic grants. Individual denials and revocations override this policy and survive sign-in and restarts.
 - Keep identity callbacks, HTTPS, LiveKit networking and persistence configured as described in [Go live](GO_LIVE.md). Reviewer access does not replace those requirements.
 - For approved non-Modal inference hosts, configure exact public origins, for example `REVIEWER_GPU_ALLOWED_ORIGINS=https://evon.example.org,https://inference.example.net`. This is an operator-reviewed allowlist, not arbitrary user-controlled proxy access.
-- Create private, preferably email-bound invitations with the shortest practical expiry. Grant shared-provider access only when you intend those reviews to use the configured resources.
+- Review pending access requests and automatic grants in the admin portal. Grant shared-provider access only when intended. For exceptional private invitations, prefer email binding and the shortest practical expiry.
 - Confirm shared Gnani/Evon settings and the intended budget policy. Connecting reviewer-owned services does not increase the host's limits or expose its keys.
 - First run the offline tests for reviewer access, credentials, routing and preparation. Then perform an authorized live test with the chosen provider account. No live provider success or current hosted availability is implied by passing offline checks.
 - Do not publish invitations, keys, identity backups, billing records or private configuration. The guide belongs in GitHub; those values do not.

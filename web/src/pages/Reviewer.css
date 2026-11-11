@@ -73,6 +73,38 @@
 .reviewer-invitation {
   max-width: 780px;
 }
+.reviewer-domain-note {
+  border-left: 3px solid #3656c9;
+  padding-left: 14px;
+}
+.reviewer-invite-alternative {
+  border-top: 1px solid var(--border, #d8dfe8);
+  padding-top: 16px;
+  margin-top: 22px;
+}
+.reviewer-invite-alternative summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.reviewer-approval-panel {
+  border: 1px solid var(--border, #d8dfe8);
+  border-radius: 12px;
+  margin: 22px 0;
+  padding: 18px;
+}
+.reviewer-approval-settings {
+  display: grid;
+  grid-template-columns: minmax(160px, 230px) 1fr;
+  gap: 22px;
+  align-items: center;
+}
+.reviewer-request-list strong,
+.reviewer-invitation strong {
+  overflow-wrap: anywhere;
+}
+.reviewer-request-list .reviewer-actions {
+  margin-top: 12px;
+}
 .reviewer-start .field {
   max-width: 620px;
 }
@@ -127,7 +159,8 @@
   margin-top: 12px;
 }
 @media (max-width: 850px) {
-  .reviewer-resource-grid {
+  .reviewer-resource-grid,
+  .reviewer-approval-settings {
     grid-template-columns: 1fr;
   }
 }

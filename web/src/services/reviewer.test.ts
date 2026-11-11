@@ -1,11 +1,19 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   changeResource,
   preparationLabel,
   resourcePayload,
   reviewerAccessIsCurrent,
+  reviewerAccess,
+  reviewerRequestState,
+  requestReviewerAccess,
+  reviewerRequests,
+  decideReviewerRequest,
+  type ReviewerAccess,
   type ResourceForm,
 } from './reviewer';
+
+afterEach(() => vi.unstubAllGlobals());
 
 const form: ResourceForm = {
   gnani_source: 'own',
@@ -85,5 +93,84 @@ describe('reviewer resource boundaries', () => {
         detail: 'Access expired',
       }),
     ).toBe('Access expired');
+  });
+});
+
+describe('verified-domain and administrator-review access', () => {
+  const unavailable: ReviewerAccess = {
+    reviewer: false,
+    can_host: false,
+    reviewer_shared_allowed: false,
+    auto_domains: ['gnani.ai'],
+    access_source: null,
+  };
+  function state(status: 'pending' | 'approved' | 'denied' | 'revoked' | 'expired') {
+    return {
+      ...unavailable,
+      request: {
+        id: 'request-1',
+        email: 'reviewer@example.com',
+        status,
+        created_at: 1,
+      },
+    };
+  }
+  it('does not turn domain metadata or a pending request into local meeting permission', () => {
+    expect(reviewerAccessIsCurrent({ ...state('pending'), access_source: 'domain' })).toBe(false);
+    expect(reviewerRequestState(state('pending')).canRequest).toBe(false);
+    expect(reviewerRequestState(unavailable).canRequest).toBe(true);
+  });
+  it.each(['denied', 'revoked'] as const)(
+    'keeps %s accounts blocked rather than offering invitation bypass',
+    (status) => {
+      expect(reviewerRequestState(state(status))).toMatchObject({
+        canRequest: false,
+        canRedeem: false,
+      });
+      expect(reviewerAccessIsCurrent(state(status))).toBe(false);
+    },
+  );
+  it('permits an explicit renewal request after expiry without presenting access as active', () => {
+    const expired = { ...state('expired'), reviewer: true, can_host: true, expires_at: 100 };
+    expect(reviewerAccessIsCurrent(expired, 100001)).toBe(false);
+    expect(reviewerRequestState(expired).canRequest).toBe(true);
+  });
+  it('requests access using only the authenticated session, never a submitted email or role', async () => {
+    const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify(state('pending'))));
+    vi.stubGlobal('fetch', fetcher);
+    await requestReviewerAccess();
+    expect(fetcher).toHaveBeenCalledTimes(1);
+    const [url, init] = fetcher.mock.calls[0];
+    expect(url).toBe('/api/reviewer/access/request');
+    expect(init).toMatchObject({ method: 'POST', credentials: 'same-origin' });
+    expect(init.body).toBeUndefined();
+    expect(init.headers['X-Charcha-Request']).toBe('1');
+  });
+  it('reads access and approval queues without posting to provider or preparation routes', async () => {
+    const fetcher = vi.fn().mockResolvedValue(new Response('{}'));
+    vi.stubGlobal('fetch', fetcher);
+    await reviewerAccess();
+    fetcher.mockResolvedValue(new Response('{"requests":[]}'));
+    await reviewerRequests();
+    expect(fetcher.mock.calls.map(([url]) => url)).toEqual([
+      '/api/reviewer/access',
+      '/api/admin/reviewer-requests',
+    ]);
+    expect(fetcher.mock.calls.every(([, init]) => !init.method || init.method === 'GET')).toBe(
+      true,
+    );
+  });
+  it('sends an explicit admin decision and resource choice for the encoded request ID', async () => {
+    const fetcher = vi.fn().mockResolvedValue(new Response('{}'));
+    vi.stubGlobal('fetch', fetcher);
+    await decideReviewerRequest('request/with space', 'approve', 24, false);
+    const [url, init] = fetcher.mock.calls[0];
+    expect(url).toBe('/api/admin/reviewer-requests/request%2Fwith%20space/decision');
+    expect(init.method).toBe('POST');
+    expect(JSON.parse(init.body)).toEqual({
+      decision: 'approve',
+      expires_in_hours: 24,
+      share_resources: false,
+    });
   });
 });

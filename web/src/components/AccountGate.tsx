@@ -137,7 +137,8 @@ export function AccountGate({ children }: { children: ReactNode }) {
             </div>
             {pathname !== '/admin' && <p className="account-help">
               Reviewing Charcha for Gnani? <a href={loginUrl('/reviewer', false, !!who.password_security_available)}>Reviewer sign-in</a>.
-              {' '}Use your verified email and the private invitation supplied by the submitter.
+              {' '}Verified Gnani-domain emails are checked for automatic reviewer access. Other
+              accounts can request administrator approval after signing in.
             </p>}
             {who.password_security_available && pathname !== '/admin' && (
               <p className="account-help">First visit? Verify your email with Google, then open Password &amp; security to add a password. You can use either method afterward. Use Google if you forget your password.</p>

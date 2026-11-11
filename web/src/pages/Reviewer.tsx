@@ -6,6 +6,8 @@ import {
   changeResource,
   reviewerAccess,
   reviewerAccessIsCurrent,
+  reviewerRequestState,
+  requestReviewerAccess,
   reviewerWorkspace,
   saveReviewerWorkspace,
   type ReviewerAccess,
@@ -42,6 +44,7 @@ export function Reviewer() {
   const resourcesLoaded = useRef(false);
   const resourceRevision = useRef(0);
   const currentAccess = useRef<ReviewerAccess | null>(null);
+  const accessRevision = useRef(0);
 
   function loseAccess(value: ReviewerAccess) {
     resourceRevision.current++;
@@ -57,6 +60,7 @@ export function Reviewer() {
   }
 
   function apply(value: ReviewerWorkspace) {
+    value = { ...value, access: { ...currentAccess.current, ...value.access } };
     if (!reviewerAccessIsCurrent(value.access)) {
       loseAccess(value.access);
       return;
@@ -85,24 +89,34 @@ export function Reviewer() {
     setConfirmClear(false);
   }
   async function refresh() {
+    const revision = ++accessRevision.current;
     const current = await reviewerAccess();
+    if (revision !== accessRevision.current) return;
+    currentAccess.current = current;
     setAccess(current);
-    if (current.can_host) apply(await reviewerWorkspace());
+    if (reviewerAccessIsCurrent(current)) {
+      const resourceCheck = resourceRevision.current;
+      const next = await reviewerWorkspace();
+      if (revision === accessRevision.current && resourceCheck === resourceRevision.current)
+        apply(next);
+    } else if (resourcesLoaded.current) loseAccess(current);
   }
   useEffect(() => {
     let active = true;
-    let requestRevision = 0;
     let expiryTimer: ReturnType<typeof setTimeout>;
     const check = async () => {
-      const revision = ++requestRevision;
+      const revision = ++accessRevision.current;
       try {
         const current = await reviewerAccess();
-        if (!active || revision !== requestRevision) return;
+        if (!active || revision !== accessRevision.current) return;
         setError((previous) =>
           previous.startsWith('Reviewer access could not be verified.') ? '' : previous,
         );
         clearTimeout(expiryTimer);
+        const previouslyAllowed = currentAccess.current?.can_host;
         currentAccess.current = current;
+        if (previouslyAllowed !== current.can_host)
+          window.dispatchEvent(new Event('charcha-account-changed'));
         if (!reviewerAccessIsCurrent(current)) {
           if (resourcesLoaded.current) loseAccess(current);
           else setAccess({ ...current, can_host: false });
@@ -123,11 +137,15 @@ export function Reviewer() {
         if (!resourcesLoaded.current) {
           const resourceCheck = resourceRevision.current;
           const result = await reviewerWorkspace();
-          if (active && revision === requestRevision && resourceCheck === resourceRevision.current)
+          if (
+            active &&
+            revision === accessRevision.current &&
+            resourceCheck === resourceRevision.current
+          )
             apply(result);
         }
       } catch (e) {
-        if (active && revision === requestRevision) {
+        if (active && revision === accessRevision.current) {
           setAccess(null);
           setError('Reviewer access could not be verified. ' + (e as Error).message);
         }
@@ -156,6 +174,7 @@ export function Reviewer() {
   }
   const allowed = !!access?.reviewer_shared_allowed;
   const hostAllowed = reviewerAccessIsCurrent(access);
+  const requestState = access ? reviewerRequestState(access) : null;
   const sourcesAllowed = allowed || (form.gnani_source === 'own' && form.evon_source === 'own');
   const sameEvon =
     workspace?.profile?.evon_source === 'own' &&
@@ -169,7 +188,7 @@ export function Reviewer() {
       />
       <div className="reviewer-steps" aria-label="Reviewer setup steps">
         <span>
-          <b>1</b> Sign in &amp; redeem an invitation
+          <b>1</b> Sign in &amp; check reviewer access
         </span>
         <span>
           <b>2</b> Choose your resources
@@ -188,51 +207,128 @@ export function Reviewer() {
       {access && !hostAllowed && (
         <section className="panel reviewer-invitation">
           <ShieldCheck size={25} />
-          <h2>Reviewer invitation</h2>
-          <p>
-            Sign-in verifies your email. A private invitation from the Charcha administrator gives
-            you meeting-host access; it does not give administrator access.
-          </p>
-          <form
-            onSubmit={async (e) => {
-              e.preventDefault();
-              setBusy('redeem');
-              setError('');
-              try {
-                await request('/reviewer/access/redeem', {
-                  method: 'POST',
-                  body: JSON.stringify({ invitation: invitation.trim() }),
-                });
-                setInvitation('');
-                await refresh();
-                window.dispatchEvent(new Event('charcha-account-changed'));
-                setMessage('Invitation accepted. Choose the resources for your review.');
-              } catch (e) {
-                setError((e as Error).message);
-              } finally {
-                setBusy('');
-              }
-            }}
-          >
-            <label className="field">
-              <span>Private one-use invitation</span>
-              <input
-                type="password"
-                autoComplete="off"
-                required
-                value={invitation}
-                onChange={(e) => setInvitation(e.target.value)}
-                placeholder="Paste the invitation supplied to you"
-              />
-            </label>
-            <button className="button primary" disabled={!!busy || !invitation.trim()}>
-              {busy === 'redeem' ? 'Checking invitation…' : 'Activate reviewer access'}
+          <h2>{requestState?.title}</h2>
+          {access.auto_domains?.length ? (
+            <p className="reviewer-domain-note">
+              Verified email addresses with the exact domain{' '}
+              <strong>{access.auto_domains.map((domain) => '@' + domain).join(', ')}</strong>{' '}
+              receive reviewer access automatically. This verifies the email domain, not a judging
+              role.
+            </p>
+          ) : null}
+          <p>{requestState?.detail}</p>
+          {access.request && (
+            <p className="source-note">
+              Verified email: <strong>{access.request.email}</strong>
+            </p>
+          )}
+          <div className="reviewer-actions">
+            {requestState?.canRequest && (
+              <button
+                type="button"
+                className="button primary"
+                disabled={!!busy}
+                onClick={async () => {
+                  setBusy('request');
+                  setError('');
+                  setMessage('');
+                  try {
+                    ++accessRevision.current;
+                    await requestReviewerAccess();
+                    await refresh();
+                    if (reviewerAccessIsCurrent(currentAccess.current)) {
+                      window.dispatchEvent(new Event('charcha-account-changed'));
+                      setMessage('Reviewer access enabled. Choose your resources to continue.');
+                    } else if (currentAccess.current?.request?.status === 'pending') {
+                      setMessage(
+                        'Request sent to the administrator. No speech or GPU services were started.',
+                      );
+                    } else {
+                      setMessage('Reviewer access status updated.');
+                    }
+                  } catch (e) {
+                    setError((e as Error).message);
+                  } finally {
+                    setBusy('');
+                  }
+                }}
+              >
+                {busy === 'request'
+                  ? 'Requesting access…'
+                  : ['expired', 'approved'].includes(access.request?.status || '')
+                    ? 'Renew reviewer access'
+                    : 'Request reviewer access'}
+              </button>
+            )}
+            <button
+              type="button"
+              className="button secondary"
+              disabled={!!busy}
+              onClick={async () => {
+                setBusy('access');
+                setError('');
+                try {
+                  await refresh();
+                  window.dispatchEvent(new Event('charcha-account-changed'));
+                } catch (e) {
+                  setError((e as Error).message);
+                } finally {
+                  setBusy('');
+                }
+              }}
+            >
+              {busy === 'access' ? 'Checking…' : 'Check access status'}
             </button>
-          </form>
-          <p className="source-note">
-            Ask the submitter for a fresh invitation if yours has expired. Keep invitation codes out
-            of public posts and URLs.
+          </div>
+          <p>
+            Reviewer permission covers your own meetings and participant admission. It does not give
+            administrator access. Checking or requesting access does not start provider services.
           </p>
+          {requestState?.canRedeem && (
+            <details className="reviewer-invite-alternative">
+              <summary>Already have a private invitation?</summary>
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  setBusy('redeem');
+                  setError('');
+                  try {
+                    await request('/reviewer/access/redeem', {
+                      method: 'POST',
+                      body: JSON.stringify({ invitation: invitation.trim() }),
+                    });
+                    setInvitation('');
+                    await refresh();
+                    window.dispatchEvent(new Event('charcha-account-changed'));
+                    setMessage('Invitation accepted. Choose the resources for your review.');
+                  } catch (e) {
+                    setError((e as Error).message);
+                  } finally {
+                    setBusy('');
+                  }
+                }}
+              >
+                <label className="field">
+                  <span>Private one-use invitation</span>
+                  <input
+                    type="password"
+                    autoComplete="off"
+                    required
+                    value={invitation}
+                    onChange={(e) => setInvitation(e.target.value)}
+                    placeholder="Paste the invitation supplied to you"
+                  />
+                </label>
+                <button className="button primary" disabled={!!busy || !invitation.trim()}>
+                  {busy === 'redeem' ? 'Checking invitation…' : 'Activate reviewer access'}
+                </button>
+              </form>
+              <p className="source-note">
+                Ask the submitter for a fresh invitation if yours has expired. Keep invitation codes
+                out of public posts and URLs.
+              </p>
+            </details>
+          )}
         </section>
       )}
       {hostAllowed && access && (
@@ -241,12 +337,24 @@ export function Reviewer() {
             <ShieldCheck size={24} />
             <div>
               <strong>
-                {access.reviewer ? 'Reviewer meeting access enabled' : 'Designated host workspace'}
+                {access.access_source === 'domain'
+                  ? 'Verified Gnani-domain reviewer access'
+                  : access.access_source === 'approval'
+                    ? 'Administrator-approved reviewer access'
+                    : access.reviewer
+                      ? 'Reviewer meeting access enabled'
+                      : 'Designated host workspace'}
               </strong>
+              {access.access_source === 'domain' && (
+                <p>
+                  Your verified email domain enabled meeting access. No invitation is needed; this
+                  does not establish a judging role.
+                </p>
+              )}
               <p>
                 {allowed
                   ? 'Your access allows shared Charcha services or your own services.'
-                  : 'Use your own speech and GPU services. This invitation does not allow shared provider credits.'}
+                  : 'Use your own speech and GPU services. Your access does not allow shared provider credits.'}
                 {access.expires_at && (
                   <> Access expires {new Date(access.expires_at * 1000).toLocaleString()}.</>
                 )}
@@ -519,7 +627,7 @@ export function Reviewer() {
             )}
             {!sourcesAllowed && (
               <p role="alert">
-                Shared resources are no longer allowed by your invitation. Choose and save your own
+                Shared resources are no longer allowed by your access. Choose and save your own
                 services before creating a meeting.
               </p>
             )}

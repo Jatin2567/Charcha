@@ -68,7 +68,8 @@ def test_bound_invite_is_one_use_and_never_grants_admin(site):
     result = client.post("/api/reviewer/access/redeem", json={"invitation":issued["invitation"]})
     assert result.status_code == 200
     assert result.json() == {"reviewer":True,"can_host":True,"reviewer_shared_allowed":True,
-                            "expires_at":issued["expires_at"],"grant_id":issued["id"]}
+                            "expires_at":issued["expires_at"],"grant_id":issued["id"],
+                            "auto_domains":["gnani.ai"],"access_source":"invitation","request":None}
     who = client.get("/api/account").json()
     assert who["reviewer"] and who["can_host"] and not who["admin"]
     assert client.get("/api/admin").status_code == 403

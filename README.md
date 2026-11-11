@@ -14,7 +14,7 @@ Speak, read both languages, correct a message and acknowledge the updated versio
 
 **[Read the one-page pitch ↗](docs/Charcha-one-page-pitch.pdf)** · **[Open the app ↗](https://charcha-234398803946.asia-south2.run.app/)** · [Reviewer access](docs/REVIEWER_GUIDE.md) · [Run locally](#run-locally-without-provider-credits) · [Submission guide](docs/SUBMISSION.md) · [Latest LinkedIn post](https://lnkd.in/p/g5rqTQaZ)
 
-> **For reviewers:** Hosted evaluation requires a private invitation. The [setup guide](docs/REVIEWER_GUIDE.md) covers your own meetings, participant admission, shared or reviewer-supplied Gnani/Evon resources, preparing translation before joining, and account-scoped reports. Deployment alone does not issue an invitation or demonstrate a live provider flow.
+> **For reviewers:** Sign in at the [Reviewer workspace](https://charcha-234398803946.asia-south2.run.app/#/reviewer). Verified `@gnani.ai` accounts qualify for automatic reviewer access; other verified accounts can request administrator approval. Existing private invitations remain supported. Reviewer access permits hosting your own meetings, never administration. The [setup guide](docs/REVIEWER_GUIDE.md) explains shared or personal resources, pre-meeting preparation and account-scoped reports. Access alone does not start compute or establish a successful live provider flow.
 
 [The workflow](#one-small-correction-three-important-steps) · [Features](#inside-the-application) · [Architecture](#how-it-fits-together) · [Evidence](#what-has-been-checked) · [Project record](#checks-and-project-record)
 

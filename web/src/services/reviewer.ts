@@ -5,7 +5,59 @@ export type ReviewerAccess = {
   can_host: boolean;
   reviewer_shared_allowed: boolean;
   expires_at?: number | null;
+  auto_domains?: string[];
+  access_source?: 'domain' | 'approval' | 'invitation' | null;
+  request?: ReviewerAccessStatus | null;
 };
+export type ReviewerAccessRequest = {
+  id: string;
+  email: string;
+  status: 'pending' | 'approved' | 'denied' | 'revoked' | 'expired';
+  created_at: number;
+  reviewed_at?: number | null;
+  expires_at?: number | null;
+  share_resources?: boolean;
+  source?: 'domain' | 'request';
+};
+export type ReviewerAccessStatus = Omit<ReviewerAccessRequest, 'id' | 'created_at'> & {
+  id: string | null;
+  created_at: number | null;
+};
+
+export function reviewerRequestState(access: ReviewerAccess) {
+  const status = access.request?.status;
+  if (status === 'pending')
+    return {
+      title: 'Awaiting administrator approval',
+      detail:
+        'Your verified email is in the approval queue. This page checks for a decision automatically.',
+      canRequest: false,
+      canRedeem: true,
+    };
+  if (status === 'denied' || status === 'revoked')
+    return {
+      title: status === 'denied' ? 'Reviewer request declined' : 'Reviewer access revoked',
+      detail:
+        'The administrator must approve access before you can host reviewer meetings. Signing in again does not override this decision.',
+      canRequest: false,
+      canRedeem: false,
+    };
+  if (status === 'expired' || status === 'approved')
+    return {
+      title: 'Reviewer access expired',
+      detail:
+        'Request access again. Eligible verified Gnani-domain accounts can renew automatically; other accounts need administrator approval.',
+      canRequest: true,
+      canRedeem: true,
+    };
+  return {
+    title: 'Request reviewer access',
+    detail:
+      'Use your signed-in, verified email to request permission to create meetings and admit participants. The administrator reviews other email domains.',
+    canRequest: true,
+    canRedeem: true,
+  };
+}
 export function reviewerAccessIsCurrent(access: ReviewerAccess | null, now = Date.now()) {
   return (
     !!access?.can_host &&
@@ -78,6 +130,24 @@ export function resourcePayload(form: ResourceForm) {
 }
 
 export const reviewerAccess = () => request<ReviewerAccess>('/reviewer/access');
+export const requestReviewerAccess = () =>
+  request<ReviewerAccess>('/reviewer/access/request', { method: 'POST' });
+export const reviewerRequests = () =>
+  request<{ requests: ReviewerAccessRequest[] }>('/admin/reviewer-requests');
+export const decideReviewerRequest = (
+  id: string,
+  decision: 'approve' | 'deny' | 'revoke',
+  expiresInHours: number,
+  shareResources: boolean,
+) =>
+  request<ReviewerAccessRequest>(`/admin/reviewer-requests/${encodeURIComponent(id)}/decision`, {
+    method: 'POST',
+    body: JSON.stringify({
+      decision,
+      expires_in_hours: expiresInHours,
+      share_resources: shareResources,
+    }),
+  });
 export const reviewerWorkspace = () => request<ReviewerWorkspace>('/reviewer/workspace');
 export const saveReviewerWorkspace = (form: ResourceForm) =>
   request<ReviewerWorkspace>('/reviewer/workspace', {

@@ -72,7 +72,10 @@ class Accounts:
         self.signing_keys: dict[str, dict] = {}
         self.keys_valid_until = 0.0
         self.db = settings.usage_db_path.with_name("accounts.sqlite3")
-        self.reviewers = ReviewerAccess(self.db, self.issuer)
+        self.reviewers = ReviewerAccess(self.db, self.issuer,
+            auto_domains=settings.reviewer_auto_domains,
+            auto_hours=settings.reviewer_auto_access_hours,
+            auto_shared=settings.reviewer_auto_shared_resources)
 
     @property
     def configured(self):
@@ -372,6 +375,9 @@ class Accounts:
             self.sessions[key] = Account(
                 key, claims["sub"], claims["email"].casefold(), admin, time.time() + ttl, sid
             )
+            # Only the signed, verified OIDC identity reaches this point. Login
+            # may renew an expired domain lease; ordinary status polling cannot.
+            self.reviewers.ensure_domain_access(self.sessions[key], renew=True)
             response = RedirectResponse(self.origin + "/#" + ("/admin" if admin else dest), 303)
             response.delete_cookie(STATE_COOKIE, path="/")
             self.set_cookie(response, COOKIE, raw, ttl)

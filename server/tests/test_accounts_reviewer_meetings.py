@@ -142,6 +142,23 @@ def test_resource_revocation_ends_room_and_clears_profile(site, action):
     assert who.key not in app.state.reviewer_resources.profiles
 
 
+def test_automatic_domain_grant_revocation_ends_room_and_clears_profile(site):
+    app,client=site
+    who,_=sign_in(site,"gnani-reviewer")
+    who=replace(who,email="reviewer@gnani.ai")
+    app.state.accounts.sessions[who.key]=who
+    access=client.get('/api/reviewer/access').json()
+    assert access['access_source']=='domain'
+    own_resources(client)
+    code=make_room(client)
+    sign_in(site,'administrator',admin=True)
+    result=client.post(f"/api/admin/reviewer-requests/{access['request']['id']}/decision",json={'decision':'revoke'})
+    assert result.is_success,result.text
+    assert code not in app.state.reviewer_resources.rooms
+    assert code not in app.state.store.rooms
+    assert who.key not in app.state.reviewer_resources.profiles
+
+
 def test_saved_profile_and_room_snapshot_are_session_scoped(site):
     app, client = site
     _, cookie, _ = reviewer(site)

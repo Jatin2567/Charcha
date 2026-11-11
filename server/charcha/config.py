@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import re
 from typing import Annotated, Literal
 
 from pydantic import AliasChoices, Field, SecretStr, field_validator
@@ -41,6 +42,10 @@ class Settings(BaseSettings):
     # Operator-reviewed additional public HTTPS origins for reviewer-owned Evon.
     # Modal-owned subdomains are supported without expanding this allowlist.
     reviewer_gpu_allowed_origins: Annotated[list[str], NoDecode] = []
+    # Exact verified-email domains; no wildcard or subdomain inheritance.
+    reviewer_auto_domains: Annotated[list[str], NoDecode] = ["gnani.ai"]
+    reviewer_auto_access_hours: int = Field(default=168, ge=1, le=168)
+    reviewer_auto_shared_resources: bool = True
     gnani_stt_url: str = "wss://api.vachana.ai/stt/v3/stream"
     # Unset preserves the provider-selected legacy default; opt in explicitly.
     gnani_stt_model: Literal["prisma-v2.5", "prisma-v3.0"] | None = None
@@ -132,6 +137,16 @@ class Settings(BaseSettings):
     def blank_stt_model_is_unselected(cls, value):
         # Empty optional .env entries preserve the existing provider default.
         return None if isinstance(value, str) and not value.strip() else value
+
+    @field_validator("reviewer_auto_domains", mode="before")
+    @classmethod
+    def exact_reviewer_domains(cls, value):
+        values = value.split(",") if isinstance(value, str) else value
+        domains = [v.strip().lower() for v in values if v.strip()]
+        if any(not re.fullmatch(r"[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)+", v)
+               or len(v) > 253 for v in domains):
+            raise ValueError("Reviewer domains must be exact ASCII DNS names without wildcards")
+        return list(dict.fromkeys(domains))
 
     def missing_live_config(self) -> list[str]:
         required = {

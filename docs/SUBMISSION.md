@@ -47,7 +47,7 @@ Check the repository, PDF and uploaded video while signed out before submitting.
 
 **Sathvika — tech student and Telugu speaker.** Publication approved; only sentence spacing has been corrected. This is personal product feedback, not a controlled language-accuracy evaluation or a latency measurement. Her observation about response latency is retained in full. The same review is included in the one-page pitch and submission kit.
 
-For hands-on evaluation, the [reviewer guide](REVIEWER_GUIDE.md) explains the deployed private, authenticated meeting-host invitations, optional reviewer-owned resources and explicit pre-meeting translation preparation. An evaluator still needs an invitation; deployment did not issue one, grant public administrator access or start provider usage. Personal providers still depend on running Charcha identity, application and meeting-media services.
+For hands-on evaluation, the [reviewer guide](REVIEWER_GUIDE.md) explains verified `@gnani.ai` automatic meeting-host access, administrator approval for other verified accounts, optional private invitations, reviewer-owned resources and explicit pre-meeting translation preparation. Domain access identifies a verified company email, not an appointed judge. It never grants administrator access or starts provider usage by itself. Personal providers still depend on running Charcha identity, application and meeting-media services. See the guide's access-update record for deployment verification; the 10 November invitation-only results below remain historical.
 
 ## Social post to accompany the video
 
