@@ -1,6 +1,26 @@
-# Charcha operating state — 6 November 2026
+# Charcha operating state
 
 Application: https://charcha-234398803946.asia-south2.run.app/
+
+## Hosting extension and recovery — 13 November 2026
+
+The application VM reached its former seven-day runtime limit at approximately
+06:50 IST on 13 November, producing 504 responses from the public gateway.
+The owner authorised extending hosting through **31 December 2026**.
+
+The VM was restarted at approximately 21:00 IST on 13 November. Its verified
+schedule now uses **`terminationTime=2026-12-31T18:29:59Z`**
+(31 December, 23:59:59 IST), action **STOP**, with the old `maxRunDuration`
+removed. This is a fixed runtime cutoff, not a spending cap. Restarting before
+that date does not extend the cutoff. Persistent storage can remain billable
+after the VM stops.
+
+Recovery checks returned 200 for the home page, API health, account status and
+identity discovery, and 401 for anonymous reviewer/admin routes and media
+validation. The boot-time media-address service completed successfully. The
+existing reviewer release and provider settings were retained. These checks
+did not join a meeting, call Gnani or wake Modal; live interpreted-call quality
+was not re-tested. GPU operation remains meeting/preparation-driven.
 
 ## Deployed reviewer access update — 11 November 2026
 
@@ -93,9 +113,9 @@ Local verification recorded 322 passing frontend tests and 60 focused backend te
 - At the read-only billing check: Modal $23.77 credits remaining, $6.23 used, $0 charges. The
   workspace usage limit is now $30, matching included monthly compute. GCP showed ₹27,777.69
   promotional credits remaining, expiring 22 January 2027. These are dated observations only.
-- The former one-hour VM stop was extended to seven days to bound unattended GCP use under the
-  existing ₹5,000 authorization: the current run stops around **13 November, 06:49 IST**. Extend
-  only after reviewing actual remaining credits and applicable authorization. GCP's console also
+- Historical 6 November setting: the one-hour VM stop was extended to seven days under the
+  then-existing ₹5,000 authorization, ending around **13 November, 06:49 IST**. The owner
+  subsequently authorised the fixed 31 December cutoff recorded above. GCP's console had also
   displayed an account-verification notice; the account owner must handle identity/payment checks.
 
 ## VoiceShield and accuracy
