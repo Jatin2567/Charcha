@@ -92,7 +92,9 @@ Ten configurable languages do not imply tested quality for every pair. VoiceShie
 
 </details>
 
-**Release record · 11 November 2026:** `reviewer-domain-access-20261111` is deployed and checked. Verified `@gnani.ai` accounts receive reviewer access automatically; other verified accounts request administrator approval. Existing invitations, personal provider choices and pre-meeting preparation remain available. The films, pitch and their dated evidence are unchanged. [Full release record →](docs/SUBMISSION_RELEASE_NOTES.md)
+**Portal update · 14 November 2026:** Sathvika's approved Telugu-speaker feedback is now visible before sign-in and on Overview, with her latency observation retained. Mobile feedback cards and live-meeting guidance were checked locally and deployed. All 342 frontend tests passed; hosted health and access checks passed without provider calls. [Verification record →](docs/PARTICIPANT_FEEDBACK_VERIFICATION.json)
+
+**Reviewer release · 11 November 2026:** `reviewer-domain-access-20261111` remains the API release. Verified `@gnani.ai` accounts receive reviewer access automatically; other verified accounts request administrator approval. Existing invitations, personal provider choices and pre-meeting preparation remain available. The films, pitch and their dated evidence are unchanged. [Full release record →](docs/SUBMISSION_RELEASE_NOTES.md)
 
 ## Run locally without provider credits
 

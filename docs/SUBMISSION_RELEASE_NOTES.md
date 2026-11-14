@@ -1,5 +1,14 @@
 # Submission publication record
 
+## Participant feedback and homepage clarity — 14 November 2026
+
+- Deployed frontend-only release `participant-feedback-20261114`. Sathvika's approved full review now appears on the public sign-in homepage and signed-in Overview, alongside Harsh Vardhan's feedback. Her Telugu-speaker attribution and response-latency observation are retained; initials are used because no approved portrait was supplied.
+- Improved desktop/mobile feedback layout. Corrected the live workspace banner so it describes real meeting setup and potential provider usage instead of claiming the action opens a scripted demonstration. The join and admin sign-in screens remain focused on access.
+- Local verification: **342 frontend tests across 47 files passed**, production build passed, and isolated Chrome checks at 1440 px and 390 px verified public/authenticated visibility with no horizontal overflow. No backend behavior was changed and no new full backend-suite run is claimed.
+- Hosted checks at **05:40:20 UTC** returned health 200, matched the served entry/reviewer/prejoin/usage/performance assets to the local build, confirmed the new feedback/live-mode copy and rejected eight anonymous protected requests with 401. The deployment guard found no connected participants; only the web container was replaced. API release `reviewer-domain-access-20261111` remains unchanged.
+- Updated the submission guide to the official extended deadline: **15 November 2026, 6:00 PM IST**, checked on 14 November. Historical measurements, films, pitch and release dates remain unchanged.
+- No Gnani/Modal requests, meeting preparation or live speech tests were made. This update does not claim improved measured latency or VoiceShield accuracy. [Verification record](PARTICIPANT_FEEDBACK_VERIFICATION.json).
+
 ## Verified reviewer access release — 11 November 2026
 
 - Deployed tested code commit `edd71418abf7c88f868c8823790edb8c8532c694` as `reviewer-domain-access-20261111` on the existing application VM. The deployment guard found no connected meeting participants before restarting web/API services.

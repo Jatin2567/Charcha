@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useRef, useState, type ReactNode 
 import { Link, useLocation } from 'react-router-dom';
 import { API_BASE, request } from '../services/api';
 import { Logo } from './ui';
+import { UserFeedback } from './UserFeedback';
 
 type Identity = {
   authenticated: boolean;
@@ -113,7 +114,7 @@ export function AccountGate({ children }: { children: ReactNode }) {
       </Context.Provider>
     );
   return (
-    <main className="account-entry">
+    <main className={`account-entry${pathname === '/' ? ' account-entry-with-feedback' : ''}`}>
       <section className="account-card">
         <Logo />
         <p className="eyebrow">PRIVATE MEETINGS</p>
@@ -162,6 +163,7 @@ export function AccountGate({ children }: { children: ReactNode }) {
         )}
         <a className="account-privacy" href="/privacy.html">Privacy</a>
       </section>
+      {pathname === '/' && <UserFeedback />}
     </main>
   );
 }

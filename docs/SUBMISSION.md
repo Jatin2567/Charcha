@@ -8,7 +8,7 @@ The actual Microsoft submission form requires a **2–3 minute demo** and a proj
 
 Actual fields, in order: full name; registered email; teammate's registered email (optional); higher-education institution; project URL containing the one-page pitch; 2–3 minute demo URL; LinkedIn/X post URL (optional field for bonus awards). No separate architecture essay field is present: put the technical explanation and evidence in the linked pitch.
 
-The [official challenge page](https://www.gnani.ai/internship) states **10 November 2026, 11:59 PM IST** as the deadline. Use the submission form sent to the registered email.
+The [official challenge page](https://www.gnani.ai/internship), checked on 14 November 2026, states the extended deadline as **15 November 2026, 6:00 PM IST**. Use the submission form sent to the registered email. Historical test and release dates below are unchanged.
 
 1. Required form demo: [2:40 build film](media/Charcha-2m40-multilingual-build.mp4). The final render and full decode passed. Upload it to a viewable video host and enter its watch link. The [60-second multilingual film](media/Charcha-60s-voice-cloning-social.mp4) is the social cut, not a replacement for the form's longer video.
 2. Project URL: [github.com/Jatin2567/Charcha](https://github.com/Jatin2567/Charcha). This revision contains source, architecture, the [refreshed one-page pitch](Charcha-one-page-pitch.pdf) and reviewed media. Verify these exact files are visible at the submitted public revision.

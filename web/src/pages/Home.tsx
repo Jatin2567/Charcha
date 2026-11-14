@@ -327,16 +327,20 @@ export function Home() {
           <strong>
             {app.health?.mode === 'transport'
               ? 'Start with a local audio check.'
-              : 'Explore the conversation before connecting your services.'}
+              : app.health?.mode === 'live'
+                ? 'Ready for a real conversation.'
+                : 'Explore the conversation before connecting your services.'}
           </strong>
           <p>
             {app.health?.mode === 'transport'
               ? 'Join from two browser profiles, use headphones and test one microphone at a time. Speech APIs are disabled.'
-              : 'The demo uses clearly labelled, scripted examples. It does not perform live translation.'}
+              : app.health?.mode === 'live'
+                ? 'Choose original audio or interpretation above. For interpreted meetings, prepare translation before joining. Connected speech and model services may use credits.'
+                : 'The demo uses clearly labelled, scripted examples. It does not perform live translation.'}
           </p>
         </div>
-        <button className="text-link" onClick={() => void start()}>
-          {app.health?.mode === 'transport' ? 'Start audio check' : 'Try the workspace'}
+        <button className="text-link" disabled={busy || !app.health} onClick={() => void start()}>
+          {!host ? 'Enter meeting code' : app.health?.mode === 'transport' ? 'Start audio check' : app.health?.mode === 'live' ? 'Continue to meeting setup' : 'Try the workspace'}
           <ArrowRight size={16} />
         </button>
       </div>

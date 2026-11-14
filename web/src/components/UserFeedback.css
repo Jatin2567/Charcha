@@ -1,8 +1,8 @@
 .user-feedback {
   display: grid;
-  grid-template-columns: minmax(190px, 0.8fr) minmax(0, 1.6fr);
-  align-items: center;
-  gap: clamp(20px, 3vw, 40px);
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 20px;
   margin: 32px 0;
 }
 
@@ -15,16 +15,19 @@
 
 .user-feedback-intro p {
   margin: 0;
-  max-width: 32ch;
+  max-width: 60ch;
 }
 
 .user-feedback-list {
   display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  align-items: start;
   gap: 16px;
   min-width: 0;
 }
 
 .user-feedback-card {
+  min-width: 0;
   margin: 0;
   padding: clamp(20px, 2.5vw, 28px);
   border: 1px solid var(--border);
@@ -56,7 +59,7 @@
 .user-feedback-card blockquote {
   margin: 18px 0 24px;
   color: var(--ink);
-  font-size: clamp(17px, 1.6vw, 20px);
+  font-size: clamp(16px, 1.5vw, 18px);
   line-height: 1.6;
   letter-spacing: -0.15px;
   overflow-wrap: anywhere;
@@ -97,6 +100,23 @@
 .user-feedback-person > span {
   color: var(--muted);
   font-size: 12px;
+}
+
+.account-entry-with-feedback {
+  align-content: start;
+  gap: 32px;
+  padding-block: clamp(24px, 5vw, 64px);
+}
+
+.account-entry-with-feedback > .user-feedback {
+  width: min(100%, 64rem);
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .user-feedback-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 @media (max-width: 720px) {

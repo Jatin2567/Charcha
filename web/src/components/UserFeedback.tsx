@@ -10,7 +10,7 @@ export function UserFeedback() {
       <div className="user-feedback-intro">
         <span className="eyebrow">USER FEEDBACK</span>
         <h2 id="user-feedback-heading">In their own words.</h2>
-        <p>What people appreciate about their conversations on Charcha.</p>
+        <p>Experiences shared with permission, including what we can improve.</p>
       </div>
       <div className="user-feedback-list">
         {userFeedback.map((entry) => (

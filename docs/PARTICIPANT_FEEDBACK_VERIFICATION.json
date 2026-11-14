@@ -1,0 +1,94 @@
+{
+  "observed_at": "2026-11-14T05:40:20.774229+00:00",
+  "release": "participant-feedback-20261114",
+  "app_origin": "https://charcha-234398803946.asia-south2.run.app",
+  "provider_calls_by_this_check": 0,
+  "authenticated_checks": false,
+  "assets": {
+    "/assets/index-C6Gb-L31.js": {
+      "sha256": "4340f1ae3d256b6d71df5896a15fd4c7a10f1e8aeb923f99e8ea2d3e3a233783",
+      "matched_local_build": true
+    },
+    "/assets/Reviewer-Bq7UiMzi.js": {
+      "sha256": "adaf041d457b1932a8b02662faf2985467b67d9af5a2ce5ce55751e25f8a6596",
+      "matched_local_build": true
+    },
+    "/assets/Prejoin-xfewiovU.js": {
+      "sha256": "333470ca7b18187b33e9dd7d0f47841bbfdc342b68f5b8cb70bc91767c194d0d",
+      "matched_local_build": true
+    },
+    "/assets/Usage-C1h2j2Ha.js": {
+      "sha256": "ce797b1a1e03507ed47b46bbe6ff1ac4309a1cfdba2fcf43403bf2c754348f05",
+      "matched_local_build": true
+    },
+    "/assets/Performance-BBubBRf4.js": {
+      "sha256": "8109ec1186278157fa415fd6c8d7ef5ea8f602581386261f67a4743c9df33821",
+      "matched_local_build": true
+    }
+  },
+  "health_status": 200,
+  "admin_approval_controls_present": true,
+  "privacy_updated": true,
+  "anonymous_gates": {
+    "GET /api/reviewer/access": 401,
+    "GET /api/reviewer/workspace": 401,
+    "GET /api/admin/reviewer-requests": 401,
+    "GET /api/admin/reviewers": 401,
+    "POST /api/reviewer/access/request": 401,
+    "POST /api/admin/reviewer-requests/deployment-verification-nonexistent/decision": 401,
+    "POST /api/reviewer/access/redeem": 401,
+    "POST /api/admin/reviewer-invitations": 401
+  },
+  "identity_configured_anonymous": true,
+  "deployment_scope": "web only; backend reviewer-domain-access-20261111 unchanged",
+  "feedback": {
+    "approved_full_quote_present": true,
+    "latency_observation_retained": true,
+    "public_sign_in_and_overview": true,
+    "initials_avatar": true
+  },
+  "live_mode_copy_corrected": true,
+  "local_checks": {
+    "frontend_tests_passed": 342,
+    "test_files": 47,
+    "production_build_passed": true,
+    "browser_checks": [
+      {
+        "screen": "public-1440",
+        "width": 1440,
+        "scroll": 1425,
+        "overflow": false,
+        "offenders": []
+      },
+      {
+        "screen": "public-390",
+        "width": 390,
+        "scroll": 375,
+        "overflow": false,
+        "offenders": []
+      },
+      {
+        "screen": "signed-in-1440",
+        "width": 1440,
+        "scroll": 1425,
+        "overflow": false,
+        "offenders": []
+      },
+      {
+        "screen": "signed-in-390",
+        "width": 390,
+        "scroll": 375,
+        "overflow": false,
+        "offenders": []
+      },
+      {
+        "full_feedback_visible": true,
+        "public_and_authenticated": true,
+        "admin_uncluttered": true,
+        "provider_calls": 0,
+        "no_mutating_requests": true
+      }
+    ],
+    "scope": "isolated local Chrome; provider network blocked; no live speech flow tested"
+  }
+}
